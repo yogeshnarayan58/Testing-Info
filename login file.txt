@@ -1,0 +1,182 @@
+e2e/page-objects/survey/arthur-ai.page.ts
+      const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reportexperience-dev';
+      const appBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+      const surveyURL = new URL('survey', appBaseURL).toString();
+      await this.webActionHandler.navigateTo(surveyURL, 30000, 'domcontentloaded');
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Please don't add explicit timeout for navigateTo()
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/page-objects/survey/arthur-ai.page.ts
+      throw new Error(
+        `Failed to navigate to survey page: ${error instanceof Error ? error.message : error}`
+      );
+    }
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Move this entire method to common utils because you have duplicated the same code in 2 files. Please refer Omnishopper ui automation repo and implement the same common method ( navigateToUrl ).
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/page-objects/survey/select-panelist.page.ts
+      const searchField = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await searchField.waitFor(3000);
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+For every action like click, I can see waitFor() method call with explicit timeout. Please remove the hardcoded number like 3000, 10000, etc... This will slow the entire automation suite execution time in future
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/page-objects/survey/select-panelist.page.ts
+      await searchField.waitFor(3000);
+      // Clear any existing text
+      await searchField.enterText("");
+      await this.webActionHandler.delay(100);  // Small delay between clear and enter
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+delay() method call with explicit timeout - Please remove the hardcoded number like 100. Instead of hardcoding the number, create a timeout-constant.ts and use the constant variable here. Refer Omnishopper UI automation repo.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/page-objects/survey/arthur-ai.page.ts
+// Loaded via require() (not `import ... from`) so the project doesn't need
+// `resolveJsonModule` enabled in tsconfig.json - mirrors login.page.ts.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const arthurAiPageResources = require('../../locators/survey/arthur-ai.locator.json') as ElementResource;
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+• 
+We should NOT use require() for json import. Please refer Omnishopper UI automation repo on how to import json content and use it.
+
+Using ES6 import with resolveJsonModule enabled is cleaner, more maintainable, and aligns with modern TypeScript best practices.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/page-objects/survey/login.page.ts
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Move this login.page.ts out from survey folder, please create a folder named as common and place this file
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/login.spec.ts
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Do we need this login.spec.ts file? Why we need to write test case for login page?
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Rename this file as start-from-scratch.spec.ts
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-taking.spec.ts
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+This file is not giving any meaning. Please rename this file as start-with-prompt.spec.ts
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/playwright.config.ts
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+This file should be same as Omnishopper UI automation repo. Need to enable below things:
+
+Lambda test
+Allure report
+Grafana dashboard
+Jamaltheen S (@Jamaltheen-S_niq) Please create tickets for upcoming sprint for "Lambda test", "Allure" which are mandatory setup. And for "Grafana dashboard" create a ticket for future sprint/next PI
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+import { SurveyGenerationPage } from '../../page-objects/survey/survey-generation.page';
+import { SelectPanelistPage } from '../../page-objects/survey/select-panelist.page';
+
+test('Start from scratch - All dimensions selection', { tag: '@E2E' }, async () => {
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+• 
+Why there is no test.describe() for all .spec.ts file?
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+import { SurveyGenerationPage } from '../../page-objects/survey/survey-generation.page';
+import { SelectPanelistPage } from '../../page-objects/survey/select-panelist.page';
+
+test('Start from scratch - All dimensions selection', { tag: '@E2E' }, async () => {
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Need to change the tag naming appropriate as per test case
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+        await surveyPage.navigateToSurvey();
+        await surveyPage.clickStartFromScratch();
+        await surveyPage.selectProductOffering('');
+        await surveyPage.searchAndSelectDataset('SI', 'Omni Agg SI 3yrs Synd', 0);
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Dataset name should NOT be hardcoded. Please refer Omnishopper UI automation repo and implement it here.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+              skipParentSearch: true,
+              filterIconClickAfterParent: true
+            }
+        ]);
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+Move this test data into a folder called "test-data" and name the file prefixed with environment like dev-test-data-.json, uat-test-data.json. Please refer Omnishopper UI automation repo
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq) reviewed 3 days ago
+e2e/tests/survey/survey-generation.spec.ts
+            }
+        ]);
+
+        await selectPanelistPage.clickSearchForPanelists();
+@Jayaseelan-Selvaraj_niq
+Jayaseelan Selvaraj (Jayaseelan-Selvaraj_niq)
+3 days ago
+This test doesn't have assertion. Every test case should have assert(). If require, we need to create assertion-data .json file as well. Please refer Omnishopper UI automation repo under reports folders.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
