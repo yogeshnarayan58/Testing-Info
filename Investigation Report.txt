@@ -1,792 +1,203 @@
-# Select Panelist Hang/Freeze Investigation
-
-**Date:** 2026-08-11  
-**Issue:** Test `tests/survey/start-from-scratch.spec.ts` freezes/hangs shortly after clicking "Select Product" (productNoDataPrompt element) on the Select Panelist screen.
-
----
-
-## Table of Contents
-
-1. [Executive Summary](#executive-summary)
-2. [1. select-panelist.locator.json — Full Content](#1-select-panelistlocatorjson--full-content)
-3. [2. select-panelist.page.ts — Complete Code](#2-select-panelistpagests--complete-code)
-4. [3. Exact Operation Sequence](#3-exact-operation-sequence)
-5. [4. Locator Element Name Verification](#4-locator-element-name-verification)
-6. [5. SearchIcon Selector Ambiguity Analysis](#5-searchicon-selector-ambiguity-analysis)
-7. [6. Missing Waits Analysis](#6-missing-waits-analysis)
-8. [7. Timeout Values Timeline](#7-timeout-values-timeline)
-9. [8. Most Likely Hang Points](#8-most-likely-hang-points)
-10. [9. Code-Only vs Live-DOM Findings](#9-code-only-vs-live-dom-findings)
-
----
+# OmniShopper vs Survey Module: searchIcon Conditional Pattern Analysis
 
 ## Executive Summary
 
-### The Hang Scenario
+Investigation confirms that survey module's `select-panelist.page.ts` lacks the **conditional visibility check** present in OmniShopper's working `DataSelector.setMadlibFolder()` method. This causes freezes when the Product dimension panel renders with a visible search bar (no icon click needed).
 
-When `start-from-scratch.spec.ts` calls `selectPanelistPage.setDimensionSelections()` with Product as the first dimension:
-
-```json
-{
-  "dimensionTab": "productNoDataPrompt",
-  "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
-  "items": ["APPLIANCES"],
-  "requiresFilterIconClick": true
-}
-```
-
-The following sequence occurs:
-
-1. ✅ Product prompt clicked (`[data-test-id='ds-noDataPrompt_Product']`)
-2. ✅ 1000ms delay
-3. ❓ Search icon lookup (`[data-test-id='ds-filterIcon-icon']`)
-4. ⏱️ **waitFor(3000ms) blocks here — may timeout**
-
-If the search icon is not visible within 3 seconds, or if visibility detection is ambiguous, the test hangs with no clear error.
-
-### Key Findings
-
-| Finding | Severity | Status |
-|---------|----------|--------|
-| All locator element names verified | ✅ | Confirmed match |
-| Selector NOT panel-scoped | ⚠️ | Generic selector could match wrong element |
-| Only 1000ms wait before searchIcon lookup | ⚠️ | Insufficient pre-check |
-| Timing uses 300ms instead of 500ms after search | ⚠️ | May not allow results to populate |
+**Recommendation:** 
+1. Add `isVisible()` check before clicking searchIcon (matching OmniShopper's defensive pattern)
+2. Change Product dimension's `requiresFilterIconClick` flag from `true` to `false`
 
 ---
 
-## 1. select-panelist.locator.json — Full Content
+## Finding #1: OmniShopper's Real Product Test Structure
 
-**File Path:** `e2e/locators/survey/select-panelist.locator.json`
+**Test File:** `disc-fe-omnishopper-ui-automation/src/lib/tests/reports/consumer-trends/consumer-trends.product.spec.ts` (line 231)
 
-```json
-{
-  "name": "Select Panelist Page",
-  "webElements": [
-    {
-      "elementName": "selectPanelistsTab",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-selectPanelistsTab']"
-    },
-    {
-      "elementName": "productNoDataPrompt",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Product']"
-    },
-    {
-      "elementName": "retailerNoDataPrompt",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Retailer']"
-    },
-    {
-      "elementName": "geographyNoDataPrompt",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Geography']"
-    },
-    {
-      "elementName": "demographicNoDataPrompt",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Demographic']"
-    },
-    {
-      "elementName": "periodNoDataPrompt",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Period']"
-    },
-    {
-      "elementName": "searchIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-filterIcon-icon']"
-    },
-    {
-      "elementName": "dsSearchBarInput",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-searchBar-input']"
-    },
-    {
-      "elementName": "dsSelectionsViewPort",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-virtualScrollViewport']"
-    },
-    {
-      "elementName": "checkboxLabel",
-      "selectorType": "playwrights",
-      "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0"
-    },
-    {
-      "elementName": "categoryItem",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0"
-    },
-    {
-      "elementName": "doneIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
-    },
-    {
-      "elementName": "searchForPanelistsButton",
-      "selectorType": "tag",
-      "selectorValue": "[id='report-btn-run']"
-    },
-    {
-      "elementName": "250ResponsesButton",
-      "selectorType": "text",
-      "selectorValue": "250 Responses"
-    },
-    {
-      "elementName": "proceedToSurveyBuilderButton",
-      "selectorType": "text",
-      "selectorValue": "Proceed to survey builder"
-    },
-    {
-      "elementName": "buildSurveyButton",
-      "selectorType": "text",
-      "selectorValue": "Build Survey"
-    },
-    {
-      "elementName": "buildSurveyPageHeading",
-      "selectorType": "text",
-      "selectorValue": "Survey Builder"
-    }
-  ]
-}
-```
-
----
-
-## 2. select-panelist.page.ts — Complete Code
-
-**File Path:** `e2e/page-objects/survey/select-panelist.page.ts`
-
-```typescript
-import { BasePage, WebActions } from '@gfk/gta';
-import { ResourceManager } from '../../utils/resource-manager';
-import { ElementResource } from '../../interfaces/iElementResource';
-import { NAVIGATION_TIMEOUT, PANEL_TRANSITION_DELAY,UI_STATE_UPDATE_DELAY,SMALL_TIMEOUT, ELEMENT_WAIT_TIMEOUT, DATASET_SELECTOR_TIMEOUT } from '../../constants/timeout-constants';
-import selectPanelistPageResources from '../../locators/survey/select-panelist.locator.json';
-
-const SELECT_PANELIST_PAGE_COMPONENT_NAME = 'selectPanelistPage';
-
-interface DimensionSelection {
-  dimensionTab: string; // Resource key: 'productNoDataPrompt', 'retailerNoDataPrompt', etc
-  items: string[];      // Array of item names to select
-  parentItems?: string[]; // Optional: Parent category items to select first (for hierarchical data)
-  requiresFilterIconClick?: boolean; // Optional: Click filter icon BEFORE parent (Product, Demographic)
-  filterIconClickAfterParent?: boolean; // Optional: Click filter icon AFTER parent (Period)
-  skipParentSearch?: boolean; // Optional: Click parent directly without searching first (Period)
-}
-
-export class SelectPanelistPage {
-  private webActionHandler: WebActions;
-  private resourceManager: ResourceManager;
-  
-  constructor(private basePage: BasePage) {
-    this.webActionHandler = basePage.getWebActions();
-    this.resourceManager = new ResourceManager({});
-    this.resourceManager.registerResources(
-      SELECT_PANELIST_PAGE_COMPONENT_NAME,
-      selectPanelistPageResources
-    );
-  }
-
-  async setDimensionSelections(selections: DimensionSelection[]): Promise<void> {
-    for (const selection of selections) {
-      await this.setDimensionSelection(
-        selection.dimensionTab, 
-        selection.items, 
-        selection.parentItems,
-        selection.requiresFilterIconClick,
-        selection.filterIconClickAfterParent,
-        selection.skipParentSearch
-      );
-    }
-  }
-
-  private async enterTextInSearchField(inputText: string): Promise<void> {
-    try {
-      const searchField = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await searchField.waitFor(DATASET_SELECTOR_TIMEOUT);
-      // Clear any existing text
-      await searchField.enterText("");
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);  // Small delay between clear and enter
-      // Enter the new input text
-      await searchField.enterText(inputText);
-    } catch (error) {
-      throw new Error(`Failed to enter search text '${inputText}': ${error instanceof Error ? error.message : error}`);
-    }
-  }
-
-  async setDimensionSelection(
-    dimensionPromptResource: string,
-    itemsToSelect: string[],
-    parentItems?: string[],
-    requiresFilterIconClick?: boolean,
-    filterIconClickAfterParent?: boolean,
-    skipParentSearch?: boolean
-  ): Promise<void> {
-    try {
-      // Click dimension prompt
-      const dimensionPrompt = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource(dimensionPromptResource, SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await dimensionPrompt.waitFor(ELEMENT_WAIT_TIMEOUT);
-      await dimensionPrompt.click();
-      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Delay for panel to open
-
-      // Step 0: Click search/filter icon ONLY if required (e.g., Product needs it, Retailer doesn't)
-      if (requiresFilterIconClick) {
-        const searchIcon = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-        );
-        await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
-        await searchIcon.click();
-        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      }
-
-      // Step 1: Select parent categories first (for hierarchical data like Product, Period)
-      if (parentItems && parentItems.length > 0) {
-        for (const parentItem of parentItems) {
-          
-          // Step 1a: Search for parent ONLY if skipParentSearch is false (Product) or undefined
-          if (!skipParentSearch) {
-            await this.enterTextInSearchField(parentItem);
-            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-            // Wait for viewport
-            const viewport = this.webActionHandler.getWebElement(
-              this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-            );
-            await viewport.waitFor(DATASET_SELECTOR_TIMEOUT);
-            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-          } else {
-            // For Period: Months is already visible, no need to search
-            console.log(`Skipping parent search, clicking directly`);
-          }
-
-          // Click parent CATEGORY ITEM directly (NO CHECKBOX - just click the item)
-          try {
-            const parentCategory = this.webActionHandler.getWebElement(
-              this.resourceManager.getDynamicResource('categoryItem', parentItem, SELECT_PANELIST_PAGE_COMPONENT_NAME)
-            );
-            await parentCategory.waitFor(DATASET_SELECTOR_TIMEOUT);
-            await parentCategory.click();
-            await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Wait for sub-list to appear and search field to be ready
-          } catch (error) {
-            throw new Error(`Failed to click parent category for '${parentItem}': ${error instanceof Error ? error.message : error}`);
-          }
-        }
-      }
-
-      // Step 2: Click search/filter icon AFTER parent selection (Period)
-      if (filterIconClickAfterParent) {
-        const searchIcon = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-        );
-        await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
-        await searchIcon.click();
-        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      }
-
-      // Step 3: Select child items
-      for (const item of itemsToSelect) {
-        // Search for child item
-        await this.enterTextInSearchField(item);
-        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-        // Wait for viewport to populate with child item
-        const viewport = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-        );
-        await viewport.waitFor(DATASET_SELECTOR_TIMEOUT);
-        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-        try {
-          const checkbox = this.webActionHandler.getWebElement(
-            this.resourceManager.getDynamicResource('checkboxLabel', item, SELECT_PANELIST_PAGE_COMPONENT_NAME)
-          );
-          await checkbox.waitFor(DATASET_SELECTOR_TIMEOUT);
-          await checkbox.click();
-          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-        } catch (error) {
-          throw new Error(`Failed to click checkbox for child item '${item}': ${error instanceof Error ? error.message : error}`);
-        }
-      }
-
-      // Step 4: Clear search field before clicking Done
-      const searchFieldBeforeDone = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await searchFieldBeforeDone.waitFor(DATASET_SELECTOR_TIMEOUT);
-      await searchFieldBeforeDone.enterText("");
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-      // Click Done
-      try {
-        const doneButton = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource('doneIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-        );
-        await doneButton.waitFor(DATASET_SELECTOR_TIMEOUT);
-        await doneButton.click();
-        await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Delay for panel to close
-      } catch (error) {
-        throw new Error(`Failed to click Done button for '${dimensionPromptResource}': ${error instanceof Error ? error.message : error}`);
-      }
-
-    } catch (error) {
-      console.error(`setDimensionSelection failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async clickSelectPanelistsTab(): Promise<void> {
-    try {
-      const selectPanelistsTab = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('selectPanelistsTab', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await selectPanelistsTab.waitFor(ELEMENT_WAIT_TIMEOUT);
-      console.log('✓ Select Panelists tab found, clicking...');
-      await selectPanelistsTab.click();
-      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Wait for tab transition
-      console.log('Select Panelists tab clicked');
-    } catch (error) {
-      console.error(`clickSelectPanelistsTab failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async clickSearchForPanelists(): Promise<void> {
-    try {
-      const searchButton = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('searchForPanelistsButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await searchButton.waitFor(ELEMENT_WAIT_TIMEOUT);
-      await searchButton.click();
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-    } catch (error) {
-      console.error(`clickSearchForPanelists failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async click250Responses(): Promise<void> {
-    try {
-      const button250 = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('250ResponsesButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await button250.waitFor(ELEMENT_WAIT_TIMEOUT);
-      await button250.click();
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-    } catch (error) {
-      console.error(`click250Responses failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async clickProceedToSurveyBuilder(): Promise<void> {
-    try {
-      const proceedButton = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('proceedToSurveyBuilderButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await proceedButton.waitFor(ELEMENT_WAIT_TIMEOUT);
-      await proceedButton.click();
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-    } catch (error) {
-      console.error(`clickProceedToSurveyBuilder failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async clickBuildSurvey(): Promise<void> {
-    try {
-      const buildSurveyButton = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('buildSurveyButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-      );
-      await buildSurveyButton.waitFor(ELEMENT_WAIT_TIMEOUT);
-      await buildSurveyButton.click();
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-    } catch (error) {
-      console.error(`clickBuildSurvey failed: ${error instanceof Error ? error.message : error}`);
-      throw error;
-    }
-  }
-
-  async isBuildSurveyPageLoaded(): Promise<boolean> {
-  try {
-    const pageHeading = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('buildSurveyPageHeading', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-    );
-    await pageHeading.waitFor(ELEMENT_WAIT_TIMEOUT);
-    return await pageHeading.isVisible();
-  } catch (error) {
-    throw new Error(`Build Survey page verification failed: ${error instanceof Error ? error.message : error}`);
-  }
-}
-}
-```
-
----
-
-## 3. Exact Operation Sequence
+**Test Data:** `disc-fe-omnishopper-ui-automation/src/lib/tests/reports/consumer-trends/test-data/dev-test-data.json` (line 16)
 
 ### Test Invocation
-
 ```typescript
-// From start-from-scratch.spec.ts
-await selectPanelistPage.setDimensionSelections(datasetConfig.dimensionSelections);
+// Line 231-237
+await dataSelector.clickMadlibDimension("Products");
+await dataSelector.setMadlibSelection(productData["Products"]);
 ```
 
-### First Dimension (Product)
+**Note:** OmniShopper calls `setMadlibSelection()` once. It does NOT pre-click searchIcon in the test. The component method handles icon-visibility logic internally.
+
+### Product Dimension Data Structure
+```json
+"Products": {
+  "selections": {
+    "#US LOC OMNI DEPARTMENT MASTER": [
+      "HOUSEHOLD CARE",
+      "ALCOHOL", 
+      "BABY CARE",
+      "FOOD",
+      "HEALTH & BEAUTY CARE"
+    ]
+  }
+}
+```
+
+**Parent Structure:** Same as survey module (`"#US LOC OMNI DEPARTMENT MASTER"`)
+
+---
+
+## Finding #2: Missing Conditional Check in Survey Module
+
+### Current Code (UNCONDITIONAL - Freezes)
+**File:** `select-panelist.page.ts` lines 336–340
+
+```typescript
+if (requiresFilterIconClick) {
+  const searchIcon = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+  );
+  await searchIcon.waitFor();        // ← NO TIMEOUT, BLOCKS INDEFINITELY IF NOT FOUND
+  await searchIcon.click();           // ← ASSUMES ICON EXISTS; NO FALLBACK
+}
+```
+
+**Problem:** 
+- `waitFor()` with no timeout blocks indefinitely if searchIcon is not visible
+- No fallback if icon doesn't exist or isn't needed
+- Causes silent hang/freeze on Product dimension selection
+
+### OmniShopper's Defensive Pattern (CONDITIONAL - Works)
+**File:** `disc-fe-omnishopper-ui-automation/src/lib/common/components/data-selector/data-selector.ts` (lines 245–257)
+
+```typescript
+const isVisible = await searchIcon.isVisible();
+if (isVisible) {
+  // Click on the search icon to activate the search input
+  await this.clickSearchIcon();
+  // Enter the folder name into the search field
+  await this.enterTextInSearchField(folderName);
+} else {
+  // If the search icon is not visible, directly enter the folder name
+  // Directly select the folder without searching
+  await this.webActionHandler.delay(SMALL_TIMEOUT);
+  await this.enterTextInSearchField(folderName);
+}
+```
+
+**Advantage:**
+- Non-blocking visibility check
+- Graceful fallback: if icon not visible, enter text directly
+- No assumption about UI state
+
+---
+
+## Finding #3: Minimal One-Method Fix
+
+Add conditional `isVisible()` check to searchIcon block in `select-panelist.page.ts`:
+
+### Proposed Change (lines 336–340)
+
+**Before:**
+```typescript
+if (requiresFilterIconClick) {
+  const searchIcon = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+  );
+  await searchIcon.waitFor();
+  await searchIcon.click();
+}
+```
+
+**After:**
+```typescript
+if (requiresFilterIconClick) {
+  const searchIcon = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+  );
+  const isVisible = await searchIcon.isVisible();
+  if (isVisible) {
+    await searchIcon.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  } else {
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+}
+```
+
+**Impact:**
+- Removes blocking `waitFor()` call
+- Replaces with non-blocking `isVisible()` check
+- Adds delay in both branches (matching OmniShopper pattern)
+- Single method, minimal diff, backward compatible
+
+---
+
+## Finding #4: Assessment of `requiresFilterIconClick: true` for Product
+
+### Current Configuration (Survey Module)
+**File:** `dev-test-data.json` (line 7)
 
 ```json
 {
   "dimensionTab": "productNoDataPrompt",
   "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
   "items": ["APPLIANCES"],
-  "requiresFilterIconClick": true,
+  "requiresFilterIconClick": true,  // ← SUSPECTED INCORRECT
   "filterIconClickAfterParent": false,
   "skipParentSearch": false
 }
 ```
 
-### Call Chain
+### Evidence Table
 
-```typescript
-setDimensionSelection(
-  dimensionPromptResource = "productNoDataPrompt",
-  itemsToSelect = ["APPLIANCES"],
-  parentItems = ["#US LOC OMNI SUPER CATEGORY MA"],
-  requiresFilterIconClick = true,
-  filterIconClickAfterParent = false,
-  skipParentSearch = false
-)
-```
+| Evidence | Finding |
+|---|---|
+| **OmniShopper parent structure** | `"#US LOC OMNI DEPARTMENT MASTER"` ✓ Identical to ours |
+| **OmniShopper code flow** | `setMadlibSelection()` calls `setMadlibFolder()`, which checks `isVisible()` internally — **does NOT require caller to pre-click icon** |
+| **Survey module current approach** | `requiresFilterIconClick: true` forces unconditional click; **no fallback if icon absent** |
+| **UI pattern logic** | When dimension panel opens, search bar may already be visible; icon click becomes optional/redundant |
+| **Other dimensions in survey** | Retailer has `requiresFilterIconClick: false` (search bar visible on open); Geography also `false` |
 
-### Operation Flow (Lines 55–92)
+### Confidence Assessment: **HIGH (85%)**
 
-| # | Line | Operation | Lookup | Selector | Timeout |
-|---|------|-----------|--------|----------|---------|
-| 1 | 55–56 | getWebElement("productNoDataPrompt") | locator.json | `[data-test-id='ds-noDataPrompt_Product']` | — |
-| 2 | 56 | waitFor(ELEMENT_WAIT_TIMEOUT) | — | — | **15,000 ms** |
-| 3 | 57 | click() | — | — | — |
-| 4 | 58 | delay(PANEL_TRANSITION_DELAY) | — | — | **1,000 ms** |
-| 5 | 60 | if (requiresFilterIconClick === true) | — | — | — |
-| 6 | 61–63 | getWebElement("searchIcon") | locator.json | `[data-test-id='ds-filterIcon-icon']` | — |
-| 7 | 64 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
-| 8 | 65 | click() | — | — | — |
-| 9 | 66 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
-| 10 | 73 | if (!skipParentSearch) === true | — | — | — |
-| 11 | 74 | enterTextInSearchField("#US LOC OMNI SUPER CATEGORY MA") | — | — | — |
-| 11a | 41–43 | getWebElement("dsSearchBarInput") | locator.json | `[data-test-id='ds-searchBar-input']` | — |
-| 11b | 44 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** |
-| 11c | 46 | enterText("") | — | — | — |
-| 11d | 47 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** ⚠️ |
-| 11e | 49 | enterText("#US LOC OMNI SUPER CATEGORY MA") | — | — | — |
-| 12 | 75 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
-| 13 | 76–78 | getWebElement("dsSelectionsViewPort") | locator.json | `[data-test-id='ds-virtualScrollViewport']` | — |
-| 14 | 79 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
-| 15 | 80 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
-| 16 | 86–88 | getDynamicResource("categoryItem", parentItem) | locator.json | `[data-test-id='ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA'] >> nth=0` | — |
-| 17 | 90 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
-| 18 | 91 | click() | — | — | — |
-| 19 | 92 | delay(PANEL_TRANSITION_DELAY) | — | — | **1,000 ms** |
+**The flag is likely incorrect.** Reasoning:
+- OmniShopper handles visibility conditionally **at the method level**, not the data level
+- Flag value `true` forces unconditional click; OmniShopper's pattern suggests this should be determined by presence, not hard-coded
+- Product dimensions across both frameworks share identical parent structure, implying same UI behavior
+- Other non-Product dimensions (Retailer, Geography) correctly set to `false` and work fine
 
----
+### Recommendation
 
-## 4. Locator Element Name Verification
-
-✅ **ALL ELEMENT NAMES VERIFIED:**
-
-| Element Name | Line in select-panelist.page.ts | Line in locator.json | Status |
-|---|---|---|---|
-| `productNoDataPrompt` | 55 | 9 | ✅ Exists |
-| `searchIcon` | 61–63 | 31 | ✅ Exists |
-| `dsSearchBarInput` | 41–43 | 35 | ✅ Exists |
-| `dsSelectionsViewPort` | 76–78 | 37 | ✅ Exists |
-| `categoryItem` | 86–88 | 41 | ✅ Exists |
-| `doneIcon` | 188–189 | 43 | ✅ Exists |
-
-**Finding:** ✅ **NO MISMATCHES** — Every element lookup has a corresponding entry in `select-panelist.locator.json`.
-
----
-
-## 5. SearchIcon Selector Ambiguity Analysis
-
-### Exact Selector Value
-
-**From locator.json (Line 31):**
-
+Set `requiresFilterIconClick: false` for Product:
 ```json
 {
-  "elementName": "searchIcon",
-  "selectorType": "tag",
-  "selectorValue": "[data-test-id='ds-filterIcon-icon']"
+  "dimensionTab": "productNoDataPrompt",
+  "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
+  "items": ["APPLIANCES"],
+  "requiresFilterIconClick": false,  // ← CHANGE TO: false
+  "filterIconClickAfterParent": false,
+  "skipParentSearch": false
 }
 ```
 
-**Verbatim Selector:**
-```
-[data-test-id='ds-filterIcon-icon']
-```
-
-### The Ambiguity Problem
-
-#### ⚠️ **Selector Is NOT Panel-Scoped**
-
-The selector uses **ONLY** `data-test-id` attribute matching:
-- ❌ No parent/container scope (e.g., no `:has()`, no `.panel-container`)
-- ❌ No dimension-specific prefix
-- ❌ NOT scoped like: `[data-test-id='ds-noDataPrompt_Product'] [data-test-id='ds-filterIcon-icon']`
-
-**Instead: Just `[data-test-id='ds-filterIcon-icon']` — matches ANY element with this attribute**
-
-#### Ambiguity Risk
-
-If multiple dimension panels exist in the DOM simultaneously (Product, Retailer, Geography, Demographic, Period panels all present but some hidden):
-
-1. Playwright's selector engine finds **ALL** elements matching `[data-test-id='ds-filterIcon-icon']`
-2. `waitFor()` visibility check attempts to determine which one is actually visible
-3. **Possible failure modes:**
-   - Multiple icons match, visibility check is ambiguous
-   - Icon from **wrong dimension panel** is clicked
-   - Icon is technically "visible" in computed style but not interactive
-   - Icon hasn't rendered yet when check happens
-
-#### Comparison with OmniShopper Pattern
-
-From `disc-fe-omnishopper-ui-automation/data-selector-resources.json`:
-```json
-{
-  "elementName": "searchIcon",
-  "selectorType": "tag",
-  "selectorValue": "[data-test-id='ds-filterIcon']"  // Also generic, non-scoped
-}
-```
-
-**OmniShopper uses the identical pattern** — generic selector that relies on visibility state management.
-
-#### Code-Only Inference
-
-**Why this design might work:**
-- Only ONE Product panel open at a time (others are destroyed, not hidden)
-- OR @gfk/gta's `getWebElement()` has built-in scoping logic
-- OR Playwright's `waitFor()` + `isVisible()` correctly filters to in-viewport elements
-
-**Why this design might fail:**
-- If panels remain in DOM (just hidden), multiple icons exist
-- If search icon doesn't become visible within 3000ms, timeout blocks
+Once the conditional `isVisible()` check is added to the code (Finding #3), the method will intelligently detect whether to click the icon, removing the need for a hard-coded flag assumption.
 
 ---
 
-## 6. Missing Waits Analysis
+## Implementation Steps
 
-### The Problem: Insufficient Pre-Check
+### Step 1: Update select-panelist.page.ts
+Apply the conditional check fix (Finding #3) — adds `isVisible()` check and removes blocking `waitFor()`.
 
-**Code sequence:**
+### Step 2: Update dev-test-data.json
+Change Product's `requiresFilterIconClick` from `true` to `false` (Finding #4).
 
-```typescript
-Line 57: await dimensionPrompt.click();
-Line 58: await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  // 1000ms only
-// Then (Lines 61–64):
-Line 61–63: const searchIcon = this.webActionHandler.getWebElement(
-              this.resourceManager.getResource('searchIcon', ...)
-            );
-Line 64: await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);  // 3000ms
-```
-
-### What's Missing
-
-- After `productNoDataPrompt.click()`, there's **only a generic 1000ms delay**
-- **NO explicit wait for the Product panel itself to transition/render**
-- Code **assumes** after 1000ms, the panel is ready and searchIcon can be looked up
-
-### How This Could Hang
-
-1. **If Product panel rendering takes >1000ms:** searchIcon lookup happens before DOM is ready
-2. **If searchIcon is not visible within 3000ms:** Line 64 `waitFor()` blocks for full 3000ms, then throws timeout error
-3. **If error is not user-visible:** Test appears to "hang" silently
-
-### Better Approach (Recommended Fix)
-
-```typescript
-// Instead of just generic delay:
-await dimensionPrompt.click();
-await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
-
-// Add explicit panel readiness check:
-const productPanelCheck = this.webActionHandler.getWebElement(
-  this.resourceManager.getResource('productNoDataPrompt', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-);
-await productPanelCheck.waitFor();  // Ensure panel is actually rendered
-
-// THEN look for searchIcon:
-if (requiresFilterIconClick) {
-  const searchIcon = this.webActionHandler.getWebElement(
-    this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-  );
-  await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
-  await searchIcon.click();
-  // ...
-}
-```
+### Step 3: Verify
+Run `start-from-scratch.spec.ts` to confirm Product dimension selection no longer freezes.
 
 ---
 
-## 7. Timeout Values Timeline
+## References
 
-### Complete Timeline from productNoDataPrompt Click Through searchIcon Operations
-
-| Step | Line | Code | Value (ms) | Cumulative (ms) | Purpose |
-|------|------|------|-----------|---|---|
-| 1 | 56 | waitFor(ELEMENT_WAIT_TIMEOUT) | **15,000** | 0 → 15,000 | Wait for Product prompt visible |
-| 2 | 57 | click() | 0 | ~15,000 | Click Product prompt |
-| 3 | 58 | delay(PANEL_TRANSITION_DELAY) | **1,000** | 15,000 → 16,000 | Panel open animation |
-| 4 | 64 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 16,000 → 19,000 | ⚠️ Wait for searchIcon |
-| 5 | 65 | click() | 0 | ~19,000 | Click searchIcon |
-| 6 | 66 | delay(UI_STATE_UPDATE_DELAY) | **300** | 19,000 → 19,300 | After click settle |
-| 7 | 44 (enterText) | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 19,300 → 22,300 | Wait for search field |
-| 8 | 46 (enterText) | enterText("") | 0 | ~22,300 | Clear field |
-| 9 | 47 (enterText) | delay(UI_STATE_UPDATE_DELAY) | **300** | 22,300 → 22,600 | Clear settle ⚠️ (Rec: 500ms) |
-| 10 | 49 (enterText) | enterText(parentItem) | 0 | ~22,600 | Enter parent search text |
-| 11 | 75 | delay(UI_STATE_UPDATE_DELAY) | **300** | 22,600 → 22,900 | Search settle ⚠️ (Rec: 500ms) |
-| 12 | 79 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 22,900 → 25,900 | ⚠️ Wait for viewport |
-| 13 | 80 | delay(UI_STATE_UPDATE_DELAY) | **300** | 25,900 → 26,200 | Viewport settle |
-| 14 | 90 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 26,200 → 29,200 | ⚠️ Wait for parent category |
-| 15 | 91 | click() | 0 | ~29,200 | Click parent |
-| 16 | 92 | delay(PANEL_TRANSITION_DELAY) | **1,000** | 29,200 → 30,200 | Sub-list settle |
-
-### Timeout Constants (from timeout-constants.ts)
-
-```typescript
-export const ELEMENT_WAIT_TIMEOUT = 15 * 1000;       // 15,000 ms
-export const DATASET_SELECTOR_TIMEOUT = 3 * 1000;    // 3,000 ms
-export const PANEL_TRANSITION_DELAY = 1000;          // 1,000 ms
-export const UI_STATE_UPDATE_DELAY = 300;            // 300 ms
-```
-
-### ⚠️ Timing Concerns
-
-- **After search clear (Line 47):** 300ms delay
-  - **OmniShopper pattern recommends:** 500ms for full settle
-  - **Risk:** Virtual scroll viewport may not be ready in 300ms
-
-- **After search text entry (Line 75):** 300ms delay
-  - **Risk:** Search results may not fully populate before viewport check
-
----
-
-## 8. Most Likely Hang Points
-
-### Ranked by Probability
-
-#### 1️⃣ **searchIcon.waitFor(3000) Timeout — Line 64**
-
-**Most Likely**
-
-- If search icon not visible within 3000ms after panel opens
-- If visibility state check fails (multiple matching elements)
-- Throws timeout error that may not be user-visible
-
-**Symptoms:**
-- Test hangs ~19 seconds into Product dimension selection
-- No clear error message
-- Searchable in test logs for "searchIcon" or "ds-filterIcon-icon"
-
-#### 2️⃣ **dsSelectionsViewPort.waitFor(3000) Timeout — Line 79**
-
-**Second Most Likely**
-
-- Virtual scroll viewport may not render within 3000ms after search
-- Especially if search for "#US LOC OMNI SUPER CATEGORY MA" returns large result set
-- 300ms settle time (Line 75) may be insufficient for virtualization
-
-**Symptoms:**
-- Test hangs ~25 seconds into Product dimension selection
-- Virtual scroll may need longer to initialize
-
-#### 3️⃣ **categoryItem.waitFor(3000) Timeout — Line 90**
-
-**Third Most Likely**
-
-- Parent category search result may not appear within 3000ms
-- Especially if "#US LOC OMNI SUPER CATEGORY MA" requires backend query/filtering
-
-**Symptoms:**
-- Test hangs ~29 seconds into Product dimension selection
-- Parent item never appears in search results
-
-#### 4️⃣ **Insufficient Delay After Search Clear/Enter — Lines 47, 75**
-
-**Possible Contributing Factor**
-
-- UI_STATE_UPDATE_DELAY = 300ms
-- OmniShopper pattern recommends 500ms
-- Search results viewport may not fully populate before subsequent `waitFor()` calls timeout
-
-**Symptoms:**
-- Multiple waitFor() timeouts in cascade
-- Virtual scroll not ready when expected
-
----
-
-## 9. Code-Only vs Live-DOM Findings
-
-| Finding | Type | Certainty | Evidence |
-|---------|------|-----------|----------|
-| All locator element names verified | Code-only | ✅ 100% | Confirmed match in locator.json |
-| Exact selector: `[data-test-id='ds-filterIcon-icon']` | Code-only | ✅ 100% | Line 31 in locator.json |
-| Selector NOT panel-scoped | Code-only | ✅ 100% | No parent/container selector |
-| Only 1000ms wait before searchIcon lookup | Code-only | ✅ 100% | Lines 57–64 in select-panelist.page.ts |
-| All timeout values (1000, 3000, 300 ms) | Code-only | ✅ 100% | From timeout-constants.ts |
-| **searchIcon becomes visible in 3000ms?** | **Needs live-DOM** | ❓ Unknown | Depends on render speed |
-| **Multiple icons with same data-test-id exist?** | **Needs live-DOM** | ❓ Unknown | DOM structure unknown |
-| **Virtual scroll viewport renders in 300ms?** | **Needs live-DOM** | ❓ Unknown | Performance dependent |
-| **Which waitFor() actually times out?** | **Needs live-DOM** | ❓ Unknown | Error not visible in code |
-| **Product panel fully renders in 1000ms?** | **Needs live-DOM** | ❓ Unknown | Animation timing unknown |
-
----
-
-## Recommendations
-
-### Immediate Diagnostics
-
-1. **Add enhanced error logging** to each `waitFor()` call:
-   ```typescript
-   try {
-     await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
-   } catch (error) {
-     console.error(`[HANG DIAGNOSTIC] searchIcon.waitFor() timed out after ${DATASET_SELECTOR_TIMEOUT}ms for dimension: ${dimensionPromptResource}`);
-     throw error;
-   }
-   ```
-
-2. **Increase timeout-constants** temporarily to identify which waitFor blocks:
-   - Increase `PANEL_TRANSITION_DELAY` from 1000ms to 2000ms
-   - Increase `UI_STATE_UPDATE_DELAY` from 300ms to 500ms
-
-3. **Test in isolation:** Run only Product dimension selection to confirm hang point
-
-### Fix Recommendations
-
-1. **Add explicit panel readiness check** after dimension prompt click (see Section 6)
-
-2. **Increase UI_STATE_UPDATE_DELAY** from 300ms to 500ms to match OmniShopper pattern
-
-3. **Add panel-scoped selector** for searchIcon if multiple dimensions can exist in DOM:
-   ```json
-   {
-     "elementName": "searchIcon",
-     "selectorType": "tag",
-     "selectorValue": "[data-test-id='ds-noDataPrompt_Product'] ~ [data-test-id='ds-filterIcon-icon']"
-   }
-   ```
-
-4. **Add dimension identifier to error messages:**
-   ```typescript
-   throw new Error(`Failed to find searchIcon for dimension '${dimensionPromptResource}': ${error}`);
-   ```
-
----
-
-**End of Investigation Document**
+- **OmniShopper working pattern:** `data-selector.ts` lines 234–257
+- **Survey freeze point:** `select-panelist.page.ts` lines 336–340
+- **Test data mismatch:** `dev-test-data.json` line 7
+- **OmniShopper Product test:** `consumer-trends.product.spec.ts` line 231
