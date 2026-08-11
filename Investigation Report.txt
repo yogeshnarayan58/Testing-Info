@@ -1,0 +1,117 @@
+Investigation Report
+1. Raw Playwright Locator Exposure in Page Objects
+Finding: NONE
+All four page objects correctly follow the GTA pattern. No methods expose raw Locator objects.
+File: login.page.ts
+All public methods return Promise<void> or Promise<boolean>
+All element access wrapped: this.webActionHandler.getWebElement(...)
+File: arthur-ai.page.ts
+All public methods return Promise<void> or Promise<boolean>
+Public method example at line 105:
+public async isDatasetTypeSelectorVisible(index = 0): Promise<boolean> {
+  const datasetTypeSelector = this.webActionHandler.getWebElement(
+    this.resourceManager.getDynamicResource(...)
+  );
+  return await datasetTypeSelector.isVisible();
+}
+Returns boolean, not Locator.
+File: survey-generation.page.ts
+All public methods return Promise<void> or wrapped via WebActions
+No Locator returns
+File: select-panelist.page.ts
+All public methods return Promise<void>
+No Locator returns
+2. Full Implementation of assert-utils.ts (OmniShopper)
+File: c:\Users\Yogesh.Upadhyay\Downloads\disc-fe-omnishopper-ui-automation\src\lib\common\utils\assert-utils.ts
+Exported Functions:
+/**
+ * Asserts that the given element is present in the DOM and visible.
+ * @param {string | Locator} input - Either a string (selector) or a Locator object.
+ * @param {ExpectOptions} options - The options to pass to the expect function.
+ */
+export async function expectElementToBeVisible(input: string | Locator, options?: ExpectOptions): Promise<void> {
+    const { locator, assert } = getLocatorAndAssert(input, options);
+    await assert(locator, options).toBeVisible(options);
+}Helper Functions (Internal, Not Exported):
+getLocatorAndAssert() — Line 18–24
+function getLocatorAndAssert(input: string | Locator, options?: SoftOption): { locator: Locator; assert: Expect } {
+    const locator = getFirstLocator(input);
+    const assert = getExpectWithSoftOption(options);
+    return { locator, assert };
+}getExpectWithSoftOption() — Line 26–31
+function getExpectWithSoftOption(options?: SoftOption): Expect {
+    return expect.configure({ soft: options?.soft });
+}
+Summary: Only one exported function (expectElementToBeVisible). The file is 32 lines total with two internal helpers.
+3. Delay Calls in select-panelist.page.ts
+Total: 17 calls using UI_STATE_UPDATE_DELAY (300ms) or PANEL_TRANSITION_DELAY (1000ms)
+Line	Delay Constant	Context
+52	UI_STATE_UPDATE_DELAY (300ms)	Clear search field + small delay before entering new text
+75	PANEL_TRANSITION_DELAY (1000ms)	After dimensionPrompt.click() — wait for panel to open
+84	UI_STATE_UPDATE_DELAY	After searchIcon.click() — search field ready
+94	UI_STATE_UPDATE_DELAY	After enterTextInSearchField(parentItem) — search debounce
+101	UI_STATE_UPDATE_DELAY	After viewport.waitFor() — viewport populate settle
+114	PANEL_TRANSITION_DELAY (1000ms)	After parentCategory.click() — wait for sub-list to appear + search ready
+128	UI_STATE_UPDATE_DELAY	After enterTextInSearchField(item) — search debounce
+135	UI_STATE_UPDATE_DELAY	After viewport.waitFor() — viewport populate settle
+142	UI_STATE_UPDATE_DELAY	After checkbox.click() — checkbox state settle
+150	UI_STATE_UPDATE_DELAY	After enterTextInSearchField("") — clear search
+162	UI_STATE_UPDATE_DELAY	After searchFieldBeforeDone.enterText("") — clear before Done
+171	PANEL_TRANSITION_DELAY (1000ms)	After doneButton.click() — wait for panel to close
+190	PANEL_TRANSITION_DELAY	After selectPanelistsTab.click() — wait for tab transition
+206	UI_STATE_UPDATE_DELAY	After searchButton.click() — search button settle
+220	UI_STATE_UPDATE_DELAY	After button250.click() — button settle
+234	UI_STATE_UPDATE_DELAY	After proceedButton.click() — button settle
+248	UI_STATE_UPDATE_DELAY	After buildSurveyButton.click() — button settle
+4. Delay Calls in DataSelector (OmniShopper)
+Total: 3 calls (vs 17 in select-panelist)
+Line	Delay Constant	Context
+255	SMALL_TIMEOUT (5000ms)	Inside setMadlibFolder(): After clickSearchIcon(), if search icon NOT visible (else branch)
+408	SMALL_TIMEOUT	Inside makeAcopy(): After clicking 'Save' button — page re-rendering workaround (has TODO comment)
+777	300 (hardcoded)	Inside checkPeopleMenuInfoState(): After menuInfoIcon.hover() — wait for tooltip to appear
+5. Comparison: Delay Strategy Differences
+select-panelist.page.ts: "Heavy Fire-and-Forget"
+17 explicit delays embedded in flow
+Called after nearly every action (text entry, click, search)
+No .waitFor() calls between actions to confirm state change
+Example flow (lines 87–104):
+await this.enterTextInSearchField(parentItem);
+await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);  // Line 94 — always delay
+const viewport = this.webActionHandler.getWebElement(...);
+await viewport.waitFor(DATASET_SELECTOR_TIMEOUT);
+await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);  // Line 101 — double-wait pattern
+data-selector.ts: "Conditional + Long Waits"
+3 delays total (hardcoded 300ms/5000ms)
+Relies on waitFor() with visibility states instead
+Example from line 161–166
+public async setDimensionSelection(selections: string[], searchReq = true): Promise<void> {
+  for (const selection of selections) {
+    if (searchReq) {
+      await this.enterTextInSearchField(selection);
+      // NO delay here — proceeds immediately
+    }
+    // Wait for actual DOM state change, not fixed time
+    await this.webActionHandler
+      .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
+      .waitFor();  // Waits for visibility, not a fixed delay
+    await selectionElement.click();
+  }
+}
+Stability Polling (OmniShopper only)
+Lines 1158–1202: waitForMadlibStability() method
+Polls madlib text every POLLING_INTERVAL (300ms)
+Detects actual state change (text content) vs. fixed delay
+Waits for stability (5 seconds unchanged) after detecting change
+No equivalent in survey-mod
+Direct Comparison Examples:
+Action	select-panelist.page.ts	data-selector.ts
+Parent category selection	await parentCategory.click(); await delay(PANEL_TRANSITION_DELAY); (line 114)	await folderElement.click(); await viewport.waitFor(); (lines 189–192)
+Dimension folder search	await enterTextInSearchField(); await delay(UI_STATE_UPDATE_DELAY); (lines 94–101)	await enterTextInSearchField(); await viewport.waitFor(); (no delay after search)
+Checkbox click	await checkbox.click(); await delay(UI_STATE_UPDATE_DELAY); (line 142)	await selectionElement.click(); // proceeds immediately (line 208)
+Pivot change	N/A	await switchPivotDropdown(); await waitForMadlibStability(); (lines 738–752) monitors actual text change, not time
+Summary
+✅ No Locator exposure found — all page objects follow GTA wrapping pattern
+📋 assert-utils.ts — Single exported function + 2 helpers, 32 lines total
+⏱️ select-panelist: 17 delays — 300ms (13x), 1000ms (4x) — fire-and-forget pattern
+⏱️ data-selector: 3 delays — minimal; prefers .waitFor() for visibility detection
+🔄 OmniShopper — 5x fewer delays, relies on conditional .waitFor() + stability polling for madlib changes
