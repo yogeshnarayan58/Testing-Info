@@ -1,1745 +1,102 @@
-Complete Investigation: DataSelector Component — Full Code & Exact Selectors
-1. FULL CONTENT: data-selector.ts
-File Path: src/lib/common/components/data-selector/data-selector.ts
+# Select Panelist Hang/Freeze Investigation
 
-Lines 1–1,193 (Complete File):
-import { BasePage, assert } from "@gfk/gta";
-import { ResourceManager } from "../../utils/resource-manager";
-import * as commonResources from "../../pages/common-test-resources.json";
-import * as dsResources from "../data-selector/data-selector-resources.json";
-import { MAX_TEST_TIMEOUT, SMALL_TIMEOUT, POLLING_INTERVAL } from "../../../constants/time-out-constants";
-import { CommonTestCase } from "../../pages/common-test-case/common-test-case";
-import { PeopleMenu } from "./people-menu-constant";
-import { AssertionMenuOption, AssertionSubMenuOption } from "../../models/data-selector-model";
-import { randomInt } from "crypto";
-// import * as commonResources from '../../../object-resources/common-resources.json';
+**Date:** 2026-08-11  
+**Issue:** Test `tests/survey/start-from-scratch.spec.ts` freezes/hangs shortly after clicking "Select Product" (productNoDataPrompt element) on the Select Panelist screen.
 
-// Register the DataSelector resources
-const DS_COMPONENT_NAME = "DataSelector";
-const COMMON_COMPONENT_NAME = "Common";
-export class DataSelector extends CommonTestCase {
-  constructor(basePage: BasePage) {
-    super(basePage);
-    this.webActionHandler = basePage.getWebActions();
-    // Initialize ResourceManager with component resources
-    this.resourceManager = new ResourceManager({});
+---
 
-    // Register multiple resources for the same component
-    this.resourceManager.registerResources(DS_COMPONENT_NAME, dsResources);
-    this.resourceManager.registerResources(
-      COMMON_COMPONENT_NAME,
-      commonResources
-    );    
-    
-    // this.resourceManager.registerResources(COMMON_COMPONENT_NAME, commonResources); // TODO: Uncomment when common resources are available
-  }
+## Table of Contents
 
-  /**
-   * Handles interaction with the Additional Prompt Ellipsis (three dots) icon.
-   */
-  public async clickAdditionalPromptEllipsisIcon(): Promise<void> {
-    await super.clickWebelement("additionalPromptEllipsis",DS_COMPONENT_NAME);
-  }
+1. [Executive Summary](#executive-summary)
+2. [1. select-panelist.locator.json — Full Content](#1-select-panelistlocatorjson--full-content)
+3. [2. select-panelist.page.ts — Complete Code](#2-select-panelistpagests--complete-code)
+4. [3. Exact Operation Sequence](#3-exact-operation-sequence)
+5. [4. Locator Element Name Verification](#4-locator-element-name-verification)
+6. [5. SearchIcon Selector Ambiguity Analysis](#5-searchicon-selector-ambiguity-analysis)
+7. [6. Missing Waits Analysis](#6-missing-waits-analysis)
+8. [7. Timeout Values Timeline](#7-timeout-values-timeline)
+9. [8. Most Likely Hang Points](#8-most-likely-hang-points)
+10. [9. Code-Only vs Live-DOM Findings](#9-code-only-vs-live-dom-findings)
 
-  /**
-   * Clicks on a Madlib dimension element specified by the given dimension key.
-   *
-   * @param {string} dimension - The key or identifier used to locate the dimension element.
-   */
-  public async clickMadlibDimension(dimension: string): Promise<void> {
-    try {
-      // Retrieve the web element corresponding to the specified dimension
-      const dimensionElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource(dimension, DS_COMPONENT_NAME)
-      );
+---
 
-      // Wait until the element is visible and ready for interaction
-      await dimensionElement.waitFor();
-      // Click the dimension element
-      await dimensionElement.click();
-    } catch (error) {
-      console.error(`Failed to click Madlib dimension '${dimension}':`, error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(`Error interacting with Madlib dimension '${dimension}': ${errorMessage}`);
-    }
-  }
+## Executive Summary
 
-  /**
-   * Closes the Data Selector panel by clicking its close icon.
-   */
-  public async closeDataSelectorPanel(): Promise<void> {
-    await super.clickWebelement("Data Selector Close Icon",DS_COMPONENT_NAME);
-  }
+### The Hang Scenario
 
-  /**
-   * Removes selected items by clicking the remove icon.
-   */
-  public async removeSelections(): Promise<void> {
-    await super.clickWebelement("removeIcon",DS_COMPONENT_NAME);
-  }
+When `start-from-scratch.spec.ts` calls `selectPanelistPage.setDimensionSelections()` with Product as the first dimension:
 
-  /**
-   * Clicks the Add icon.
-   * Note: Search icon may appear after folder selection in some dimensions (e.g., Period)
-   */
-  public async clickAddIcon(): Promise<void> {
-    await super.clickWebelement("addIcon",DS_COMPONENT_NAME);
-  }
-
-  /**
-   * Clicks the Search icon.
-   */
-  public async clickSearchIcon(): Promise<void> {
-    await super.clickWebelement("searchIcon",DS_COMPONENT_NAME);
-  }
-
-  /**
-   * Enters the given text into the search input field after clearing any existing text.
-   *
-   * @param inputText - The text to enter into the search field.
-   */
-  public async enterTextInSearchField(inputText: string): Promise<void> {
-    const searchField = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("dsSearchBarInput", DS_COMPONENT_NAME)
-    );
-    await searchField.waitFor();
-    // Clear any existing text
-    await searchField.enterText("");
-    // Enter the new input text
-    await searchField.enterText(inputText);
-  }
-
-  /**
-   * Selects a folder by clicking on its label based on the folder name.
-   *
-   * @param folderName - The name of the folder to select.
-   */
-  public async selectFolder(folderName: string): Promise<void> {
-    // Retrieve the folder element dynamically using the folder name
-    const folderElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource(
-        "dsNavigationItemLabel",
-        folderName,
-        DS_COMPONENT_NAME
-      )
-    );
-    await folderElement.waitFor();
-    // Click the folder element to select it
-    await folderElement.click();
-  }
-
-  /**
-   * Checks (selects) an item from the selections viewport based on the given selection name.
-   *
-   * @param selection - The name of the item to be selected.
-   */
-  public async checkSelection(selection: string): Promise<void> {
-    // Ensure the selections viewport is loaded
-    await this.webActionHandler
-      .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort"))
-      .waitFor();
-    // Retrieve the selection element dynamically using the selection name
-    const selectionElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource(
-        "checkboxLabel",
-        selection,
-        DS_COMPONENT_NAME
-      )
-    );
-    await selectionElement.waitFor();
-    // Click the selection element to check/select it
-    await selectionElement.click();
-  }
-
-  /**
-   * Clicks the Done icon to complete the current action or close the panel.
-   */
-  public async clickDone(): Promise<void> {
-    await super.clickWebelement("doneIcon",DS_COMPONENT_NAME);
-  }
-
-  
-  /**
-   * Sets the Madlib selections by iterating through each folder and applying its corresponding dimension selections.
-   *
-   * @param dimensionSelection - An object containing folder names as keys and their corresponding selections as values.
-   */
-  public async setMadlibSelection(
-    dimensionSelection: {
-      selections: Record<string, any>;
-    },
-    searchReq = true
-  ): Promise<void> {
-
-    const folderEntries = Object.entries(dimensionSelection.selections);
-    if (!folderEntries.length) {
-      return;
-    }
-    // Clear default/existing state once before processing all folders.
-    await this.checkSelectionGroupExists();
-
-    // Loop through each folder and its associated selections.
-    for (let index = 0; index < folderEntries.length; index++) {
-      const [folderName, selections] = folderEntries[index];
-      if (index > 0) { // For second+ folders, create an additional selection group instead of replacing previous selections.
-        await this.clickAddIcon();
-      }
-      await this.setMadlibFolder(folderName, searchReq); // Select the folder
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME)
-        )
-        .waitFor(MAX_TEST_TIMEOUT, "visible");
-      await this.setDimensionSelection(selections, searchReq); // Apply the dimension selections within the folder
-    }
-  }
-
-  /**
-   * Selects each dimension value by searching and clicking its corresponding checkbox.
-   *
-   * @param selections - An array of dimension values to select.
-   */
-  public async setDimensionSelection(
-    selections: string[],
-    searchReq = true
-  ): Promise<void> {
-    try {
-      for (const selection of selections) {
-        if (searchReq) {
-          // Enter the selection text in the search field
-          await this.enterTextInSearchField(selection);
-        }
-        // Wait for the selection viewport to be available in the DOM
-        await this.webActionHandler
-          .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
-          .waitFor();
-        // Click the checkbox corresponding to the selection
-        const selectionElement = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "checkboxLabel",
-            selection,
-            DS_COMPONENT_NAME
-          )
-        );
-        await selectionElement.click();
-      }
-      // Click the 'Done' button to finalize the selection process
-      await this.clickDone();
-    } catch (error) {
-      console.error("Error in setDimensionSelection:", error);
-      throw new Error(`Failed to set dimension selection: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  /**
-   * Opens a Madlib folder by searching for its name and selecting it.
-   * Logs an error if the operation fails.
-   *
-   * @param folderName - The name of the folder to search and select.
-   */
-  public async setMadlibFolder(
-    folderName: string,
-    searchReq = true
-  ): Promise<void> {
-    try {
-      if (searchReq) {
-         // Get the search icon element
-        const searchIcon = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource("searchIcon", DS_COMPONENT_NAME)
-        );
-      // Check if the search icon is visible
-        const isVisible = await searchIcon.isVisible();
-        if (isVisible) {
-          // Click on the search icon to activate the search input
-          await this.clickSearchIcon();
-          // Enter the folder name into the search field
-          await this.enterTextInSearchField(folderName);
-        } else {
-          // If the search icon is not visible, directly enter the folder name
-          // Directly select the folder without searching
-          await this.webActionHandler.delay(SMALL_TIMEOUT);
-          await this.enterTextInSearchField(folderName);
-        }
-        // Select the folder from the search results
-        await this.selectFolder(folderName);
-      } else {
-        // Search not required in new UI flows; select directly from visible list.
-        await this.selectFolder(folderName);
-      }
-      console.log(`Folder '${folderName}' successfully selected.`);
-    } catch (error) {
-      console.error(
-        `❌ Failed to select Madlib folder '${folderName}':`,
-        error
-      );
-      throw error;
-    }
-  }
-  /**
-   * Retrieves the text value of a specified Madlib dimension.
-   *
-   * @param dimension - The name of the dimension whose value should be retrieved.
-   * @returns The text content of the specified dimension element.
-   */
-  public async fetchMadlibDimensionValue(dimension: string): Promise<string> {
-    // Get the locator for the web element based on the provided dimension name
-    const dimensionElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource(dimension, DS_COMPONENT_NAME)
-    );
-
-    // Wait until the element is present and visible on the page
-    await dimensionElement.waitFor();
-
-    // Return the text content of the dimension element
-    return await dimensionElement.getText();
-  }
-
-  /**
-   * Handles the selection of dimensions in a madlib-like UI flow based on a given input.
-   * Iterates through each folder and applies corresponding selections.
-   *
-   * @param dimensionSelection - Object containing dimension folder names and associated selections
-   */
-  public async setPeriodMadlibSelection(dimensionSelection: {
-    selections: Record<string, string[]>;
-  }): Promise<void> {
-    const { selections } = dimensionSelection;
-
-    for (const [folderName, dimensionValues] of Object.entries(selections)) {
-      try {
-        //check if any selections exist
-        await this.checkSelectionGroupExists();
-
-        // Construct and retrieve the navigation element for the given folder
-        const folderElement = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "dsNavigationItemLabel",
-            folderName,
-            DS_COMPONENT_NAME
-          )
-        );
-        await folderElement.click();
-        await this.setPeriodDimensionSelection(dimensionValues);
-      } catch (error) {
-        console.error(`Error selecting folder "${folderName}":`, error);
-        throw new Error(
-          `Failed to process selections for folder: ${folderName}`
-        );
-      }
-    }
-  }
-
-  /**
-   * Applies a list of dimension selections by clicking each option in the UI.
-   *
-   * @param selectionValues - List of dimension values to select
-   */
-  public async setPeriodDimensionSelection(
-    selectionValues: string[]
-  ): Promise<void> {
-    for (const value of selectionValues) {
-      try {
-        const selectionElement = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "checkboxLabel",
-            value,
-            DS_COMPONENT_NAME
-          )
-        );
-
-        await selectionElement.click();
-      } catch (error) {
-        console.error(`Error selecting dimension value "${value}":`, error);
-        throw new Error(`Failed to select dimension value: ${value}`);
-      }
-    }
-
-    try {
-      await this.clickDone();
-    } catch (error) {
-      console.error("Error clicking 'Done' button:", error);
-      throw new Error("Failed to finalize the dimension selection process.");
-    }
-  }
-
-  /**
-   * Clicks the 'Run' button in the report interface.
-   */
-  public async clickRunButton(): Promise<void> {
-    await super.clickWebelement("reportRunButton", DS_COMPONENT_NAME);
-  }
-
-  /**
-   * Waits for the report run process to complete by monitoring the visibility
-   * of the cancel button during spinner activity. Handles timeout scenarios.
-   */
-  public async waitForReportRunCompletion(): Promise<void> {
-    const cancelButton = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("inProgressCancel", DS_COMPONENT_NAME)
-    );
-
-    try {
-      // First wait until the cancel button becomes visible (indicates run started)
-      await cancelButton.waitFor(MAX_TEST_TIMEOUT, "visible");
-      // Then wait until the cancel button disappears (indicates run completed)
-      await cancelButton.waitFor(MAX_TEST_TIMEOUT, "hidden");
-
-      console.info("Report run completed!");
-    } catch (error) {
-      console.error(
-        "Cancel button did not disappear within the expected duration:",
-        error
-      );
-      throw new Error("Report run did not complete within the timeout period.");
-    }
-  }
-
-  /**
- * Initiates the process to make a copy of a report.
- * This involves clicking the 'Make a Copy' icon, updating the report title,
- * selecting the save location, and saving the new report.
- * After the save operation, it waits for the page to re-render and then retrieves
- * the URL of the new report.
- * Finally, it closes the browser tab and returns an object containing both the
- * new report's title and its URL.
- * 
- * @returns {Promise<{ newReportTitle: string, newUrl: string }>}
- */
-  public async makeAcopy(): Promise<{ newReportTitle: string, newUrl: string }> {
-    await this.clickMakeAcopyIcon();
-    let newReportTitle = await this.updateReportTitle();
-    await this.clickMyAssets();
-    await this.clickSaveButton();
-    await this.webActionHandler.delay(SMALL_TIMEOUT); //Todo: Added a delay after clicking the 'Save' button to accommodate page re-rendering; need to find an alternative approach
-    let newUrl = await this.webActionHandler.getPageUrl();
-    await this.webActionHandler.closeBrowserTab();
-    return { newReportTitle, newUrl };
-  }
-
-  /**
-   * Clicks the "Make a copy" icon after ensuring it is visible and enabled.
-   * Throws an error if the icon is not found, not visible, or not clickable within the timeout.
-   */
-  public async clickMakeAcopyIcon(): Promise<void> {
-    // Wait for and click the "Save" icon
-    await this.clickSaveIcon();
-    await super.clickWebelement("makeAcopy",DS_COMPONENT_NAME);
-    
-  }
-
-  /**
-   * Clicks the save icon after ensuring it is visible.
-   * Throws an error if the icon is not found or not clickable within timeout.
-   */
-  public async clickSaveIcon(): Promise<void> {
-    await super.clickWebelement("saveIcon",DS_COMPONENT_NAME);
-  }
-
-  /**
-   * Retrieves and updates the report title input field with a new value.
-   * @param prefix - The prefix to prepend to the existing report title.
-   * @returns The updated report title.
-   */
-  public async updateReportTitle(): Promise<string> {
-    const reportTitleInput = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource(
-        "reportTitleInput",
-        COMMON_COMPONENT_NAME
-      )
-    );
-
-    // Wait for the report title input to be visible
-    await reportTitleInput.waitFor();
-
-    // Retrieve the current value of the report title
-    const originalTitle = await reportTitleInput.getValue();
-
-    // Construct the new report title
-    const newReportTitle = `Playwright automation - ${originalTitle}`;
-
-    // Enter the new report title into the input field
-    await reportTitleInput.enterText(newReportTitle);
-
-    return newReportTitle;
-  }
-
-  /**
-   * Clicks on the "My assets" element after ensuring it is visible and clickable.
-   * Throws an error if the element is not found or not clickable within the specified timeout.
-   */
-  public async clickMyAssets(): Promise<void> {
-    const myAssetsElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("My assets", COMMON_COMPONENT_NAME)
-    ); // TODO: "My assets" element lacks a data-test-id; consider adding one for reliable test targeting in the future #refactor-data-test-id
-
-    try {
-      // Wait for the "My assets" element to be visible
-      await myAssetsElement.waitFor();
-
-      // Click on the "My assets" element
-      await myAssetsElement.click();
-    } catch (error) {
-      throw new Error(
-        "Failed to click 'My assets' element: element not visible or clickable."
-      );
-    }
-  }
-
-  /**
-   * Clicks on the "Save" button after ensuring it is visible and clickable.
-   * Throws an error if the element is not found or not clickable within the specified timeout.
-   */
-  public async clickSaveButton(): Promise<void> {
-    const saveButton = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("Save button", COMMON_COMPONENT_NAME)
-    );
-
-    try {
-      // Wait for the "Save" button to be visible
-      await saveButton.waitFor();
-
-      // Click on the "Save" button
-      await saveButton.click();
-    } catch (error) {
-      throw new Error(
-        "Failed to click 'Save' button: element not visible or clickable."
-      );
-    }
-  }
-
-   public async selectClosedDropdown(selections: any) {
-    for (const closedDropDownVal of selections.value) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "closedDropdownSelector",
-            closedDropDownVal,
-            DS_COMPONENT_NAME
-          )
-        )
-        .click();
-    }
-  }
-
-  public async multiSelectDropDown(selections: any) {
-    for (const closedDropDownVal of selections) {
-      const closedDropDownItem = this.webActionHandler.getWebElement(
-        this.resourceManager.getDynamicResource(
-          "multiSelectDropdownSelector",
-          closedDropDownVal,
-          DS_COMPONENT_NAME
-        )
-      );
-      await closedDropDownItem.waitFor(MAX_TEST_TIMEOUT, "visible");
-      await closedDropDownItem.focus();
-      await closedDropDownItem.click();
-    }
-  }
- /**
- * Switches to a specific pivot option in the dropdown.
- * 
- * @param {string} pivot - The name of the pivot option to select.
- * @param {boolean} waitForMadlibUpdate - Whether to wait for madlib update after pivot switch (default: true)
- * @returns {Promise<void>}
- */
-public async switchPivotDropdown(pivot: string, waitForMadlibUpdate: boolean = true): Promise<void> {
-  try {
-    // Get the pivot dropdown selector element
-    const pivotDropdown = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource(
-        "pivotDropdownSelector",
-        DS_COMPONENT_NAME
-      )
-    );
-    await pivotDropdown.waitFor();
-    await pivotDropdown.click();
-    
-    // Get the specific pivot element based on the provided pivot name
-    const pivotElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource(
-        "pivotElement",
-        pivot,
-        DS_COMPONENT_NAME
-      )
-    );
-    // Wait for the pivot option to be visible after dropdown opens
-    await pivotElement.waitFor();
-    await pivotElement.click();
-    
-    // Wait for madlib update after pivot change (network calls to stabilize)
-    if (waitForMadlibUpdate) {
-      await this.waitForMadlibStability();
-    }
-    
-    console.log(`Successfully switched to pivot: ${pivot}`);
-  } catch (error) {
-    console.error(`Failed to switch to pivot '${pivot}':`, error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    throw new Error(`Error switching to pivot '${pivot}': ${errorMessage}`);
-  }
-}
-
-  public async assertPivotDropdown(pivotArr: any) {
-     if (!pivotArr || !Array.isArray(pivotArr)) return;
-    await this.webActionHandler
-      .getWebElement(
-        this.resourceManager.getResource(
-          "pivotDropdownSelector",
-          DS_COMPONENT_NAME
-        )
-      )
-      .click();
-    for (const element of pivotArr) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "pivotElement",
-            element,
-            DS_COMPONENT_NAME
-          )
-        )
-        .waitFor(MAX_TEST_TIMEOUT, "visible");
-      const dropDownItem = await this.webActionHandler.getWebElementsText(
-        this.resourceManager.getDynamicResource(
-          "pivotElement",
-          element,
-          DS_COMPONENT_NAME
-        )
-      );
-      assert(dropDownItem[0]).toBe(element);
-    }
-    await this.webActionHandler
-      .getWebElement(
-        this.resourceManager.getResource(
-          "pivotDropdownSelector",
-          DS_COMPONENT_NAME
-        )
-      )
-      .click();
-  }
-
-  public async assertFactsDropdown(factsArr: any) {
-    for (const element of factsArr) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "factDropDownOption",
-            element,
-            DS_COMPONENT_NAME
-          )
-        )
-        .waitFor(MAX_TEST_TIMEOUT, "visible");
-      const dropDownItem = await this.webActionHandler.getWebElementsText(
-        this.resourceManager.getDynamicResource(
-          "factDropDownOption",
-          element,
-          DS_COMPONENT_NAME
-        )
-      );
-      assert(dropDownItem[0]).toBe(element);
-    }
-  }
-
-  public async assertPeopleMenuOptions(
-    menuOptions: AssertionMenuOption[]
-  ) {
-    console.log('===Starting assertion for people menu options===');
-    for (const item of menuOptions) {
-      const menuSelectorText = PeopleMenu[item.name].selectorText;
-      const menuElement = this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            item.subMenu?.length ? "peopleDropdownItemWithSubmenus" : "peopleDropdownItemWithoutSubmenus",
-            menuSelectorText,
-            DS_COMPONENT_NAME
-          )
-        );
-      
-      const isVisible = await menuElement.isVisible();
-      // The below condition checks whether the menu item should be displayed or not.
-      // For example, few datasets may not have certain menu item like "Deal".
-      if (item.shouldDisplay) {
-        assert(isVisible).toBeTruthy();
-      } else {
-        assert(isVisible).toBeFalsy();
-      }
-      console.log(`People Menu "${item.name}" asserted.`);
-    }
-    await this.ensureAllSubMenusClosed(menuOptions);
-    console.log('===Ended assertion for people menu options===');
-  }
-
-  /**
-   * Iterate and mouse hover the menu dropdown and check people sub menu visibility.
-   * @param menuOptions The menu options to assert.
-   */
-  public async assertPeopleSubMenuOptions(
-    menuOptions: AssertionMenuOption[]
-  ) {
-    console.log('===Starting assertion for people sub menu options===');
-    for (const item of menuOptions) {
-      if (item.shouldDisplay && item.subMenu && item.subMenu.length) { // Main menu should display and sub menu should display
-        const mainMenuSelectorText = PeopleMenu[item.name].selectorText;
-        const mainMenuElement = this.webActionHandler
-          .getWebElement(
-            this.resourceManager.getDynamicResource(
-              "peopleDropdownItemWithSubmenus",
-              mainMenuSelectorText,
-              DS_COMPONENT_NAME
-            )
-          );
-        await mainMenuElement.waitFor();
-        const isVisible = await mainMenuElement.isVisible();
-        if (!isVisible) {
-          throw new Error(`Element for "${item.name}" is not visible and unable to assert sub menu items`);
-        }
-        await this.checkPeopleSubMenuItems(item, mainMenuElement);
-      } else if (item.shouldDisplay && item.subMenu && item.subMenu.length === 0) { // Main menu should display and no sub menu should display
-        console.log(`Menu item: "${item.name}" should display but has no sub menu items to assert`);
-        assert(!item.subMenu || item.subMenu.length === 0).toBeTruthy();
-      } else { // Main menu should not display and no sub menu should display
-        console.log(`Menu item: "${item.name}" should not display and no sub menu items to assert`);
-      }
-    }
-
-    await this.ensureAllSubMenusClosed(menuOptions);
-    console.log('===Ended assertion for people sub menu options===');
-  }
-
-  /**
-   * Hover on main menu item and assert sub menu items visibility.
-   * @param {AssertionMenuOption} item The main menu option object containing submenus to assert.
-   * @param {any} mainMenuElement The main menu DOM element to hover over to reveal submenus.
-   */
-  private async checkPeopleSubMenuItems(item: AssertionMenuOption, mainMenuElement: any) {
-    const allSubMenus = item.subMenu.map(sub => sub.name).join(", ");
-    console.log(`Menu item: "${item.name}" and its sub menu items: "${allSubMenus}" to assert`);
-
-    for (let index = 0; index < item?.subMenu.length; index++) {
-      await mainMenuElement.hover(); // Hover on main menu item to reveal sub-menu
-      
-      const subMenu = item.subMenu[index]; // Example, subMenu = { name: "BOUGHT_EACH_OF", shouldDisplay: true }
-      const subMenuSelectorText = PeopleMenu[subMenu.name].selectorText; // Example, selectorText = "Bought each of"
-      const subMenuItemElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getDynamicResource(
-          "peopleDropdownItemSubMenuItems",
-          subMenuSelectorText,
-          DS_COMPONENT_NAME
-        )
-      );
-      const isVisible = await subMenuItemElement.isVisible();
-      // The below condition checks whether the menu item should be displayed or not.
-      // For example, few datasets may not have certain menu item like "Deal".
-      if (subMenu.shouldDisplay) {
-        assert(isVisible).toBeTruthy();
-      } else {
-        assert(isVisible).toBeFalsy();
-      }
-      console.log(`Sub menu item: "${subMenu.name}" asserted.`);
-    }
-  }
-
-  /**
-   * Assert People main menu info icon tooltip text.
-   * @param menuOptions 
-   */
-  public async assertPeopleMenuInfoOptions(menuOptions: AssertionMenuOption[]) {
-    console.log('===Starting assertion for people menu info icon===');
-    for (const item of menuOptions) {
-      if (item.shouldDisplay) {
-        await this.checkPeopleMenuInfoState(item);
-      }
-    }
-    await this.ensureAllSubMenusClosed(menuOptions);
-    console.log('===Ended assertion for people menu info icon===');
-  }
-
-  private async checkPeopleMenuInfoState(item: AssertionMenuOption) {
-    console.log(`Menu item: "${item.name}" info icon tooltip to assert`);
-    const menuSelectorText = PeopleMenu[item.name].selectorText;
-
-    // Hover on the main menu item
-    const menuItem = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource(
-        item.subMenu?.length ? 'peopleDropdownItemWithSubmenus' : 'peopleDropdownItemWithoutSubmenus',
-        menuSelectorText,
-        DS_COMPONENT_NAME
-      )
-    );
-    await menuItem.hover();
-
-    // Hover on the info icon to trigger the tooltip
-    const menuInfoIcon = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource(
-        item.subMenu?.length ? 'peopleMenuWithSubmenusInfoIcon' : 'peopleMenuWithoutSubmenusInfoIcon',
-        menuSelectorText,
-        DS_COMPONENT_NAME
-      )
-    );
-    await menuInfoIcon.hover();
-
-    // Wait for the tooltip to appear
-    await this.webActionHandler.delay(300);
-    
-    // Get the tooltip text element
-    const matTooltipTxt = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource(
-        "peopleSubmenuInfoTooltipId",
-        DS_COMPONENT_NAME
-      )
-    );
-    await menuItem.waitFor(MAX_TEST_TIMEOUT, "visible");
-    await matTooltipTxt.waitFor();
-    const matTooltipTxtFromUI = await matTooltipTxt.getAllInnerText();
-    const tooltipExpectedText = PeopleMenu[item.name].tooltipText;
-    assert(matTooltipTxtFromUI[0]).toContain(tooltipExpectedText);
-    console.log(`Info icon tooltip text asserted for menu item: "${item.name}"`);
-    await menuItem.hover(); // Hover again on main menu to close tooltip
-  }
- 
-  public async handlePeopleMenuOptions(menuOptions: any) {
-    for (const folderKey of Object.keys(menuOptions)) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "peopleDropdownItemWithSubmenus",
-            folderKey,
-            DS_COMPONENT_NAME
-          )
-        )
-        .hover();
-      await this.handlePeopleSubMenuOptions(menuOptions[folderKey]);
-    }
-  }
-
-  public async handlePeopleSubMenuOptions(subMenuOptions: any) {
-    for (const folderKey of Object.keys(subMenuOptions)) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "peopleDropdownItemSubMenuItems",
-            folderKey,
-            DS_COMPONENT_NAME
-          )
-        )
-        .click();
-      await this.selectPeopledimensions(subMenuOptions[folderKey]);
-    }
-  }
-
-  public async selectPeopledimensions(menuDimensions: any) {
-    for (const dimensionKey of Object.keys(menuDimensions)) {
-      console.log("inner people product:", dimensionKey);
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getResource(
-            "peopleDimensionDataSelectionId",
-            DS_COMPONENT_NAME
-          )
-        )
-        .click();
-      console.log("menudimension:", menuDimensions);
-      await this.setPeopleDimensionFolder(menuDimensions[dimensionKey]);
-    }
-    console.log("outsie the peopledimen");
-  }
-
-  public async setPeopleDimensionFolder(dimensionSelection: any) {
-    for (const [folderName, selections] of Object.entries(
-      dimensionSelection.selections
-    )) {
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getResource("searchIcon", DS_COMPONENT_NAME)
-        )
-        .click();
-
-      const searchBArLocator = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("dsSearchBarInput")
-      );
-      await searchBArLocator.waitFor(MAX_TEST_TIMEOUT, "visible");
-      await searchBArLocator.enterText("");
-      await searchBArLocator.enterText(folderName);
-      console.log("folderNAme:", `text="ds-navigationItemLabel_${folderName}"`);
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "peopleDimensionDataSelectionItemLabel",
-            folderName,
-            DS_COMPONENT_NAME
-          )
-        )
-        .waitFor(MAX_TEST_TIMEOUT, "visible");
-      await this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            "peopleDimensionDataSelectionItemLabel",
-            folderName,
-            DS_COMPONENT_NAME
-          )
-        )
-        .click();
-      console.log("folder visible");
-      await this.setPeopleMadlibSelection(selections);
-    }
-  }
-
-  public async setPeopleMadlibSelection(selections: any) {
-  for (const selection of selections) {
-    console.log("going for selection:", selection);
-
-    const searchBArLocator = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("dsSearchBarInput", DS_COMPONENT_NAME)
-    );
-    await searchBArLocator.waitFor(MAX_TEST_TIMEOUT, "visible");
-    await searchBArLocator.enterText("");
-    await searchBArLocator.enterText(selection);
-
-    await super.clickWebelement(
-      "peopleDimensionSelectedItemCheckBox",
-      DS_COMPONENT_NAME
-    );
-  }
-  const peopleDoneBtn = this.webActionHandler.getWebElement(
-    this.resourceManager.getResource("peopleAddDoneBtn", DS_COMPONENT_NAME)
-  );
-
-  const startTime = Date.now();
-  while (Date.now() - startTime < MAX_TEST_TIMEOUT) {
-    const disabledAttr = await peopleDoneBtn.getAttribute("disabled");
-    const classAttr = await peopleDoneBtn.getAttribute("class");
-
-    if (!disabledAttr && !classAttr?.includes("disabled")) {
-      console.log("People Done button enabled");
-      break;
-    }
-
-    await this.waitForTimeout(POLLING_INTERVAL);
-  }
-  await super.clickWebelement("peopleAddDoneBtn", DS_COMPONENT_NAME);
-  await super.clickWebelement("panelPropertiesActionButton", DS_COMPONENT_NAME);
-}
-  
-public async peopleDialogClose() {
-    await super.clickWebelement("peopleDialogCancelBtn", DS_COMPONENT_NAME);
-  }
-
-  public async enterTextInput(selectorStr: string, value: any) {
-    const inputItem = this.webActionHandler.getWebElement({
-      elementName: selectorStr,
-      selectorType: "tag",
-      selectorValue: selectorStr,
-    });
-    await inputItem.waitFor(MAX_TEST_TIMEOUT, "visible");
-    await inputItem.enterText(value);
-  }
-
-  //Handles open prompt fact selections
-  public async openPromptFactSelection(
-    dimensionSelection: {
-      selections: Record<string, any>;
-    }
-  ): Promise<void> {
-    // Remove default facts before starting folder selection
-    await this.removeDefaultFacts();
-   
-    for (const [folderName, folderData] of Object.entries(
-      dimensionSelection.selections
-    )) {
-      // 1. Select main folder
-      await this.setOpenFactMadlibFolder(folderName);
-  
-      // 2. Select sub folder (submenu) if exists
-      if (folderData.subFolder) {
-        await this.setOpenFactSubFolder(folderData.subFolder);
-      }
-  
-      // 3. Select actual values
-      const valuesToSelect = folderData.selections || folderData;
-      await this.setOpenFactDimensionSelection(valuesToSelect);
-    }
-  }
-
-  /**
-   * Removes default facts if they exist by calling checkSelectionGroupExists
-   */
-  public async removeDefaultFacts(): Promise<void> {
-    await this.checkSelectionGroupExists();
-  }
-
-  public async setOpenFactMadlibFolder(folderName: string): Promise<void> {
-    try {
-      
-      await this.selectFolder(folderName);
-      console.log(`Folder '${folderName}' successfully selected.`);
-    } catch (error) {
-      console.error(
-        `Failed to select Madlib folder '${folderName}':`,
-        error
-      );
-      throw error;
-    }
-  }
-
-  public async setOpenFactDimensionSelection(
-    selections: string[],
-    searchReq = false
-  ): Promise<void> {
-    try {
-      for (const selection of selections) {
-        // Wait for the selection viewport to be available in the DOM
-        await this.webActionHandler
-          .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
-          .waitFor();
-          
-        // Directly click the checkbox from subfolder dropdown
-        const selectionElement = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "checkboxLabel",
-            selection,
-            DS_COMPONENT_NAME
-          )
-        );
-        await selectionElement.click();
-      }
-       
-      await this.clickDone();
-    } catch (error) {
-      console.error(`Error in setOpenFactDimensionSelection:`, error);
-      throw new Error(`Failed to set dimension selection: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-   public async setOpenFactSubFolder(subFolderName: string): Promise<void> {
-    try {
-      // Click the dropdown to open subfolder menu
-      const dropdown = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("dsSubFoldersDropdown", DS_COMPONENT_NAME)
-      );
-      await dropdown.waitFor(MAX_TEST_TIMEOUT, "visible");
-      await dropdown.click();
-      
-      // Click the specific subfolder option that contains the desired text
-      const subFolderElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getDynamicResource(
-          "dsSubFolderOption",
-          subFolderName,
-          DS_COMPONENT_NAME
-        )
-      );
-      await subFolderElement.waitFor(MAX_TEST_TIMEOUT, "visible");
-      await subFolderElement.click();
-    } catch (error) {
-      console.error(
-        `Failed to select Sub Folder '${subFolderName}':`,
-        error
-      );
-      throw error;
-    }
-  }
-
-   public async openHMLDimensionSelection(
-    dimensionSelection: {
-      selections: Record<string, any>;
-    }
-  ): Promise<void> {
-   
-    for (const [folderName, selections] of Object.entries(
-      dimensionSelection.selections
-    )) {     
-     await this.setOpenHMLDimensionSelection(selections);
-    }
-  }
-
-  public async setOpenHMLDimensionSelection(
-    selections: string[],
-    searchReq = false
-  ): Promise<void> {
-    try {
-      for (const selection of selections) {
-        if (searchReq) {
-          
-          await this.clickSearchIcon();
-          // Enter the selection text in the search field
-          await this.enterTextInSearchField(selection);
-        }
-        // Wait for the selection viewport to be available in the DOM
-        await this.webActionHandler
-          .getWebElement(this.resourceManager.getResource("hmlPresetsContainer", DS_COMPONENT_NAME))
-          .waitFor();
-          const selectionElement = this.webActionHandler.getWebElement(
-           this.resourceManager.getDynamicResource(
-             "HMLCheckboxLabel",
-             selection,
-              DS_COMPONENT_NAME
-            )
-          );
-          await selectionElement.click();
-        }
-        await this.clickDone();
-      } catch (error) {
-        console.error(`Error in setOpenHMLDimensionSelection:`, error);
-        throw new Error(`Failed to set dimension selection in setOpenHMLDimensionSelection: ${error instanceof Error ? error.message : String(error)}`);
-      }
-  }
-
- 
-  /**
-   * Gets the current madlib text content for debugging
-   * @returns Promise<string> - The current madlib text
-   */
-  public async getMadlibText(): Promise<string> {
-    try {
-      const madlibElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("madlibText", DS_COMPONENT_NAME)
-      );
-      
-      await madlibElement.waitFor(10000, "visible");
-      const madlibText = await madlibElement.getText();
-      console.log("Acutual madlib text in UI:", madlibText)
-      return madlibText?.replace(/[\r\n\s]+/g, ' ').trim() || '';
-    } catch (error) {
-      console.error('Failed to get madlib text:', error);
-      return '';
-    }
-  }
-
-  /**
-   * Waits for madlib stability after pivot changes by monitoring text content stability
-   * Ensures that madlib changes at least once, otherwise waits full timeout duration
-   * @param {number} timeout - Maximum wait time in milliseconds (default: 10 seconds)
-   * @param {number} stabilityDuration - Duration to wait for stability in milliseconds (default: 5 seconds)  
-   * @returns Promise<void>
-   */
-  // TODO: This is a workaround solution. In future, implement network call stability monitoring
-  // TODO: instead of relying on UI text changes for detecting pivot switch completion
-  public async waitForMadlibStability(timeout: number = 2 * SMALL_TIMEOUT, stabilityDuration: number = SMALL_TIMEOUT): Promise<void> {
-    const startTime = Date.now();
-    let lastMadlibText = '';
-    let stableStartTime = 0;
-    let hasDetectedChange = false; // Track if madlib has changed at least once
-    
-    console.log('Waiting for madlib stability after pivot change...');
-    
-    try {
-      while (Date.now() - startTime < timeout) {
-        // Get current madlib text
-        const currentMadlibText = await this.getMadlibText();
-        
-        // Check if madlib text has stabilized
-        if (currentMadlibText === lastMadlibText && currentMadlibText.length > 0) {
-          // Text is stable - but only exit if we've detected at least one change
-          if (hasDetectedChange) {
-            if (stableStartTime === 0) {
-              stableStartTime = Date.now();
-            } else if (Date.now() - stableStartTime >= stabilityDuration) {
-              console.log('Madlib text has stabilized after pivot change (change detected)');
-              return;
-            }
-          }
-          // If no change detected yet, continue waiting
-        } else {
-          // Text changed - mark that we've detected a change and reset stability timer
-          if (lastMadlibText !== '') {
-            hasDetectedChange = true;
-            console.log('Madlib text change detected after pivot switch');
-            console.log('currentMadlibText:', currentMadlibText);
-          }
-          lastMadlibText = currentMadlibText;
-          stableStartTime = 0;
-        }
-        
-        await this.waitForTimeout(POLLING_INTERVAL); // Check every 300ms
-      }
-      
-      if (!hasDetectedChange) {
-        console.warn(`No madlib changes detected after pivot switch. Waited full timeout (${timeout}ms). Proceeding anyway...`);
-      } else {
-        console.warn(`Madlib stability timeout reached (${timeout}ms). Proceeding anyway...`);
-      }
-    } catch (error) {
-      console.warn('Error while waiting for madlib stability:', error);
-      // Continue execution even if stability check fails
-    }
-  }
-
-  /**
-   * Helper method to wait for a specified duration
-   * @param {number} ms - Milliseconds to wait
-   */
-  private async waitForTimeout(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  /**
-   * Validates madlib text using regex pattern matching with detailed results
-   * @param expectedPattern - The regex pattern to match against
-   * @returns Promise<{isValid: boolean, actualText: string, expectedPattern: string, errorMessage?: string}> - Detailed validation result
-   */
-  public async validateMadlibWithPattern(expectedPattern: string): Promise<{
-    isValid: boolean;
-    actualText: string;
-    expectedPattern: string;
-    errorMessage?: string;
-  }> {
-    try {
-      const actualText = await this.getMadlibText();
-      const regex = new RegExp(expectedPattern, 'i'); // Case insensitive matching
-      const isValid = regex.test(actualText);
-      
-      return {
-        isValid,
-        actualText,
-        expectedPattern,
-        errorMessage: isValid ? undefined : `Pattern "${expectedPattern}" did not match actual text: "${actualText}"`
-      };
-    } catch (error) {
-      console.error('Failed to validate madlib with pattern:', error);
-      const errorMessage = `Failed to validate madlib with pattern: ${error}`;
-      return {
-        isValid: false,
-        actualText: '',
-        expectedPattern,
-        errorMessage
-      };
-    }
-  }
-
-  /**
-   * Simple boolean validation for backward compatibility
-   * @param expectedPattern - The regex pattern to match against
-   * @returns Promise<boolean> - Returns true if pattern matches
-   */
-  public async validateMadlibPattern(expectedPattern: string): Promise<boolean> {
-    const result = await this.validateMadlibWithPattern(expectedPattern);
-    return result.isValid;
-  }
-
-  /**
-   * Returns the base page instance.
-   * @returns {BasePage} The base page instance
-   */
-  public getBasePage(): BasePage {
-    return this.basePage;
-  }
-  public async editSelections(): Promise<void> {
-    const editListButton = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("editListButton", DS_COMPONENT_NAME)
-    );
-    await editListButton.waitFor();
-    await editListButton.click();
-  }
-
-  /**
-   * Ensure all sub-menus are closed after assertions.
-   * Pick one of random menu item which has shouldDisplay: true
-   * And click on sub menu which has shouldDisplay: true to close any open sub-menus.
-   * @param menuOptions 
-   */
-  private async ensureAllSubMenusClosed(menuOptions: AssertionMenuOption[]) {
-    console.log('Ensuring all sub-menus are closed after assertions...');
-    const filteredMenus = menuOptions.filter(menu => menu.shouldDisplay);
-    // Here random index is picked to avoid always picking the first menu item
-    // If there are more than 2 filtered menus, pick a random one, else pick the last one
-    const randomIndex = filteredMenus.length > 2 ? randomInt(0, filteredMenus.length) : filteredMenus.length - 1;
-    const menu: AssertionMenuOption = filteredMenus[randomIndex];
-    if (menu) {
-      const menuSelectorText = PeopleMenu[menu.name].selectorText;
-      // Hover on the main menu item
-      const menuElement = this.webActionHandler
-        .getWebElement(
-          this.resourceManager.getDynamicResource(
-            menu.subMenu?.length ? "peopleDropdownItemWithSubmenus" : "peopleDropdownItemWithoutSubmenus",
-            menuSelectorText,
-            DS_COMPONENT_NAME
-          )
-        );
-      await menuElement.hover();
-      // Click on sub menu item if exists to close all sub-menus
-      if (menu.subMenu && menu.subMenu.length) {
-        const subMenu = menu.subMenu.find((menu: AssertionSubMenuOption) => menu.shouldDisplay); // Example, subMenu = { name: "BOUGHT_EACH_OF", shouldDisplay: true }
-        if (subMenu && subMenu.name) {
-          const subMenuSelector = PeopleMenu[subMenu.name].selectorText; // Example, selectorText = "Bought each of"
-          const subMenuElement = this.webActionHandler
-            .getWebElement(
-              this.resourceManager.getDynamicResource(
-                "peopleDropdownItemSubMenuItems",
-                subMenuSelector,
-                DS_COMPONENT_NAME
-              )
-            );
-          await subMenuElement.click();
-        } else {
-          throw new Error(`
-            Unable to close all submenus for menu ${menu.name}, please check if at least one of submenu set with shouldDisplay: true or check UI menu
-          `);
-        }
-      } else { // No sub-menu to close
-        console.log(`No sub-menu to close, clicking on main menu ${menu.name}`);
-        await menuElement.click();
-      }
-    }
-  }
-
-    /**
-   * Checks if the selection group exists and is visible.
-   */
-  private async checkSelectionGroupExists(): Promise<void> {
-    try {
-      const selectionGroup = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource("selectionGroups", DS_COMPONENT_NAME)
-      );
-      const count = await selectionGroup.getCount();
-
-      if (count > 0) {
-        console.warn("Selections found. Removing existing selections.");
-
-        const editListButton = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource("editListButton", DS_COMPONENT_NAME)
-        );
-
-        if (await editListButton.isVisible()) {
-          console.info("Edit List button found. Using edit flow.");
-          await editListButton.click();
-          await this.removeAllSelections();
-          await this.clickAddIcon();
-          return;
-        }
-        const removeIcon = this.webActionHandler.getWebElement(
-          this.resourceManager.getResource("removeIcon", DS_COMPONENT_NAME)
-        );
-
-        if (await removeIcon.isVisible()) {
-          console.info("Direct remove selections option found.");
-          await removeIcon.click();
-          await this.clickAddIcon();
-          return;
-        }
-
-        console.warn("Selections exist but no supported remove mechanism found.");
-      }
-       try {
-      const factsRemoveIcon = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("factsRemoveIcon", DS_COMPONENT_NAME)
-      );
-
-      if (await factsRemoveIcon.isVisible()) {
-        await factsRemoveIcon.click();
-        await this.clickAddIcon();
-      }
-    } catch {
-      // factsRemoveIcon not present → ignore silently
-    }
-    } catch (error) {
-      console.error("Error while handling existing selections:", error);
-      throw new Error("Failed to clear existing selections safely.");
-    }
-  }
-   /**
-   * Removes all selection groups by clicking the delete button.
-   */
-  public async removeAllSelections(): Promise<void> {
-    try {
-      await super.clickWebelement("panelHeaderMenuBtn", DS_COMPONENT_NAME);
-      await super.clickWebelement("deleteAllSelectionsBtn", DS_COMPONENT_NAME);
-      await super.clickWebelement("confirmDeleteAllSelectionsBtn", DS_COMPONENT_NAME);
-    } catch (error) {
-      console.error("Failed to remove all selections:", error);
-      throw new Error("Error occurred while removing all selections.");
-    }
-  }
-
-  /**
-   * Configures the Range dimension with specified parameters.
-   * @param volumetricType - Type from dropdown. Available options:
-   *   - "Avg. Price (Units)" or "Units"
-   *   - "Avg. Price (Value)" or "Value"
-   *   - "Avg. Price (EQ)"
-   *   - "Avg. Price (EQ2)"
-   *   - "Avg. Price (EQ3)"
-   *   - "Avg. Price (EQ4)"
-   * @param minValue - Minimum range value
-   * @param maxValue - Maximum range value
-   * @param incrementValue - Increment value for the range
-   */
-  public async configureRange(
-    volumetricType: string | undefined,
-    minValue: string,
-    maxValue: string,
-    incrementValue: string,
-    splitBasedOn?: string
-  ): Promise<void> {
-    try {
-      // Select volumetric type (optional - not applicable for Frequency pivot)
-      if (volumetricType) {
-        await super.clickWebelement("rangeVolumetricDropdown", DS_COMPONENT_NAME);
-        console.log("Clicked volumetric dropdown");
-        const volumetricOption = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "rangeVolumetricOption",
-            volumetricType,
-            DS_COMPONENT_NAME
-          )
-        );
-        await volumetricOption.waitFor();
-        await volumetricOption.click();
-        console.log(`Selected volumetric type: ${volumetricType}`);
-      }
-
-      // Optional: Select split based on (for Contribution pivot)
-      if (splitBasedOn) {
-        await super.clickWebelement("rangeSplitBasedOnDropdown", DS_COMPONENT_NAME);
-        console.log("Clicked split based on dropdown");
-        const splitBasedOnOption = this.webActionHandler.getWebElement(
-          this.resourceManager.getDynamicResource(
-            "rangeSplitBasedOnOption",
-            splitBasedOn,
-            DS_COMPONENT_NAME
-          )
-        );
-        await splitBasedOnOption.waitFor();
-        await splitBasedOnOption.click();
-        console.log(`Selected split based on: ${splitBasedOn}`);
-      }
-
-      // Step 1: Fill in Min value
-      const minInput = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("rangeMinInput", DS_COMPONENT_NAME)
-      );
-      await minInput.waitFor();
-      await minInput.enterText(minValue);
-      console.log(`Entered Min value: ${minValue}`);
-
-      // Step 2: Fill in Max value
-      const maxInput = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("rangeMaxInput", DS_COMPONENT_NAME)
-      );
-      await maxInput.waitFor();
-      await maxInput.enterText(maxValue);
-      console.log(`Entered Max value: ${maxValue}`);
-
-      // Step 3: Fill in Increment value
-      const incrementInput = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("rangeIncrementInput", DS_COMPONENT_NAME)
-      );
-      await incrementInput.waitFor();
-      await incrementInput.enterText(incrementValue);
-      console.log(`Entered Increment value: ${incrementValue}`);
-
-      // Step 4: Click Apply/Done button
-
-      await super.clickWebelement("rangeApplyButton", DS_COMPONENT_NAME);
-      console.log("Clicked Apply button to save Range configuration");
-
-      console.log("Range configuration completed successfully");
-    } catch (error) {
-      console.error("Failed to configure Range dimension:", error);
-      throw new Error(`Error configuring Range dimension: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-}
---------------------------------------------------------------------------------
-2. FULL CONTENT: data-selector-resources.json
-File Path: src/lib/common/components/data-selector/data-selector-resources.json
-
-All 148 resource entries (Lines 1–end):
-
+```json
 {
-  "name": "Data Selector",
+  "dimensionTab": "productNoDataPrompt",
+  "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
+  "items": ["APPLIANCES"],
+  "requiresFilterIconClick": true
+}
+```
+
+The following sequence occurs:
+
+1. ✅ Product prompt clicked (`[data-test-id='ds-noDataPrompt_Product']`)
+2. ✅ 1000ms delay
+3. ❓ Search icon lookup (`[data-test-id='ds-filterIcon-icon']`)
+4. ⏱️ **waitFor(3000ms) blocks here — may timeout**
+
+If the search icon is not visible within 3 seconds, or if visibility detection is ambiguous, the test hangs with no clear error.
+
+### Key Findings
+
+| Finding | Severity | Status |
+|---------|----------|--------|
+| All locator element names verified | ✅ | Confirmed match |
+| Selector NOT panel-scoped | ⚠️ | Generic selector could match wrong element |
+| Only 1000ms wait before searchIcon lookup | ⚠️ | Insufficient pre-check |
+| Timing uses 300ms instead of 500ms after search | ⚠️ | May not allow results to populate |
+
+---
+
+## 1. select-panelist.locator.json — Full Content
+
+**File Path:** `e2e/locators/survey/select-panelist.locator.json`
+
+```json
+{
+  "name": "Select Panelist Page",
   "webElements": [
     {
-      "elementName": "additionalPromptEllipsis",
+      "elementName": "selectPanelistsTab",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-promptDataUnselectedPrompt']"
+      "selectorValue": "[data-test-id='ds-selectPanelistsTab']"
     },
     {
-      "elementName": "blankSpace",
+      "elementName": "productNoDataPrompt",
       "selectorType": "tag",
-      "selectorValue": "div.cdk-overlay-container"
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Product']"
     },
     {
-      "elementName": "Product",
+      "elementName": "retailerNoDataPrompt",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_label']"
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Retailer']"
     },
     {
-      "elementName": "Products",
+      "elementName": "geographyNoDataPrompt",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_label']"
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Geography']"
     },
     {
-      "elementName": "Products_PRDC_O",
+      "elementName": "demographicNoDataPrompt",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_O_label']"
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Demographic']"
     },
     {
-      "elementName": "New Product",
+      "elementName": "periodNoDataPrompt",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_label']"
-    },
-    {
-      "elementName": "Product Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Shifting Universe Product",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_label']"
-    },
-    {
-      "elementName": "Fact",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-FCT_1_label']"
-    },
-    {
-      "elementName": "Category",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Benchmark Product",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label'], [data-test-id='ds-PRDC_O_label']"
-    },
-    {
-      "elementName": "Sourcing Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Comparison Product",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_O_label']"
-    },
-    {
-      "elementName": "Comparison Retailers",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RTLR_label']"
-    },
-    {
-      "elementName": "Comparison Products",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_O_label']"
-    },
-    {
-      "elementName": "Comparison Product BRAND_SU",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Comparison Products PRDC",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRDC_label']"
-    },
-    {
-      "elementName": "Buyer Group",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BUYGP_label']"
-    },
-    {
-      "elementName": "Retailer",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RTLR_label']"
-    },
-    {
-      "elementName": "Retailer Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RETAILER_SU_label']"
-    },
-    {
-      "elementName": "Shifting Universe Retailer",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RETAILER_SU_label']"
-    },
-    {
-      "elementName": "Switching Product Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-BRAND_SU_label']"
-    },
-    {
-      "elementName": "Switching Retailer Universe",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RETAILER_SU_label']"
-    },
-    {
-      "elementName": "Benchmark Retailer",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RETAILER_SU_label']"
-    },
-    {
-      "elementName": "Focus Retailer",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Focus Retailer']"
-    },
-    {
-      "elementName": "Focus Retailer-SHPGP1",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-SHPGP1_label']"
-    },
-    {
-      "elementName": "Retailers",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RTLR_label']"
-    },
-    {
-      "elementName": "Competitive Retailers",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-RTLR_label']"
-    },
-    {
-      "elementName": "editListButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-editDropdownButton']"
-    },
-    {
-      "elementName": "Shopper Group",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-SHPGP_label']"
-    },
-    {
-      "elementName": "Geography",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-GEO_label']"
-    },
-    {
-      "elementName": "Geographies",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-GEO_label']"
-    },
-    {
-      "elementName": "Demography",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-DEMO_label']"
-    },
-    {
-      "elementName": "Demographic",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-DEMO_label']"
-    },
-    {
-      "elementName": "Demographies",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-DEMO_label']"
-    },
-    {
-      "elementName": "Demographics",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-DEMO_label']"
-    },
-    {
-      "elementName": "Legend Facts",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-FCT_label']"
-    },
-    {
-      "elementName": "Bubble Size Fact",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-FCT_1_label']"
-    },
-    {
-      "elementName": "Additional attributes",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-Additional attributes_dropdown']"
-    },
-    {
-      "elementName": "Facts",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-FCT_label']"
-    },
-    {
-      "elementName": "blankSpace",
-      "selectorType": "tag",
-      "selectorValue": "div.cdk-overlay-container"
-    },
-    {
-      "elementName": "facts",
-      "selectorType": "tag",
-      "selectorValue": "div[data-test-id='ds-Facts_dropdown']"
-    },
-    {
-      "elementName": "Period",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRD_label']"
-    },
-    {
-      "elementName": "Periods",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRD_label'], [data-test-id='ds-TRENDED_PRD_label']"
-    },
-    {
-      "elementName": "Post Launch Period",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PRD_label']"
-    },
-    {
-      "elementName": "Comparison Period",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-COMP_PRD_label']"
-    },
-    {
-      "elementName": "Custom Comparison Period",
-      "selectorType": "tag",
-      "selectorValue": "[data-cy='FCT_COMP_PRD-dropdown']"
-    },
-    {
-      "elementName": "Trended Period",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-TRENDED_PRD_label']"
-    },
-    {
-      "elementName": "People",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-People_Dimension']"
-    },
-    {
-      "elementName": "Trip Groups",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-TRIP_label']"
-    },
-    {
-      "elementName": "Time stamped groups",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PPL_label']"
-    },
-    {
-      "elementName": "Shopper Facts People",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-PPL_label']"
-    },
-    {
-      "elementName": "Data Selector Close Icon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-dimensionsCloseMenu']"
-    },
-    {
-      "elementName": "saveIcon",
-      "selectorType": "tag",
-      "selectorValue": "crf-save [data-test-id='-icon']"
-    },
-    {
-      "elementName": "snapshot",
-      "selectorType": "text",
-      "selectorValue": "  Create a snapshot "
-    },
-    {
-      "elementName": "removeIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-removeIcon-icon']"
-    },
-    {
-      "elementName": "addIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-addButton']"
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Period']"
     },
     {
       "elementName": "searchIcon",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-filterIcon']"
+      "selectorValue": "[data-test-id='ds-filterIcon-icon']"
     },
     {
       "elementName": "dsSearchBarInput",
@@ -1752,24 +109,14 @@ All 148 resource entries (Lines 1–end):
       "selectorValue": "[data-test-id='ds-virtualScrollViewport']"
     },
     {
-      "elementName": "dsFoldersDropdownValue",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}']"
+      "elementName": "checkboxLabel",
+      "selectorType": "playwrights",
+      "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0"
     },
     {
-      "elementName": "dsSubFoldersDropdown",
+      "elementName": "categoryItem",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-subFoldersDropdown']"
-    },
-    {
-      "elementName": "dsSubFolderOption",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-subFolderOption']:has-text('${text}')"
-    },
-    {
-      "elementName": "hmlPresetsContainer",
-      "selectorType": "tag",
-      "selectorValue": "[id='hml-presets-container']"
+      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0"
     },
     {
       "elementName": "doneIcon",
@@ -1777,579 +124,669 @@ All 148 resource entries (Lines 1–end):
       "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
     },
     {
-      "elementName": "reportRunButton",
+      "elementName": "searchForPanelistsButton",
       "selectorType": "tag",
-      "selectorValue": "[data-test-id='rb-report-btn-run']"
+      "selectorValue": "[id='report-btn-run']"
     },
     {
-      "elementName": "inProgressCancel",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-progressCancel']"
+      "elementName": "250ResponsesButton",
+      "selectorType": "text",
+      "selectorValue": "250 Responses"
     },
     {
-      "elementName": "saveIcon",
-      "selectorType": "tag",
-      "selectorValue": "crf-save [data-test-id='-icon']"
+      "elementName": "proceedToSurveyBuilderButton",
+      "selectorType": "text",
+      "selectorValue": "Proceed to survey builder"
     },
     {
-      "elementName": "snapshotIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='-dropdown-content'] niq-item .snapshot"
+      "elementName": "buildSurveyButton",
+      "selectorType": "text",
+      "selectorValue": "Build Survey"
     },
     {
-      "elementName": "checkboxLabel",
-      "selectorType": "tag",
-      "selectorValue": "div.item-value-checkbox-label >> text=${text} >> nth=0"
-    },
-    {
-      "elementName": "dsNavigationItemLabel",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0"
-    },
-    {
-      "elementName": "Type Characteristics",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-Type Characteristics_dropdown']"
-    },
-    {
-      "elementName": "Range",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Range']"
-    },
-    {
-      "elementName": "newRange",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-rangeAddGroupButton']"
-    },
-    {
-      "elementName": "rangeDoneBtn",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
-    },
-    {
-      "elementName": "peopleAddGroupButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-panelAddGroupButton']"
-    },
-    {
-      "elementName": "peopleAddGroupDropdown",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-groupTypeValMenu_0-dropdown-trigger']"
-    },
-    {
-      "elementName": "tripGroupsAddGroupButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-panelAddGroupButton']"
-    },
-    {
-      "elementName": "tripGroupsAddGroupDropdown",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-groupTypeValMenu_0-dropdown-trigger']"
-    },
-    {
-      "elementName": "timeStampedGroupsAddGroupDropdown",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-groupTypeValMenu_0-dropdown-trigger']"
-    },
-    {
-      "elementName": "timeStampedGroupsAddGroupButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-panelAddGroupButton']"
-    },
-    {
-      "elementName": "peopleAddDoneBtn",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
-    },
-    {
-      "elementName": "panelPropertiesActionButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-panelPropertiesActionButton']"
-    },
-    {
-      "elementName": "peopleDialogCancelBtn",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='panel-dialog-close-button-icon']"
-    },
-    {
-      "elementName": "pivotDropdownSelector",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-omniPivot_dropdown']"
-    },
-    {
-      "elementName": "closedDropdownSelector",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-option_${text}']"
-    },
-    {
-      "elementName": "multiSelectDropdownSelector",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-marketPromptSelectionValues_${text}'] [data-test-id='-icon']"
-    },
-    {
-      "elementName": "pivotElement",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='pivot${text}']"
-    },
-    {
-      "elementName": "factDropDownOption",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-option_${text}']"
-    },
-    {
-      "elementName": "peopleDropdownItemWithSubmenus",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-subMenu_0_${text}']"
-    },
-    {
-      "elementName": "peopleDropdownItemWithoutSubmenus",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-dropdownItems_${text}']"
-    },
-    {
-      "elementName": "peopleDropdownItemSubMenuItems",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-subMenuOptions_0_${text}']"
-    },
-    {
-      "elementName": "peopleMenuWithSubmenusInfoIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-subMenu_${text}'] niq-icon:nth-child(1)"
-    },
-    {
-      "elementName": "peopleMenuWithoutSubmenusInfoIcon",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-dropdownItems_${text}'] niq-icon:nth-child(1)"
-    },
-    {
-      "elementName": "peopleSubmenuInfoTooltipId",
-      "selectorType": "tag",
-      "selectorValue": "niq-tooltip [data-test-id='-content']"
-    },
-    {
-      "elementName": "peopleDimensionDataSelectionId",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='-body'] [data-test-id='ds-selectedDataDescription_0_0']"
-    },
-    {
-      "elementName": "peopleDimensionDataSelectionItemLabel",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}']"
-    },
-    {
-      "elementName": "peopleDimensionSelectedItemCheckBox",
-      "selectorType": "tag",
-      "selectorValue": "niq-checkbox.item-value-checkbox"
-    },
-    {
-      "elementName": "madlibText",
-      "selectorType": "tag",
-      "selectorValue": "crf-data-summary"
-    },
-    {
-      "elementName": "HML",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-HML_label']"
-    },
-    {
-      "elementName": "TripGroups",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-noDataPrompt_Trip Groups']"
-    },
-    {
-      "elementName": "HMLCheckboxLabel",
-      "selectorType": "tag",
-      "selectorValue": "span.selections-label:text('${text}')"
-    },
-    {
-      "elementName": "selectionGroups",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-selectionHeader']"
-    },
-    {
-      "elementName": "panelHeaderMenuBtn",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-menu_Panel Header']"
-    },
-    {
-      "elementName": "deleteAllSelectionsBtn",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-dataSelectorMenuOption_DeleteAllSelections']"
-    },
-    {
-      "elementName": "confirmDeleteAllSelectionsBtn",
-      "selectorType": "tag",
-      "selectorValue": "div[class='footer-buttons'] [class*='cancel-button']"
-    },
-    {
-      "elementName": "defineNewRangeButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-rangeAddGroupButton']"
-    },
-    {
-      "elementName": "rangeVolumetricDropdown",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-productGroup-chevron-icon'] >> nth=0"
-    },
-    {
-      "elementName": "rangeVolumetricOption",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-productGroupMenu-dropdown-content'] >> text=${text}"
-    },
-    {
-      "elementName": "rangeMinInput",
-      "selectorType": "tag",
-      "selectorValue": ".range-text-fields .range-field:nth-child(1) input"
-    },
-    {
-      "elementName": "rangeMaxInput",
-      "selectorType": "tag",
-      "selectorValue": ".range-text-fields .range-field:nth-child(3) input"
-    },
-    {
-      "elementName": "rangeIncrementInput",
-      "selectorType": "tag",
-      "selectorValue": ".range-space [data-test-id='-input'] >> nth=2"
-    },
-    {
-      "elementName": "rangeApplyButton",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
-    },
-    {
-      "elementName": "rangeSplitBasedOnDropdown",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-productGroup-chevron-icon'] >> nth=1"
-    },
-    {
-      "elementName": "rangeSplitBasedOnOption",
-      "selectorType": "tag",
-      "selectorValue": "[data-test-id='ds-dropdownItems_${text}']"
+      "elementName": "buildSurveyPageHeading",
+      "selectorType": "text",
+      "selectorValue": "Survey Builder"
     }
   ]
 }
+```
 
-----------------------------------------------------------
-3. THE COMPLETE SELECTION FLOW — EXACT METHODS & FULL BODIES
-Key Methods in the Checkbox/Item Selection Flow:
+---
 
-Method A: setDimensionSelection (Lines 199–230)
-Purpose: Main orchestrator for selecting items in a dimension with search support.
+## 2. select-panelist.page.ts — Complete Code
 
-Exact Code:
-public async setDimensionSelection(
-  selections: string[],
-  searchReq = true
-): Promise<void> {
-  try {
-    for (const selection of selections) {
-      if (searchReq) {
-        // Enter the selection text in the search field
-        await this.enterTextInSearchField(selection);
-      }
-      // Wait for the selection viewport to be available in the DOM
-      await this.webActionHandler
-        .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
-        .waitFor();
-      // Click the checkbox corresponding to the selection
-      const selectionElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getDynamicResource(
-          "checkboxLabel",
-          selection,
-          DS_COMPONENT_NAME
-        )
-      );
-      await selectionElement.click();
-    }
-    // Click the 'Done' button to finalize the selection process
-    await this.clickDone();
-  } catch (error) {
-    console.error("Error in setDimensionSelection:", error);
-    throw new Error(`Failed to set dimension selection: ${error instanceof Error ? error.message : String(error)}`);
-  }
+**File Path:** `e2e/page-objects/survey/select-panelist.page.ts`
+
+```typescript
+import { BasePage, WebActions } from '@gfk/gta';
+import { ResourceManager } from '../../utils/resource-manager';
+import { ElementResource } from '../../interfaces/iElementResource';
+import { NAVIGATION_TIMEOUT, PANEL_TRANSITION_DELAY,UI_STATE_UPDATE_DELAY,SMALL_TIMEOUT, ELEMENT_WAIT_TIMEOUT, DATASET_SELECTOR_TIMEOUT } from '../../constants/timeout-constants';
+import selectPanelistPageResources from '../../locators/survey/select-panelist.locator.json';
+
+const SELECT_PANELIST_PAGE_COMPONENT_NAME = 'selectPanelistPage';
+
+interface DimensionSelection {
+  dimensionTab: string; // Resource key: 'productNoDataPrompt', 'retailerNoDataPrompt', etc
+  items: string[];      // Array of item names to select
+  parentItems?: string[]; // Optional: Parent category items to select first (for hierarchical data)
+  requiresFilterIconClick?: boolean; // Optional: Click filter icon BEFORE parent (Product, Demographic)
+  filterIconClickAfterParent?: boolean; // Optional: Click filter icon AFTER parent (Period)
+  skipParentSearch?: boolean; // Optional: Click parent directly without searching first (Period)
 }
--------------------------------------------------------------------
-Method B: checkSelection (Lines 120–135)
-Purpose: Lower-level method for selecting a single item by name.
 
-Exact Code:
-public async checkSelection(selection: string): Promise<void> {
-  // Ensure the selections viewport is loaded
-  await this.webActionHandler
-    .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort"))
-    .waitFor();
-  // Retrieve the selection element dynamically using the selection name
-  const selectionElement = this.webActionHandler.getWebElement(
-    this.resourceManager.getDynamicResource(
-      "checkboxLabel",
-      selection,
-      DS_COMPONENT_NAME
-    )
-  );
-  await selectionElement.waitFor();
-  // Click the selection element to check/select it
-  await selectionElement.click();
-}
---------------------------------------------------
-Method C: enterTextInSearchField (Lines 101–112)
-Purpose: Handles searching for items by text with clear-first pattern.
-
-Exact Code:
-public async enterTextInSearchField(inputText: string): Promise<void> {
-  const searchField = this.webActionHandler.getWebElement(
-    this.resourceManager.getResource("dsSearchBarInput", DS_COMPONENT_NAME)
-  );
-  await searchField.waitFor();
-  // Clear any existing text
-  await searchField.enterText("");
-  // Enter the new input text
-  await searchField.enterText(inputText);
-}
--------------------------------------------------------
-Method D: selectFolder (Lines 114–126)
-Purpose: Selects parent category/folder to expand its child items.
-
-Exact Code:
-public async selectFolder(folderName: string): Promise<void> {
-  // Retrieve the folder element dynamically using the folder name
-  const folderElement = this.webActionHandler.getWebElement(
-    this.resourceManager.getDynamicResource(
-      "dsNavigationItemLabel",
-      folderName,
-      DS_COMPONENT_NAME
-    )
-  );
-  await folderElement.waitFor();
-  // Click the folder element to select it
-  await folderElement.click();
-}
------------------------------------------------------------------
-Method E: setMadlibFolder (Lines 233–271)
-Purpose: Opens folder with optional search activation.
-
-Exact Code:
-public async setMadlibFolder(
-  folderName: string,
-  searchReq = true
-): Promise<void> {
-  try {
-    if (searchReq) {
-       // Get the search icon element
-      const searchIcon = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource("searchIcon", DS_COMPONENT_NAME)
-      );
-    // Check if the search icon is visible
-      const isVisible = await searchIcon.isVisible();
-      if (isVisible) {
-        // Click on the search icon to activate the search input
-        await this.clickSearchIcon();
-        // Enter the folder name into the search field
-        await this.enterTextInSearchField(folderName);
-      } else {
-        // If the search icon is not visible, directly enter the folder name
-        // Directly select the folder without searching
-        await this.webActionHandler.delay(SMALL_TIMEOUT);
-        await this.enterTextInSearchField(folderName);
-      }
-      // Select the folder from the search results
-      await this.selectFolder(folderName);
-    } else {
-      // Search not required in new UI flows; select directly from visible list.
-      await this.selectFolder(folderName);
-    }
-    console.log(`Folder '${folderName}' successfully selected.`);
-  } catch (error) {
-    console.error(
-      `❌ Failed to select Madlib folder '${folderName}':`,
-      error
+export class SelectPanelistPage {
+  private webActionHandler: WebActions;
+  private resourceManager: ResourceManager;
+  
+  constructor(private basePage: BasePage) {
+    this.webActionHandler = basePage.getWebActions();
+    this.resourceManager = new ResourceManager({});
+    this.resourceManager.registerResources(
+      SELECT_PANELIST_PAGE_COMPONENT_NAME,
+      selectPanelistPageResources
     );
-    throw error;
-  }
-}
----------------------------------------------------------
-Method F: clickDone (Lines 137–140)
-Purpose: Finalizes selection by clicking the "Done" button.
-
-Exact Code:public async clickDone(): Promise<void> {
-  await super.clickWebelement("doneIcon",DS_COMPONENT_NAME);
-}
--------------------------------------------------------------
-4. THE EXACT CHECKBOX SELECTOR — VERBATIM FROM JSON
-From data-selector-resources.json — Line 357:
-
-{
-  "elementName": "checkboxLabel",
-  "selectorType": "tag",
-  "selectorValue": "div.item-value-checkbox-label >> text=${text} >> nth=0"
-}
----------------------------------------------------------------
-Breakdown:
-
-div.item-value-checkbox-label — CSS class targeting the checkbox label container
->> text=${text} — Playwright text filter — matches element containing the exact text value (e.g., "APPLIANCES")
->> nth=0 — Selects the FIRST match if multiple results exist
-${text} — Dynamic replacement placeholder — replaced by ResourceManager at runtime
-How it's used:
-// If selection = "APPLIANCES"
-this.resourceManager.getDynamicResource("checkboxLabel", "APPLIANCES", DS_COMPONENT_NAME)
-// Returns: 
-// {
-//   elementName: "checkboxLabel",
-//   selectorType: "tag",
-//   selectorValue: "div.item-value-checkbox-label >> text=APPLIANCES >> nth=0"
-// }
-----------------------------------------------------------------------------
-5. HANDLING MULTIPLE MATCHING RESULTS
-The component uses >> nth=0 to disambiguate when multiple items match:
-
-From data-selector-resources.json:
-
-Checkbox selector (Line 357):
-"selectorValue": "div.item-value-checkbox-label >> text=${text} >> nth=0"
-Navigation item selector (Line 363):
-"selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0"
-Mechanism:
-
->> nth=0 is a Playwright chaining operator that selects the first matching element (index 0)
-If "APPLIANCES" appears in multiple category groupings, only the first occurrence in DOM order is clicked
-This assumes the first occurrence is the desired one, or results are ordered such that the most relevant match comes first
-Example:// If "APPLIANCES" appears in:
-// <div class="item-value-checkbox-label">APPLIANCES</div>  // ← This one selected (nth=0)
-// <div class="item-value-checkbox-label">APPLIANCES (Legacy)</div>
-// <div class="item-value-checkbox-label">APPLIANCES-2024</div>
-
-const selector = "div.item-value-checkbox-label >> text=APPLIANCES >> nth=0";
-// Playwright returns: First <div> only
--------------------------------------------------------------------------
-6. VIRTUAL SCROLL VIEWPORT — EXACT SELECTOR & HANDLING
-From data-selector-resources.json — Line 353:
-{
-  "elementName": "dsSelectionsViewPort",
-  "selectorType": "tag",
-  "selectorValue": "[data-test-id='ds-virtualScrollViewport']"
-}
-Verbatim Selector:
-[data-test-id='ds-virtualScrollViewport']
-Usage in code (Line 200 & 216):
-// Before clicking any checkbox, ALWAYS wait for viewport:
-await this.webActionHandler
-  .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
-  .waitFor();
-Why:
-
-Angular Material virtual scroll dynamically renders only visible items
-Searching filters the list and re-renders items into the viewport
-Must wait for viewport visibility before clicking checkboxes to ensure items are DOM-rendered (not just virtually available)
-Without this, checkboxes may be in virtual DOM but not clickable
---------------------------------------------------------------------
-7. REAL TEST SPEC — COMPLETE END-TO-END FLOW
-File Path: src/lib/tests/reports/trip-groups/trip-groups.spec.ts
-
-Lines 27–77 (Complete runReportWithData Method Chain):
-async function runReportWithData(testData: any, reportUrl: string): Promise<{ savedReportTitle: string, savedReportUrl: string }> {
-  let basePage = await BasePageFactory.createBasePage();
-  let commonTestCase = new CommonTestCase(basePage);
-  await commonTestCase.navigateToReportUrl(reportUrl);
-
-  let commonBasePage = commonTestCase.getBasePage();
-  let dataSelector = new DataSelector(commonBasePage);
-
-  // Set all dimension selections
-  await dataSelector.clickMadlibDimension("Period");
-  await dataSelector.setPeriodMadlibSelection(testData.dimensionSelections[0]["Period"]);
-
-  await dataSelector.clickMadlibDimension("Product");
-  await dataSelector.setMadlibSelection(testData.dimensionSelections[0]["Product"]);
-
-  await dataSelector.clickMadlibDimension("Retailer");
-  await dataSelector.setMadlibSelection(testData.dimensionSelections[0]["Retailer"]);
-
-  await dataSelector.clickMadlibDimension("Trip Groups");
-  await dataSelector.clickMadlibDimension("tripGroupsAddGroupButton");
-  await dataSelector.clickMadlibDimension("tripGroupsAddGroupDropdown");
-  for (const selection of testData.dimensionSelections[0]["Trip Groups"].selections) {
-    await dataSelector.handlePeopleMenuOptions(selection);
   }
 
-  await dataSelector.clickAdditionalPromptEllipsisIcon();
-  await dataSelector.clickMadlibDimension("Demography");
-  await dataSelector.setMadlibSelection(testData.dimensionSelections[0]["Demography"]);
+  async setDimensionSelections(selections: DimensionSelection[]): Promise<void> {
+    for (const selection of selections) {
+      await this.setDimensionSelection(
+        selection.dimensionTab, 
+        selection.items, 
+        selection.parentItems,
+        selection.requiresFilterIconClick,
+        selection.filterIconClickAfterParent,
+        selection.skipParentSearch
+      );
+    }
+  }
 
-  await dataSelector.clickMadlibDimension("Geography");
-  await dataSelector.setMadlibSelection(testData.dimensionSelections[0]["Geography"]);
+  private async enterTextInSearchField(inputText: string): Promise<void> {
+    try {
+      const searchField = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await searchField.waitFor(DATASET_SELECTOR_TIMEOUT);
+      // Clear any existing text
+      await searchField.enterText("");
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);  // Small delay between clear and enter
+      // Enter the new input text
+      await searchField.enterText(inputText);
+    } catch (error) {
+      throw new Error(`Failed to enter search text '${inputText}': ${error instanceof Error ? error.message : error}`);
+    }
+  }
 
-  await dataSelector.clickMadlibDimension("Facts");
-  await dataSelector.openPromptFactSelection(testData.dimensionSelections[0]["Facts"]);
+  async setDimensionSelection(
+    dimensionPromptResource: string,
+    itemsToSelect: string[],
+    parentItems?: string[],
+    requiresFilterIconClick?: boolean,
+    filterIconClickAfterParent?: boolean,
+    skipParentSearch?: boolean
+  ): Promise<void> {
+    try {
+      // Click dimension prompt
+      const dimensionPrompt = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource(dimensionPromptResource, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await dimensionPrompt.waitFor(ELEMENT_WAIT_TIMEOUT);
+      await dimensionPrompt.click();
+      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Delay for panel to open
 
-  // Execute report
-  let dsBasePage = await dataSelector.getBasePage();
-  commonTestCase = new CommonTestCase(dsBasePage);
-  await commonTestCase.clickRunButton();
-  await commonTestCase.waitForReportRunCompletion();
+      // Step 0: Click search/filter icon ONLY if required (e.g., Product needs it, Retailer doesn't)
+      if (requiresFilterIconClick) {
+        const searchIcon = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
+        await searchIcon.click();
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      }
 
-  console.log("Report execution successful");
-  const { newReportTitle, newUrl } = await commonTestCase.saveReport();
+      // Step 1: Select parent categories first (for hierarchical data like Product, Period)
+      if (parentItems && parentItems.length > 0) {
+        for (const parentItem of parentItems) {
+          
+          // Step 1a: Search for parent ONLY if skipParentSearch is false (Product) or undefined
+          if (!skipParentSearch) {
+            await this.enterTextInSearchField(parentItem);
+            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
 
-  console.log("savedReportTitle:", newReportTitle);
-  console.log("savedReportUrl:", newUrl);
+            // Wait for viewport
+            const viewport = this.webActionHandler.getWebElement(
+              this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+            );
+            await viewport.waitFor(DATASET_SELECTOR_TIMEOUT);
+            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+          } else {
+            // For Period: Months is already visible, no need to search
+            console.log(`Skipping parent search, clicking directly`);
+          }
 
-  return {
-    savedReportTitle: newReportTitle,
-    savedReportUrl: newUrl
-  };
+          // Click parent CATEGORY ITEM directly (NO CHECKBOX - just click the item)
+          try {
+            const parentCategory = this.webActionHandler.getWebElement(
+              this.resourceManager.getDynamicResource('categoryItem', parentItem, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+            );
+            await parentCategory.waitFor(DATASET_SELECTOR_TIMEOUT);
+            await parentCategory.click();
+            await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Wait for sub-list to appear and search field to be ready
+          } catch (error) {
+            throw new Error(`Failed to click parent category for '${parentItem}': ${error instanceof Error ? error.message : error}`);
+          }
+        }
+      }
+
+      // Step 2: Click search/filter icon AFTER parent selection (Period)
+      if (filterIconClickAfterParent) {
+        const searchIcon = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
+        await searchIcon.click();
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      }
+
+      // Step 3: Select child items
+      for (const item of itemsToSelect) {
+        // Search for child item
+        await this.enterTextInSearchField(item);
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+        // Wait for viewport to populate with child item
+        const viewport = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await viewport.waitFor(DATASET_SELECTOR_TIMEOUT);
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+        try {
+          const checkbox = this.webActionHandler.getWebElement(
+            this.resourceManager.getDynamicResource('checkboxLabel', item, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+          );
+          await checkbox.waitFor(DATASET_SELECTOR_TIMEOUT);
+          await checkbox.click();
+          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+        } catch (error) {
+          throw new Error(`Failed to click checkbox for child item '${item}': ${error instanceof Error ? error.message : error}`);
+        }
+      }
+
+      // Step 4: Clear search field before clicking Done
+      const searchFieldBeforeDone = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await searchFieldBeforeDone.waitFor(DATASET_SELECTOR_TIMEOUT);
+      await searchFieldBeforeDone.enterText("");
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      // Click Done
+      try {
+        const doneButton = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('doneIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await doneButton.waitFor(DATASET_SELECTOR_TIMEOUT);
+        await doneButton.click();
+        await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Delay for panel to close
+      } catch (error) {
+        throw new Error(`Failed to click Done button for '${dimensionPromptResource}': ${error instanceof Error ? error.message : error}`);
+      }
+
+    } catch (error) {
+      console.error(`setDimensionSelection failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async clickSelectPanelistsTab(): Promise<void> {
+    try {
+      const selectPanelistsTab = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('selectPanelistsTab', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await selectPanelistsTab.waitFor(ELEMENT_WAIT_TIMEOUT);
+      console.log('✓ Select Panelists tab found, clicking...');
+      await selectPanelistsTab.click();
+      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  //Wait for tab transition
+      console.log('Select Panelists tab clicked');
+    } catch (error) {
+      console.error(`clickSelectPanelistsTab failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async clickSearchForPanelists(): Promise<void> {
+    try {
+      const searchButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('searchForPanelistsButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await searchButton.waitFor(ELEMENT_WAIT_TIMEOUT);
+      await searchButton.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+    } catch (error) {
+      console.error(`clickSearchForPanelists failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async click250Responses(): Promise<void> {
+    try {
+      const button250 = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('250ResponsesButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await button250.waitFor(ELEMENT_WAIT_TIMEOUT);
+      await button250.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+    } catch (error) {
+      console.error(`click250Responses failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async clickProceedToSurveyBuilder(): Promise<void> {
+    try {
+      const proceedButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('proceedToSurveyBuilderButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await proceedButton.waitFor(ELEMENT_WAIT_TIMEOUT);
+      await proceedButton.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+    } catch (error) {
+      console.error(`clickProceedToSurveyBuilder failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async clickBuildSurvey(): Promise<void> {
+    try {
+      const buildSurveyButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('buildSurveyButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await buildSurveyButton.waitFor(ELEMENT_WAIT_TIMEOUT);
+      await buildSurveyButton.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+    } catch (error) {
+      console.error(`clickBuildSurvey failed: ${error instanceof Error ? error.message : error}`);
+      throw error;
+    }
+  }
+
+  async isBuildSurveyPageLoaded(): Promise<boolean> {
+  try {
+    const pageHeading = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('buildSurveyPageHeading', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await pageHeading.waitFor(ELEMENT_WAIT_TIMEOUT);
+    return await pageHeading.isVisible();
+  } catch (error) {
+    throw new Error(`Build Survey page verification failed: ${error instanceof Error ? error.message : error}`);
+  }
 }
--------------------------------------------------------------------------
-Key Call Chain for Checkbox Selection:
-// 1. Click dimension (opens panel)
-await dataSelector.clickMadlibDimension("Product");
+}
+```
 
-// 2. Set selections (searches & clicks checkboxes)
-await dataSelector.setMadlibSelection(testData.dimensionSelections[0]["Product"]);
-// ↓ Internally calls:
-//   - checkSelectionGroupExists()  [clear existing]
-//   - setMadlibFolder(folderName)   [search & open folder]
-//   - setDimensionSelection(selections)  [search & click checkboxes]
-//     ↓ For each selection:
-//       - enterTextInSearchField(selection)   [search]
-//       - waitFor(dsSelectionsViewPort)       [wait for viewport]
-//       - getDynamicResource("checkboxLabel", selection)  [get selector]
-//       - click()  [click checkbox]
-//   - clickDone()  [finalize]
---------------------------
-8. ICON-BASED CHECKBOX ELEMENT
-From data-selector-resources.json — Line 497:
+---
+
+## 3. Exact Operation Sequence
+
+### Test Invocation
+
+```typescript
+// From start-from-scratch.spec.ts
+await selectPanelistPage.setDimensionSelections(datasetConfig.dimensionSelections);
+```
+
+### First Dimension (Product)
+
+```json
 {
-  "elementName": "peopleDimensionSelectedItemCheckBox",
-  "selectorType": "tag",
-  "selectorValue": "niq-checkbox.item-value-checkbox"
+  "dimensionTab": "productNoDataPrompt",
+  "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
+  "items": ["APPLIANCES"],
+  "requiresFilterIconClick": true,
+  "filterIconClickAfterParent": false,
+  "skipParentSearch": false
 }
---------------------------------
-Verbatim Selector:
-niq-checkbox.item-value-checkbox
-Usage in code (Line 851):
-// For people/trip groups dimensions, uses the checkbox element directly:
-await super.clickWebelement(
-  "peopleDimensionSelectedItemCheckBox",
-  DS_COMPONENT_NAME
+```
+
+### Call Chain
+
+```typescript
+setDimensionSelection(
+  dimensionPromptResource = "productNoDataPrompt",
+  itemsToSelect = ["APPLIANCES"],
+  parentItems = ["#US LOC OMNI SUPER CATEGORY MA"],
+  requiresFilterIconClick = true,
+  filterIconClickAfterParent = false,
+  skipParentSearch = false
+)
+```
+
+### Operation Flow (Lines 55–92)
+
+| # | Line | Operation | Lookup | Selector | Timeout |
+|---|------|-----------|--------|----------|---------|
+| 1 | 55–56 | getWebElement("productNoDataPrompt") | locator.json | `[data-test-id='ds-noDataPrompt_Product']` | — |
+| 2 | 56 | waitFor(ELEMENT_WAIT_TIMEOUT) | — | — | **15,000 ms** |
+| 3 | 57 | click() | — | — | — |
+| 4 | 58 | delay(PANEL_TRANSITION_DELAY) | — | — | **1,000 ms** |
+| 5 | 60 | if (requiresFilterIconClick === true) | — | — | — |
+| 6 | 61–63 | getWebElement("searchIcon") | locator.json | `[data-test-id='ds-filterIcon-icon']` | — |
+| 7 | 64 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
+| 8 | 65 | click() | — | — | — |
+| 9 | 66 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
+| 10 | 73 | if (!skipParentSearch) === true | — | — | — |
+| 11 | 74 | enterTextInSearchField("#US LOC OMNI SUPER CATEGORY MA") | — | — | — |
+| 11a | 41–43 | getWebElement("dsSearchBarInput") | locator.json | `[data-test-id='ds-searchBar-input']` | — |
+| 11b | 44 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** |
+| 11c | 46 | enterText("") | — | — | — |
+| 11d | 47 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** ⚠️ |
+| 11e | 49 | enterText("#US LOC OMNI SUPER CATEGORY MA") | — | — | — |
+| 12 | 75 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
+| 13 | 76–78 | getWebElement("dsSelectionsViewPort") | locator.json | `[data-test-id='ds-virtualScrollViewport']` | — |
+| 14 | 79 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
+| 15 | 80 | delay(UI_STATE_UPDATE_DELAY) | — | — | **300 ms** |
+| 16 | 86–88 | getDynamicResource("categoryItem", parentItem) | locator.json | `[data-test-id='ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA'] >> nth=0` | — |
+| 17 | 90 | waitFor(DATASET_SELECTOR_TIMEOUT) | — | — | **3,000 ms** ⚠️ |
+| 18 | 91 | click() | — | — | — |
+| 19 | 92 | delay(PANEL_TRANSITION_DELAY) | — | — | **1,000 ms** |
+
+---
+
+## 4. Locator Element Name Verification
+
+✅ **ALL ELEMENT NAMES VERIFIED:**
+
+| Element Name | Line in select-panelist.page.ts | Line in locator.json | Status |
+|---|---|---|---|
+| `productNoDataPrompt` | 55 | 9 | ✅ Exists |
+| `searchIcon` | 61–63 | 31 | ✅ Exists |
+| `dsSearchBarInput` | 41–43 | 35 | ✅ Exists |
+| `dsSelectionsViewPort` | 76–78 | 37 | ✅ Exists |
+| `categoryItem` | 86–88 | 41 | ✅ Exists |
+| `doneIcon` | 188–189 | 43 | ✅ Exists |
+
+**Finding:** ✅ **NO MISMATCHES** — Every element lookup has a corresponding entry in `select-panelist.locator.json`.
+
+---
+
+## 5. SearchIcon Selector Ambiguity Analysis
+
+### Exact Selector Value
+
+**From locator.json (Line 31):**
+
+```json
+{
+  "elementName": "searchIcon",
+  "selectorType": "tag",
+  "selectorValue": "[data-test-id='ds-filterIcon-icon']"
+}
+```
+
+**Verbatim Selector:**
+```
+[data-test-id='ds-filterIcon-icon']
+```
+
+### The Ambiguity Problem
+
+#### ⚠️ **Selector Is NOT Panel-Scoped**
+
+The selector uses **ONLY** `data-test-id` attribute matching:
+- ❌ No parent/container scope (e.g., no `:has()`, no `.panel-container`)
+- ❌ No dimension-specific prefix
+- ❌ NOT scoped like: `[data-test-id='ds-noDataPrompt_Product'] [data-test-id='ds-filterIcon-icon']`
+
+**Instead: Just `[data-test-id='ds-filterIcon-icon']` — matches ANY element with this attribute**
+
+#### Ambiguity Risk
+
+If multiple dimension panels exist in the DOM simultaneously (Product, Retailer, Geography, Demographic, Period panels all present but some hidden):
+
+1. Playwright's selector engine finds **ALL** elements matching `[data-test-id='ds-filterIcon-icon']`
+2. `waitFor()` visibility check attempts to determine which one is actually visible
+3. **Possible failure modes:**
+   - Multiple icons match, visibility check is ambiguous
+   - Icon from **wrong dimension panel** is clicked
+   - Icon is technically "visible" in computed style but not interactive
+   - Icon hasn't rendered yet when check happens
+
+#### Comparison with OmniShopper Pattern
+
+From `disc-fe-omnishopper-ui-automation/data-selector-resources.json`:
+```json
+{
+  "elementName": "searchIcon",
+  "selectorType": "tag",
+  "selectorValue": "[data-test-id='ds-filterIcon']"  // Also generic, non-scoped
+}
+```
+
+**OmniShopper uses the identical pattern** — generic selector that relies on visibility state management.
+
+#### Code-Only Inference
+
+**Why this design might work:**
+- Only ONE Product panel open at a time (others are destroyed, not hidden)
+- OR @gfk/gta's `getWebElement()` has built-in scoping logic
+- OR Playwright's `waitFor()` + `isVisible()` correctly filters to in-viewport elements
+
+**Why this design might fail:**
+- If panels remain in DOM (just hidden), multiple icons exist
+- If search icon doesn't become visible within 3000ms, timeout blocks
+
+---
+
+## 6. Missing Waits Analysis
+
+### The Problem: Insufficient Pre-Check
+
+**Code sequence:**
+
+```typescript
+Line 57: await dimensionPrompt.click();
+Line 58: await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);  // 1000ms only
+// Then (Lines 61–64):
+Line 61–63: const searchIcon = this.webActionHandler.getWebElement(
+              this.resourceManager.getResource('searchIcon', ...)
+            );
+Line 64: await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);  // 3000ms
+```
+
+### What's Missing
+
+- After `productNoDataPrompt.click()`, there's **only a generic 1000ms delay**
+- **NO explicit wait for the Product panel itself to transition/render**
+- Code **assumes** after 1000ms, the panel is ready and searchIcon can be looked up
+
+### How This Could Hang
+
+1. **If Product panel rendering takes >1000ms:** searchIcon lookup happens before DOM is ready
+2. **If searchIcon is not visible within 3000ms:** Line 64 `waitFor()` blocks for full 3000ms, then throws timeout error
+3. **If error is not user-visible:** Test appears to "hang" silently
+
+### Better Approach (Recommended Fix)
+
+```typescript
+// Instead of just generic delay:
+await dimensionPrompt.click();
+await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+
+// Add explicit panel readiness check:
+const productPanelCheck = this.webActionHandler.getWebElement(
+  this.resourceManager.getResource('productNoDataPrompt', SELECT_PANELIST_PAGE_COMPONENT_NAME)
 );
-Alternative checkbox selector for HML (Line 512):
-{
-  "elementName": "HMLCheckboxLabel",
-  "selectorType": "tag",
-  "selectorValue": "span.selections-label:text('${text}')"
+await productPanelCheck.waitFor();  // Ensure panel is actually rendered
+
+// THEN look for searchIcon:
+if (requiresFilterIconClick) {
+  const searchIcon = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+  );
+  await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
+  await searchIcon.click();
+  // ...
 }
-Two Checkbox Patterns:
+```
 
-Text-based (standard): div.item-value-checkbox-label >> text=${text} >> nth=0
-Component-based (people/HML): niq-checkbox.item-value-checkbox or span.selections-label:text('${text}')
-Summary Table
-Item	Exact Value	Location
-Main checkbox selector	div.item-value-checkbox-label >> text=${text} >> nth=0	Line 357, data-selector-resources.json
-Virtual viewport selector	[data-test-id='ds-virtualScrollViewport']	Line 353, data-selector-resources.json
-Icon checkbox selector	niq-checkbox.item-value-checkbox	Line 497, data-selector-resources.json
-Folder/category selector	[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0	Line 363, data-selector-resources.json
-Multiple matches handling	>> nth=0 (first match only)	In all dynamic selectors
-Search input selector	[data-test-id='ds-searchBar-input']	Line 349, data-selector-resources.json
-Done button selector	[data-test-id='ds-breadcrumbDoneButton']	Line 359, data-selector-resources.json
-All code shown is complete, untruncated, and verbatim from the repository files.
+---
 
+## 7. Timeout Values Timeline
+
+### Complete Timeline from productNoDataPrompt Click Through searchIcon Operations
+
+| Step | Line | Code | Value (ms) | Cumulative (ms) | Purpose |
+|------|------|------|-----------|---|---|
+| 1 | 56 | waitFor(ELEMENT_WAIT_TIMEOUT) | **15,000** | 0 → 15,000 | Wait for Product prompt visible |
+| 2 | 57 | click() | 0 | ~15,000 | Click Product prompt |
+| 3 | 58 | delay(PANEL_TRANSITION_DELAY) | **1,000** | 15,000 → 16,000 | Panel open animation |
+| 4 | 64 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 16,000 → 19,000 | ⚠️ Wait for searchIcon |
+| 5 | 65 | click() | 0 | ~19,000 | Click searchIcon |
+| 6 | 66 | delay(UI_STATE_UPDATE_DELAY) | **300** | 19,000 → 19,300 | After click settle |
+| 7 | 44 (enterText) | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 19,300 → 22,300 | Wait for search field |
+| 8 | 46 (enterText) | enterText("") | 0 | ~22,300 | Clear field |
+| 9 | 47 (enterText) | delay(UI_STATE_UPDATE_DELAY) | **300** | 22,300 → 22,600 | Clear settle ⚠️ (Rec: 500ms) |
+| 10 | 49 (enterText) | enterText(parentItem) | 0 | ~22,600 | Enter parent search text |
+| 11 | 75 | delay(UI_STATE_UPDATE_DELAY) | **300** | 22,600 → 22,900 | Search settle ⚠️ (Rec: 500ms) |
+| 12 | 79 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 22,900 → 25,900 | ⚠️ Wait for viewport |
+| 13 | 80 | delay(UI_STATE_UPDATE_DELAY) | **300** | 25,900 → 26,200 | Viewport settle |
+| 14 | 90 | waitFor(DATASET_SELECTOR_TIMEOUT) | **3,000** | 26,200 → 29,200 | ⚠️ Wait for parent category |
+| 15 | 91 | click() | 0 | ~29,200 | Click parent |
+| 16 | 92 | delay(PANEL_TRANSITION_DELAY) | **1,000** | 29,200 → 30,200 | Sub-list settle |
+
+### Timeout Constants (from timeout-constants.ts)
+
+```typescript
+export const ELEMENT_WAIT_TIMEOUT = 15 * 1000;       // 15,000 ms
+export const DATASET_SELECTOR_TIMEOUT = 3 * 1000;    // 3,000 ms
+export const PANEL_TRANSITION_DELAY = 1000;          // 1,000 ms
+export const UI_STATE_UPDATE_DELAY = 300;            // 300 ms
+```
+
+### ⚠️ Timing Concerns
+
+- **After search clear (Line 47):** 300ms delay
+  - **OmniShopper pattern recommends:** 500ms for full settle
+  - **Risk:** Virtual scroll viewport may not be ready in 300ms
+
+- **After search text entry (Line 75):** 300ms delay
+  - **Risk:** Search results may not fully populate before viewport check
+
+---
+
+## 8. Most Likely Hang Points
+
+### Ranked by Probability
+
+#### 1️⃣ **searchIcon.waitFor(3000) Timeout — Line 64**
+
+**Most Likely**
+
+- If search icon not visible within 3000ms after panel opens
+- If visibility state check fails (multiple matching elements)
+- Throws timeout error that may not be user-visible
+
+**Symptoms:**
+- Test hangs ~19 seconds into Product dimension selection
+- No clear error message
+- Searchable in test logs for "searchIcon" or "ds-filterIcon-icon"
+
+#### 2️⃣ **dsSelectionsViewPort.waitFor(3000) Timeout — Line 79**
+
+**Second Most Likely**
+
+- Virtual scroll viewport may not render within 3000ms after search
+- Especially if search for "#US LOC OMNI SUPER CATEGORY MA" returns large result set
+- 300ms settle time (Line 75) may be insufficient for virtualization
+
+**Symptoms:**
+- Test hangs ~25 seconds into Product dimension selection
+- Virtual scroll may need longer to initialize
+
+#### 3️⃣ **categoryItem.waitFor(3000) Timeout — Line 90**
+
+**Third Most Likely**
+
+- Parent category search result may not appear within 3000ms
+- Especially if "#US LOC OMNI SUPER CATEGORY MA" requires backend query/filtering
+
+**Symptoms:**
+- Test hangs ~29 seconds into Product dimension selection
+- Parent item never appears in search results
+
+#### 4️⃣ **Insufficient Delay After Search Clear/Enter — Lines 47, 75**
+
+**Possible Contributing Factor**
+
+- UI_STATE_UPDATE_DELAY = 300ms
+- OmniShopper pattern recommends 500ms
+- Search results viewport may not fully populate before subsequent `waitFor()` calls timeout
+
+**Symptoms:**
+- Multiple waitFor() timeouts in cascade
+- Virtual scroll not ready when expected
+
+---
+
+## 9. Code-Only vs Live-DOM Findings
+
+| Finding | Type | Certainty | Evidence |
+|---------|------|-----------|----------|
+| All locator element names verified | Code-only | ✅ 100% | Confirmed match in locator.json |
+| Exact selector: `[data-test-id='ds-filterIcon-icon']` | Code-only | ✅ 100% | Line 31 in locator.json |
+| Selector NOT panel-scoped | Code-only | ✅ 100% | No parent/container selector |
+| Only 1000ms wait before searchIcon lookup | Code-only | ✅ 100% | Lines 57–64 in select-panelist.page.ts |
+| All timeout values (1000, 3000, 300 ms) | Code-only | ✅ 100% | From timeout-constants.ts |
+| **searchIcon becomes visible in 3000ms?** | **Needs live-DOM** | ❓ Unknown | Depends on render speed |
+| **Multiple icons with same data-test-id exist?** | **Needs live-DOM** | ❓ Unknown | DOM structure unknown |
+| **Virtual scroll viewport renders in 300ms?** | **Needs live-DOM** | ❓ Unknown | Performance dependent |
+| **Which waitFor() actually times out?** | **Needs live-DOM** | ❓ Unknown | Error not visible in code |
+| **Product panel fully renders in 1000ms?** | **Needs live-DOM** | ❓ Unknown | Animation timing unknown |
+
+---
+
+## Recommendations
+
+### Immediate Diagnostics
+
+1. **Add enhanced error logging** to each `waitFor()` call:
+   ```typescript
+   try {
+     await searchIcon.waitFor(DATASET_SELECTOR_TIMEOUT);
+   } catch (error) {
+     console.error(`[HANG DIAGNOSTIC] searchIcon.waitFor() timed out after ${DATASET_SELECTOR_TIMEOUT}ms for dimension: ${dimensionPromptResource}`);
+     throw error;
+   }
+   ```
+
+2. **Increase timeout-constants** temporarily to identify which waitFor blocks:
+   - Increase `PANEL_TRANSITION_DELAY` from 1000ms to 2000ms
+   - Increase `UI_STATE_UPDATE_DELAY` from 300ms to 500ms
+
+3. **Test in isolation:** Run only Product dimension selection to confirm hang point
+
+### Fix Recommendations
+
+1. **Add explicit panel readiness check** after dimension prompt click (see Section 6)
+
+2. **Increase UI_STATE_UPDATE_DELAY** from 300ms to 500ms to match OmniShopper pattern
+
+3. **Add panel-scoped selector** for searchIcon if multiple dimensions can exist in DOM:
+   ```json
+   {
+     "elementName": "searchIcon",
+     "selectorType": "tag",
+     "selectorValue": "[data-test-id='ds-noDataPrompt_Product'] ~ [data-test-id='ds-filterIcon-icon']"
+   }
+   ```
+
+4. **Add dimension identifier to error messages:**
+   ```typescript
+   throw new Error(`Failed to find searchIcon for dimension '${dimensionPromptResource}': ${error}`);
+   ```
+
+---
+
+**End of Investigation Document**
