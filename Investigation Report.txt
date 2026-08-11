@@ -1,350 +1,70 @@
-Investigation Report: Playwright Trace Errors & Configuration
-1. @nielseniq/athena-core & global-nav Shared Module References
-disc-fe-omni-survey-mod — Version Declaration:
-File: libs/survey-mod-lib/package.json
-{
-  "name": "@nielsen/crf-survey-mod",
-  "version": "26.16.1-dev",
-  "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/router": "^21.0.0",
-    "@ngrx/store": "^21.0.0",
-    "@nielseniq/athena-core": "*",
-    "@nielsen/crf-lp-common": "*",
-    "@nielsen/crf-lp-my-assets": "*"
-  }
-}
+import { test, expect } from '@playwright/test';
 
-Note: @nielseniq/athena-core specified as "*" (wildcard), which accepts any version.
-
-disc-fe-omni-survey-mod — Dependency Resolution:
-File: package.json (root, lines 30–36)
-
-"@nielseniq/athena-charts": "26.8.1-8",
-"@nielseniq/athena-core": "26.8.1-8",
-"@nielseniq/athena-utils": "26.8.1-8",
-
-Version installed locally: 26.8.1-8
-
-Asset Configuration (athena-core i18n):
-File: angular.json (lines 74–77, 81–86)
-
-"assets": [
-  {
-    "glob": "**/*",
-    "input": "node_modules/@nielseniq/crf-translate/assets/i18n/cuic-athena-core",
-    "output": "/assets/i18n/@nielseniq/athena-core"
-  },
-  ...
-  {
-    "glob": "**/*",
-    "input": "node_modules/@nielseniq/athena-core/assets",
-    "output": "/assets/athena-core"
-  }
-]
-
-Component Imports (athena-core usage):
-File: libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.ts (line 16)
-
-import {
-  ButtonModule,
-  CheckboxModule,
-  IconModule,
-  CardModule
-} from '@nielseniq/athena-core';
-
-CSS Reference to global-nav:
-File: libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.scss (line 95)
-top: calc(48px + var(--global-nav-brandbar-height, 0px));
-Where declared: @nielseniq/athena-core CSS variables (provided by host app)
-
-2. Version Mismatch Analysis
-Error Message:
-Unsatisfied version 26.9.1-6-dev from crfReportExperienceApp of shared singleton module 
-@nielseniq/athena-core/global-nav (required)
-Component	Version	Source
-survey-mod expects	26.8.1-8	package.json:30
-Host app (crfReportExperienceApp) provides	26.9.1-6-dev	disc-fe-crf-report-experience-ui (external repo)
-Mechanism	Module Federation shared singleton	Host app's webpack/build config
-Why This Fails:
-Module Federation (used by disc-fe-crf-report-experience-ui) declares @nielseniq/athena-core as a shared singleton module
-When survey-mod loads as a micro-frontend, it tries to consume the shared module from the host
-Version requirement conflict:
-survey-mod built against 26.8.1-8
-Host serves 26.9.1-6-dev
-Webpack module federation rejects the version mismatch for singleton modules (to ensure single instance across all micro-frontends)
-No Module Federation Config in survey-mod:
-Searched for: webpack.config.ts, remotes, shared config declarations
-Result: None found
-survey-mod is NOT a module federation container/shell
-It's a remote module consumed by disc-fe-crf-report-experience-ui
-All module federation config is in the host app (disc-fe-crf-report-experience-ui)
-3. Headed vs Headless Mode Control Comparison
-disc-fe-omni-survey-mod/e2e
-File: e2e/playwright.config.ts (lines 15–23)
-export default defineConfig({
-  testDir: './tests',
-  globalSetup: require.resolve('./helpers/global-setup.ts'),
-  outputDir: './test-results',
-  timeout: 300 * 1000,
-
-  use: {
-    baseURL: normalizedBaseURL,
-    storageState: 'storage/auth.json',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    headless: process.env.HEADLESS !== 'false',  // Line 22 — Playwright built-in config
-  },
-  ...
+test('test', async ({ page }) => {
+  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=agLqkEaXSeHBRSORg2Mf_BzzSEzaKUrp1KHmczP1Umw&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=L_-UEQhl9WE8_W8eibB6Epnq_pePRIOTIt3Cb9HR0Hw&code_challenge=j-WwNuQJQi5PpTKl5ljqqCCoSFyyT5YZVDzVfXQ20GM&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.locator('div').filter({ hasText: 'Start from scratchBlank' }).nth(4).click();
+  await page.getByText('Next').click();
+  await page.locator('[data-test-id="dataset-picker-search-bar-toggle-search-button-icon"]').click();
+  await page.locator('[data-test-id="dataset-picker-search-bar-input"]').fill('SI');
+  await page.getByText('Omni Agg SI 3yrs Synd').click();
+  await page.getByText('Next').click();
+  await page.getByText('Apply dataset').click();
+  await page.locator('[data-test-id="ds-noDataPrompt_Product"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('US LOC OMNI SUPER ');
+  await page.getByText('US LOC OMNI SUPER').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('US LOC OMNI');
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('I');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('');
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('#US LOC OMNI SUPER CATEGORY MA');
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').dblclick();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('#US LOC OMNI SUPER CATEGORY M');
+  await page.getByText('#US LOC OMNI SUPER CATEGORY M').click();
+  await page.locator('.chevron-right-sign').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('APPLIANCES');
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.getByText('Done').click();
+  await page.locator('[data-test-id="ds-noDataPrompt_Retailer"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Channel');
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').getByText('Channel').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Dollar Store');
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.getByText('Done').click();
+  await page.locator('[data-test-id="ds-noDataPrompt_Geography"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Total US');
+  await page.locator('[data-test-id="-icon"]').first().click();
+  await page.locator('[data-test-id="ds-noDataPrompt_Demographic"]').click();
+  await page.locator('[data-test-id="ds-filterIcon-icon"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Total');
+  await page.locator('#INP_TOTDEM').click();
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.getByText('Done').click();
+  await page.locator('[data-test-id="ds-noDataPrompt_Period"]').click();
+  await page.locator('[data-test-id="ds-filterOut_Package_null"]').nth(2).click();
+  await page.locator('[data-test-id="ds-filterIcon-icon"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Sep');
+  await page.locator('[data-test-id="-icon"]').first().click();
+  await page.getByText('Done').click();
+  await page.locator('.report-btn-run-container').click();
+  await page.getByText('Search for Panelists').click();
+  await page.getByRole('button', { name: '250 Responses' }).click();
+  await page.getByRole('button', { name: 'Proceed to survey builder' }).click();
+  await page.getByText('Build Survey').click();
 });
-Method: Built-in Playwright fixture — test.use() automatic browser initialization
-Environment variable: HEADLESS (default: true = headless mode)
-No LambdaTest integration
-
-disc-fe-omnishopper-ui-automation
-File: playwright.config.ts (lines 12–48)
-const isLambdaTest = process.env.LAMBDATEST === 'true';
-// LambdaTest environment variables
-const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
-const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
-const ltProject = process.env.LT_PROJECT || 'OMNI Discover';
-const ltBuild = process.env.LT_BUILD || 'Discover build';
-const ltBuildIdentifier = process.env.LT_BUILD_IDENTIFIER || process.env.BUILD_NUMBER || process.env.GITHUB_RUN_NUMBER || undefined;
-
-const ltVideo = process.env.LT_VIDEO ? process.env.LT_VIDEO === 'true' : true;
-const ltNetwork = process.env.LT_NETWORK ? process.env.LT_NETWORK === 'true' : false;
-const ltConsole = process.env.LT_CONSOLE ? process.env.LT_CONSOLE === 'true' : false;
-const ltIdleTimeout = process.env.LT_IDLE_TIMEOUT ? Number(process.env.LT_IDLE_TIMEOUT) : 300;
-const ltWorkers = process.env.LT_WORKERS ? Number(process.env.LT_WORKERS) : 1;
-...
-  projects: isLambdaTest
-    ? [
-        {
-          name: 'lambdatest-chromium',
-          use: {
-            browserName: 'chromium',
-            headless: true,  // Line 108 — always true for LT cloud
-            viewport: { width: 1920, height: 1080 },
-            baseURL: frameworkConfig.BASE_URL,
-            connectOptions: { wsEndpoint: `wss://cdp.lambdatest.com/...` }
-          }
-        }
-      ]
-    : [  // Local execution config
-        {
-          name: 'chromium',
-          use: {
-            launchOptions: { args: ['--start-maximized'] },
-            viewport: null
-          }
-        }
-      ]
-Manual Browser Creation via BasePageFactory:
-File: src/lib/common/utils/base-page-factory.ts (lines 14–19, 74–92)
-
-Method signature:
-static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
-  const isLambdaTest = process.env.LAMBDATEST === 'true';
-  const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
-  const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
-  const ltProject = process.env.LT_PROJECT || 'OMNI Discover';
-  ...
-  
-  if (isLambdaTest) {
-    const ltOptions: any = {
-      platform: 'Windows 11',
-      project: ltProject,
-      build: ltBuild,
-      name: sessionName,
-      user: ltUser,
-      accessKey: ltAccessKey,
-      network: ltNetwork,
-      video: ltVideo,
-      console: ltConsole,
-    };
-
-    if (forceHeadless !== undefined) {
-      ltOptions.headless = forceHeadless;  // Line 84 — Manual control
-    }
-
-    const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
-      JSON.stringify({
-        browserName: 'pw-chromium',
-        browserVersion: 'latest',
-        'LT:Options': ltOptions,  // Passed to cloud browser
-      })
-    )}`;
-
-    const browser = await chromium.connect(wsEndpoint);
-    ...
-    return new BasePage();  // Line 127 — Manual return, NOT Playwright's automatic fixture
-  }
-  
-  // Local execution fallback
-  const contextOptions = { acceptDownloads: true, recordVideo: ... };
-  return await BasePage.initializer(browserName, browserOptions, contextOptions);
-}
-Method: Manual BasePage.initializer() call — NOT Playwright's automatic test.use() fixture
-Headed/Headless control:
-
-LambdaTest: Via forceHeadless parameter → ltOptions.headless
-Local: Via browserOptions → manual BasePage initialization
-4. LambdaTest-Specific Environment Variables
-File: .env.example (lines 11–26)
-# LambdaTest Configuration (for video integration)
-LAMBDATEST=false  # Enable/disable LambdaTest cloud execution
-LAMBDATEST_USERNAME='your_lambdatest_username'
-LT_USERNAME='your_lambdatest_username'
-LAMBDATEST_ACCESS_KEY='your_lambdatest_access_key'
-LT_ACCESS_KEY='your_lambdatest_access_key'
-LT_PROJECT='OMNI Discover'
-LT_BUILD='Discover build'
-LT_BUILD_IDENTIFIER=''
-LT_TUNNEL=true  # Enable LambdaTest Local Tunnel (for localhost/staging)
-LT_VIDEO=true  # Record video on LambdaTest cloud
-LT_NETWORK=false  # Capture network logs
-LT_CONSOLE=false  # Capture console logs
-LT_OBSERVABILITY=true  # Enable LambdaTest observability
-LT_IDLE_TIMEOUT=300  # Session idle timeout in seconds
-LT_WORKERS=1  # Parallel workers on LambdaTest cloud
-LT_DOWNLOAD_VIDEOS=false  # Download recorded videos after test
-Usage in Code:
-
-const ltVideo = process.env.LT_VIDEO ? process.env.LT_VIDEO === 'true' : true;
-const ltNetwork = process.env.LT_NETWORK ? process.env.LT_NETWORK === 'true' : false;
-const ltConsole = process.env.LT_CONSOLE ? process.env.LT_CONSOLE === 'true' : false;
-const ltIdleTimeout = process.env.LT_IDLE_TIMEOUT ? Number(process.env.LT_IDLE_TIMEOUT) : 300;
-const ltWorkers = process.env.LT_WORKERS ? Number(process.env.LT_WORKERS) : 1;
-Key Difference from survey-mod:
-
-OmniShopper has NO direct headed/headless environment variable
-Instead: forceHeadless parameter passed to createBasePage(), which propagates to LambdaTest cloud options
-survey-mod uses simple HEADLESS !== 'false' at config level
-Summary
-Item	disc-fe-omni-survey-mod	disc-fe-omnishopper-ui-automation
-Module source	Micro-frontend (consumed by host)	Host application (OmniShopper)
-athena-core version	26.8.1-8 (peerDep: "*")	Not checked (N/A)
-Version mismatch	YES — host serves 26.9.1-6-dev	N/A
-Browser init	Playwright built-in test.use()	Manual BasePage.initializer()LambdaTest	None (DEV env only)	Full integration via connectOptions.wsEndpoint
-Headed control	process.env.HEADLESS	forceHeadless param → LT cloud options
-Headed env var	HEADLESS (string)	None direct (uses LT_VIDEO, LT_CONSOLE, etc.)
--------------------------------------------------------------------------------------------------------
-given this prompt also
-
-Perfect! ✅ Yes, OmniShopper has environment-specific test data files.
-
-OmniShopper Multi-Environment Pattern:
-File Structure:
-src/lib/tests/reports/{report-name}/test-data/
-├── dev-test-data.json              ← For DEV/SI/UAT
-├── prod-test-data.json             ← For PROD_US, PROD_EU, PROD_APAC, PROD_CALATAM
-├── localization-data.json
-└── assertion-data/
-
-Environment Detection in Spec:
-import devTestData from "./test-data/dev-test-data.json";
-import prodTestData from "./test-data/prod-test-data.json";
-
-// Automatic env detection
-const isProdEnvironment = config.ENV?.startsWith('PROD_');
-const testData = isProdEnvironment ? prodTestData : devTestData;
-
-// Use it
-const reportTestData = findDataSetByName(testData, config.DATASET);
-
-Config Maps All Environments:
-baseURLs: {
-  DEV: 'https://si.connect.nielseniq.io/reportexperience-dev',
-  SI: 'https://si.connect.nielseniq.io/reportexperience',
-  UAT: 'https://uat.connect.nielseniq.io/reportexperience',
-  PROD_US: 'https://connect.nielseniq.com/discover',
-  PROD_EU: 'https://eu.connect.nielseniq.com/discover',
-  PROD_APAC: 'https://apac.connect.nielseniq.com/discover',
-  PROD_CALATAM: 'https://calatam.connect.nielseniq.com/discover'
-}
-
-Real Example - Different Data Per Environment:
-DEV (dev-test-data.json):
-
-{
-  "datasets": {
-    "Omni Agg SI 3yrs Synd": {
-      "navUrlWithDataSetId": "/report/flow/US-1898238/US-1898238/155535/OrderId_4011",
-      "Products": {
-        "selections": {
-          "#US LOC OMNI DEPARTMENT MASTER": ["HEALTH & BEAUTY CARE", "FOOD"]
-        }
-      }
-    }
-  }
-}
-
-PROD (prod-test-data.json):
-{
-  "datasets": {
-    "POD_Homescan_GB": {
-      "navUrlWithDataSetId": "/report/flow/EU-476937/EU-476937/572618/OrderId_25339",
-      "Products": {
-        "selections": {
-          "Total Product": ["Total Product"]  // ← Different structure!
-        }
-      }
-    }
-  }
-}
-
-For Your Survey-Mod e2e Tests:
-You should follow the same pattern:
-# Create both files
-e2e/tests/survey/test-data/
-├── dev-test-data.json
-└── prod-test-data.json
-dev-test-data.json (SI environment panelist data):
-{
-  "datasets": {
-    "Omni Agg SI 3yrs Synd": {
-      "dimensions": {
-        "Product": {
-          "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
-          "items": ["APPLIANCES"]
-        },
-        "Retailer": { ... }
-      }
-    }
-  }
-}
-prod-test-data.json (Production panelist data - different product hierarchies):
-{
-  "datasets": {
-    "POD_Homescan_GB": {
-      "dimensions": {
-        "Product": {
-          "parentItems": ["Total Product"],
-          "items": ["Total Product"]
-        },
-        "Retailer": { ... }
-      }
-    }
-  }
-}
-Then in your spec:
-import devTestData from "./test-data/dev-test-data.json";
-import prodTestData from "./test-data/prod-test-data.json";
-
-const isProdEnvironment = config.ENV?.startsWith('PROD_');
-const testData = isProdEnvironment ? prodTestData : devTestData;
-const surveyTestData = findDataSetByName(testData, config.DATASET);
-
-// Use surveyTestData for dimension selections
-import devTestData from "./test-data/dev-test-data.json";
-import prodTestData from "./test-data/prod-test-data.json";
-
-const isProdEnvironment = config.ENV?.startsWith('PROD_');
-const testData = isProdEnvironment ? prodTestData : devTestData;
-const surveyTestData = findDataSetByName(testData, config.DATASET);
-
-// Use surveyTestData for dimension selections
-
-
