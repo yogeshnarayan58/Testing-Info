@@ -1335,3 +1335,34 @@ export default defineConfig({
   ],
 });
 ---------------
+getting this issue 
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/gta-migration)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --headed
+◇ injected env (4) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+SyntaxError: C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\test-data\dev-test-data.json: Unexpected token ' ', "
+  common: "... is not valid JSON
+
+   at survey\start-from-scratch.spec.ts:6
+
+  4 | import { SelectPanelistPage } from '../../page-objects/survey/select-panelist.page';
+  5 | import { assertTrue } from '../../page-objects/common/assert-utils';
+> 6 | import testData from '../../test-data/dev-test-data.json';
+    | ^
+  7 |
+  8 | const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+  9 | const DATASET_NAME = datasetNames[0];
+    at Object.<anonymous> (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:6:1)
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
