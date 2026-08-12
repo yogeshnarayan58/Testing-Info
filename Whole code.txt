@@ -1,176 +1,1134 @@
-# Investigation: `e2e/playwright.config.ts` — `projects` array (`name` vs `devices` preset, multi-browser support)
+# LambdaTest & Allure Setup — Reference from `disc-fe-omnishopper-ui-automation`
 
-> Investigation only — no files were modified as part of this task.
-
-PR comment being addressed:
-> name and device not matching and also can we add any other browser microsoft edge or any?
+> Investigation-only document. All content below was read fresh from the actual files in
+> `disc-fe-omnishopper-ui-automation` (workspace folder path:
+> `c:\Users\Yogesh.Upadhyay\Downloads\disc-fe-omnishopper-ui-automation`) at the time this
+> file was generated. No prior session context was reused. Every claim in the Summary
+> sections cites the specific file (and, where useful, symbol/line content) it was taken from.
 
 ---
 
-## 1. Full current content of `e2e/playwright.config.ts`
+## LambdaTest Integration
+
+### Summary
+
+**What it does / why it's needed**
+LambdaTest is a cloud browser grid. Instead of launching a local Chromium instance, Playwright
+connects over a WebSocket (`chromium.connect(wsEndpoint)`) to a remote browser hosted by
+LambdaTest, so tests can run on real remote OS/browser combinations (e.g. Windows 11 Chrome,
+macOS Edge) and produce recorded video/network/console artifacts for each session. This is
+controlled entirely by an `isLambdaTest = process.env.LAMBDATEST === 'true'` flag — when unset/false,
+everything falls back to a normal local Chromium run.
+(Source: [playwright.config.ts](file:///c:/Users/Yogesh.Upadhyay/Downloads/disc-fe-omnishopper-ui-automation/playwright.config.ts) — `const isLambdaTest = process.env.LAMBDATEST === 'true';`;
+[base-page-factory.ts](file:///c:/Users/Yogesh.Upadhyay/Downloads/disc-fe-omnishopper-ui-automation/src/lib/common/utils/base-page-factory.ts) — same flag and `chromium.connect(wsEndpoint)` call.)
+
+**Files it touches** (confirmed by opening each one):
+1. `playwright.config.ts` (repo root) — reads LT env vars, builds the `wsEndpoint` capability string, conditionally adds a `lambdatest-chromium` project, conditionally adds the `lt-session-reporter` to the reporter list, and throws if `isLambdaTest` is true but credentials are missing.
+2. `src/lib/common/utils/base-page-factory.ts` — `BasePageFactory.createBasePage()` branches on `isLambdaTest`; when true it builds its own `wsEndpoint`, connects via `chromium.connect`, creates context/page, and writes per-test session-tracking files into `.lt-sessions/`.
+3. `src/lib/common/utils/configurationDetails.ts` — exports `getLambdaTestBuildName(ltBuild, buildIdentifier)`, a shared helper used by both `playwright.config.ts`, `base-page-factory.ts`, and `globalTeardown.ts` to build a consistent LambdaTest build name (e.g. `"Discover build (123)"`).
+4. `src/lib/common/utils/global-setup.ts` — Playwright `globalSetup`; deletes old `storage/auth.json`, clears/creates the `.lt-sessions/` directory before each run, then calls `BasePageFactory.createBasePage(true)` to log in and produce a fresh `storage/auth.json`.
+5. `src/lib/playwright/reporters/lt-session-reporter.ts` — a custom Playwright `Reporter` (`LTSessionReporter`) that only activates when `process.env.LAMBDATEST === "true"`; on `onTestEnd` it reads the per-test session file written by `base-page-factory.ts` from `.lt-sessions/` and records a `fullName -> sessionName` mapping, writing both individual mapping files and a combined `session-mappings.json` in `.lt-sessions/`.
+6. `src/lib/playwright/setup/globalTeardown.ts` — Playwright `globalTeardown`; when `isLambdaTest` is true, reads the `.lt-sessions/` mapping files, injects an `LT_SESSION` parameter into each Allure `*-result.json`, calls the LambdaTest Automation API (`https://api.lambdatest.com/automation/api/v1/sessions?...`) to fetch session IDs/status, adds a `"LambdaTest Video"` link into each Allure result, PATCHes each session's pass/fail status back to LambdaTest, and finally writes `allure-results/environment.properties` with the build URL/name/ID.
+7. `lambdatest.yml` (repo root) — a YAML config consumed by the **LambdaTest CLI/GitHub Action** (not by Playwright directly) that defines platforms (Windows 11 Chrome/Edge, macOS Edge), tunnel usage, build naming via `${LAMBDATEST_BUILD_NAME}` / `${DATE_TIME}` placeholders, and debugging options (`video`, `networkLogs`, `idleTimeout`).
+8. `.env.example` (repo root) — documents all `LAMBDATEST_*` / `LT_*` variables consumers must set.
+9. `package.json` (repo root) — `test:lambdatest` script (`cross-env LAMBDATEST=true npx playwright test`); no LambdaTest npm package/SDK dependency exists — the "integration" is just a raw CDP WebSocket URL, so there is no `@lambdatest/*` npm package in `devDependencies`/`dependencies`.
+10. `.gitignore` (repo root) — ignores `.lt-sessions/` (the cross-process session-mapping directory created by `base-page-factory.ts` / read by `lt-session-reporter.ts` and `globalTeardown.ts`).
+
+**Environment variables / credentials required** (all confirmed present in `.env.example`):
+| Variable | Where the value comes from |
+|---|---|
+| `LAMBDATEST` | Feature flag you set yourself (`true`/`false`) — not a credential. |
+| `LAMBDATEST_USERNAME` / `LT_USERNAME` | Your LambdaTest account username, from the LambdaTest dashboard (Profile → Account Settings). |
+| `LAMBDATEST_ACCESS_KEY` / `LT_ACCESS_KEY` | Your LambdaTest account access key, from the same LambdaTest Account Settings page. |
+| `LT_PROJECT` | Free-text project label shown in the LambdaTest dashboard; defaults to `'OMNI Discover'` if unset (`playwright.config.ts` / `base-page-factory.ts`). |
+| `LT_BUILD` | Free-text build label; defaults to `'Discover build'` if unset. |
+| `LT_BUILD_IDENTIFIER` (or `BUILD_NUMBER` / `GITHUB_RUN_NUMBER`) | Optional suffix appended to the build name via `getLambdaTestBuildName`; typically supplied by CI (e.g. GitHub Actions run number), not manually. |
+| `LT_TUNNEL` | Used only by `lambdatest.yml` (`lambdaTestTunnel: true`) for the LambdaTest CLI, not read anywhere in the TypeScript code found. |
+| `LT_VIDEO`, `LT_NETWORK`, `LT_CONSOLE` | Boolean toggles for whether LambdaTest records video/network/console logs for the session; user-chosen, not credentials. |
+| `LT_OBSERVABILITY` | Present in `.env.example` but **not referenced anywhere** in `playwright.config.ts`, `base-page-factory.ts`, `configurationDetails.ts`, `global-setup.ts`, `lt-session-reporter.ts`, or `globalTeardown.ts` (confirmed via search) — appears unused by the code, only documented. |
+| `LT_IDLE_TIMEOUT` | Numeric seconds before an idle LambdaTest session is killed; user-chosen, defaults to `300`. |
+| `LT_WORKERS` | Playwright worker count when running on LambdaTest; user-chosen, defaults to `1`. |
+| `LT_DOWNLOAD_VIDEOS` | Present in `.env.example` but **not referenced** in any of the TypeScript files read — same as `LT_OBSERVABILITY`, appears unused by code. |
+
+**Code-only (safe to add now) vs. credential-gated:**
+- Code-only / safe without any account: the `isLambdaTest` branching logic itself, the `getLambdaTestBuildName` helper, the `.lt-sessions/` bookkeeping in `base-page-factory.ts`/`lt-session-reporter.ts`, and the conditional reporter/project wiring in `playwright.config.ts` — none of this requires a real LambdaTest account to exist in the codebase or to pass a normal (non-LambdaTest) local run, since `isLambdaTest` stays `false` by default.
+- Credential-gated: actually running with `LAMBDATEST=true` requires a valid `LAMBDATEST_USERNAME`/`LT_USERNAME` + `LAMBDATEST_ACCESS_KEY`/`LT_ACCESS_KEY` pair — `playwright.config.ts` explicitly throws `'LambdaTest credentials missing!...'` if `isLambdaTest` is true and either is missing. The `globalTeardown.ts` LambdaTest API calls (`api.lambdatest.com/automation/api/v1/sessions`) also require these same credentials and will just log a warning and skip if missing (`"Missing LambdaTest credentials. Skipping API calls."`).
+
+**npm packages needed:** None specific to LambdaTest. There is **no** `@lambdatest/*` package anywhere in `package.json`'s `dependencies`/`devDependencies` — connectivity is done via a raw `chromium.connect(wsEndpoint)` WebSocket URL built by hand, so `@playwright/test` (already required for Allure/Playwright itself) is the only relevant package. (Confirmed by reading the full `package.json` — no such dependency line exists.)
+
+**Setup steps beyond code:**
+- Create/have a LambdaTest account and obtain the username + access key from the LambdaTest dashboard.
+- Populate `.env` with `LAMBDATEST=true`, `LAMBDATEST_USERNAME`/`LT_USERNAME`, `LAMBDATEST_ACCESS_KEY`/`LT_ACCESS_KEY`.
+- If using the LambdaTest tunnel for localhost/private URLs (`lambdaTestTunnel: true` in `lambdatest.yml`), the LambdaTest Tunnel binary/CLI must be installed and running separately — this repo's code does not install or launch a tunnel process itself (no tunnel-related code found in any of the files read).
+- `lambdatest.yml` implies use of the LambdaTest **CLI/GitHub Action** for platform-matrix runs, which is a separate tool from the `npx playwright test` path — nothing in the repository (as read) invokes this YAML file automatically; it appears to be config for an external LambdaTest CLI/action invocation not present in `package.json` scripts.
+
+**Can it be tested/verified locally without external credentials?**
+Partially. The conditional code paths (`isLambdaTest` false branch, i.e. ordinary local Chromium runs) can be fully exercised without any LambdaTest account — this is the default behavior. However, actually exercising the LambdaTest branch (`LAMBDATEST=true`) — the WebSocket connection, session registration files, the reporter, and `globalTeardown.ts`'s API calls — is **credential-gated**: it requires a real `LAMBDATEST_USERNAME`/`LT_USERNAME` + `LAMBDATEST_ACCESS_KEY`/`LT_ACCESS_KEY`, and `playwright.config.ts` will throw immediately without them.
+
+### Raw Code
+
+#### 1. `playwright.config.ts` (complete, verbatim)
 
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
+import path from 'path';
+import { WaitForLoadStateOptions } from './src/lib/constants/optional-parameter-types';
+import { MAX_TEST_TIMEOUT, NAVIGATION_TIMEOUT, RUN_TEST_TIMEOUT } from './src/lib/constants/time-out-constants';
+import { config as frameworkConfig } from './src/lib/playwright/config';
+import { getLambdaTestBuildName } from './src/lib/common/utils/configurationDetails';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Read from ".env" file.
 
-const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reportexperience-dev';
-const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+dotenv.config({ path: path.join(__dirname, '.env') });
 
+const isLambdaTest = process.env.LAMBDATEST === 'true';
+// LambdaTest environment variables
+const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
+const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
+const ltProject = process.env.LT_PROJECT || 'OMNI Discover';
+const ltBuild = process.env.LT_BUILD || 'Discover build';
+const ltBuildIdentifier =
+  process.env.LT_BUILD_IDENTIFIER ||
+  process.env.BUILD_NUMBER ||
+  process.env.GITHUB_RUN_NUMBER ||
+  undefined;
+
+const ltVideo = process.env.LT_VIDEO ? process.env.LT_VIDEO === 'true' : true;
+const ltNetwork = process.env.LT_NETWORK ? process.env.LT_NETWORK === 'true' : false;
+const ltConsole = process.env.LT_CONSOLE ? process.env.LT_CONSOLE === 'true' : false;
+
+const ltIdleTimeout = process.env.LT_IDLE_TIMEOUT
+  ? Number(process.env.LT_IDLE_TIMEOUT)
+  : 300;
+
+const ltWorkers = process.env.LT_WORKERS ? Number(process.env.LT_WORKERS) : 1;
+
+console.log('isLambdaTest =', isLambdaTest);
+console.log('LAMBDATEST env var =', process.env.LAMBDATEST);
+
+if (isLambdaTest) {
+
+  console.log('\n🌐 LambdaTest Cloud Execution Enabled');
+  console.log('   User:', ltUser);
+  console.log('   Project:', ltProject);
+  console.log('   Workers:', ltWorkers);
+
+  if (!ltUser || !ltAccessKey) {
+    throw new Error(
+      'LambdaTest credentials missing! Please set LAMBDATEST_USERNAME/LT_USERNAME and LAMBDATEST_ACCESS_KEY/LT_ACCESS_KEY'
+    );
+  }
+}
+
+export const LOADSTATE: WaitForLoadStateOptions = 'domcontentloaded';
+
+/**
+ * Read environment variables from file.
+ * https://github.com/motdotla/dotenv
+ */
 export default defineConfig({
-  testDir: './tests',
-  globalSetup: require.resolve('./helpers/global-setup.ts'),
-  outputDir: './test-results',
-  timeout: 300 * 1000,
+  testDir: './src/lib/tests/reports',
+  /* Run tests in files in parallel */
+  fullyParallel: true,
+
+  timeout: isLambdaTest ? RUN_TEST_TIMEOUT : MAX_TEST_TIMEOUT,
+
+  globalSetup: require.resolve('./src/lib/common/utils/global-setup'),
+  globalTeardown: require.resolve('./src/lib/playwright/setup/globalTeardown'),
+  
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  forbidOnly: !!process.env.CI,
+  /* Retry on CI only */
+  retries: process.env.CI ? 2 : 0,
+
+  // LambdaTest runs should be minimal workers to avoid session conflicts
+  workers: isLambdaTest ? ltWorkers : process.env.CI ? 1 : 2,
+
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['json', { outputFile: 'playwright-report/test-results.json' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : []),
+        [
+          './src/lib/playwright/grafana-reporter.ts',
+          {
+            areaName: process.env.AREA_NAME || 'TestArea',
+            domainName: process.env.DOMAIN_NAME || 'TechTest',
+            teamName: process.env.TEAM_NAME || 'DiscoverOmniTest',
+            projectName: process.env.PROJECT_NAME || 'GTATesting'
+          }
+        ]
+      ]
+    : [
+        ['list'],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : [])
+      ],
 
   use: {
-    baseURL: normalizedBaseURL,
-    storageState: 'storage/auth.json',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    headless: process.env.HEADLESS !== 'false',
+    trace: 'on-first-retry',
+    navigationTimeout: NAVIGATION_TIMEOUT,
+    baseURL: frameworkConfig.BASE_URL
   },
 
-  fullyParallel: false,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 2,
+  /* Configure projects for major browsers */
+  projects: isLambdaTest
+    ? [
+        {
+          name: 'lambdatest-chromium',
+          use: {
+            browserName: 'chromium',
+            headless: true,
+            viewport: { width: 1920, height: 1080 },
+            baseURL: frameworkConfig.BASE_URL,
 
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-  ],
+            connectOptions: {
+              wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+                JSON.stringify({
+                  browserName: 'pw-chromium',
+                  browserVersion: 'latest',
 
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+                  'LT:Options': {
+                    platform: 'Windows 11',
+
+                    // Build name should include identifier so you can track correctly
+                    build: getLambdaTestBuildName(ltBuild, ltBuildIdentifier),
+
+                    name: 'Playwright Automation', 
+
+                    user: ltUser,
+                    accessKey: ltAccessKey,
+
+                    project: ltProject,
+
+                    network: ltNetwork,
+                    video: ltVideo,
+                    console: ltConsole,
+
+                    plugin: 'playwright-test',
+                    w3c: true,
+                    idleTimeout: ltIdleTimeout
+                  }
+                })
+              )}`
+            }
+          }
+        }
+      ]
+    : [
+        {
+          name: 'chromium',
+          use: {
+            launchOptions: {
+              args: ['--start-maximized']
+            },
+            viewport: null
+          }
+        }
+         // {
+        //   name: 'firefox',
+        //   use: {
+        //     launchOptions: {
+        //       args: ['--start-maximized'],
+        // {
+        //     viewport: null,
+        //   },
+        // },
+
+        // {
+        //   name: 'webkit',
+        //   use: { ...devices['Desktop Safari'] },
+        // },
+
+        /* Test against mobile viewports. */
+        // {
+        //   name: 'Mobile Chrome',
+        //   use: { ...devices['Pixel 5'] },
+        // },
+        // {
+        //   name: 'Mobile Safari',
+        //   use: { ...devices['iPhone 12'] },
+        // },
+
+        /* Test against branded browsers. */
+        // {
+        //   name: 'Microsoft Edge',
+        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+        // },
+        // {
+        //   name: 'Google Chrome',
+        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+        // },
+      ]
+
+  /* Run your local dev server before starting the tests */
+  // webServer: {
+  //   command: 'npm run start',
+  //   url: 'http://127.0.0.1:3000',
+  //   reuseExistingServer: !process.env.CI,
+  // },
 });
 ```
 
----
+> Note: this file imports `WaitForLoadStateOptions` and time-out constants from
+> `./src/lib/constants/...` and a shared app config from `./src/lib/playwright/config` — these
+> exist in the OmniShopper repo's own framework layer and are outside the scope of the
+> LambdaTest/Allure integration itself (not reproduced here since the task scope is the
+> LambdaTest/Allure files only).
 
-## 2. Does the `chromium` project's `use` block reference `devices[]`?
-
-Yes. The exact code is:
-
-```typescript
-{
-  name: 'chromium',
-  use: { ...devices['Desktop Chrome'] },
-},
-```
-
-It spreads `devices['Desktop Chrome']` — it does **not** use raw `launchOptions`/`viewport` fields. `devices` is imported at the top (`import { defineConfig, devices } from '@playwright/test';`) and used here.
-
----
-
-## 3. Omni Shopper's `playwright.config.ts` — exact `projects` array (non-LambdaTest branch)
+#### 2. `base-page-factory.ts` (complete, verbatim)
 
 ```typescript
-: [
-    {
-      name: 'chromium',
-      use: {
-        launchOptions: {
-          args: ['--start-maximized']
-        },
-        viewport: null
-      }
+import { BasePage } from '@gfk/gta';
+import { chromium } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { config } from '../../playwright/config';
+import { WebActions } from '@gfk/gta/dist/core/web/webActions';
+import { getLambdaTestBuildName } from './configurationDetails';
+
+// Store session names with timestamp as key (for reporter lookup)
+export const sessionRegistry: Array<{ timestamp: number; sessionName: string; title?: string }> = [];
+
+// Map to store session per worker - each worker runs tests sequentially
+export const workerSessionMap = new Map<number, string>();
+
+// Global current session tracker - stores the last created session
+export let currentLTSession: string | null = null;
+
+export class BasePageFactory {
+  static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
+    const isLambdaTest = process.env.LAMBDATEST === 'true';
+
+    const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
+    const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
+    const ltProject = process.env.LT_PROJECT || 'OMNI Discover';
+    const ltBuildBase = process.env.LT_BUILD || 'Discover build';
+    const ltBuildIdentifier =
+      process.env.LT_BUILD_IDENTIFIER ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_RUN_NUMBER ||
+      undefined;
+    const ltBuild = getLambdaTestBuildName(ltBuildBase, ltBuildIdentifier);
+
+    const ltVideo = process.env.LT_VIDEO === 'false' ? false : true;
+    const ltNetwork = process.env.LT_NETWORK === 'true';
+    const ltConsole = process.env.LT_CONSOLE === 'true';
+
+    let storageState: string | undefined;
+    const authPath = path.resolve(process.cwd(), 'storage/auth.json');
+
+    if (fs.existsSync(authPath)) {
+      storageState = authPath;
+      console.log('Auth state loaded from storage/auth.json');
+    } else {
+      console.log('No auth state found - login required');
     }
-     // {
-    //   name: 'firefox',
-    //   use: {
-    //     launchOptions: {
-    //       args: ['--start-maximized'],
-    // {
-    //     viewport: null,
-    //   },
-    // },
+    if (isLambdaTest) {
+      console.log('Connecting to LambdaTest cloud...');
 
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+      const timestamp = Date.now();
+      const sessionName = `Test-${timestamp}`;
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+      const ltOptions: any = {
+        platform: 'Windows 11',
+        project: ltProject,
+        build: ltBuild,
+        name: sessionName,
+        user: ltUser,
+        accessKey: ltAccessKey,
+        network: ltNetwork,
+        video: ltVideo,
+        console: ltConsole,
+      };
 
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ]
+      if (forceHeadless !== undefined) {
+        ltOptions.headless = forceHeadless;
+      }
+
+      const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+        JSON.stringify({
+          browserName: 'pw-chromium',
+          browserVersion: 'latest',
+          'LT:Options': ltOptions,
+        })
+      )}`;
+
+      const browser = await chromium.connect(wsEndpoint);
+      console.log(`Connected to LambdaTest (Session: ${sessionName})`);
+
+      const contextOptions: any = {
+        acceptDownloads: true,
+        viewport: { width: 1920, height: 1080 },
+      };
+
+      if (storageState) {
+        contextOptions.storageState = storageState;
+      }
+
+      const context = await browser.newContext(contextOptions);
+      const page = await context.newPage();
+
+      // Store session info for reporter/global-teardown
+      try {
+        const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
+        const testId =
+          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
+
+        const sessionDir = path.join(process.cwd(), '.lt-sessions');
+        fs.mkdirSync(sessionDir, { recursive: true });
+
+        // store in memory
+        (page as any).__LT_SESSION_NAME__ = sessionName;
+        sessionRegistry.push({ timestamp, sessionName });
+        workerSessionMap.set(workerIndex, sessionName);
+        currentLTSession = sessionName;
+
+        // append sessions.jsonl (fallback)
+        fs.appendFileSync(
+          path.join(sessionDir, 'sessions.jsonl'),
+          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
+          'utf-8'
+        );
+
+        // PRIMARY (parallel safe): write per-test session file
+        if (testId) {
+          fs.writeFileSync(
+            path.join(sessionDir, `test-${testId}.json`),
+            JSON.stringify({ sessionName, timestamp, testId }),
+            'utf-8'
+          );
+          console.log(`[LT Session] ✓ test-${testId}.json written`);
+        } else {
+          console.warn('[LT Session] ⚠ testId not available, using fallback sessions.jsonl');
+        }
+
+        // optional worker file
+        fs.writeFileSync(
+          path.join(sessionDir, `worker-${workerIndex}.json`),
+          JSON.stringify({ sessionName, timestamp }),
+          'utf-8'
+        );
+
+        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
+      } catch (err) {
+        console.warn('[LT Session] Could not store session info:', err);
+      }
+
+      // Inject into BasePage
+      (BasePage as any).browser = browser;
+      (BasePage as any).context = context;
+      (BasePage as any).page = page;
+      (BasePage as any).webActions = new WebActions(page, context);
+
+      return new (BasePage as any)();
+    }
+    const browserName = config.browser ?? 'chromium';
+    let browserOptions = config.browserOptions ?? {};
+
+    if (forceHeadless !== undefined) {
+      browserOptions = { ...browserOptions, headless: forceHeadless };
+    }
+
+    const contextOptions = {
+      acceptDownloads: true,
+      recordVideo: process.env.PWVIDEO ? { dir: 'screenshots' } : undefined,
+      viewport: null,
+      storageState,
+    };
+
+    return await BasePage.initializer(browserName, browserOptions, contextOptions);
+  }
+}
 ```
 
-There is also a separate `lambdatest-chromium` project (used only when `isLambdaTest` is true), which uses `browserName: 'chromium'` + `connectOptions` (LambdaTest CDP endpoint) — no `devices[]` spread there either.
-
-**Finding**: Omni Shopper's active `chromium` project uses `launchOptions`/`viewport: null`, **not** `devices['Desktop Chrome']` — it doesn't spread `devices` at all for its active project.
-
----
-
-## 4. What does the `name` field actually do?
-
-- `name` is purely a **label/identifier** for the project. Playwright uses it for:
-  - Display in the CLI/HTML report (test titles are prefixed with it, e.g. `[chromium] › test.spec.ts`).
-  - Filtering via `--project=<name>` on the CLI.
-  - `test.info().project.name` at runtime.
-  - Dependency references (`dependencies: ['setup']` etc. match against `name`).
-- There is **no technical requirement** that `name` match a key in the `devices()` map. `devices['Desktop Chrome']` is just a plain JS object of preset `use` options (userAgent, viewport, browserName: 'chromium', etc.) shipped in `@playwright/test`. You could name a project `"foo"` and still spread `devices['Desktop Chrome']` into its `use` block, or name it `"chromium"` and use completely custom `launchOptions`/`viewport` with no `devices[]` reference at all (as Omni Shopper does).
-- **Conclusion**: matching the `name` string to a `devices()` preset key is a **semantic/naming convention only** — not enforced or required by Playwright.
-
-In our (`e2e/playwright.config.ts`) case, `name: 'chromium'` happens to align with the actual `devices['Desktop Chrome']` preset being spread, so the "mismatch" concern raised in the PR comment (that `name` doesn't literally equal `'Desktop Chrome'`) is **not a functional issue** — it's standard practice across Playwright configs (including Playwright's own default template) to name the project `chromium`/`firefox`/`webkit` while pointing at `devices['Desktop Chrome']`/`devices['Desktop Firefox']`/`devices['Desktop Safari']` respectively.
-
----
-
-## 5. Adding a Microsoft Edge project
-
-Playwright requires the `devices` import (already present in `e2e/playwright.config.ts`: `import { defineConfig, devices } from '@playwright/test';`) and a project entry using the `Desktop Edge` preset plus the `msedge` channel:
+#### 2b. `configurationDetails.ts` (complete, verbatim — shared helper used by both LambdaTest and Jira/Allure code)
 
 ```typescript
+import { parseBoolean, resolveEnvValue } from './env-utils';
+
+const DEFAULT_SUITE_NAME = 'Omni Reports';
+const JIRA_FLAG_KEY = 'JiraUpdateEnabled';
+const JIRA_FLAG_ALIASES = [JIRA_FLAG_KEY, 'JIRA_UPDATE_ENABLED', 'UpdateJira', 'UPDATE_JIRA'];
+const SUITE_NAME_KEY = 'SuiteName';
+
+export const getJiraFlagvalue = (): string => {
+  for (const key of JIRA_FLAG_ALIASES) {
+    const value = resolveEnvValue(key);
+    if (value !== undefined) {
+      return value.trim();
+    }
+  }
+  return 'false';
+};
+
+export const shouldUpdateJira = (): boolean => {
+  return parseBoolean(getJiraFlagvalue(), false);
+};
+
+export const getSuiteName = (): string => {
+  const value = resolveEnvValue(SUITE_NAME_KEY) ?? resolveEnvValue('PLAYWRIGHT_SUITE_NAME');
+  if (value && value.trim().length > 0) {
+    return value.trim();
+  }
+  return resolveEnvValue('npm_package_name') ?? DEFAULT_SUITE_NAME;
+};
+
+/**
+ * Constructs the LambdaTest build name with optional build identifier suffix.
+ * Used consistently across playwright.config.ts and globalTeardown.ts.
+ * 
+ * @param ltBuild - Base build name (e.g., "Discover build")
+ * @param buildIdentifier - Optional identifier to append (e.g., GitHub run number)
+ * @returns Formatted build name with identifier if provided
+ */
+export const getLambdaTestBuildName = (
+  ltBuild: string,
+  buildIdentifier?: string
+): string => {
+  return buildIdentifier ? `${ltBuild} (${buildIdentifier})` : ltBuild;
+};
+```
+
+#### 2c. `global-setup.ts` (complete, verbatim — Playwright `globalSetup`, prepares `.lt-sessions/` and auth state)
+
+```typescript
+/**
+ * @fileoverview Global setup for Playwright tests.
+ * Handles authentication state management and login initialization.
+ *
+ * This module is executed before running tests to establish authentication
+ * and prepare the testing environment.
+ */
+import fs from "fs";
+import path from "path";
+import { BasePageFactory } from "./base-page-factory";
+import { LoginPage } from "../pages/login-page/login-page";
+import { config } from "../../playwright/config";
+
+// Define constants
+const AUTH_FILE_PATH = "storage/auth.json";
+const LT_SESSIONS_DIR = ".lt-sessions";
+
+/**
+ * Performs global setup operations before tests are run.
+ * - Validates environment variables
+ * - Cleans up previous authentication state
+ * - Performs login to establish a new auth state
+ */
+async function globalSetup(): Promise<void> {
+  try {
+    console.log("Starting global setup...");
+
+    // Delete existing auth state if it exists
+    if (fs.existsSync(AUTH_FILE_PATH)) {
+      fs.unlinkSync(AUTH_FILE_PATH);
+      console.log("Old authentication state deleted.");
+    }
+
+    // Clean up LambdaTest session files from previous run
+    if (fs.existsSync(LT_SESSIONS_DIR)) {
+      const files = fs.readdirSync(LT_SESSIONS_DIR);
+      files.forEach(file => {
+        fs.unlinkSync(path.join(LT_SESSIONS_DIR, file));
+      });
+      console.log(`Cleared ${files.length} old LambdaTest session file(s).`);
+    } else {
+      // Create directory if it doesn't exist
+      fs.mkdirSync(LT_SESSIONS_DIR, { recursive: true });
+      console.log("Created .lt-sessions directory.");
+    }
+    
+    // Perform login and create new auth state (force headless mode for login)
+    console.log(`Logging in to ${config.BASE_URL} in headless mode...`);
+    const basePage = await BasePageFactory.createBasePage(true);
+    const loginPage = new LoginPage(basePage);
+    await loginPage.login(config.BASE_URL);
+    console.log("Authentication successful. New auth state created.");
+  } catch (error) {
+    console.error("Global setup failed:", error);
+
+    // Rethrow with context to ensure the setup failure is clearly indicated
+    if (error instanceof Error) {
+      throw new Error(`Global setup failed: ${error.message}`);
+    } else {
+      throw new Error("Global setup failed with an unknown error");
+    }
+  }
+}
+
+export default globalSetup;
+```
+
+#### 3. `lt-session-reporter.ts` (complete, verbatim — full LambdaTest-specific reporter)
+
+```typescript
+/**
+ * Custom Playwright reporter to capture LambdaTest session names.
+ * NOTE: This reporter does NOT create sessions - it only captures session names created by 
+ * BasePageFactory (which uses getLambdaTestBuildName for consistent build naming).
+ * Stores test -> session mapping into individual per-test JSON files 
+ * (.lt-sessions/test-<id>-<pid>-<timestamp>.json) to avoid concurrent write conflicts.
+ */
+
+import { Reporter, TestCase, TestResult, FullResult } from "@playwright/test/reporter";
+import * as fs from "fs";
+import * as path from "path";
+
+class LTSessionReporter implements Reporter {
+  private testSessions = new Map<string, string>(); // fullName -> sessionName
+
+  onBegin() {
+    if (process.env.LAMBDATEST !== "true") return;
+    
+    console.log("[LT Reporter] Initialized - capturing LambdaTest sessions...");
+  }
+
+  onTestBegin(test: TestCase) {
+    if (process.env.LAMBDATEST !== "true") return;
+    
+    process.env.__CURRENT_TEST_ID__ = test.id;
+    (global as any).__CURRENT_TEST_ID__ = test.id;
+
+    console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
+  }
+
+  onTestEnd(test: TestCase, result: TestResult) {
+    if (process.env.LAMBDATEST !== "true") return;
+
+    const testId = test.id;
+    const sessionDir = path.join(process.cwd(), ".lt-sessions");
+    const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
+
+    let sessionName: string | null = null;
+
+    try {
+      // 1st priority: test-specific session file
+      if (fs.existsSync(testSessionFile)) {
+        const data = JSON.parse(fs.readFileSync(testSessionFile, "utf-8"));
+        sessionName = data.sessionName;
+
+        // cleanup
+        try {
+          fs.unlinkSync(testSessionFile);
+        } catch {}
+      }
+
+      // fallback: sessions.jsonl
+      if (!sessionName) {
+        const sessionsLogFile = path.join(sessionDir, "sessions.jsonl");
+        const workerIndex = result.parallelIndex ?? 0;
+        const testStartTime = result.startTime?.getTime() || 0;
+
+        if (fs.existsSync(sessionsLogFile)) {
+          const lines = fs.readFileSync(sessionsLogFile, "utf-8").split("\n").filter(Boolean);
+
+          let bestMatch: { sessionName: string; diff: number } | null = null;
+
+          for (const line of lines) {
+            try {
+              const s = JSON.parse(line);
+              if (s.workerIndex === workerIndex && s.timestamp && testStartTime) {
+                const diff = Math.abs(s.timestamp - testStartTime);
+                if (diff < 60000 && (!bestMatch || diff < bestMatch.diff)) {
+                  bestMatch = { sessionName: s.sessionName, diff };
+                }
+              }
+            } catch {}
+          }
+
+          if (bestMatch) sessionName = bestMatch.sessionName;
+        }
+      }
+    } catch (err) {
+      console.error("[LT Reporter] Error reading session:", err);
+    }
+
+    if (!sessionName) {
+      console.warn(`[LT Reporter] No session found for "${test.title}" (testId: ${testId})`);
+      return;
+    }
+
+    const fullName = test.titlePath().filter(Boolean).join(" › ");
+    // Normalize > separator to › for consistent mapping with globalTeardown
+    const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+    
+    this.testSessions.set(normalizedFullName, sessionName);
+
+    console.log(`[LT Reporter] Stored: "${normalizedFullName}" -> ${sessionName}`);
+
+    // Write mapping per test/worker to avoid concurrent write conflicts
+    try {
+      fs.mkdirSync(sessionDir, { recursive: true });
+
+      // Use a collision-resistant filename per test/process to prevent concurrent write conflicts
+      const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
+      const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
+      fs.writeFileSync(
+        mappingFile,
+        JSON.stringify({
+          testName: test.title,
+          fullName: normalizedFullName,
+          testId,
+          sessionName,
+          timestamp: Date.now(),
+        }, null, 2),
+        "utf-8"
+      );
+
+      console.log(`[LT Reporter] Mapping written to ${path.basename(mappingFile)}`);
+    } catch (err) {
+      console.error("[LT Reporter] Failed to write mapping:", err);
+    }
+  }
+
+  onEnd(result: FullResult) {
+    if (process.env.LAMBDATEST !== "true") return;
+
+    if (this.testSessions.size === 0) {
+      console.warn("[LT Reporter] No sessions captured.");
+      return;
+    }
+
+    try {
+      const sessionDir = path.join(process.cwd(), ".lt-sessions");
+      fs.mkdirSync(sessionDir, { recursive: true });
+
+      const mappingFile = path.join(sessionDir, "session-mappings.json");
+      fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions), null, 2));
+
+      console.log(`[LT Reporter] Saved ${this.testSessions.size} session mappings.`);
+    } catch (err) {
+      console.error("[LT Reporter] Failed to save mappings:", err);
+    }
+  }
+}
+
+export default LTSessionReporter;
+```
+
+#### 4. `.env.example` (complete, verbatim)
+
+```dotenv
+# Authentication Configuration
+USER_NAME='automation1gen@nielseniq.com'
+PASS_WORD='NIQTeam@2023'
+
+# Environment Configuration
+ENV='SI'
+LOCALE='en-US'
+DATASET='Omni Agg SI 3yrs Synd'
+
+# LambdaTest Configuration (for video integration)
+LAMBDATEST=false
+LAMBDATEST_USERNAME='your_lambdatest_username'
+LT_USERNAME='your_lambdatest_username'
+LAMBDATEST_ACCESS_KEY='your_lambdatest_access_key'
+LT_ACCESS_KEY='your_lambdatest_access_key'
+LT_PROJECT='OMNI Discover'
+LT_BUILD='Discover build'
+LT_BUILD_IDENTIFIER=''
+LT_TUNNEL=true
+LT_VIDEO=true
+LT_NETWORK=false
+LT_CONSOLE=false
+LT_OBSERVABILITY=true
+LT_IDLE_TIMEOUT=300
+LT_WORKERS=1
+LT_DOWNLOAD_VIDEOS=false
+
+#Grafana Configuration
+POSTGRES_API_URL='https://postgres-api.qa.in.gfk.com/report-postgres/api/v1'
+AREA_NAME='TestArea'
+DOMAIN_NAME='TechTest'
+TEAM_NAME='DiscoverOmniTest'
+PROJECT_NAME='GTATesting'
+
+# Jira Update Configuration
+JiraUrl='https://adlm.nielseniq.com/jira'
+AuthorizationKey='REPLACE_WITH_YOUR_JIRA_AUTH_KEY'
+JiraProjectId='41103'
+# JiraRelease: exact release/fix version name from Jira (e.g., 'February-I_2026')
+JiraRelease='March-II_2026'
+# JiraCycle: exact test cycle name from Jira Zephyr (e.g., 'Omni Reports')
+JiraCycle='CLONE - Omni Reports'
+# FolderName: folder name inside cycle (leave empty '' if tests are directly in cycle)
+FolderName=''
+# UpdateJira or JiraUpdateEnabled: 'Yes'/'true' to push results, 'No'/'false' to skip
+UpdateJira='Yes'
+```
+
+#### `lambdatest.yml` (complete, verbatim — LambdaTest CLI config, root of the repo)
+
+```yaml
+# =============================
+# LambdaTest Credentials
+# =============================
+userName: ${LT_USERNAME}
+accessKey: ${LT_ACCESS_KEY}
+
+# ======================
+# LambdaTest Configuration
+# ======================
+framework: playwright
+projectName: Discover_OMNI
+buildName: ${LAMBDATEST_BUILD_NAME}
+buildIdentifier: ${DATE_TIME}
+testObservability: false
+consoleLogs: info
+lambdaTestLocal: true
+
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Ventura
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Big Sur
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
+
+# ==========================================
+# LambdaTest Tunnel
+# (For localhost, staging/private websites)
+# ==========================================
+lambdaTestTunnel: true
+
+# ===================
+# Debugging features
+# ===================
+debug: false
+networkLogs: false
+video: true
+idleTimeout: 300
+
+# ===================
+# GTA compatibility
+# ===================
+platform: Windows 11
+browserVersion: "141.0"
+```
+
+---
+
+## Allure Integration
+
+### Summary
+
+**What it does / why it's needed**
+Allure is a test-reporting tool. Playwright is configured to emit Allure result JSON files via
+the `allure-playwright` reporter plugin into an `allure-results/` folder; those raw results are
+later compiled into a browsable HTML report using the `allure-commandline` CLI (`allure generate`
+/ `allure open`). This is unconditional — unlike LambdaTest, the `allure-playwright` reporter entry
+is present in **both** the CI and local reporter arrays in `playwright.config.ts`, so Allure results
+are always produced regardless of `LAMBDATEST`.
+(Source: [playwright.config.ts](file:///c:/Users/Yogesh.Upadhyay/Downloads/disc-fe-omnishopper-ui-automation/playwright.config.ts) — `['allure-playwright', { outputFolder: 'allure-results' }]` appears in both branches of the `reporter` ternary.)
+
+**Files it touches** (confirmed by opening each one):
+1. `playwright.config.ts` — registers `['allure-playwright', { outputFolder: 'allure-results' }]` in the `reporter` array (both CI and non-CI branches).
+2. `package.json` — declares `allure-playwright` and `allure-commandline` as `devDependencies`, and defines the `allure`, `allure:generate`, `allure:open` npm scripts.
+3. `src/lib/playwright/setup/globalTeardown.ts` — post-processes the Allure result files after every run: reads every `allure-results/*-result.json`, optionally injects LambdaTest session/video info (see LambdaTest section above), and always writes `allure-results/environment.properties` with `Execution.Mode` (and LambdaTest build info when applicable, gated inside the `if (isLambdaTest)` block).
+4. `.gitignore` — ignores `allure-results/` and `allure-report/` (the raw results directory and the generated HTML report directory) so they aren't committed.
+5. No dedicated Allure config file (`allure.config.js`, `.allurerc`, `categories.json`, environment.properties **template**) was found anywhere in the repository — confirmed via a workspace-wide regex search for `categories\.json|environment\.properties|allure\.config|\.allurerc|allureConfig`. The only hit was the `environment.properties` **output path constant** (`ENV_PROPS_PATH`) inside `globalTeardown.ts`, which is a runtime-generated file, not a checked-in config file. **No `categories.json`, `.allurerc`, or `allure.config.js` exists in this repository.**
+
+**Environment variables required:** None are required specifically for Allure result generation itself — `allure-playwright` needs no credentials. The only Allure-adjacent env-derived value is the `Execution.Mode` / LambdaTest build fields written into `environment.properties` by `globalTeardown.ts`, which reuse the LambdaTest env vars documented above (only populated when `LAMBDATEST=true`).
+
+**Code-only (safe to add now) vs. credential-gated:**
+- Fully code-only / no credentials needed: the `allure-playwright` reporter registration in `playwright.config.ts`, the `allure-playwright`/`allure-commandline` devDependencies, and the three npm scripts (`allure`, `allure:generate`, `allure:open`). These work with zero external accounts.
+- The only credential-gated part of the Allure pipeline is the *enrichment* step in `globalTeardown.ts` (LambdaTest video links / session parameter injection) — but the base Allure report generation and viewing works with no credentials at all, even with `LAMBDATEST=false`.
+
+**npm packages needed** (verbatim from `package.json`):
+```
+"allure-commandline": "^2.34.0",
+"allure-playwright": "^3.2.2"
+```
+Install command: `npm install --save-dev allure-playwright@^3.2.2 allure-commandline@^2.34.0` (or simply `npm install` once both are added to `package.json`, matching the exact versions above).
+
+**Setup steps beyond code:**
+- No account/signup is required for Allure itself — `allure-commandline` bundles the CLI as an npm package, invoked via `allure generate` / `allure open` (both are `npx`-style scripts in `package.json`, no global install needed since it's a local devDependency).
+- Java Runtime: `allure-commandline` (the actual Allure CLI) requires a Java runtime under the hood to run `allure generate`/`allure open` — this is an Allure CLI system requirement, not something declared anywhere in this repo's own config files (no `.java-version` / JDK reference found in the repo), so it must be available on the machine running these scripts.
+
+**Can it be tested/verified locally without external credentials?**
+**Yes, fully.** Nothing in the Allure pipeline (`allure-playwright` reporter, `allure-results/` output, `allure generate`/`allure open` scripts) requires any external account or credential. The only credential-gated behavior that *touches* Allure output is the optional LambdaTest video-link injection inside `globalTeardown.ts`, which is skipped gracefully when `LAMBDATEST` is not `'true'` or credentials are absent.
+
+### Raw Code
+
+#### 5. Allure config files search result
+
+**None exist.** A workspace-wide search for `categories.json`, `environment.properties`, `allure.config`, `.allurerc`, and `allureConfig` inside `disc-fe-omnishopper-ui-automation` returned exactly one match: the string `ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, "environment.properties")` inside [globalTeardown.ts](file:///c:/Users/Yogesh.Upadhyay/Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/setup/globalTeardown.ts), which is a **runtime-generated output file path**, not a checked-in Allure configuration file. No `allure.config.js`, `.allurerc`, or `categories.json` file exists anywhere in the repository.
+
+The `environment.properties` file itself is not checked into the repo (it lives under the gitignored `allure-results/` directory) — its content is generated fresh on every run by this code in `globalTeardown.ts`:
+
+```typescript
+      // Step 6: environment.properties write
+      if (buildId) {
+        process.env.LT_BUILD_ID = buildId;
+      }
+
+      const ltBuildId = buildId || process.env.LT_BUILD_ID;
+
+      let buildUrl: string;
+
+      if (ltBuildId) {
+        // Use simple format: ?build=<id> (not pageType)
+        buildUrl = `https://automation.lambdatest.com/build?build=${ltBuildId}`;
+      } else {
+        // Fallback to build name search
+        buildUrl = `https://automation.lambdatest.com/build?buildName=${encodeURIComponent(actualBuildName)}`;
+      }
+
+      let envContent =
+        `LambdaTest.Build.URL=${buildUrl}\n` +
+        `LambdaTest.Build.Name=${actualBuildName}\n` +
+        (buildIdentifier ? `LambdaTest.Build.Identifier=${buildIdentifier}\n` : "") +
+        (ltBuildId ? `LambdaTest.Build.ID=${ltBuildId}\n` : "") +
+        `Execution.Mode=LambdaTest Cloud\n`;
+
+      // #cycode_sast_ignore_here Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
+      fs.writeFileSync(ENV_PROPS_PATH, envContent, "utf-8");
+```
+
+> Note: this snippet only executes inside the `if (isLambdaTest)` block of `globalTeardown.ts`.
+> When `LAMBDATEST` is not `'true'`, this repo's code (as read) does **not** write an
+> `environment.properties` file at all — no unconditional/default `environment.properties`
+> writer exists outside the LambdaTest branch in `globalTeardown.ts`.
+
+#### 6. `package.json` — exact Allure/LambdaTest-related dependency lines (verbatim, from the `devDependencies` block)
+
+```json
+    "@gfk/gta": "latest",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.10.5",
+    "allure-commandline": "^2.34.0",
+    "allure-playwright": "^3.2.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "typescript": "^5.7.3"
+```
+(No `@lambdatest/*` package exists in this file — confirmed by reading the full `package.json`, reproduced in full below for completeness.)
+
+Full `package.json` (complete, verbatim):
+```json
 {
-  name: 'Microsoft Edge',
-  use: { ...devices['Desktop Edge'], channel: 'msedge' },
-},
+  "name": "disc-fe-omnishopper-ui-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "@gfk/gta": "latest",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.10.5",
+    "allure-commandline": "^2.34.0",
+    "allure-playwright": "^3.2.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "test:regression": "npx playwright test --headed",
+    "test:tag": "npx playwright test --grep '@snapshot' --headed --reporter=allure-playwright",
+    "test:regression:ui": "npx playwright test omni-regression-suite.spec.ts --ui",
+    "test:singlereport": "npx playwright test  single-report-suite.spec.ts --headed --reporter=allure-playwright",
+    "test:singlereport:ui": "npx playwright test single-report-suite.spec.ts --ui",
+    "test:singlereportdebug": "npx playwright test single-report-suite.spec.ts --headed --debug",
+    "test:lambdatest": "cross-env LAMBDATEST=true npx playwright test",
+    "test:codegen": "npx playwright codegen",
+    "report": "playwright show-report playwright-report",
+    "allure": "allure generate ./allure-results --clean && allure open ./allure-report",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:open": "allure open allure-report",
+    "postinstall": "npx playwright install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niq-enterprise/disc-fe-omnishopper-ui-automation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/niq-enterprise/disc-fe-omnishopper-ui-automation/issues"
+  },
+  "homepage": "https://github.com/niq-enterprise/disc-fe-omnishopper-ui-automation#readme",
+  "dependencies": {
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1"
+  }
+}
 ```
 
-### Omni Shopper Edge status
+#### 7. `package.json` — exact Allure-related npm scripts (verbatim)
 
-Their config does **not** have an active Edge (or Firefox/WebKit/mobile) project. The exact block:
-
-```typescript
-/* Test against branded browsers. */
-// {
-//   name: 'Microsoft Edge',
-//   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-// },
-// {
-//   name: 'Google Chrome',
-//   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-// },
+```json
+    "allure": "allure generate ./allure-results --clean && allure open ./allure-report",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:open": "allure open allure-report",
+```
+There is also a Playwright test-run script that explicitly requests the Allure reporter via CLI flag rather than relying only on `playwright.config.ts`:
+```json
+    "test:tag": "npx playwright test --grep '@snapshot' --headed --reporter=allure-playwright",
+    "test:singlereport": "npx playwright test  single-report-suite.spec.ts --headed --reporter=allure-playwright",
 ```
 
-This — along with the Firefox, WebKit, "Mobile Chrome", and "Mobile Safari" entries — is entirely commented out in their real `projects` array (the standalone `webkit` block above it is also commented out: `// use: { ...devices['Desktop Safari'] },`). Only the single active `chromium` project (with `launchOptions`/`viewport: null`) and the conditional `lambdatest-chromium` project actually run. None of these commented sections are active anywhere in their config.
+#### 8. `.gitignore` — exact Allure / test-artifact lines (verbatim, with surrounding context)
+
+Full `.gitignore` (complete, verbatim — it is short, reproduced in full for context):
+```gitignore
+.env
+.env.production
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+storage/
+# Allure artifacts
+allure-results/
+allure-report/
+log/
+# LambdaTest session files (cross-process communication)
+.lt-sessions/
+```
+The Allure-specific lines are exactly:
+```gitignore
+# Allure artifacts
+allure-results/
+allure-report/
+```
+(`test-results/` and `playwright-report/` above them are general Playwright test-artifact ignores, not Allure-specific, but are included since the task asked for "test artifacts" lines too.)
+
+#### 9. Node.js version requirement
+
+**No `engines` field exists in `package.json`** — confirmed by reading the full file above (no `"engines"` key present) and by a targeted regex search for `engines|node` in `package.json`, which matched only the unrelated `"@types/node": "^22.10.5"` devDependency line.
+**No `.nvmrc` file exists** in the repository root — confirmed via a direct file-existence search (`.nvmrc` glob returned "No files found").
+**Conclusion: there is no explicit, checked-in Node.js version requirement in this repository for either LambdaTest or Allure tooling.** The only version-relevant signal found is `@types/node: ^22.10.5`, which is a TypeScript typings package, not an enforced runtime requirement.
 
 ---
 
-## Summary for PR response
+## Gap Analysis: Our Project vs Omni Shopper
 
-1. **"name and device not matching"**: Not a real bug — `name` is just a label with no functional link to `devices()` keys. `e2e/playwright.config.ts` already correctly spreads `devices['Desktop Chrome']` under a project named `chromium`, which is the standard convention.
-2. **"can we add Microsoft Edge or any other browser?"**: Yes — add a project entry using `devices['Desktop Edge']` + `channel: 'msedge'` (shown above). Omni Shopper's repo has the same Edge/Firefox/WebKit snippets but all commented out/inactive — they are not currently running multi-browser either.
+Scope compared: `disc-fe-omni-survey-mod/e2e` (this project) vs. the files documented in Part B
+above (`disc-fe-omnishopper-ui-automation`). Confirmed via direct file/folder searches in this
+workspace (`playwright.config.ts`, `base-page-factory*`, `.env*` glob searches, and reading
+`package.json`/`.gitignore`) immediately before writing this section.
+
+### `e2e/` folder contents (this project) — as it exists today
+`e2e/` contains only: `.env`, `fixtures/` (empty), `log/` (empty dir), `node_modules/`,
+`playwright-report/`, `storage/`, `test-results/`. There is **no** `playwright.config.ts`
+anywhere in this repository (confirmed via a recursive glob search for `**/playwright.config.ts`
+— zero results) and **no** `base-page-factory*` file anywhere (confirmed via a recursive glob
+search — zero results).
+
+### 1. `playwright.config.ts`
+- **Missing entirely.** No file of this name exists anywhere in `disc-fe-omni-survey-mod`
+  (confirmed by a workspace-wide glob search). There is therefore no `testDir`, no `reporter`
+  array, no `globalSetup`/`globalTeardown` wiring, no `isLambdaTest` branch, and no
+  `lambdatest-chromium` project — none of the scaffolding that OmniShopper's config provides
+  exists here at all.
+- The `e2e/playwright-report/` and `e2e/test-results/` folders already exist in this project even
+  though no `playwright.config.ts` produces them — implying some ad-hoc/manual Playwright run has
+  happened previously, but there is no committed config driving it.
+
+### 2. `base-page-factory.ts`
+- **Missing entirely.** No file matching `base-page-factory*` exists anywhere in this repo
+  (confirmed via glob search). There is consequently no `BasePageFactory.createBasePage()`
+  abstraction, no `isLambdaTest` branch, no `chromium.connect(wsEndpoint)` call, and no
+  `.lt-sessions/` session-registration logic (`sessionRegistry`, `workerSessionMap`,
+  `currentLTSession`) anywhere in this project.
+- There is also no equivalent of OmniShopper's `global-setup.ts` (which depends on
+  `BasePageFactory`) or `lt-session-reporter.ts`/`globalTeardown.ts` (which depend on the
+  `.lt-sessions/` files written by `base-page-factory.ts`) — this entire LambdaTest
+  session-tracking chain is absent.
+
+### 3. `package.json` (repo root, `disc-fe-omni-survey-mod`)
+- **No `@playwright/test` dependency** in either `dependencies` or `devDependencies` (confirmed
+  by reading the full file above and a targeted regex search for `playwright|allure|lambdatest`,
+  which returned zero matches).
+- **No `allure-playwright` dependency** and **no `allure-commandline` dependency** — both are
+  present in OmniShopper's `devDependencies` (`^3.2.2` and `^2.34.0` respectively) but absent here.
+- **No `cross-env` dependency** — OmniShopper uses this for its `test:lambdatest` script
+  (`cross-env LAMBDATEST=true npx playwright test`); this project has no equivalent script or
+  dependency.
+- **No Allure npm scripts** (`allure`, `allure:generate`, `allure:open`) exist in this project's
+  `package.json` `scripts` block — the entire scripts block here (`ng`, `start`, `build`,
+  `build:lib`, `watch`, `test:lib`, `test:watch`, `test:ui`, `test:coverage`, `lint`, `lint:lib`,
+  `registry`) is Angular/Vitest-only; there is no `test:lambdatest`, `test:headed`, `test:debug`,
+  `test:codegen`, or `report` script analog either.
+- This project's `package.json` **does** declare `"packageManager": "npm@10.9.4"` but, like
+  OmniShopper, has **no `engines` field** — same gap/non-gap as OmniShopper (neither project
+  pins a Node engine version in `package.json`).
+
+### 4. `.env` / `.env.example`
+- This project has an `e2e/.env` file (not `.env.example`) containing only:
+  `BASE_URL`, `USER_NAME`, `PASS_WORD`, `HEADLESS` — no `.env.example` file exists anywhere in
+  this repository (confirmed via glob search for `.env*` in the repo root, which returned zero
+  results for anything other than the single `e2e/.env`).
+- **None of OmniShopper's LambdaTest variables exist**: no `LAMBDATEST`, `LAMBDATEST_USERNAME`,
+  `LT_USERNAME`, `LAMBDATEST_ACCESS_KEY`, `LT_ACCESS_KEY`, `LT_PROJECT`, `LT_BUILD`,
+  `LT_BUILD_IDENTIFIER`, `LT_TUNNEL`, `LT_VIDEO`, `LT_NETWORK`, `LT_CONSOLE`, `LT_OBSERVABILITY`,
+  `LT_IDLE_TIMEOUT`, `LT_WORKERS`, or `LT_DOWNLOAD_VIDEOS` are present in `e2e/.env`.
+- No Grafana (`POSTGRES_API_URL`, `AREA_NAME`, `DOMAIN_NAME`, `TEAM_NAME`, `PROJECT_NAME`) or
+  Jira-sync (`JiraUrl`, `AuthorizationKey`, `JiraProjectId`, `JiraRelease`, `JiraCycle`,
+  `FolderName`, `UpdateJira`) variables exist either — this project's `.env` is minimal by
+  comparison (4 keys vs. OmniShopper's ~28).
+
+### 5. `lambdatest.yml`
+- **Missing entirely.** No file of this name exists anywhere in `disc-fe-omni-survey-mod`.
+
+### 6. Allure-specific reporter wiring / `globalTeardown.ts` equivalent
+- **Missing entirely.** No `globalTeardown.ts`, no `environment.properties` writer, and no
+  Allure-results post-processing step of any kind exists in this project.
+
+### 7. `.gitignore` (repo root)
+- **No Allure-related ignore lines** (`allure-results/`, `allure-report/`) exist in this
+  project's `.gitignore` (confirmed by reading the full file above — it only covers `/dist`,
+  `/tmp`, `/out-tsc`, `/bazel-out`, `/node_modules`, IDE files, `.angular/cache`, `.sass-cache/`,
+  `/connect.lock`, `/coverage`, `/typings`, `__screenshots__/`, OS files, and `.nx/cache`
+  /`.nx/workspace-data`).
+- **No `.lt-sessions/` ignore line** exists either.
+- **No `test-results/` / `playwright-report/` ignore lines** exist in the root `.gitignore` —
+  meaning if `e2e/test-results/` and `e2e/playwright-report/` (which already exist on disk in
+  this project) were ever populated by a real Playwright run, they would not currently be
+  git-ignored at the root level (no `e2e/.gitignore` was found either — only a single root-level
+  `.gitignore` exists in this repo, confirmed via glob search).
+
+### 8. Node.js version requirement
+- Same as OmniShopper: no `engines` field in `package.json` and no `.nvmrc` file in this project
+  (confirmed by the same search approach applied to this repo). No gap here — both repos are
+  equally silent on an explicit Node version pin.
+
+### Summary of what's needed to replicate the integration here (no code proposed, just the list)
+For **LambdaTest**: a new `playwright.config.ts`, a new `base-page-factory.ts` (or equivalent),
+`configurationDetails.ts`'s `getLambdaTestBuildName` helper (or equivalent), a `global-setup.ts`,
+an `lt-session-reporter.ts`, a `globalTeardown.ts`, a `lambdatest.yml`, the `@playwright/test`,
+`cross-env` devDependencies, a `test:lambdatest` script, and all `LAMBDATEST`/`LT_*` env vars
+added to `e2e/.env` (and a new `.env.example`).
+
+For **Allure**: the `allure-playwright` and `allure-commandline` devDependencies, the
+`allure-playwright` reporter entry inside a (currently nonexistent) `playwright.config.ts`, the
+`allure`/`allure:generate`/`allure:open` npm scripts, and `allure-results/`/`allure-report/`
+entries in `.gitignore`.
