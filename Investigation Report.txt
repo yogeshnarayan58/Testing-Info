@@ -1,101 +1,240 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/lambdatest-allure-setup)
-$ git diff HEAD -- e2e/playwright.config.ts
-warning: in the working copy of 'e2e/playwright.config.ts', LF will be replaced by CRLF the next time Git touches it
-diff --git a/e2e/playwright.config.ts b/e2e/playwright.config.ts
-index 6626175..57e6765 100644
---- a/e2e/playwright.config.ts
-+++ b/e2e/playwright.config.ts
-@@ -8,37 +8,38 @@ const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reporte
- const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
- 
- export default defineConfig({
--  testDir: './tests',
--  globalSetup: require.resolve('./helpers/global-setup.ts:
-warning: in the working copy of 'e2e/playwright.config.ts', LF will be replaced by CRLF the next time Git touches it
-diff --git a/e2e/playwright.config.ts b/e2e/playwright.config.ts
-index 6626175..57e6765 100644
---- a/e2e/playwright.config.ts
-+++ b/e2e/playwright.config.ts
-@@ -8,37 +8,38 @@ const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reporte
- const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
- 
- export default defineConfig({
--  testDir: './tests',
--  globalSetup: require.resolve('./helpers/global-setup.ts'),
-:
-warning: in the working copy of 'e2e/playwright.config.ts', LF will be replaced by CRLF the next time Git touches it
-diff --git a/e2e/playwright.config.ts b/e2e/playwright.config.ts
-index 6626175..57e6765 100644
---- a/e2e/playwright.config.ts
-+++ b/e2e/playwright.config.ts
-@@ -8,37 +8,38 @@ const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reporte
- const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
- 
- export default defineConfig({
--  testDir: './tests',
--  globalSetup: require.resolve('./helpers/global-setup.ts'),
--  outputDir: './test-results',
--  timeout: 300 * 1000,
-+  testDir: './tests',
-+  globalSetup: require.resolve('./helpers/global-setup.ts'),
-+  outputDir: './test-results',
-+  timeout: 300 * 1000,
- 
--  use: {
--    baseURL: normalizedBaseURL,
--    storageState: 'storage/auth.json',
--    trace: 'retain-on-failure',
--    screenshot: 'only-on-failure',
--    video: 'retain-on-failure',
--    headless: process.env.HEADLESS !== 'false',
--  },
-+  use: {
-+    baseURL: normalizedBaseURL,
-+    storageState: 'storage/auth.json',
-+    trace: 'retain-on-failure',
-+    screenshot: 'only-on-failure',
-+    video: 'retain-on-failure',
-+    headless: process.env.HEADLESS !== 'false',
-+  },
- 
--  fullyParallel: false,
--  retries: process.env.CI ? 2 : 0,
--  workers: process.env.CI ? 1 : 2,
-+  fullyParallel: false,
-+  retries: process.env.CI ? 2 : 0,
-+  workers: process.env.CI ? 1 : 2,
- 
--  reporter: [
--    ['list'],
--    ['html', { outputFolder: 'playwright-report', open: 'neve
-r' }],
--  ],
-+  reporter: [
-+    ['list'],
-+    ['html', { outputFolder: 'playwright-report', open: 'neve
-r' }],
-+    ['allure-playwright', { outputFolder: 'allure-results' }]
-,
-+  ],
- 
--  projects: [
--    {
--      name: 'chromium',
--      use: { ...devices['Desktop Chrome'], channel: 'chrome' 
-},
-+  projects: [
-+    {
-+      name: 'chromium',
-+      use: { ...devices['Desktop Chrome'], channel: 'chrome' 
-},
-     },
-     {
-       name: 'Microsoft Edge',
-       use: { ...devices['Desktop Edge'], channel: 'msedge' },
--    },
--  ],
-+    },
-+  ],
- });
-\ No newline at end of file
-(END)
+# LambdaTest Integration Implementation Summary
+
+This document records the LambdaTest cloud integration added to
+`disc-fe-omni-survey-mod/e2e`, matching Omni Shopper's structure. The
+integration is **fully inert by default** (`LAMBDATEST` unset/`false`) —
+existing `testDir`, `globalSetup`, tests, page objects, test data, and the
+Allure reporter entry all continue to work exactly as before.
+
+## Step 0 — Current-State Findings (before this task)
+
+- **`e2e/utils/base-page-factory.ts`**: was a simplified, local-only factory
+  with **no** LambdaTest branching, session tracking, or cloud connection
+  logic — it only called `BasePage.initializer()` for a local browser.
+- **`e2e/package.json`**: scripts were `test`, `allure`, `allure:generate`,
+  `allure:open`. devDependencies: `@playwright/test ^1.61.1`,
+  `@types/node ^26.1.1`, `allure-commandline ^2.34.0`,
+  `allure-playwright ^3.2.2`, `dotenv ^17.4.2`, `typescript ~5.9.3`.
+  dependencies: `@gfk/gta ^2.0.67`.
+- **`e2e/.env.example`**: **already existed** on this branch (this was worth
+  double-checking rather than assuming) — it contained only `BASE_URL`,
+  `USER_NAME`, `PASS_WORD`. No `HEADLESS` or LambdaTest vars were documented.
+- **`e2e/.env`**: already existed with `BASE_URL`, `USER_NAME`, `PASS_WORD`,
+  `HEADLESS=false`.
+
+## Files Created
+
+### `e2e/utils/configurationDetails.ts`
+New file containing only `getLambdaTestBuildName(ltBuild, buildIdentifier)`,
+copied from Omni Shopper's version. Their `getJiraFlagvalue` /
+`shouldUpdateJira` / `getSuiteName` helpers were **intentionally not copied**
+— this repo has no Jira-sync feature, and the task scope only asked for the
+LambdaTest build-name helper.
+
+### `e2e/playwright/setup/globalTeardown.ts`
+New file with the LambdaTest-only teardown logic:
+- Reads `.lt-sessions/` test→session mapping files.
+- Injects an `LT_SESSION` parameter into matching Allure `*-result.json` files.
+- Calls the LambdaTest Automation API to fetch session info (video link,
+  session id) and PATCH each session's pass/fail status.
+- Writes `allure-results/environment.properties` with the LambdaTest build URL.
+- Is a complete no-op (`return` immediately) when `LAMBDATEST !== 'true'`.
+
+Omni Shopper's Jira-update block at the bottom of their `globalTeardown.ts`
+(`getJiraFlagvalue`, `shouldUpdateJira`, `updateJira()`) was **intentionally
+omitted** — there is no Jira integration anywhere else in this repo, so
+including it would introduce an unused/broken dependency (`jiraUpdateManager`
+doesn't exist here).
+
+### `e2e/playwright/reporters/lt-session-reporter.ts`
+New file, `LTSessionReporter` class copied structurally as-is from Omni
+Shopper (no project-specific import paths needed — only `@playwright/test/reporter`,
+`fs`, `path`). No-ops entirely when `LAMBDATEST !== 'true'`.
+
+## Files Modified
+
+### `e2e/playwright.config.ts`
+- Added the `isLambdaTest` env-var reading block at the top (`ltUser`,
+  `ltAccessKey`, `ltProject`, `ltBuild`, `ltBuildIdentifier`, `ltVideo`,
+  `ltNetwork`, `ltConsole`, `ltIdleTimeout`, `ltWorkers`).
+- Added the credential-check `throw` when `isLambdaTest` is true but
+  `ltUser`/`ltAccessKey` are missing.
+- Added `globalTeardown: require.resolve('./playwright/setup/globalTeardown.ts')`
+  alongside the existing `globalSetup`.
+- `workers` now uses `ltWorkers` when `isLambdaTest`, otherwise unchanged
+  (`process.env.CI ? 1 : 2`).
+- `reporter` array: kept `['list']`, `['html', ...]`, `['allure-playwright', ...]`
+  exactly as before, and appended
+  `['./playwright/reporters/lt-session-reporter.ts']` only when `isLambdaTest`.
+- `projects`: now `isLambdaTest ? [lambdatest-chromium project] : [chromium, Microsoft Edge]`
+  — the default (non-LambdaTest) path is byte-for-byte the same `chromium` +
+  `Microsoft Edge` projects as before.
+- `testDir`, `globalSetup`, `outputDir`, `timeout`, `use` block, `fullyParallel`,
+  `retries` were **not** touched.
+
+### `e2e/utils/base-page-factory.ts`
+- Added an `isLambdaTest` branch at the top of `createBasePage()`: connects via
+  `chromium.connect(wsEndpoint)` with `LT:Options` capabilities, writes session
+  registry data to `.lt-sessions/` (`sessionRegistry` array, `workerSessionMap`,
+  `currentLTSession`, per-test/worker JSON files), and injects the resulting
+  browser/context/page into `BasePage`'s static fields.
+- The existing **local/non-LambdaTest path is unchanged** — same
+  `BasePage.initializer(browserName, browserOptions, contextOptions)` call,
+  same `storage/auth.json` read-only reuse logic, same headless resolution.
+- Fixed one incidental issue while writing this file: a stray non-breaking-space
+  character got embedded next to a `⚠` emoji in a `console.warn` call; replaced
+  the emoji with plain text (`'Warning: testId not available...'`) to avoid any
+  encoding ambiguity going forward.
+
+### `e2e/package.json`
+- Added `"cross-env": "^7.0.3"` to `devDependencies` (matches Omni Shopper's
+  version).
+- Added `"test:lambdatest": "cross-env LAMBDATEST=true npx playwright test"`
+  script. No other existing scripts were modified.
+
+### `e2e/.env.example`
+Appended (existing `BASE_URL`/`USER_NAME`/`PASS_WORD` lines kept as-is):
+```
+HEADLESS=false
+
+# LambdaTest Configuration (inert until LAMBDATEST=true and real credentials are provided)
+LAMBDATEST=false
+LAMBDATEST_USERNAME=your_lambdatest_username
+LT_USERNAME=your_lambdatest_username
+LAMBDATEST_ACCESS_KEY=your_lambdatest_access_key
+LT_ACCESS_KEY=your_lambdatest_access_key
+LT_PROJECT=OMNI Discover
+LT_BUILD=Discover build
+LT_BUILD_IDENTIFIER=
+LT_TUNNEL=true
+LT_VIDEO=true
+LT_NETWORK=false
+LT_CONSOLE=false
+LT_OBSERVABILITY=true
+LT_IDLE_TIMEOUT=300
+LT_WORKERS=1
+LT_DOWNLOAD_VIDEOS=false
+```
+`HEADLESS` was added here too since it's used by both `base-page-factory.ts`
+and the real `.env` but wasn't documented in `.env.example` before. No real
+credentials were ever written — only placeholder values.
+
+### `e2e/.env`
+Added exactly one line: `LAMBDATEST=false`. No placeholder credential lines
+were added to the real `.env` file (only `.env.example` carries placeholders).
+
+## `npm install` Output (run inside `e2e/`)
+
+```
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@gfk/gta@2.0.67',
+npm warn EBADENGINE   required: { node: '24.11.1', npm: '11.6.2' },
+npm warn EBADENGINE   current: { node: 'v24.19.0', npm: '11.17.0' }
+npm warn EBADENGINE }
+
+added 1 package, and audited 373 packages in 4s
+
+41 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn allow-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn allow-scripts   oracledb@6.1.0 (install: node package/install.js)
+```
+
+Only `cross-env` was newly added (1 package). The `EBADENGINE`/`oracledb`
+notices are pre-existing and unrelated to this change.
+
+## `npx tsc --noEmit` Output (run inside `e2e/`)
+
+```
+(no output — clean exit)
+```
+
+Clean compile across the whole project, including the new LambdaTest code
+paths (`playwright.config.ts`, `base-page-factory.ts`, `configurationDetails.ts`,
+`globalTeardown.ts`, `lt-session-reporter.ts`), with `LAMBDATEST` unset.
+
+## `npx playwright test` Output (run inside `e2e/`, `LAMBDATEST` unset/false)
+
+Console confirmed the inert default path was taken:
+```
+isLambdaTest = false
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+...
+```
+
+Final result, from `test-results/.last-run.json`:
+```json
+{
+  "status": "passed",
+  "failedTests": []
+}
+```
+
+All existing tests passed. Additionally verified `.lt-sessions/` was **not**
+created (`Test-Path .lt-sessions` → `False`), confirming the LambdaTest code
+path had zero side effects during this normal run.
+
+> Note: the first `npx playwright test` invocation was a genuinely long-running
+> foreground process (real login + live-site navigation across the full suite),
+> and a couple of interim terminal-status-check commands were sent while it was
+> still active, which produced confusing interleaved output. No test code was
+> affected — the run was simply re-verified afterward via
+> `test-results/.last-run.json`, which is the authoritative pass/fail record.
+
+## READY, PENDING CREDENTIALS
+
+The LambdaTest integration is fully wired but **inert** until real credentials
+are supplied. To enable it:
+
+1. Obtain a LambdaTest username and access key from the team/LambdaTest account.
+2. Edit `e2e/.env` (NOT `.env.example`) and set:
+   ```
+   LAMBDATEST=true
+   LAMBDATEST_USERNAME=<real username>
+   LT_USERNAME=<real username>
+   LAMBDATEST_ACCESS_KEY=<real access key>
+   LT_ACCESS_KEY=<real access key>
+   ```
+   (Only `LAMBDATEST_USERNAME`/`LT_USERNAME` and
+   `LAMBDATEST_ACCESS_KEY`/`LT_ACCESS_KEY` are required — the other `LT_*` vars
+   already have sensible defaults in `playwright.config.ts` /
+   `base-page-factory.ts` and only need overriding if desired.)
+3. Run `npm run test:lambdatest` (equivalent to
+   `cross-env LAMBDATEST=true npx playwright test`) to verify the LambdaTest
+   cloud connection end-to-end.
+
+This step was **not** performed as part of this task per explicit instructions
+— no credentials exist yet, and setting `LAMBDATEST=true` without them would
+only hit the intentional credential-check `throw` in `playwright.config.ts`.
+
+## Uncertain / Intentionally Skipped
+
+- **Jira update logic** in Omni Shopper's `globalTeardown.ts` /
+  `configurationDetails.ts` was not ported — this repo has no Jira-sync
+  feature, and the task scope was limited to the LambdaTest teardown pieces
+  (session mapping, Allure injection, LambdaTest API calls,
+  `environment.properties`).
+- **Grafana reporter / CI-specific reporter branching** present in Omni
+  Shopper's `playwright.config.ts` (the `process.env.CI ? [...] : [...]`
+  reporter split with a JSON reporter and grafana-reporter) was not carried
+  over — out of scope for this task and not part of the LambdaTest feature
+  itself; our `reporter` array only gained the conditional
+  `lt-session-reporter` entry as requested.
+- **`RUN_TEST_TIMEOUT` constant**: Omni Shopper's config used
+  `timeout: isLambdaTest ? RUN_TEST_TIMEOUT : MAX_TEST_TIMEOUT`, but that
+  constant doesn't exist in our `constants/timeout-constants.ts` and our
+  config doesn't currently source its top-level `timeout` from that file at
+  all (it's a plain `300 * 1000`). Since adjusting the test `timeout` wasn't
+  explicitly requested for this task, `timeout: 300 * 1000` was left
+  unchanged to avoid an out-of-scope behavior change.
+- **`globalSetup`, `testDir`, existing test files, page objects, test data,
+  and the Allure reporter entry** were not touched at all beyond what's
+  described above.
+- **LambdaTest cloud connection was not tested** — no credentials exist yet;
+  this is expected and explicitly out of scope per the task instructions.
