@@ -1,328 +1,93 @@
-import { BasePage } from '@gfk/gta';
-import { chromium } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
-import { WebActions } from '@gfk/gta/dist/core/web/webActions';
-import { getLambdaTestBuildName } from './configurationDetails';
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ npm run test:lambdatest
 
-/**
- * BasePageFactory: wires up a Playwright browser for tests, either
- * locally (default) or against LambdaTest cloud (when LAMBDATEST=true).
- *
- * The local/non-LambdaTest path below is unchanged from before and remains
- * the default: it only ever wires up a local browser via GTA's
- * BasePage.initializer(). storageState is READ-ONLY here: if
- * storage/auth.json exists, it is passed into contextOptions so the browser
- * reuses that session. Writing/saving storageState remains the
- * responsibility of the login page object (via webActions.getStorageState()),
- * not this factory.
- *
- * The LambdaTest path is INERT until LAMBDATEST=true and real credentials
- * (SM_LAMBDATEST_USERNAME/SM_LT_USERNAME + SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY) are
- * provided - see e2e/.env.example.
- */
+> e2e@1.0.0 test:lambdatest
+> cross-env LAMBDATEST=true npx playwright test
 
-// Store session names with timestamp as key (for reporter lookup)
-export const sessionRegistry: Array<{ timestamp: number; sessionName: string; title?: string }> = [];
+◇ injected env (19) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = true
 
-// Map to store session per worker - each worker runs tests sequentially
-export const workerSessionMap = new Map<number, string>();
+🌐 LambdaTest Cloud Execution Enabled
+   User: SurveyMod
+   Project: OMNI SurveyMod
+   Workers: 1
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Connecting to LambdaTest cloud...
+Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+Call log:
+  - <ws connecting> wss://cdp.lambdatest.com/playwright
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
-// Global current session tracker - stores the last created session
-export let currentLTSession: string | null = null;
-
-export class BasePageFactory {
-  static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
-    const isLambdaTest = process.env.LAMBDATEST === 'true';
-
-    let storageState: string | undefined;
-    const authPath = path.resolve(process.cwd(), 'storage/auth.json');
-
-    if (fs.existsSync(authPath)) {
-      storageState = authPath;
-      console.log('Auth state loaded from storage/auth.json');
-    } else {
-      console.log('No auth state found - login required');
-    }
-
-    if (isLambdaTest) {
-      console.log('Connecting to LambdaTest cloud...');
-
-      const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
-      const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
-      const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
-      const ltBuildBase = process.env.SM_LT_BUILD || 'Discover build';
-      const ltBuildIdentifier =
-        process.env.SM_LT_BUILD_IDENTIFIER ||
-        process.env.BUILD_NUMBER ||
-        process.env.GITHUB_RUN_NUMBER ||
-        undefined;
-      const ltBuild = getLambdaTestBuildName(ltBuildBase, ltBuildIdentifier);
-
-      const ltVideo = process.env.SM_LT_VIDEO === 'false' ? false : true;
-      const ltNetwork = process.env.SM_LT_NETWORK === 'true';
-      const ltConsole = process.env.SM_LT_CONSOLE === 'true';
-
-      const timestamp = Date.now();
-      const sessionName = `Test-${timestamp}`;
-
-      const ltOptions: any = {
-        platform: 'Windows 11',
-        project: ltProject,
-        build: ltBuild,
-        name: sessionName,
-        user: ltUser,
-        accessKey: ltAccessKey,
-        network: ltNetwork,
-        video: ltVideo,
-        console: ltConsole,
-      };
-
-      if (forceHeadless !== undefined) {
-        ltOptions.headless = forceHeadless;
-      }
-
-      const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
-        JSON.stringify({
-          browserName: 'pw-chromium',
-          browserVersion: 'latest',
-          'LT:Options': ltOptions,
-        })
-      )}`;
-
-      const browser = await chromium.connect(wsEndpoint);
-      console.log(`Connected to LambdaTest (Session: ${sessionName})`);
-
-      const contextOptions: any = {
-        acceptDownloads: true,
-        viewport: { width: 1920, height: 1080 },
-      };
-
-      if (storageState) {
-        contextOptions.storageState = storageState;
-      }
-
-      const context = await browser.newContext(contextOptions);
-      const page = await context.newPage();
-
-      // Store session info for reporter/global-teardown
-      try {
-        const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-        const testId =
-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-
-        const sessionDir = path.join(process.cwd(), '.lt-sessions');
-        fs.mkdirSync(sessionDir, { recursive: true });
-
-        // store in memory
-        (page as any).__LT_SESSION_NAME__ = sessionName;
-        sessionRegistry.push({ timestamp, sessionName });
-        workerSessionMap.set(workerIndex, sessionName);
-        currentLTSession = sessionName;
-
-        // append sessions.jsonl (fallback)
-        fs.appendFileSync(
-          path.join(sessionDir, 'sessions.jsonl'),
-          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
-          'utf-8'
-        );
-
-        // PRIMARY (parallel safe): write per-test session file
-        if (testId) {
-          fs.writeFileSync(
-            path.join(sessionDir, `test-${testId}.json`),
-            JSON.stringify({ sessionName, timestamp, testId }),
-            'utf-8'
-          );
-          console.log(`[LT Session] ✓ test-${testId}.json written`);
-        } else {
-          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
-        }
-
-        // optional worker file
-        fs.writeFileSync(
-          path.join(sessionDir, `worker-${workerIndex}.json`),
-          JSON.stringify({ sessionName, timestamp }),
-          'utf-8'
-        );
-
-        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
-      } catch (err) {
-        console.warn('[LT Session] Could not store session info:', err);
-      }
-
-      // Inject into BasePage
-      (BasePage as any).browser = browser;
-      (BasePage as any).context = context;
-      (BasePage as any).page = page;
-      (BasePage as any).webActions = new WebActions(page, context);
-
-      return new (BasePage as any)();
-    }
-
-    const browserName = process.env.BROWSER_NAME || 'chromium';
-
-    const envHeadless = process.env.HEADLESS !== 'false';
-    const headless = forceHeadless ?? envHeadless;
-    const browserOptions = { headless };
-
-    const contextOptions = {
-      acceptDownloads: true,
-     // viewport: null,
-      storageState,
-    };
-
-    return await BasePage.initializer(browserName, browserOptions, contextOptions);
-  }
-}
--------------------
-BASE_URL=https://si.connect.nielseniq.io/reportexperience-dev/
-USER_NAME=USER_NAME
-PASS_WORD=PASS_WORD
-HEADLESS=false
-
-# LambdaTest Configuration (inert until LAMBDATEST=true and real credentials are provided)
-LAMBDATEST=false
-SM_LAMBDATEST_USERNAME='SurveyMod'
-SM_LT_USERNAME='SurveyMod'
-SM_LAMBDATEST_ACCESS_KEY=''
-SM_LT_ACCESS_KEY=''
-SM_LT_PROJECT='OMNI SurveyMod'
-SM_LT_BUILD='Survey Mod Build'
-SM_LT_BUILD_IDENTIFIER=''
-SM_LT_TUNNEL=true
-SM_LT_VIDEO=true
-SM_LT_NETWORK=false
-SM_LT_CONSOLE=false
-SM_LT_OBSERVABILITY=true
-SM_LT_IDLE_TIMEOUT=300
-SM_LT_WORKERS=1
-SM_LT_DOWNLOAD_VIDEOS=false
---------------------
-import { defineConfig, devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { getLambdaTestBuildName } from './utils/configurationDetails';
-
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reportexperience-dev';
-const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-
-const isLambdaTest = process.env.LAMBDATEST === 'true';
-// LambdaTest environment variables (all inert/unused unless LAMBDATEST=true)
-const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
-const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
-const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
-const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
-const ltBuildIdentifier =
-  process.env.SM_LT_BUILD_IDENTIFIER ||
-  process.env.BUILD_NUMBER ||
-  process.env.GITHUB_RUN_NUMBER ||
-  undefined;
-
-const ltVideo = process.env.SM_LT_VIDEO ? process.env.SM_LT_VIDEO === 'true' : true;
-const ltNetwork = process.env.SM_LT_NETWORK ? process.env.SM_LT_NETWORK === 'true' : false;
-const ltConsole = process.env.SM_LT_CONSOLE ? process.env.SM_LT_CONSOLE === 'true' : false;
-
-const ltIdleTimeout = process.env.SM_LT_IDLE_TIMEOUT ? Number(process.env.SM_LT_IDLE_TIMEOUT) : 300;
-
-const ltWorkers = process.env.SM_LT_WORKERS ? Number(process.env.SM_LT_WORKERS) : 1;
-
-console.log('isLambdaTest =', isLambdaTest);
-
-if (isLambdaTest) {
-  console.log('\n🌐 LambdaTest Cloud Execution Enabled');
-  console.log('   User:', ltUser);
-  console.log('   Project:', ltProject);
-  console.log('   Workers:', ltWorkers);
-
-  if (!ltUser || !ltAccessKey) {
-    throw new Error(
-      'LambdaTest credentials missing! Please set SM_LAMBDATEST_USERNAME/SM_LT_USERNAME and SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY'
-    );
-  }
-}
-
-export default defineConfig({
-  testDir: './tests',
-  globalSetup: require.resolve('./helpers/global-setup.ts'),
-  globalTeardown: require.resolve('./playwright/setup/globalTeardown.ts'),
-  outputDir: './test-results',
-  timeout: 300 * 1000,
-
-  use: {
-    baseURL: normalizedBaseURL,
-    storageState: 'storage/auth.json',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    headless: process.env.HEADLESS !== 'false',
-  },
-
-  fullyParallel: false,
-  retries: process.env.CI ? 2 : 0,
-  // LambdaTest runs should be minimal workers to avoid session conflicts
-  workers: isLambdaTest ? ltWorkers : process.env.CI ? 1 : 2,
-
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['allure-playwright', { outputFolder: 'allure-results' }],
-    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+    at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:93:38)
+    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:33:38) {
+  log: [
+    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
+    '  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate',
+    '  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate',
+    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
   ],
+  name: 'Error'
+}
+Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+Call log:
+  - <ws connecting> wss://cdp.lambdatest.com/playwright
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
-  projects: isLambdaTest
-    ? [
-        {
-          name: 'lambdatest-chromium',
-          use: {
-            browserName: 'chromium' as const,
-            headless: true,
-            viewport: { width: 1920, height: 1080 },
-            baseURL: normalizedBaseURL,
 
-            connectOptions: {
-              wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
-                JSON.stringify({
-                  browserName: 'pw-chromium',
-                  browserVersion: 'latest',
+   at ..\helpers\global-setup.ts:42
 
-                  'LT:Options': {
-                    platform: 'Windows 11',
+  40 |     console.error('Global setup failed:', error);
+  41 |     if (error instanceof Error) {
+> 42 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  43 |     }
+  44 |     throw new Error('Global setup failed with an unknown error');
+  45 |   } finally {
+    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:42:13)
+[global-teardown] Adding LambdaTest videos to Allure report...
+[global-teardown] Step 1: Reading test-session mappings...
+[global-teardown] No .lt-sessions directory found at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\.lt-sessions
+[global-teardown] Step 2: Reading Allure result files...
+[global-teardown] Found 20 Allure result files
+[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge› survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown] Step 4: Fetching LambdaTest sessions...
+[global-teardown] Missing LambdaTest credentials. Skipping API calls.
+[LT Reporter] Initialized - capturing LambdaTest sessions...
 
-                    // Build name should include identifier so you can track correctly
-                    build: getLambdaTestBuildName(ltBuild, ltBuildIdentifier),
+[LT Reporter] No sessions captured.
 
-                    name: 'Playwright Automation',
+To open last HTML report run:
 
-                    user: ltUser,
-                    accessKey: ltAccessKey,
+  npx playwright show-report
 
-                    project: ltProject,
 
-                    network: ltNetwork,
-                    video: ltVideo,
-                    console: ltConsole,
-
-                    plugin: 'playwright-test',
-                    w3c: true,
-                    idleTimeout: ltIdleTimeout,
-                  },
-                })
-              )}`,
-            },
-          },
-        },
-      ]
-    : [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        },
-        {
-          name: 'Microsoft Edge',
-          use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        },
-      ],
-});
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ 
