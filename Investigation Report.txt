@@ -1,43 +1,55 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ npm run test:lambdatest
+$ NODE_TLS_REJECT_UNAUTHORIZED=0 npm run test:lambdatest
 
 > e2e@1.0.0 test:lambdatest
 > cross-env LAMBDATEST=true npx playwright test
 
-◇ injected env (19) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (19) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 isLambdaTest = true
 
 🌐 LambdaTest Cloud Execution Enabled
    User: SurveyMod
    Project: OMNI SurveyMod
    Workers: 1
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 Starting global setup...
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Connecting to LambdaTest cloud...
-Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+(node:17576) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
+{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
+{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
+  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
     at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:93:38)
     at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:33:38) {
   log: [
     '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
-    '  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate',
-    '  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate',
+    '  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized\n' +
+      '{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}',
+    '  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established',
+    '  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established',
     '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
   ],
   name: 'Error'
 }
-Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+Error: Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
+{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
+{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
+  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
 
@@ -78,15 +90,17 @@ Call log:
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: [TypeError: fetch failed] {
-  [cause]: Error: unable to get local issuer certificate
-      at TLSSocket.onConnectSecure (node:internal/tls/wrap:1768:34)
-      at TLSSocket.emit (node:events:509:28)
-      at TLSSocket._finishInit (node:internal/tls/wrap:1203:8)
-      at TLSWrap.ssl.onhandshakedone (node:internal/tls/wrap:984:12) {
-    code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'
-  }
-}
+[global-teardown] Failed to add LambdaTest info: Error: [global-teardown] LambdaTest API failed: 401 Unauthorized Body: HTTP Basic: Access denied.
+    at _default (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:162:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at Object.teardown [as setup] (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5939:7)
+    at taskLoop (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5687:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5703:5)
+    at _TaskRunner.run (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5668:28)
+    at runTasks (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5832:18)
+    at Object.runAllTestsWithConfig (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6514:18)
+    at runTests (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
+    at _Command.<anonymous> (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:53:7)
 [LT Reporter] Initialized - capturing LambdaTest sessions...
 
 [LT Reporter] No sessions captured.
@@ -95,282 +109,68 @@ To open last HTML report run:
 
   npx playwright show-report
 
--------------
-import * as fs from 'fs';
-import * as path from 'path';
-import { getLambdaTestBuildName } from '../../utils/configurationDetails';
-import { MAX_TEST_TIMEOUT } from '../../constants/timeout-constants';
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94
+--------------------------------------------------------
 
-const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
-const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
+# =============================
+# LambdaTest Credentials
+# =============================
+userName: ${LT_USERNAME}
+accessKey: ${LT_ACCESS_KEY}
 
-/**
- * globalTeardown.ts: Runs after all tests complete.
- *
- * When LAMBDATEST=true, this:
- *  - Reads the .lt-sessions/ test->session mapping files written by
- *    lt-session-reporter.ts / base-page-factory.ts,
- *  - Injects an LT_SESSION parameter into the matching Allure result files,
- *  - Calls the LambdaTest Automation API to fetch session info (video link,
- *    session id) and patch each session's pass/fail status,
- *  - Writes allure-results/environment.properties with the LambdaTest build URL.
- *
- * When LAMBDATEST is not 'true', this is a complete no-op so local/default
- * test runs are entirely unaffected.
- */
-export default async () => {
-  const isLambdaTest = process.env.LAMBDATEST === 'true';
+# ======================
+# LambdaTest Configuration
+# ======================
+framework: playwright
+projectName: Discover_OMNI
+buildName: ${LAMBDATEST_BUILD_NAME}
+buildIdentifier: ${DATE_TIME}
+testObservability: false
+consoleLogs: info
+lambdaTestLocal: true
 
-  if (!isLambdaTest) {
-    return;
-  }
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Ventura
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Big Sur
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
 
-  try {
-    console.log('[global-teardown] Adding LambdaTest videos to Allure report...');
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
 
-    const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
-    const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
-    const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
-    const buildIdentifier =
-      process.env.SM_LT_BUILD_IDENTIFIER ||
-      process.env.BUILD_NUMBER ||
-      process.env.GITHUB_RUN_NUMBER ||
-      undefined;
+# ==========================================
+# LambdaTest Tunnel
+# (For localhost, staging/private websites)
+# ==========================================
+lambdaTestTunnel: true
 
-    // Construct the actual build name used in LambdaTest.
-    // getLambdaTestBuildName centralizes the naming convention so that both
-    // playwright.config.ts and this teardown step use the same format, ensuring
-    // LambdaTest sessions are grouped correctly and can be reliably correlated.
-    const actualBuildName = getLambdaTestBuildName(ltBuild, buildIdentifier);
+# ===================
+# Debugging features
+# ===================
+debug: false
+networkLogs: false
+video: true
+idleTimeout: 300
 
-    fs.mkdirSync(ALLURE_RESULTS_DIR, { recursive: true });
-
-    console.log('[global-teardown] Step 1: Reading test-session mappings...');
-    const sessionDir = path.join(process.cwd(), '.lt-sessions');
-
-    const testSessionMap = new Map<string, string>(); // fullName -> sessionName
-    const testIdMap = new Map<string, string>(); // testId -> sessionName
-
-    // Read individual mapping files (one per test) to avoid concurrent write conflicts
-    if (fs.existsSync(sessionDir)) {
-      const mappingFiles = fs
-        .readdirSync(sessionDir)
-        .filter((f) => f.startsWith('test-') && f.endsWith('.json'));
-
-      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
-
-      for (const file of mappingFiles) {
-        try {
-          const sanitizedFile = path.basename(file);
-          const filePath = path.join(sessionDir, sanitizedFile);
-          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
-          if (data.sessionName) {
-            if (data.fullName) {
-              testSessionMap.set(data.fullName.trim(), data.sessionName);
-            }
-            if (data.testId) {
-              testIdMap.set(data.testId, data.sessionName);
-            }
-          }
-        } catch (e) {
-          console.warn(`[global-teardown] Failed to parse mapping file ${file}:`, e);
-        }
-      }
-    } else {
-      console.warn(`[global-teardown] No .lt-sessions directory found at ${sessionDir}`);
-    }
-
-    // Step 2: Read Allure result files
-    console.log('[global-teardown] Step 2: Reading Allure result files...');
-    const allureFiles = fs.existsSync(ALLURE_RESULTS_DIR)
-      ? fs.readdirSync(ALLURE_RESULTS_DIR).filter((f) => f.endsWith('-result.json'))
-      : [];
-
-    console.log(`[global-teardown] Found ${allureFiles.length} Allure result files`);
-
-    const testResults = allureFiles.map((file) => {
-      // Sanitize filename to prevent path traversal attacks
-      const sanitizedFile = path.basename(file);
-      const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
-      const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      return { filePath, result };
-    });
-
-    // Step 3: Inject LT_SESSION into Allure result files
-    console.log('[global-teardown] Step 3: Injecting LT_SESSION into Allure files...');
-    for (const testResult of testResults) {
-      const result = testResult.result;
-
-      const testName = result.name?.trim();
-      if (!testName) continue;
-
-      const testId = result.testCaseId;
-
-      const labels = result.labels || [];
-      const parentSuite = labels.find((l: any) => l.name === 'parentSuite')?.value;
-      const suite = labels.find((l: any) => l.name === 'suite')?.value;
-      const subSuite = labels.find((l: any) => l.name === 'subSuite')?.value;
-
-      const fullName = [parentSuite, suite, subSuite, testName].filter(Boolean).join(' › ').trim();
-
-      // Normalize > separator to › for consistent mapping with reporter
-      const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
-
-      let sessionName = testSessionMap.get(normalizedFullName);
-
-      if (!sessionName && testId) {
-        sessionName = testIdMap.get(testId);
-      }
-
-      if (sessionName) {
-        result.parameters = result.parameters || [];
-        const hasLTSession = result.parameters.some((p: any) => p.name === 'LT_SESSION');
-
-        if (!hasLTSession) {
-          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
-          // Safe: testResult.filePath was sanitized with path.basename() during file reading
-          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-          console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
-        }
-      } else {
-        console.warn(`[global-teardown]  No session mapping found for: "${fullName}"`);
-      }
-    }
-
-    // Step 4: Fetch LambdaTest sessions from API
-    console.log('[global-teardown] Step 4: Fetching LambdaTest sessions...');
-    if (!ltUser || !ltAccessKey) {
-      console.warn('[global-teardown] Missing LambdaTest credentials. Skipping API calls.');
-      return;
-    }
-
-    const auth = Buffer.from(`${ltUser}:${ltAccessKey}`).toString('base64');
-
-    const response = await fetch(
-      `https://api.lambdatest.com/automation/api/v1/sessions?build=${encodeURIComponent(actualBuildName)}&limit=100`,
-      {
-        headers: { Authorization: `Basic ${auth}` },
-        signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
-      }
-    );
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      throw new Error(
-        `[global-teardown] LambdaTest API failed: ${response.status} ${response.statusText}` +
-          (errorBody ? ` Body: ${errorBody}` : '')
-      );
-    }
-
-    const data = await response.json();
-    const sessions = data?.data || [];
-
-    console.log(`[global-teardown] Found ${sessions.length} LambdaTest sessions`);
-
-    // Extract build ID from the first session that exposes it
-    let buildId: string | undefined;
-    for (const session of sessions) {
-      const sessionBuildId = session.build_id || session.buildId || session.build_number;
-      if (sessionBuildId) {
-        buildId = sessionBuildId.toString();
-        console.log(`[global-teardown] Extracted Build ID: ${buildId}`);
-        break;
-      }
-    }
-
-    // Step 5: Add LambdaTest video links to Allure
-    console.log('[global-teardown] Step 5: Adding video links to Allure files...');
-
-    for (const testResult of testResults) {
-      const result = testResult.result;
-      const testName = result.name?.trim();
-
-      if (!testName) continue;
-
-      const ltSessionParam = result.parameters?.find((p: any) => p.name === 'LT_SESSION');
-      const sessionName = ltSessionParam?.value;
-
-      if (!sessionName) {
-        console.warn(`[global-teardown] No LT_SESSION parameter for test: ${testName}`);
-        continue;
-      }
-
-      console.log(`[global-teardown] Looking for session: ${sessionName}`);
-      const session = sessions.find((s: any) => s.name === sessionName);
-      if (!session) {
-        console.warn(`[global-teardown] Session "${sessionName}" not found in LT API`);
-        console.warn(
-          `[global-teardown]    Available sessions (first 5): ${sessions
-            .slice(0, 5)
-            .map((s: any) => s.name)
-            .join(', ')}`
-        );
-        continue;
-      }
-      console.log(`[global-teardown] ✓ Found session in LT API: ${session.session_id}`);
-
-      result.links = result.links || [];
-      result.links = result.links.filter((link: any) => link.name !== 'LambdaTest Video');
-
-      result.links.push({
-        name: 'LambdaTest Video',
-        url: `https://automation.lambdatest.com/logs/?sessionID=${session.session_id}`,
-        type: 'link',
-      });
-
-      // Update LT status
-      const testStatus = result.status === 'passed' ? 'passed' : 'failed';
-
-      try {
-        await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${session.session_id}`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Basic ${auth}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status_ind: testStatus }),
-          signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
-        });
-      } catch (e) {
-        console.warn(`[global-teardown] Failed to update status for session ${session.session_id}`, e);
-      }
-
-      // Safe: testResult.filePath was sanitized with path.basename() during file reading
-      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-      console.log(`[global-teardown] ✓ Added video link for "${testName}"`);
-    }
-
-    // Step 6: environment.properties write
-    if (buildId) {
-      process.env.LT_BUILD_ID = buildId;
-    }
-
-    const ltBuildId = buildId || process.env.LT_BUILD_ID;
-
-    let buildUrl: string;
-
-    if (ltBuildId) {
-      // Use simple format: ?build=<id> (not pageType)
-      buildUrl = `https://automation.lambdatest.com/build?build=${ltBuildId}`;
-    } else {
-      // Fallback to build name search
-      buildUrl = `https://automation.lambdatest.com/build?buildName=${encodeURIComponent(actualBuildName)}`;
-    }
-
-    let envContent =
-      `LambdaTest.Build.URL=${buildUrl}\n` +
-      `LambdaTest.Build.Name=${actualBuildName}\n` +
-      (buildIdentifier ? `LambdaTest.Build.Identifier=${buildIdentifier}\n` : '') +
-      (ltBuildId ? `LambdaTest.Build.ID=${ltBuildId}\n` : '') +
-      `Execution.Mode=LambdaTest Cloud\n`;
-
-    // Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
-    fs.writeFileSync(ENV_PROPS_PATH, envContent, 'utf-8');
-
-    console.log('[global-teardown] LambdaTest videos added to Allure report successfully.');
-    console.log(`[global-teardown] Build URL: ${buildUrl}`);
-  } catch (error) {
-    console.warn('[global-teardown] Failed to add LambdaTest info:', error);
-  }
-};
+# ===================
+# GTA compatibility
+# ===================
+platform: Windows 11
+browserVersion: "141.0"
