@@ -4,64 +4,79 @@ $ npm run test:lambdatest
 > e2e@1.0.0 test:lambdatest
 > cross-env LAMBDATEST=true npx playwright test
 
-◇ injected env (19) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (19) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = true
 
 🌐 LambdaTest Cloud Execution Enabled
    User: SurveyMod
    Project: OMNI SurveyMod
    Workers: 1
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Connecting to LambdaTest cloud...
-Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+(node:19016) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Connected to LambdaTest (Session: Test-1786874303473)
+[LT Session] Warning: testId not available, using fallback sessions.jsonl
+[LT Session] Registered session: Test-1786874303473 (worker: 0)
+Starting login process...
+Checking for Terms & Conditions page...
+Terms accepted successfully.
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-    at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:93:38)
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:33:38) {
-  log: [
-    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
-    '  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate',
-    '  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate',
-    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
-  ],
-  name: 'Error'
-}
-Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+Running 2 tests using 1 worker
 
+[LT Reporter] Initialized - capturing LambdaTest sessions...
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = true
 
-   at ..\helpers\global-setup.ts:42
-
-  40 |     console.error('Global setup failed:', error);
-  41 |     if (error instanceof Error) {
-> 42 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  43 |     }
-  44 |     throw new Error('Global setup failed with an unknown error');
-  45 |   } finally {
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:42:13)
+🌐 LambdaTest Cloud Execution Enabled
+   User: SurveyMod
+   Project: OMNI SurveyMod
+   Workers: 1
+     1 …om-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch
+[LT Reporter] Test started: "All dimensions selection" (testId: 30f9e15d1056605e247e-923022e1070d
+  ✓  1 …tch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch (2.5m)
+Auth state loaded from storage/auth.json
+Connecting to LambdaTest cloud...
+(node:2012) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Connected to LambdaTest (Session: Test-1786874362544)
+[LT Session] Warning: testId not available, using fallback sessions.jsonl
+[LT Session] Registered session: Test-1786874362544 (worker: 0)
+✓ Dimension 'productNoDataPrompt' selection completed
+✓ Dimension 'retailerNoDataPrompt' selection completed
+✓ Dimension 'geographyNoDataPrompt' selection completed
+✓ Dimension 'demographicNoDataPrompt' selection completed
+✓ Dimension 'periodNoDataPrompt' selection completed
+[LT Reporter] Stored: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection" -> Test-1786874362544
+[LT Reporter] Mapping written to test-30f9e15d1056605e247e-923022e1070d9e9a9842-19016-1786874511274.json
+     2 …ith-prompt.spec.ts:16:7 › Start with a prompt › All dimensions selection @StartWithPrompt
+[LT Reporter] Test started: "All dimensions selection" (testId: a190e1baf811c479e479-b013306274b4
+  ✓  2 …pt.spec.ts:16:7 › Start with a prompt › All dimensions selection @StartWithPrompt (34.8s)
+Auth state loaded from storage/auth.json
+Connecting to LambdaTest cloud...
+Connected to LambdaTest (Session: Test-1786874511333)
+[LT Session] Warning: testId not available, using fallback sessions.jsonl
+[LT Session] Registered session: Test-1786874511333 (worker: 0)
+[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection" -> Test-1786874511333
+[LT Reporter] Mapping written to test-a190e1baf811c479e479-b013306274b4d6ca8455-19016-1786874546156.json
 [global-teardown] Adding LambdaTest videos to Allure report...
 [global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] No .lt-sessions directory found at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\.lt-sessions
+[global-teardown] Found 2 test-session mapping file(s)
 [global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 20 Allure result files
+[global-teardown] Found 22 Allure result files
 [global-teardown] Step 3: Injecting LT_SESSION into Allure files...
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection": Test-1786874511333
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
@@ -70,27 +85,47 @@ Call log:
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection": Test-1786874362544
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: [TypeError: fetch failed] {
-  [cause]: Error: unable to get local issuer certificate
-      at TLSSocket.onConnectSecure (node:internal/tls/wrap:1768:34)
-      at TLSSocket.emit (node:events:509:28)
-      at TLSSocket._finishInit (node:internal/tls/wrap:1203:8)
-      at TLSWrap.ssl.onhandshakedone (node:internal/tls/wrap:984:12) {
-    code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'
-  }
-}
-[LT Reporter] Initialized - capturing LambdaTest sessions...
+[global-teardown] Found 3 LambdaTest sessions
+[global-teardown] Extracted Build ID: 101166325
+[global-teardown] Step 5: Adding video links to Allure files...
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1786874511333
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1786874362544
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] LambdaTest videos added to Allure report successfully.
+[global-teardown] Build URL: https://automation.lambdatest.com/build?build=101166325
 
-[LT Reporter] No sessions captured.
-
-To open last HTML report run:
-
-  npx playwright show-report
+  2 passed (4.1m)
+[LT Reporter] Saved 2 session mappings.
+-----------------------------------------------------------
