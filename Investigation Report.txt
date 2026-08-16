@@ -1,131 +1,303 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ npm run test:lambdatest
+# lambdatest.yml Setup — Copy & Gap Analysis
 
-> e2e@1.0.0 test:lambdatest
-> cross-env LAMBDATEST=true npx playwright test
+## 1. RAW CODE — new `e2e/lambdatest.yml` (this repo)
 
-◇ injected env (19) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = true
+```yaml
+# =============================
+# LambdaTest Credentials
+# =============================
+userName: ${SM_LT_USERNAME}
+accessKey: ${SM_LT_ACCESS_KEY}
 
-🌐 LambdaTest Cloud Execution Enabled
-   User: SurveyMod
-   Project: OMNI SurveyMod
-   Workers: 1
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Connecting to LambdaTest cloud...
-(node:19016) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
-(Use `node --trace-warnings ...` to show where the warning was created)
-Connected to LambdaTest (Session: Test-1786874303473)
-[LT Session] Warning: testId not available, using fallback sessions.jsonl
-[LT Session] Registered session: Test-1786874303473 (worker: 0)
-Starting login process...
-Checking for Terms & Conditions page...
-Terms accepted successfully.
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+# ======================
+# LambdaTest Configuration
+# ======================
+framework: playwright
+projectName: SurveyMod
+buildName: ${SM_LT_BUILD}
+buildIdentifier: ${DATE_TIME}
+testObservability: false
+consoleLogs: info
+lambdaTestLocal: true
 
-Running 2 tests using 1 worker
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Ventura
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Big Sur
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
 
-[LT Reporter] Initialized - capturing LambdaTest sessions...
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = true
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
 
-🌐 LambdaTest Cloud Execution Enabled
-   User: SurveyMod
-   Project: OMNI SurveyMod
-   Workers: 1
-     1 …om-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch
-[LT Reporter] Test started: "All dimensions selection" (testId: 30f9e15d1056605e247e-923022e1070d
-  ✓  1 …tch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch (2.5m)
-Auth state loaded from storage/auth.json
-Connecting to LambdaTest cloud...
-(node:2012) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
-(Use `node --trace-warnings ...` to show where the warning was created)
-Connected to LambdaTest (Session: Test-1786874362544)
-[LT Session] Warning: testId not available, using fallback sessions.jsonl
-[LT Session] Registered session: Test-1786874362544 (worker: 0)
-✓ Dimension 'productNoDataPrompt' selection completed
-✓ Dimension 'retailerNoDataPrompt' selection completed
-✓ Dimension 'geographyNoDataPrompt' selection completed
-✓ Dimension 'demographicNoDataPrompt' selection completed
-✓ Dimension 'periodNoDataPrompt' selection completed
-[LT Reporter] Stored: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection" -> Test-1786874362544
-[LT Reporter] Mapping written to test-30f9e15d1056605e247e-923022e1070d9e9a9842-19016-1786874511274.json
-     2 …ith-prompt.spec.ts:16:7 › Start with a prompt › All dimensions selection @StartWithPrompt
-[LT Reporter] Test started: "All dimensions selection" (testId: a190e1baf811c479e479-b013306274b4
-  ✓  2 …pt.spec.ts:16:7 › Start with a prompt › All dimensions selection @StartWithPrompt (34.8s)
-Auth state loaded from storage/auth.json
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1786874511333)
-[LT Session] Warning: testId not available, using fallback sessions.jsonl
-[LT Session] Registered session: Test-1786874511333 (worker: 0)
-[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection" -> Test-1786874511333
-[LT Reporter] Mapping written to test-a190e1baf811c479e479-b013306274b4d6ca8455-19016-1786874546156.json
-[global-teardown] Adding LambdaTest videos to Allure report...
-[global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] Found 2 test-session mapping file(s)
-[global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 22 Allure result files
-[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection": Test-1786874511333
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection": Test-1786874362544
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Found 3 LambdaTest sessions
-[global-teardown] Extracted Build ID: 101166325
-[global-teardown] Step 5: Adding video links to Allure files...
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1786874511333
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1786874362544
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] LambdaTest videos added to Allure report successfully.
-[global-teardown] Build URL: https://automation.lambdatest.com/build?build=101166325
+# ==========================================
+# LambdaTest Tunnel
+# (For localhost, staging/private websites)
+# ==========================================
+lambdaTestTunnel: true
 
-  2 passed (4.1m)
-[LT Reporter] Saved 2 session mappings.
------------------------------------------------------------
+# ===================
+# Debugging features
+# ===================
+debug: false
+networkLogs: false
+video: true
+idleTimeout: 300
+
+# ===================
+# GTA compatibility
+# ===================
+platform: Windows 11
+browserVersion: "141.0"
+```
+
+## 2. RAW CODE — Omni Shopper's original `lambdatest.yml` (source of truth, read fresh)
+
+```yaml
+# =============================
+# LambdaTest Credentials
+# =============================
+userName: ${LT_USERNAME}
+accessKey: ${LT_ACCESS_KEY}
+
+# ======================
+# LambdaTest Configuration
+# ======================
+framework: playwright
+projectName: Discover_OMNI
+buildName: ${LAMBDATEST_BUILD_NAME}
+buildIdentifier: ${DATE_TIME}
+testObservability: false
+consoleLogs: info
+lambdaTestLocal: true
+
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Ventura
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Big Sur
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
+
+# ==========================================
+# LambdaTest Tunnel
+# (For localhost, staging/private websites)
+# ==========================================
+lambdaTestTunnel: true
+
+# ===================
+# Debugging features
+# ===================
+debug: false
+networkLogs: false
+video: true
+idleTimeout: 300
+
+# ===================
+# GTA compatibility
+# ===================
+platform: Windows 11
+browserVersion: "141.0"
+```
+
+## 3. Line-by-line diff
+
+Only 4 lines differ between the two files — everything else (comments, section headers,
+all 4 platform entries, `parallelsPerPlatform`, `lambdaTestTunnel`, `debug`/`networkLogs`/
+`video`/`idleTimeout`, and the trailing GTA compatibility block) is byte-for-byte identical.
+
+| Line | Omni Shopper (original) | disc-fe-omni-survey-mod (new) |
+|---|---|---|
+| `userName:` | `${LT_USERNAME}` | `${SM_LT_USERNAME}` |
+| `accessKey:` | `${LT_ACCESS_KEY}` | `${SM_LT_ACCESS_KEY}` |
+| `projectName:` | `Discover_OMNI` | `SurveyMod` |
+| `buildName:` | `${LAMBDATEST_BUILD_NAME}` | `${SM_LT_BUILD}` |
+
+Confirmed: no other lines differ, no reordering, no removed/added keys.
+
+## 4. Gap analysis — is anything else missing?
+
+**Key finding: `lambdatest.yml` is not actually wired into anything in Omni Shopper's repo.**
+It is a standalone declarative file with no code, script, or CI step that reads or invokes it.
+
+- **CI/CD workflow invoking `lambdatest.yml` or a LambdaTest CLI?**
+  Checked all 6 files in `disc-fe-omnishopper-ui-automation/.github/workflows/`
+  ([manual-automation-test-run.yml](../../../Downloads/disc-fe-omnishopper-ui-automation/.github/workflows/manual-automation-test-run.yml),
+  `scheduler-report-after-run-base-setup.yml`, `scheduler-report-after-run-batch-1/2/3.yml`,
+  `scheduler-report-basic-test-cases.yml`). None reference `lambdatest.yml` or any
+  `lambdatest`/`lt-cli` CLI binary. They set plain environment variables
+  (`LAMBDATEST`, `LAMBDATEST_USERNAME`, `LAMBDATEST_ACCESS_KEY`, `LT_USERNAME`, `LT_ACCESS_KEY`,
+  `LT_PROJECT`, `LT_BUILD`, `LT_BUILD_IDENTIFIER`, `LT_TUNNEL`, `LT_VIDEO`, `LT_NETWORK`) and
+  then just run `npx playwright test` directly — no LambdaTest CLI step of any kind.
+
+  Relevant excerpt (manual-automation-test-run.yml):
+  ```bash
+  if [ "${{ github.event.inputs.USE_LAMBDATEST }}" = "Yes" ] || [ "${{ github.event.inputs.USE_LAMBDATEST }}" = "true" ]; then
+    echo "LAMBDATEST=true" >> $GITHUB_ENV
+    echo "LAMBDATEST_USERNAME=${{ secrets.LAMBDATEST_USERNAME }}" >> $GITHUB_ENV
+    echo "LAMBDATEST_ACCESS_KEY=${{ secrets.LAMBDATEST_ACCESS_KEY }}" >> $GITHUB_ENV
+    echo "LT_USERNAME=${{ secrets.LAMBDATEST_USERNAME }}" >> $GITHUB_ENV
+    echo "LT_ACCESS_KEY=${{ secrets.LAMBDATEST_ACCESS_KEY }}" >> $GITHUB_ENV
+    echo "LT_PROJECT=OMNI Discover" >> $GITHUB_ENV
+    echo "LT_BUILD=Discover build - Manual Run" >> $GITHUB_ENV
+    echo "LT_BUILD_IDENTIFIER=${{ github.run_number }}" >> $GITHUB_ENV
+    echo "LT_TUNNEL=true" >> $GITHUB_ENV
+  ```
+  There is no `lambdatest` CLI invocation anywhere in these workflows.
+
+- **npm script invoking the LambdaTest CLI?**
+  Omni Shopper's `package.json` has:
+  ```json
+  "test:lambdatest": "cross-env LAMBDATEST=true npx playwright test",
+  ```
+  This is plain Playwright (`npx playwright test`) with an env var flag — it does **not**
+  call any `lambdatest`/`lt-cli`/`lambdatest-setup` binary. No such script exists.
+
+- **LambdaTest CLI tool listed as a dependency?**
+  Checked all of `dependencies` and `devDependencies` in Omni Shopper's `package.json`
+  (`@gfk/gta`, `@playwright/test`, `@types/node`, `allure-commandline`, `allure-playwright`,
+  `cross-env`, `dotenv`, `typescript`, `rxjs`, `tslib`). **No LambdaTest CLI package
+  (e.g. `lambdatest-cypress-cli`, `@lambdatest/*`, `lambda-tunnel`) is present.**
+
+- **How does Omni Shopper actually run on LambdaTest, then?**
+  Entirely through `playwright.config.ts`, not `lambdatest.yml`. When `LAMBDATEST=true`,
+  the config builds a `connectOptions.wsEndpoint` pointing at
+  `wss://cdp.lambdatest.com/playwright?capabilities=...` and passes `LT:Options`
+  (`platform`, `build`, `user`, `accessKey`, `project`, `network`, `video`, `console`,
+  `idleTimeout`) directly from environment variables (`LT_USERNAME`, `LT_ACCESS_KEY`,
+  `LT_PROJECT`, `LT_BUILD`, etc.) sourced from `.env`/CI secrets. `lambdatest.yml` is never
+  `require`'d, `read`'d, or referenced by path anywhere in the codebase (confirmed via
+  full-repo text search for `lambdatest.yml` — zero matches outside the file itself).
+
+- **Does `disc-fe-omni-survey-mod` have any of the above already?**
+  - `e2e/package.json` already has an equivalent script:
+    `"test:lambdatest": "cross-env LAMBDATEST=true npx playwright test"` — same pattern as
+    Omni Shopper, already present.
+  - `e2e/.env` / `e2e/.env.example` already define `SM_LT_*` variables
+    (`SM_LT_USERNAME`, `SM_LT_ACCESS_KEY`, `SM_LT_PROJECT`, `SM_LT_BUILD`, `SM_LT_TUNNEL`,
+    `SM_LT_VIDEO`, `SM_LT_NETWORK`, `SM_LT_CONSOLE`, `SM_LT_IDLE_TIMEOUT`, `SM_LT_WORKERS`),
+    matching the naming used in the 4 changes made to `lambdatest.yml`.
+  - **Missing (same as Omni Shopper — i.e., not a gap unique to us):** no LambdaTest CLI
+    dependency, and no CI/CD workflow file under `.github/workflows/` in this repo that
+    invokes LambdaTest at all (this repo has no equivalent of Omni Shopper's
+    `manual-automation-test-run.yml` / `scheduler-report-*.yml`).
+  - Not yet verified in this pass: whether `e2e/playwright.config.ts` in this repo actually
+    builds the `wss://cdp.lambdatest.com/playwright` `connectOptions` block the way Omni
+    Shopper's does — that file was not part of this task's scope but would need the same
+    wiring for `npm run test:lambdatest` to actually route to LambdaTest's cloud grid rather
+    than just setting an inert env var.
+
+## 5. Status — is `lambdatest.yml` usable as-is?
+
+**No — in both repos, `lambdatest.yml` is currently an orphaned/unused config file.**
+
+- It is not read by Playwright, not referenced by any npm script, and not invoked by any CI
+  workflow in Omni Shopper (the repo it was copied from) or in this repo.
+- The actual LambdaTest cloud execution mechanism in Omni Shopper lives entirely in
+  `playwright.config.ts` (the `wss://cdp.lambdatest.com/playwright` WebSocket endpoint built
+  from `LT_*`/`LAMBDATEST_*` env vars), not in `lambdatest.yml`.
+- Copying `lambdatest.yml` into `e2e/` is safe and consistent with the request, but by itself
+  it does **not** enable or change any LambdaTest behavior for `disc-fe-omni-survey-mod`.
+  For `npm run test:lambdatest` in this repo to actually run on LambdaTest's cloud, the
+  equivalent `connectOptions`/`wsEndpoint` wiring must exist in `e2e/playwright.config.ts`
+  (this was outside the scope of this task and was not verified/changed here).
+- No additional CLI installation is required to have the file present, but no CLI would
+  ever consume it either — it appears to be leftover/reference documentation rather than an
+  active part of either repo's test execution path.
+--------------------------------------------------------------------------------------------------------------------
+# =============================
+# LambdaTest Credentials
+# =============================
+userName: ${SM_LT_USERNAME}
+accessKey: ${SM_LT_ACCESS_KEY}
+
+# ======================
+# LambdaTest Configuration
+# ======================
+framework: playwright
+projectName: SurveyMod
+buildName: ${SM_LT_BUILD}
+buildIdentifier: ${DATE_TIME}
+testObservability: false
+consoleLogs: info
+lambdaTestLocal: true
+
+# =======================================
+# Platforms (Browsers / Devices to test)
+# =======================================
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Ventura
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+  - os: MacOS
+    osVersion: Big Sur
+    browserName: MicrosoftEdge
+    browserVersion: 141.0
+
+# =======================
+# Parallels per Platform
+# =======================
+parallelsPerPlatform: 1
+
+# ==========================================
+# LambdaTest Tunnel
+# (For localhost, staging/private websites)
+# ==========================================
+lambdaTestTunnel: true
+
+# ===================
+# Debugging features
+# ===================
+debug: false
+networkLogs: false
+video: true
+idleTimeout: 300
+
+# ===================
+# GTA compatibility
+# ===================
+platform: Windows 11
+browserVersion: "141.0"
