@@ -29,3 +29,15 @@ SM_LAMBDATEST_ACCESS_KEY
 SM_LAMBDATEST_USERNAME
 2 days ago
 -------------------------------
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ grep -c "SM_LAMBDATEST_USERNAME=" .env
+grep -c "SM_LAMBDATEST_ACCESS_KEY=" .env
+grep "SM_LAMBDATEST_USERNAME=" .env | cut -c1-25
+grep "SM_LAMBDATEST_ACCESS_KEY=" .env | cut -c1-25
+1
+1
+SM_LAMBDATEST_USERNAME='S
+SM_LAMBDATEST_ACCESS_KEY=
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ 
