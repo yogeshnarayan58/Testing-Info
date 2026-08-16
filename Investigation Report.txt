@@ -4,27 +4,27 @@ $ NODE_TLS_REJECT_UNAUTHORIZED=0 npm run test:lambdatest
 > e2e@1.0.0 test:lambdatest
 > cross-env LAMBDATEST=true npx playwright test
 
-◇ injected env (19) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (19) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = true
 
 🌐 LambdaTest Cloud Execution Enabled
    User: SurveyMod
    Project: OMNI SurveyMod
    Workers: 1
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 Starting global setup...
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Connecting to LambdaTest cloud...
-(node:17576) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(node:18780) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makesTLS connections and HTTPS requests insecure by disabling certificate verification.
 (Use `node --trace-warnings ...` to show where the warning was created)
 Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
 
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
   - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
   - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
   - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
@@ -34,7 +34,7 @@ Call log:
   log: [
     '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
     '  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized\n' +
-      '{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}',
+      '{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}',
     '  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established',
     '  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established',
     '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
@@ -42,12 +42,12 @@ Call log:
   name: 'Error'
 }
 Error: Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
 
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
   - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"795d0fa2caeb063990c1ba07fd37717e: Unauthorized, either Username or AccessKey is invalid"}}
+{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
   - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
   - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
@@ -71,9 +71,9 @@ Call log:
 [global-teardown] Step 3: Injecting LT_SESSION into Allure files...
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
@@ -83,14 +83,14 @@ Call log:
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
 [global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
 [global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: Error: [global-teardown] LambdaTest API failed: 401 Unauthorized Body: HTTP Basic: Access denied.
+[global-teardown] Failed to add LambdaTest info: Error: [global-teardown] LambdaTest API failed:401 Unauthorized Body: HTTP Basic: Access denied.
     at _default (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:162:13)
     at processTicksAndRejections (node:internal/process/task_queues:104:5)
     at Object.teardown [as setup] (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5939:7)
@@ -110,8 +110,8 @@ To open last HTML report run:
   npx playwright show-report
 
 Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94
---------------------------------------------------------
 
+---------------------------------------------------------
 # =============================
 # LambdaTest Credentials
 # =============================
