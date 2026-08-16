@@ -1,176 +1,31 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ NODE_TLS_REJECT_UNAUTHORIZED=0 npm run test:lambdatest
-
-> e2e@1.0.0 test:lambdatest
-> cross-env LAMBDATEST=true npx playwright test
-
-◇ injected env (19) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = true
-
-🌐 LambdaTest Cloud Execution Enabled
-   User: SurveyMod
-   Project: OMNI SurveyMod
-   Workers: 1
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Connecting to LambdaTest cloud...
-(node:18780) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makesTLS connections and HTTPS requests insecure by disabling certificate verification.
-(Use `node --trace-warnings ...` to show where the warning was created)
-Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
-
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
-  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
-  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
-
-    at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:93:38)
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:33:38) {
-  log: [
-    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
-    '  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized\n' +
-      '{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}',
-    '  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established',
-    '  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established',
-    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
-  ],
-  name: 'Error'
-}
-Error: Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
-
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"55c8099d31a541b76bbf1c5885bf3881: Unauthorized, either Username or AccessKey is invalid"}}
-  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
-  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+LAMBDATEST=true
+SM_LAMBDATEST_USERNAME='SurveyMod'
+SM_LT_USERNAME='SurveyMod'
+SM_LAMBDATEST_ACCESS_KEY='LT_oGGXwQwtnaUjgMpwMhaVeboLIvhdnt7oG1sh38v7W1VB6vS'
+SM_LT_ACCESS_KEY='LT_oGGXwQwtnaUjgMpwMhaVeboLIvhdnt7oG1sh38v7W1VB6vS'
+SM_LT_PROJECT='OMNI SurveyMod'
+SM_LT_BUILD='Survey Mod Build'
+SM_LT_BUILD_IDENTIFIER=''
+SM_LT_TUNNEL=true
+SM_LT_VIDEO=true
+SM_LT_NETWORK=false
+SM_LT_CONSOLE=false
+SM_LT_OBSERVABILITY=true
+SM_LT_IDLE_TIMEOUT=300
+SM_LT_WORKERS=1
+SM_LT_DOWNLOAD_VIDEOS=false
 
 
-   at ..\helpers\global-setup.ts:42
+-------------------------------
+Jeevamurugan S
+Friday 11:34
+Username: SurveyMod
+Access Key: LT_ZSezq4fr4qMSl84xhTLayBZYzfY8vBXB0KR0gSuFwb8Vg1r 
+-------------------------------
+Git 
 
-  40 |     console.error('Global setup failed:', error);
-  41 |     if (error instanceof Error) {
-> 42 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  43 |     }
-  44 |     throw new Error('Global setup failed with an unknown error');
-  45 |   } finally {
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:42:13)
-[global-teardown] Adding LambdaTest videos to Allure report...
-[global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] No .lt-sessions directory found at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\.lt-sessions
-[global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 20 Allure result files
-[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts ›Start from scratch › All dimensions selection"
-[global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: Error: [global-teardown] LambdaTest API failed:401 Unauthorized Body: HTTP Basic: Access denied.
-    at _default (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:162:13)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at Object.teardown [as setup] (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5939:7)
-    at taskLoop (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5687:11)
-    at _TaskRunner.runDeferCleanup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5703:5)
-    at _TaskRunner.run (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5668:28)
-    at runTasks (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:5832:18)
-    at Object.runAllTestsWithConfig (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6514:18)
-    at runTests (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
-    at _Command.<anonymous> (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:53:7)
-[LT Reporter] Initialized - capturing LambdaTest sessions...
-
-[LT Reporter] No sessions captured.
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94
-
----------------------------------------------------------
-# =============================
-# LambdaTest Credentials
-# =============================
-userName: ${LT_USERNAME}
-accessKey: ${LT_ACCESS_KEY}
-
-# ======================
-# LambdaTest Configuration
-# ======================
-framework: playwright
-projectName: Discover_OMNI
-buildName: ${LAMBDATEST_BUILD_NAME}
-buildIdentifier: ${DATE_TIME}
-testObservability: false
-consoleLogs: info
-lambdaTestLocal: true
-
-# =======================================
-# Platforms (Browsers / Devices to test)
-# =======================================
-platforms:
-  - os: Windows
-    osVersion: 11
-    browserName: chrome
-    browserVersion: latest
-  - os: Windows
-    osVersion: 11
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Ventura
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Big Sur
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-
-# =======================
-# Parallels per Platform
-# =======================
-parallelsPerPlatform: 1
-
-# ==========================================
-# LambdaTest Tunnel
-# (For localhost, staging/private websites)
-# ==========================================
-lambdaTestTunnel: true
-
-# ===================
-# Debugging features
-# ===================
-debug: false
-networkLogs: false
-video: true
-idleTimeout: 300
-
-# ===================
-# GTA compatibility
-# ===================
-platform: Windows 11
-browserVersion: "141.0"
+SM_LAMBDATEST_ACCESS_KEY
+2 days ago
+SM_LAMBDATEST_USERNAME
+2 days ago
+-------------------------------
