@@ -1,16 +1,22 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git pull origin feature/lambdatest-allure-setup
-info: please complete authentication in your browser...
-remote: Enumerating objects: 25, done.
-remote: Counting objects: 100% (25/25), done.
-remote: Compressing objects: 100% (4/4), done.
-remote: Total 13 (delta 8), reused 13 (delta 8), pack-reused 0 (from 0)
-Unpacking objects: 100% (13/13), 2.07 KiB | 10.00 KiB/s, done.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * branch            feature/lambdatest-allure-setup -> FETCH_HEAD
-   268b6f9..8965fca  feature/lambdatest-allure-setup -> origin/feature/lambdatest-allure-setup
-Updating 268b6f9..8965fca
-Fast-forward
+$ git log --oneline -5
+8965fca (HEAD -> feature/lambdatest-allure-setup, origin/feature/lambdatest-allure-setup) fix: keep lambdatest session artifacts out of git
+268b6f9 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/lambdatest-allure-setup
+192d00b (origin/main, origin/HEAD) RE repo updated successfully with Survey Mod lib version 26.17.4-dev
+cd9069e Survey Modernization Library version 26.17.4-dev published to Artifactory
+bebac7d Merge pull request #97 from niq-enterprise/image-config
+
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ git show 8965fca --stat
+commit 8965fca96ea84effa44cebfc3bb6306c8e347ed5 (HEAD -> feature/lambdatest-allure-setup, origin/feature/lambdatest-allure-setup)
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Tue Aug 18 06:24:01 2026 +0000
+
+    fix: keep lambdatest session artifacts out of git
+    
+    Co-authored-by: Yogesh-Upadhyay-consultant_niq <304421628+Yogesh-Upadhyay-consultant_niq@users.noreply.github.com>
+
  e2e/.gitignore                                                    | 1 +
  e2e/.lt-sessions/session-mappings.json                            | 4 ----
  e2e/.lt-sessions/sessions.jsonl                                   | 6 ------
@@ -25,10 +31,4 @@ Fast-forward
  e2e/utils/base-page-factory.ts                                    | 4 ++--
  e2e/utils/configurationDetails.ts                                 | 5 +++++
  13 files changed, 17 insertions(+), 49 deletions(-)
- delete mode 100644 e2e/.lt-sessions/session-mappings.json
- delete mode 100644 e2e/.lt-sessions/sessions.jsonl
- delete mode 100644 e2e/.lt-sessions/test-30f9e15d1056605e247e-923022e1070d9e9a9842-1212-1786877219560.json
- delete mode 100644 e2e/.lt-sessions/test-30f9e15d1056605e247e-923022e1070d9e9a9842-19016-1786874511274.json
- delete mode 100644 e2e/.lt-sessions/test-a190e1baf811c479e479-b013306274b4d6ca8455-1212-1786877304922.json
- delete mode 100644 e2e/.lt-sessions/test-a190e1baf811c479e479-b013306274b4d6ca8455-19016-1786874546156.json
- delete mode 100644 e2e/.lt-sessions/worker-0.json
+(END)
