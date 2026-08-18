@@ -1,357 +1,287 @@
-cycode-security-eu Bot reviewed 15 hours ago
-e2e/playwright/setup/globalTeardown.ts
-      }
+# Cycode SAST Review — "Unsanitized dynamic input in file path" (Critical, 98–100)
 
-      // Safe: testResult.filePath was sanitized with path.basename() during file reading
-      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-@cycode-security-eu
-cycode-security-eu Bot
-15 hours ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+**Scope:** 3 files flagged by Cycode —
+[globalTeardown.ts](playwright/setup/globalTeardown.ts),
+[base-page-factory.ts](utils/base-page-factory.ts),
+[lt-session-reporter.ts](playwright/reporters/lt-session-reporter.ts)
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+**Method note:** The raw Cycode dashboard report (with its internal finding IDs and
+exact line-to-finding mapping) is not available inside this workspace, and the
+`cycode` CLI is not installed/authenticated locally (`mcp_cycode-local_cycode_scanChangedFiles`
+returned `spawn cycode ENOENT`), so an exact 1:1 reconciliation to "13" was not possible.
+Instead, every `fs.writeFileSync` / `fs.readFileSync` / `fs.unlinkSync` / `fs.mkdirSync` /
+`path.join` call site in the three files was enumerated exhaustively (19 call sites found —
+some Cycode findings likely bundle a `path.join()` source and its consuming `fs.*` sink into
+one reported finding, and/or dedupe identical static patterns, which would explain the
+gap between 19 raw call sites and 13 dashboard rows). **Every single call site was traced
+to its origin and assessed below; none reach a truly attacker/externally-controlled value.**
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+## Summary table
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+| # | File | Line(s) | Value source | Verdict | Proposed action |
+|---|------|---------|---------------|---------|------------------|
+| F1 | globalTeardown.ts | 6 | `process.cwd()` + literal `'allure-results'` | False positive — fully static | None |
+| F2 | globalTeardown.ts | 7 | `ALLURE_RESULTS_DIR` (static) + literal | False positive — fully static | None |
+| F3 | globalTeardown.ts | 48 | `ALLURE_RESULTS_DIR` (static) | False positive — fully static | None |
+| F4 | globalTeardown.ts | 66–68 | `fs.readdirSync()`-discovered filename, sanitized via `path.basename()` | False positive — (a) disk-discovered + already sanitized | None |
+| F5 | globalTeardown.ts | 96–98 | `fs.readdirSync()`-discovered filename, sanitized via `path.basename()` | False positive — (a) disk-discovered + already sanitized | None |
+| F6 | globalTeardown.ts | 135 | `testResult.filePath` (inherits F5's sanitized path) | False positive — inherited sanitization | None |
+| F7 | globalTeardown.ts | 242 | `testResult.filePath` (inherits F5's sanitized path) | False positive — inherited sanitization | None |
+| F8 | globalTeardown.ts | 271 | `ENV_PROPS_PATH` (static) | False positive — fully static | None |
+| F9 | base-page-factory.ts | 115 | `sessionDir` = `getLambdaTestSessionDir()` (static) | False positive — fully static | None |
+| F10 | base-page-factory.ts | 124–126 | `sessionDir` (static) + literal `'sessions.jsonl'` | False positive — fully static | None |
+| F11 | base-page-factory.ts | 129–137 | `testId` from `process.env.__CURRENT_TEST_ID__` / `global.__CURRENT_TEST_ID__`, ultimately Playwright's `test.id` | False positive — (b)/(c) source cannot contain traversal chars (see reasoning) | **Hardening recommended** (not exploitable, but inconsistent with sibling file's sanitization) |
+| F12 | base-page-factory.ts | 143–146 | `workerIndex` = `Number(process.env.TEST_WORKER_INDEX \|\| 0)` | False positive — numeric coercion | None |
+| F13 | lt-session-reporter.ts | 39, 46 | `testId` = `test.id` (Playwright `TestCase` param, direct) | False positive — (b) source cannot contain traversal chars | None |
+| F14 | lt-session-reporter.ts | 51 | Same `testSessionFile` as F13 | False positive — same source | None |
+| F15 | lt-session-reporter.ts | 59, 64 | `sessionDir` (static) + literal `'sessions.jsonl'` | False positive — fully static | None |
+| F16 | lt-session-reporter.ts | 104 | `sessionDir` (static) | False positive — fully static | None |
+| F17 | lt-session-reporter.ts | 108–109 | `safeTestId` = `testId.replace(/[^a-zA-Z0-9-]/g, '_')` + `process.pid` + `Date.now()` | False positive — explicitly sanitized (textbook safe pattern) | None |
+| F18 | lt-session-reporter.ts | 141 | `sessionDir` (static) | False positive — fully static | None |
+| F19 | lt-session-reporter.ts | 143–144 | `sessionDir` (static) + literal `'session-mappings.json'` | False positive — fully static | None |
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 15 hours ago
-e2e/playwright/setup/globalTeardown.ts
-        if (!hasLTSession) {
-          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
-          // Safe: testResult.filePath was sanitized with path.basename() during file reading
-          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-@cycode-security-eu
-cycode-security-eu Bot
-15 hours ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+**Result: 19/19 call sites are false positives.** No genuine, exploitable path-injection
+vulnerability was found in any of the three files. One item (F11) is recommended for a
+cosmetic hardening fix purely for consistency with the sibling reporter file and to reduce
+future SAST noise — it is not exploitable today.
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+---
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+## How Playwright's `test.id` is generated (key fact used throughout this review)
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+Traced through `e2e/node_modules/playwright/lib/common/index.js` (`bindFileSuiteToProject`)
+and `e2e/node_modules/playwright-core/lib/coreBundle.js` (`calculateSha1`):
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-github-advanced-security[bot]
-github-advanced-security AI found potential problems 15 hours ago
-e2e/playwright.config.ts
-Fixed
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 15 hours ago
-e2e/playwright/setup/globalTeardown.ts
-    const testResults = allureFiles.map((file) => {
-      // Sanitize filename to prevent path traversal attacks
-      const sanitizedFile = path.basename(file);
-      const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
-@cycode-security-eu
-cycode-security-eu Bot
-15 hours ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+```js
+// playwright/lib/common/index.js
+const fileId = calculateSha1(toPosixPath(relativeFile)).slice(0, 20);
+...
+const testIdExpression = `[project=${project.id}]${toPosixPath(file2)}${titles.join("")}`;
+const testId = fileId + "-" + calculateSha1(testIdExpression).slice(0, 20);
+test.id = testId;
 
-Risk Score: 100 (CRITICAL)
-Severity: High
+// playwright-core/lib/coreBundle.js
+function calculateSha1(buffer) {
+  const hash = crypto.createHash("sha1");
+  hash.update(buffer);
+  return hash.digest("hex");   // <-- lowercase hex digest, nothing else
+}
+```
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+`test.id` is therefore **always** of the exact shape `/^[0-9a-f]{20}-[0-9a-f]{20}$/` —
+two 20-character lowercase-hex SHA1 slices joined by a single hyphen. It is computed
+internally by the Playwright test runner from the test file path + suite/test titles; it
+is never read from an HTTP request, CLI flag, or any other externally-supplied string, and
+its output alphabet (`0-9a-f-`) structurally cannot contain `/`, `\`, `..`, a null byte, or
+an absolute-path prefix. This holds regardless of what characters appear in the *test title*
+(the title is hashed, not concatenated raw into the id).
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+`process.env.__CURRENT_TEST_ID__` (used in base-page-factory.ts) is set by
+`lt-session-reporter.ts`'s `onTestBegin` hook (`process.env.__CURRENT_TEST_ID__ = test.id;`) —
+i.e., it is this exact same SHA1-hex value, just relayed through an environment variable
+for cross-module access within the same Node process, not sourced from outside the process.
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Copilot started work on behalf of Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq) 51 minutes ago
-@Yogesh-Upadhyay-consultant_niq
-fix: keep lambdatest session artifacts out of git 
-8965fca
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/utils/base-page-factory.ts
-        }
+---
 
-        // optional worker file
-        fs.writeFileSync(
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+## Detailed reasoning per finding
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+### F1–F3, F8 — globalTeardown.ts static path constants
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+```ts
+const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');   // line 6
+const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties'); // line 7
+...
+fs.mkdirSync(ALLURE_RESULTS_DIR, { recursive: true });                   // line 48
+...
+// Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
+fs.writeFileSync(ENV_PROPS_PATH, envContent, 'utf-8');                   // line 271
+```
+**Trace:** `process.cwd()` (the process's working directory, set by whoever launches the
+test run — a build machine or developer, not an external actor) joined with hardcoded
+string literals only. There is no per-test, per-file, or per-request variable in this path
+at all. **(d) something else — a build-time constant, not "dynamic input"** in any
+meaningful sense. **Verdict: false positive.**
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+### F4, F5 — mapping-file and Allure-result read loops (globalTeardown.ts)
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/utils/base-page-factory.ts
+```ts
+// lines 63–68 (test-session mapping files)
+const mappingFiles = fs.readdirSync(sessionDir).filter((f) => f.startsWith('test-') && f.endsWith('.json'));
+for (const file of mappingFiles) {
+  const sanitizedFile = path.basename(file);
+  const filePath = path.join(sessionDir, sanitizedFile);
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  ...
 
-        // PRIMARY (parallel safe): write per-test session file
-        if (testId) {
-          fs.writeFileSync(
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+// lines 88–98 (Allure result files)
+const allureFiles = fs.readdirSync(ALLURE_RESULTS_DIR).filter((f) => f.endsWith('-result.json'));
+const testResults = allureFiles.map((file) => {
+  const sanitizedFile = path.basename(file);
+  const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+  const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  return { filePath, result };
+});
+```
+**Trace:** `file` originates from `fs.readdirSync(sessionDir)` / `fs.readdirSync(ALLURE_RESULTS_DIR)` —
+**(a) a filename Node itself discovered by listing an existing, hardcoded-path directory.**
+`readdirSync` can only ever return bare filenames that physically exist as directory entries
+in that directory (it never returns `../foo` or absolute paths — the OS directory-listing
+syscall returns entry names, not arbitrary strings). On top of that, the code additionally
+runs every filename through `path.basename()` before use, which is the standard sanitizer
+Cycode itself recognizes for this exact rule (see the "Sanitize filename to prevent path
+traversal attacks" comment already in the code at line 95). **Verdict: false positive** —
+doubly so (safe source + explicit sanitizer).
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+### F6, F7 — `fs.writeFileSync(testResult.filePath, ...)` (globalTeardown.ts, lines 135 & 242)
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+```ts
+// Safe: testResult.filePath was sanitized with path.basename() during file reading
+fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+```
+**Trace:** `testResult.filePath` is exactly the `filePath` constant built in F5 above (same
+object, carried through the `testResults` array from the Step-2 `.map()`). No new dynamic
+value is introduced here — it's a reuse of an already-sanitized path. **Verdict: false
+positive** (inherited sanitization from F5).
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+### F9, F10, F15, F16, F18, F19 — static session-directory operations
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/utils/base-page-factory.ts
-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
+```ts
+fs.mkdirSync(sessionDir, { recursive: true });                                   // base-page-factory.ts:115, lt-session-reporter.ts:104,141
+fs.appendFileSync(path.join(sessionDir, 'sessions.jsonl'), ...);                  // base-page-factory.ts:124-126
+const sessionsLogFile = path.join(sessionDir, 'sessions.jsonl');                  // lt-session-reporter.ts:59
+const mappingFile = path.join(sessionDir, 'session-mappings.json');               // lt-session-reporter.ts:143
+```
+**Trace:** `sessionDir` = `getLambdaTestSessionDir()` = `path.join(process.cwd(),
+'test-results', '.lt-sessions')` ([configurationDetails.ts](utils/configurationDetails.ts))
+— fully hardcoded, no external input anywhere in the chain. The filenames (`'sessions.jsonl'`,
+`'session-mappings.json'`) are string literals. **(d) build-time constants.**
+**Verdict: false positive** for all six.
 
-        const sessionDir = getLambdaTestSessionDir();
-        fs.mkdirSync(sessionDir, { recursive: true });
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+### F11 — `fs.writeFileSync(path.join(sessionDir, \`test-${testId}.json\`), ...)` (base-page-factory.ts, lines 129–137)
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+```ts
+const testId = process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
+const sessionDir = getLambdaTestSessionDir();
+fs.mkdirSync(sessionDir, { recursive: true });
+...
+if (testId) {
+  fs.writeFileSync(
+    path.join(sessionDir, `test-${testId}.json`),
+    JSON.stringify({ sessionName, timestamp, testId }),
+    'utf-8'
+  );
+  ...
+}
+```
+**Trace:** `testId` comes from **(c) `process.env.__CURRENT_TEST_ID__`** (with an in-process
+`global` fallback), which is populated exclusively by `lt-session-reporter.ts`'s
+`onTestBegin(test)` hook via `process.env.__CURRENT_TEST_ID__ = test.id;` — i.e. it is
+Playwright's own `test.id`, described above (`/^[0-9a-f]{20}-[0-9a-f]{20}$/`, SHA1-hex only).
+As established, this format cannot contain `../`, absolute-path segments, or null bytes.
+**Verdict: false positive** — the source cannot produce malicious path segments.
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+However, this is the **one place worth a non-blocking hardening fix**: the sibling file
+`lt-session-reporter.ts` (F13/F17) explicitly sanitizes the same kind of value
+(`testId.replace(/[^a-zA-Z0-9-]/g, '_')`) before using it in a filename, while this file does
+not. Even though `testId` cannot realistically be malicious today, applying the identical
+sanitizer here would (1) make the two call sites consistent, (2) satisfy Cycode's pattern
+matcher (eliminating the SAST noise for this specific line without behavior change), and
+(3) add defense-in-depth in case `__CURRENT_TEST_ID__` is ever set from a different source
+in the future. **Proposed diff (not applied):**
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+```diff
+         const testId =
+           process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
++        const safeTestId = testId ? testId.replace(/[^a-zA-Z0-9-]/g, '_') : null;
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/setup/globalTeardown.ts
-        try {
-          const sanitizedFile = path.basename(file);
-          const filePath = path.join(sessionDir, sanitizedFile);
-          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+         const sessionDir = getLambdaTestSessionDir();
+         fs.mkdirSync(sessionDir, { recursive: true });
+@@
+-        if (testId) {
++        if (safeTestId) {
+           fs.writeFileSync(
+-            path.join(sessionDir, `test-${testId}.json`),
++            path.join(sessionDir, `test-${safeTestId}.json`),
+             JSON.stringify({ sessionName, timestamp, testId }),
+             'utf-8'
+           );
+           console.log(`[LT Session] ✓ test-${testId}.json written`);
+```
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+### F12 — `fs.writeFileSync(path.join(sessionDir, \`worker-${workerIndex}.json\`), ...)` (base-page-factory.ts, lines 143–146)
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+```ts
+const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
+...
+fs.writeFileSync(
+  path.join(sessionDir, `worker-${workerIndex}.json`),
+  JSON.stringify({ sessionName, timestamp }),
+  'utf-8'
+);
+```
+**Trace:** `workerIndex` comes from **(c) `process.env.TEST_WORKER_INDEX`**, but it is passed
+through `Number(...)` before use. `Number("../../etc/passwd" || 0)` evaluates to `NaN`, and
+`` `worker-${NaN}.json` `` → the literal filename `worker-NaN.json` — not a traversal
+sequence. Any non-numeric string collapses to `NaN`; any numeric string becomes a plain
+digit sequence. **Verdict: false positive** — numeric coercion neutralizes injection.
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+### F13, F14 — `path.join(sessionDir, \`test-${testId}.json\`)` read + cleanup (lt-session-reporter.ts, lines 36–52)
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/setup/globalTeardown.ts
-    const testIdMap = new Map<string, string>(); // testId -> sessionName
-
-    // Read individual mapping files (one per test) to avoid concurrent write conflicts
-    if (fs.existsSync(sessionDir)) {
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
-
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/setup/globalTeardown.ts
-
-    // Read individual mapping files (one per test) to avoid concurrent write conflicts
-    if (fs.existsSync(sessionDir)) {
-      const mappingFiles = fs
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
-
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/reporters/lt-session-reporter.ts
-
-        // cleanup
-        try {
-          fs.unlinkSync(testSessionFile);
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
-
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/reporters/lt-session-reporter.ts
-
-    // Write mapping per test/worker to avoid concurrent write conflicts
+```ts
+onTestEnd(test: TestCase, result: TestResult) {
+  const testId = test.id;
+  const sessionDir = getLambdaTestSessionDir();
+  const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
+  ...
+  if (fs.existsSync(testSessionFile)) {
+    const data = JSON.parse(fs.readFileSync(testSessionFile, 'utf-8'));
+    ...
     try {
-      fs.mkdirSync(sessionDir, { recursive: true });
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+      fs.unlinkSync(testSessionFile);
+    } catch { /* ignore cleanup failure */ }
+  }
+```
+**Trace:** Here `testId` is **(b) `test.id`, taken directly from the Playwright `TestCase`
+object passed into the reporter's `onTestEnd(test, result)` hook** — the most direct possible
+source, with no environment-variable relay at all. Same SHA1-hex format guarantee as above.
+**Verdict: false positive** for both the read (F13) and the cleanup unlink (F14).
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+### F17 — mapping-file write with explicit sanitization (lt-session-reporter.ts, lines 104–120)
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+```ts
+fs.mkdirSync(sessionDir, { recursive: true });
+// Use a collision-resistant filename per test/process to prevent concurrent write conflicts
+const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
+const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
+fs.writeFileSync(mappingFile, JSON.stringify({ ... }, null, 2), 'utf-8');
+```
+**Trace:** `testId` is the same safe `test.id` value as F13, and is **additionally** run
+through an explicit allow-list regex sanitizer (`[^a-zA-Z0-9-]` → `_`) before being
+interpolated into the filename. `process.pid` and `Date.now()` are both numbers.
+**Verdict: false positive** — this is the reference "already sanitized" pattern the rest of
+the codebase should be made consistent with (see F11's proposed fix).
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+---
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/reporters/lt-session-reporter.ts
+## Bottom line
 
-    try {
-      const sessionDir = getLambdaTestSessionDir();
-      fs.mkdirSync(sessionDir, { recursive: true });
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+All 19 audited call sites are false positives with respect to genuine, attacker-reachable
+path-injection risk: every dynamic segment is either directory-listing-derived +
+`path.basename()`-sanitized, an explicitly regex-sanitized test id, a `Number()`-coerced
+worker index, or Playwright's own SHA1-hex `test.id` (format verified from the installed
+`playwright`/`playwright-core` package source, which cannot contain `../`, absolute paths,
+or null bytes). No fix is required for correctness/security. One optional, non-blocking
+consistency fix is proposed for `base-page-factory.ts` (F11) to mirror the sanitization
+already present in `lt-session-reporter.ts` and quiet the recurring SAST noise on that line.
+--------------------------------------------------------------------------------------------------------
+Investigation complete — wrote the full audit to CYCODE_FINDINGS_REVIEW.md. No files other than that summary were modified.
 
-Risk Score: 98 (CRITICAL)
-Severity: High
+Result: 0 genuine risks, all 19 audited call sites are false positives. (I traced every fs.writeFileSync/readFileSync/unlinkSync/mkdirSync/path.join in the 3 files — Cycode's raw report wasn't reproducible locally since the cycode CLI isn't installed/authenticated here, so my count is 19 rather than exactly 13, but it's an exhaustive superset.)
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+Key findings by source category:
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/reporters/lt-session-reporter.ts
-
-    try {
-      // 1st priority: test-specific session file
-      if (fs.existsSync(testSessionFile)) {
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
-
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 42 minutes ago
-e2e/playwright/reporters/lt-session-reporter.ts
-    try {
-      // 1st priority: test-specific session file
-      if (fs.existsSync(testSessionFile)) {
-        const data = JSON.parse(fs.readFileSync(testSessionFile, 'utf-8'));
-@cycode-security-eu
-cycode-security-eu Bot
-42 minutes ago
-❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
-
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
+Static paths (process.cwd() + literals, getLambdaTestSessionDir()) — zero dynamic input at all.
+fs.readdirSync()-discovered filenames (globalTeardown.ts mapping/Allure loops) — already run through path.basename().
+testId (both files) — traced to Playwright's TestCase.id, which I verified from the installed playwright/playwright-core source is always /^[0-9a-f]{20}-[0-9a-f]{20}$/ (two SHA1-hex slices joined by -, via .digest("hex")) — structurally cannot contain ../, absolute paths, or null bytes.
+workerIndex — coerced with Number(), so injection collapses to NaN.
+One non-blocking hardening recommendation (not a real vulnerability): base-page-factory.ts writes test-${testId}.json without the safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_') sanitizer that lt-session-reporter.ts already applies to the identical value. Making the two consistent would silence the recurring Cycode noise on that line and add defense-in-depth. The exact proposed diff is in the markdown file — not applied per your instruction.
