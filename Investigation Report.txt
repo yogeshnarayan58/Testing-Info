@@ -1,10 +1,6 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git status
-On branch feature/lambdatest-allure-setup
-Your branch is up to date with 'origin/feature/lambdatest-allure-setup'.
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        ../.cycode-investigation/
-
-nothing added to commit but untracked files present (use "git add" to track)
+$ ls -la ../.cycode-investigation/
+total 9
+drwxr-xr-x 1 ENCORA+Yogesh.Upadhyay 4096   0 Aug 18 12:47 ./
+drwxr-xr-x 1 ENCORA+Yogesh.Upadhyay 4096   0 Aug 18 12:47 ../
+-rw-r--r-- 1 ENCORA+Yogesh.Upadhyay 4096 130 Aug 18 12:47 security.md
