@@ -1,350 +1,106 @@
-import { BasePage } from '@gfk/gta';
-import { chromium } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
-import { WebActions } from '@gfk/gta/dist/core/web/webActions';
-import { getLambdaTestBuildName, getLambdaTestSessionDir } from './configurationDetails';
-
-/**
- * Simplified BasePageFactory for local-only Playwright execution.
- * Unlike Omni Shopper's version, this deliberately has NO LambdaTest
- * branching, no session tracking, and no cloud connection logic -
- * it only ever wires up a local browser via GTA's BasePage.initializer().
- * storageState is READ-ONLY here: if storage/auth.json exists, it is
- * passed into contextOptions so the browser reuses that session.
- * Writing/saving storageState remains the responsibility of the login
- * page object (via webActions.getStorageState()), not this factory.
- * BasePageFactory: wires up a Playwright browser for tests, either
- * locally (default) or against LambdaTest cloud (when LAMBDATEST=true).
- *
- * The local/non-LambdaTest path below is unchanged from before and remains
- * the default: it only ever wires up a local browser via GTA's
- * BasePage.initializer(). storageState is READ-ONLY here: if
- * storage/auth.json exists, it is passed into contextOptions so the browser
- * reuses that session. Writing/saving storageState remains the
- * responsibility of the login page object (via webActions.getStorageState()),
- * not this factory.
- *
- * The LambdaTest path is INERT until LAMBDATEST=true and real credentials
- * (SM_LAMBDATEST_USERNAME/SM_LT_USERNAME + SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY) are
- * provided - see e2e/.env.example.
- */
-
-// Store session names with timestamp as key (for reporter lookup)
-export const sessionRegistry: Array<{ timestamp: number; sessionName: string; title?: string }> = [];
-
-// Map to store session per worker - each worker runs tests sequentially
-export const workerSessionMap = new Map<number, string>();
-
-// Global current session tracker - stores the last created session
-export let currentLTSession: string | null = null;
-
-export class BasePageFactory {
-  static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
-    const browserName = process.env.BROWSER_NAME || 'chromium';
-
-    const envHeadless = process.env.HEADLESS !== 'false';
-    const headless = forceHeadless ?? envHeadless;
-    const browserOptions = { headless };
-    const isLambdaTest = process.env.LAMBDATEST === 'true';
-
-    let storageState: string | undefined;
-    const authPath = path.resolve(process.cwd(), 'storage/auth.json');
-      console.log('No auth state found - login required');
-    }
-
-    if (isLambdaTest) {
-      console.log('Connecting to LambdaTest cloud...');
-
-      const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
-      const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
-      const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
-      const ltBuildBase = process.env.SM_LT_BUILD || 'Discover build';
-      const ltBuildIdentifier =
-        process.env.SM_LT_BUILD_IDENTIFIER ||
-        process.env.BUILD_NUMBER ||
-        process.env.GITHUB_RUN_NUMBER ||
-        undefined;
-      const ltBuild = getLambdaTestBuildName(ltBuildBase, ltBuildIdentifier);
-
-      const ltVideo = process.env.SM_LT_VIDEO === 'false' ? false : true;
-      const ltNetwork = process.env.SM_LT_NETWORK === 'true';
-      const ltConsole = process.env.SM_LT_CONSOLE === 'true';
-
-      const timestamp = Date.now();
-      const sessionName = `Test-${timestamp}`;
-
-      const ltOptions: any = {
-        platform: 'Windows 11',
-        project: ltProject,
-        build: ltBuild,
-        name: sessionName,
-        user: ltUser,
-        accessKey: ltAccessKey,
-        network: ltNetwork,
-        video: ltVideo,
-        console: ltConsole,
-      };
-
-      if (forceHeadless !== undefined) {
-        ltOptions.headless = forceHeadless;
-      }
-
-      const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
-        JSON.stringify({
-          browserName: 'pw-chromium',
-          browserVersion: 'latest',
-          'LT:Options': ltOptions,
-        })
-      )}`;
-
-      const browser = await chromium.connect(wsEndpoint);
-      console.log(`Connected to LambdaTest (Session: ${sessionName})`);
-
-      const contextOptions: any = {
-        acceptDownloads: true,
-        viewport: { width: 1920, height: 1080 },
-      };
-
-      if (storageState) {
-        contextOptions.storageState = storageState;
-      }
-
-      const context = await browser.newContext(contextOptions);
-      const page = await context.newPage();
-
-      // Store session info for reporter/global-teardown
-      try {
-        const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-        const testId =
-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-
-        const sessionDir = getLambdaTestSessionDir();
-        fs.mkdirSync(sessionDir, { recursive: true });Collapse commentComment on line R115cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
-
-
-Cycode Remediation Guideline
-✅ Do
-
-
-Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
-Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
-
-function write(filename) {
-  switch(filename) {
-    case "hello.txt":
-      fs.writeCreateFile("hello.txt");
-      break;
-    // Add more cases as necessary
-  }
-}
-    
-      
-    
-
-      
-    
-
-    
-  
-📋 References
-
-
-OWASP path traversal
-
-
-Tell us how you wish to proceed using one of the following commands:
-
-
-
-Tag
-Short Description
-
-
-
-
-#cycode_sast_ignore_here <reason>
-Ignore this violation — applies to this violation only
-
-
-#cycode_ai_remediation
-Request remediation guidance using Cycode AI
-
-
-
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve comment
-
-        // store in memory
-        (page as any).__LT_SESSION_NAME__ = sessionName;
-        sessionRegistry.push({ timestamp, sessionName });
-        workerSessionMap.set(workerIndex, sessionName);
-        currentLTSession = sessionName;
-
-        // append sessions.jsonl (fallback)
-        fs.appendFileSync(Collapse annotationCheck failure on line R124e2e/utils/base-page-factory.ts#L124Check failure: e2e/utils/base-page-factory.ts#L124Unsanitized dynamic input in file path found / Cycode: SASTView details
-          path.join(sessionDir, 'sessions.jsonl'),
-          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
-          'utf-8'
-        );
-
-        // PRIMARY (parallel safe): write per-test session file
-        if (testId) {
-          fs.writeFileSync(Collapse commentComment on line R132cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
-
-
-Cycode Remediation Guideline
-✅ Do
-
-
-Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
-Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
-
-function write(filename) {
-  switch(filename) {
-    case "hello.txt":
-      fs.writeCreateFile("hello.txt");
-      break;
-    // Add more cases as necessary
-  }
-}
-    
-      
-    
-
-      
-    
-
-    
-  
-📋 References
-
-
-OWASP path traversal
-
-
-Tell us how you wish to proceed using one of the following commands:
-
-
-
-Tag
-Short Description
-
-
-
-
-#cycode_sast_ignore_here <reason>
-Ignore this violation — applies to this violation only
-
-
-#cycode_ai_remediation
-Request remediation guidance using Cycode AI
-
-
-
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve comment
-            path.join(sessionDir, `test-${testId}.json`),
-            JSON.stringify({ sessionName, timestamp, testId }),
-            'utf-8'
-          );
-          console.log(`[LT Session] ✓ test-${testId}.json written`);
-        } else {
-          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
-        }
-Collapse annotationCheck failure on line R141e2e/utils/base-page-factory.ts#L141Check failure: e2e/utils/base-page-factory.ts#L141Unsanitized dynamic input in file path found / Cycode: SASTView details
-        // optional worker file
-        fs.writeFileSync(Collapse commentComment on line R143cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
-Risk Score: 98 (CRITICAL)
-Severity: High
-
-Description
-Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
-
-
-Cycode Remediation Guideline
-✅ Do
-
-
-Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
-Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
-
-function write(filename) {
-  switch(filename) {
-    case "hello.txt":
-      fs.writeCreateFile("hello.txt");
-      break;
-    // Add more cases as necessary
-  }
-}
-    
-      
-    
-
-      
-    
-
-    
-  
-📋 References
-
-
-OWASP path traversal
-
-
-Tell us how you wish to proceed using one of the following commands:
-
-
-
-Tag
-Short Description
-
-
-
-
-#cycode_sast_ignore_here <reason>
-Ignore this violation — applies to this violation only
-
-
-#cycode_ai_remediation
-Request remediation guidance using Cycode AI
-
-
-
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve comment
-          path.join(sessionDir, `worker-${workerIndex}.json`),
-          JSON.stringify({ sessionName, timestamp }),
-          'utf-8'
-        );
-
-        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
-      } catch (err) {
-        console.warn('[LT Session] Could not store session info:', err);
-      }Collapse annotationCheck failure on line R152e2e/utils/base-page-factory.ts#L152Check failure: e2e/utils/base-page-factory.ts#L152Unsanitized dynamic input in file path found / Cycode: SASTView details
-
-      // Inject into BasePage
-      (BasePage as any).browser = browser;
-      (BasePage as any).context = context;
-      (BasePage as any).page = page;
-      (BasePage as any).webActions = new WebActions(page, context);
-
-      return new (BasePage as any)();
-    }
-
-    const browserName = process.env.BROWSER_NAME || 'chromium';
-
-    const envHeadless = process.env.HEADLESS !== 'false';
-    const headless = forceHeadless ?? envHeadless;
-    const browserOptions = { headless };
-
-    const contextOptions = {
-      acceptDownloads: true,
-     // viewport: null,
+/github.com/…
+Cycode Security (EU)
+Cycode: IaC
+Cycode: SAST
+Cycode: Secrets
+Cycode: Vulnerable Dependencies
+CodeQL - Code Quality
+on: dynamic
+CodeQL
+on: dynamic
+CI
+on: pull_request
+ 5
+Code scanning results
+Cycode Security (EU) / Cycode: SAST
+succeeded 1 minute ago in 0s
+Violations detected ❌
+Status
+
+Cycode check completed. Cycode found 10 violations.
+
+Violations summary
+Policy	🟣 Critical	🔴 High	🟠 Medium	🟡 Low	🔵 Info	Total
+Unsanitized dynamic input in file path	0	10	0	0	0	10
+Annotations
+ Check failure on line 135 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L135
+
+Unsanitized dynamic input in file path found
+ Check failure on line 57 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L57
+
+Unsanitized dynamic input in file path found
+ Check failure on line 152 in e2e/utils/base-page-factory.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/utils/base-page-factory.ts#L152
+
+Unsanitized dynamic input in file path found
+ Check failure on line 124 in e2e/utils/base-page-factory.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/utils/base-page-factory.ts#L124
+
+Unsanitized dynamic input in file path found
+ Check failure on line 242 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L242
+
+Unsanitized dynamic input in file path found
+ Check failure on line 68 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L68
+
+Unsanitized dynamic input in file path found
+ Check failure on line 58 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L58
+
+Unsanitized dynamic input in file path found
+ Check failure on line 104 in e2e/playwright/reporters/lt-session-reporter.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/reporters/lt-session-reporter.ts#L104
+
+Unsanitized dynamic input in file path found
+ Check failure on line 97 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L97
+
+Unsanitized dynamic input in file path found
+ Check failure on line 141 in e2e/utils/base-page-factory.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/utils/base-page-factory.ts#L141
+
+Unsanitized dynamic input in file path found
+View more details on Cycode Security (EU)
