@@ -1,303 +1,134 @@
-# lambdatest.yml Setup — Copy & Gap Analysis
+Loaded 5 secret(s) from stdin
+Using integration ID from job details: copilot-pr-reviews
+Analyzing niq-enterprise/disc-fe-omni-survey-mod PR #100, request-id 7566:2DF9B8:4DBBF:5A158:6A832621 (autofind.js version: 0.1.114)
+Fetching PR metadata for niq-enterprise/disc-fe-omni-survey-mod#100
+Fetched PR metadata for niq-enterprise/disc-fe-omni-survey-mod#100 (object format: sha1).
+Warning: CCR setting for "RestrictedTranscriptProgressEnabled" does not exist and will be ignored. Valid keys are: maxPromptTokens, splitLinesMaxGap, contextLines, useGPT5Model, enablePlanTool, enableAgenticTools, gpt56PromptVariant, enableCommentTool, enableMemoryStorage, enableMemoryUsage, useSDKMemory, memoryLimit, moreThorough, enableReviewContinuation, enableAutoApproval, inlineApprovalReadinessReasoning, enableFeedbackInUserMessage, maxIssueReferences, maxIssueContentLength, enableSemanticIssueSearchTool, enableSemanticIssueSearchToolIssuesOnly, mustUseSemanticIssueSearchTool, enableSemanticIssuesInject, queryAgentModelName, maxSemanticSearchResults, criticModelName, criticPrescriptivePromptEnabled, verificationModelName, generateFixesInStoreFix, generateFixesInStoreComment, fixGeneratorMaxExpansionLines, fixVerificationPrompt, skipRegionFiltering, enableSkills, enableMcpProxy, broadenSkillRelevanceGating, disableBaseBranchLoading, applyContentExclusions, useCliBashTool, useV3BashPrompt, useCliFileTools, costBudgetUsd, costSoftThresholdRatio, costHardThresholdRatio, severityClassifierModelName, contextAgentModelName, enableContextPlanTool, contextV2Prompt, dedupModelName, lateFindsCurationModelName, groupingWithinReviewModelName, resolutionVerificationModelName, resolutionVerificationMaxThreads, enablePrDescriptionDriftGuidance
+[fork-gate] niq-enterprise/disc-fe-omni-survey-mod#100: disableBaseBranchLoading=true, isForked=false, loading instructions/skills from head checkout.
+Fetching diff 192d00b22c622a4803f8447935ede627231a1f50...268b6f9e9920062734f8a882fcc05df81f7700ea for niq-enterprise/disc-fe-omni-survey-mod
+Preparing repository...
+Repository is not checked out at /home/runner/work/disc-fe-omni-survey-mod/disc-fe-omni-survey-mod. Checking out a fresh copy.
+Checking out niq-enterprise/disc-fe-omni-survey-mod at SHA 268b6f9e9920062734f8a882fcc05df81f7700ea into /home/runner/work/disc-fe-omni-survey-mod/disc-fe-omni-survey-mod
+HttpError: Resource not accessible by integration - https://docs.github.com/rest/commits/commits#compare-two-commits
+    at Cz (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:361:8915)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async kZI (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:363:91574)
+    at async o.doExecute (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:22:13856)
+Failed to read cca-setup error log: ENOENT: no such file or directory, open '/home/runner/work/_temp/autofind-cca-setup-error.txt'
+Error creating PR review request: Error: HttpError: Resource not accessible by integration - https://docs.github.com/rest/commits/commits#compare-two-commits: Failed to fetch diff between 192d00b22c622a4803f8447935ede627231a1f50 and 268b6f9e9920062734f8a882fcc05df81f7700ea for niq-enterprise/disc-fe-omni-survey-mod (errorDetails: {"configurationError":false,"stack":"Error: HttpError: Resource not accessible by integration - https://docs.github.com/rest/commits/commits#compare-two-commits: Failed to fetch diff between 192d00b22c622a4803f8447935ede627231a1f50 and 268b6f9e9920062734f8a882fcc05df81f7700ea for niq-enterprise/disc-fe-omni-survey-mod\n    at Object.aB [as fetchDiff] (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:385:536)\n    at async b (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2383:470)\n    at async Promise.all (index 1)\n    at async P1 (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:9163)\n    at async F5I (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:18015)\n    at async X5I (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:18415)"}, autofind.js version: 0.1.114)
+Reporting error to sweagentd...
+Error successfully reported to sweagentd session.
+Error successfully reported to sweagentd backend.
+Error: HttpError: Resource not accessible by integration - https://docs.github.com/rest/commits/commits#compare-two-commits: Failed to fetch diff between 192d00b22c622a4803f8447935ede627231a1f50 and 268b6f9e9920062734f8a882fcc05df81f7700ea for niq-enterprise/disc-fe-omni-survey-mod
+    at Object.aB [as fetchDiff] (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:385:536)
+    at async b (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2383:470)
+    at async Promise.all (index 1)
+    at async P1 (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:9163)
+    at async F5I (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:18015)
+    at async X5I (file:///home/runner/work/_temp/***-action-main/dist-autofind-ts/ts/autofind.js:2405:18415)
+Stopping git-proxy (pid=2994)...
+::***::
+Error: Process completed with exit code 1.
+---------------------------------------------------------------
+e2e/playwright/setup/globalTeardown.ts
+      }
 
-## 1. RAW CODE — new `e2e/lambdatest.yml` (this repo)
+      // Safe: testResult.filePath was sanitized with path.basename() during file reading
+      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+14 hours ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-```yaml
-# =============================
-# LambdaTest Credentials
-# =============================
-userName: ${SM_LT_USERNAME}
-accessKey: ${SM_LT_ACCESS_KEY}
+Risk Score: 98 (CRITICAL)
+Severity: High
 
-# ======================
-# LambdaTest Configuration
-# ======================
-framework: playwright
-projectName: SurveyMod
-buildName: ${SM_LT_BUILD}
-buildIdentifier: ${DATE_TIME}
-testObservability: false
-consoleLogs: info
-lambdaTestLocal: true
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-# =======================================
-# Platforms (Browsers / Devices to test)
-# =======================================
-platforms:
-  - os: Windows
-    osVersion: 11
-    browserName: chrome
-    browserVersion: latest
-  - os: Windows
-    osVersion: 11
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Ventura
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Big Sur
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-# =======================
-# Parallels per Platform
-# =======================
-parallelsPerPlatform: 1
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 14 hours ago
+e2e/playwright/setup/globalTeardown.ts
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Safe: testResult.filePath was sanitized with path.basename() during file reading
+          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+14 hours ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-# ==========================================
-# LambdaTest Tunnel
-# (For localhost, staging/private websites)
-# ==========================================
-lambdaTestTunnel: true
+Risk Score: 98 (CRITICAL)
+Severity: High
 
-# ===================
-# Debugging features
-# ===================
-debug: false
-networkLogs: false
-video: true
-idleTimeout: 300
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-# ===================
-# GTA compatibility
-# ===================
-platform: Windows 11
-browserVersion: "141.0"
-```
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-## 2. RAW CODE — Omni Shopper's original `lambdatest.yml` (source of truth, read fresh)
+@Yogesh-Upadhyay-consultant_niq	Reply...
+github-advanced-security[bot]
+github-advanced-security AI found potential problems 14 hours ago
+e2e/playwright.config.ts
 
-```yaml
-# =============================
-# LambdaTest Credentials
-# =============================
-userName: ${LT_USERNAME}
-accessKey: ${LT_ACCESS_KEY}
+if (isLambdaTest) {
+  console.log('\n🌐 LambdaTest Cloud Execution Enabled');
+  console.log('   User:', ltUser);
+github-advanced-security commented 14 hours ago
+@github-advanced-security
+github-advanced-security
+bot
+14h ago
+High
+CodeQL / Clear-text logging of sensitive information
+This logs sensitive data returned by process environment as clear text.
+This logs sensitive data returned by process environment as clear text.
 
-# ======================
-# LambdaTest Configuration
-# ======================
-framework: playwright
-projectName: Discover_OMNI
-buildName: ${LAMBDATEST_BUILD_NAME}
-buildIdentifier: ${DATE_TIME}
-testObservability: false
-consoleLogs: info
-lambdaTestLocal: true
+Show more details
 
-# =======================================
-# Platforms (Browsers / Devices to test)
-# =======================================
-platforms:
-  - os: Windows
-    osVersion: 11
-    browserName: chrome
-    browserVersion: latest
-  - os: Windows
-    osVersion: 11
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Ventura
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Big Sur
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
+Suggested changeset 1 (1)
+e2e/playwright.config.ts
+Original file line number	Diff line number	Diff line change
+ if (isLambdaTest) {
+   console.log('\n🌐 LambdaTest Cloud Execution Enabled');
+   console.log('   User:', ltUser);
+   console.log('   User: [configured]');
+   console.log('   Project:', ltProject);
+   console.log('   Workers:', ltWorkers);
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Dismissing the alert will mark this conversation as resolved.
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 14 hours ago
+e2e/playwright/setup/globalTeardown.ts
+    const testResults = allureFiles.map((file) => {
+      // Sanitize filename to prevent path traversal attacks
+      const sanitizedFile = path.basename(file);
+      const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+@cycode-security-eu
+cycode-security-eu Bot
+14 hours ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-# =======================
-# Parallels per Platform
-# =======================
-parallelsPerPlatform: 1
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-# ==========================================
-# LambdaTest Tunnel
-# (For localhost, staging/private websites)
-# ==========================================
-lambdaTestTunnel: true
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-# ===================
-# Debugging features
-# ===================
-debug: false
-networkLogs: false
-video: true
-idleTimeout: 300
-
-# ===================
-# GTA compatibility
-# ===================
-platform: Windows 11
-browserVersion: "141.0"
-```
-
-## 3. Line-by-line diff
-
-Only 4 lines differ between the two files — everything else (comments, section headers,
-all 4 platform entries, `parallelsPerPlatform`, `lambdaTestTunnel`, `debug`/`networkLogs`/
-`video`/`idleTimeout`, and the trailing GTA compatibility block) is byte-for-byte identical.
-
-| Line | Omni Shopper (original) | disc-fe-omni-survey-mod (new) |
-|---|---|---|
-| `userName:` | `${LT_USERNAME}` | `${SM_LT_USERNAME}` |
-| `accessKey:` | `${LT_ACCESS_KEY}` | `${SM_LT_ACCESS_KEY}` |
-| `projectName:` | `Discover_OMNI` | `SurveyMod` |
-| `buildName:` | `${LAMBDATEST_BUILD_NAME}` | `${SM_LT_BUILD}` |
-
-Confirmed: no other lines differ, no reordering, no removed/added keys.
-
-## 4. Gap analysis — is anything else missing?
-
-**Key finding: `lambdatest.yml` is not actually wired into anything in Omni Shopper's repo.**
-It is a standalone declarative file with no code, script, or CI step that reads or invokes it.
-
-- **CI/CD workflow invoking `lambdatest.yml` or a LambdaTest CLI?**
-  Checked all 6 files in `disc-fe-omnishopper-ui-automation/.github/workflows/`
-  ([manual-automation-test-run.yml](../../../Downloads/disc-fe-omnishopper-ui-automation/.github/workflows/manual-automation-test-run.yml),
-  `scheduler-report-after-run-base-setup.yml`, `scheduler-report-after-run-batch-1/2/3.yml`,
-  `scheduler-report-basic-test-cases.yml`). None reference `lambdatest.yml` or any
-  `lambdatest`/`lt-cli` CLI binary. They set plain environment variables
-  (`LAMBDATEST`, `LAMBDATEST_USERNAME`, `LAMBDATEST_ACCESS_KEY`, `LT_USERNAME`, `LT_ACCESS_KEY`,
-  `LT_PROJECT`, `LT_BUILD`, `LT_BUILD_IDENTIFIER`, `LT_TUNNEL`, `LT_VIDEO`, `LT_NETWORK`) and
-  then just run `npx playwright test` directly — no LambdaTest CLI step of any kind.
-
-  Relevant excerpt (manual-automation-test-run.yml):
-  ```bash
-  if [ "${{ github.event.inputs.USE_LAMBDATEST }}" = "Yes" ] || [ "${{ github.event.inputs.USE_LAMBDATEST }}" = "true" ]; then
-    echo "LAMBDATEST=true" >> $GITHUB_ENV
-    echo "LAMBDATEST_USERNAME=${{ secrets.LAMBDATEST_USERNAME }}" >> $GITHUB_ENV
-    echo "LAMBDATEST_ACCESS_KEY=${{ secrets.LAMBDATEST_ACCESS_KEY }}" >> $GITHUB_ENV
-    echo "LT_USERNAME=${{ secrets.LAMBDATEST_USERNAME }}" >> $GITHUB_ENV
-    echo "LT_ACCESS_KEY=${{ secrets.LAMBDATEST_ACCESS_KEY }}" >> $GITHUB_ENV
-    echo "LT_PROJECT=OMNI Discover" >> $GITHUB_ENV
-    echo "LT_BUILD=Discover build - Manual Run" >> $GITHUB_ENV
-    echo "LT_BUILD_IDENTIFIER=${{ github.run_number }}" >> $GITHUB_ENV
-    echo "LT_TUNNEL=true" >> $GITHUB_ENV
-  ```
-  There is no `lambdatest` CLI invocation anywhere in these workflows.
-
-- **npm script invoking the LambdaTest CLI?**
-  Omni Shopper's `package.json` has:
-  ```json
-  "test:lambdatest": "cross-env LAMBDATEST=true npx playwright test",
-  ```
-  This is plain Playwright (`npx playwright test`) with an env var flag — it does **not**
-  call any `lambdatest`/`lt-cli`/`lambdatest-setup` binary. No such script exists.
-
-- **LambdaTest CLI tool listed as a dependency?**
-  Checked all of `dependencies` and `devDependencies` in Omni Shopper's `package.json`
-  (`@gfk/gta`, `@playwright/test`, `@types/node`, `allure-commandline`, `allure-playwright`,
-  `cross-env`, `dotenv`, `typescript`, `rxjs`, `tslib`). **No LambdaTest CLI package
-  (e.g. `lambdatest-cypress-cli`, `@lambdatest/*`, `lambda-tunnel`) is present.**
-
-- **How does Omni Shopper actually run on LambdaTest, then?**
-  Entirely through `playwright.config.ts`, not `lambdatest.yml`. When `LAMBDATEST=true`,
-  the config builds a `connectOptions.wsEndpoint` pointing at
-  `wss://cdp.lambdatest.com/playwright?capabilities=...` and passes `LT:Options`
-  (`platform`, `build`, `user`, `accessKey`, `project`, `network`, `video`, `console`,
-  `idleTimeout`) directly from environment variables (`LT_USERNAME`, `LT_ACCESS_KEY`,
-  `LT_PROJECT`, `LT_BUILD`, etc.) sourced from `.env`/CI secrets. `lambdatest.yml` is never
-  `require`'d, `read`'d, or referenced by path anywhere in the codebase (confirmed via
-  full-repo text search for `lambdatest.yml` — zero matches outside the file itself).
-
-- **Does `disc-fe-omni-survey-mod` have any of the above already?**
-  - `e2e/package.json` already has an equivalent script:
-    `"test:lambdatest": "cross-env LAMBDATEST=true npx playwright test"` — same pattern as
-    Omni Shopper, already present.
-  - `e2e/.env` / `e2e/.env.example` already define `SM_LT_*` variables
-    (`SM_LT_USERNAME`, `SM_LT_ACCESS_KEY`, `SM_LT_PROJECT`, `SM_LT_BUILD`, `SM_LT_TUNNEL`,
-    `SM_LT_VIDEO`, `SM_LT_NETWORK`, `SM_LT_CONSOLE`, `SM_LT_IDLE_TIMEOUT`, `SM_LT_WORKERS`),
-    matching the naming used in the 4 changes made to `lambdatest.yml`.
-  - **Missing (same as Omni Shopper — i.e., not a gap unique to us):** no LambdaTest CLI
-    dependency, and no CI/CD workflow file under `.github/workflows/` in this repo that
-    invokes LambdaTest at all (this repo has no equivalent of Omni Shopper's
-    `manual-automation-test-run.yml` / `scheduler-report-*.yml`).
-  - Not yet verified in this pass: whether `e2e/playwright.config.ts` in this repo actually
-    builds the `wss://cdp.lambdatest.com/playwright` `connectOptions` block the way Omni
-    Shopper's does — that file was not part of this task's scope but would need the same
-    wiring for `npm run test:lambdatest` to actually route to LambdaTest's cloud grid rather
-    than just setting an inert env var.
-
-## 5. Status — is `lambdatest.yml` usable as-is?
-
-**No — in both repos, `lambdatest.yml` is currently an orphaned/unused config file.**
-
-- It is not read by Playwright, not referenced by any npm script, and not invoked by any CI
-  workflow in Omni Shopper (the repo it was copied from) or in this repo.
-- The actual LambdaTest cloud execution mechanism in Omni Shopper lives entirely in
-  `playwright.config.ts` (the `wss://cdp.lambdatest.com/playwright` WebSocket endpoint built
-  from `LT_*`/`LAMBDATEST_*` env vars), not in `lambdatest.yml`.
-- Copying `lambdatest.yml` into `e2e/` is safe and consistent with the request, but by itself
-  it does **not** enable or change any LambdaTest behavior for `disc-fe-omni-survey-mod`.
-  For `npm run test:lambdatest` in this repo to actually run on LambdaTest's cloud, the
-  equivalent `connectOptions`/`wsEndpoint` wiring must exist in `e2e/playwright.config.ts`
-  (this was outside the scope of this task and was not verified/changed here).
-- No additional CLI installation is required to have the file present, but no CLI would
-  ever consume it either — it appears to be leftover/reference documentation rather than an
-  active part of either repo's test execution path.
---------------------------------------------------------------------------------------------------------------------
-# =============================
-# LambdaTest Credentials
-# =============================
-userName: ${SM_LT_USERNAME}
-accessKey: ${SM_LT_ACCESS_KEY}
-
-# ======================
-# LambdaTest Configuration
-# ======================
-framework: playwright
-projectName: SurveyMod
-buildName: ${SM_LT_BUILD}
-buildIdentifier: ${DATE_TIME}
-testObservability: false
-consoleLogs: info
-lambdaTestLocal: true
-
-# =======================================
-# Platforms (Browsers / Devices to test)
-# =======================================
-platforms:
-  - os: Windows
-    osVersion: 11
-    browserName: chrome
-    browserVersion: latest
-  - os: Windows
-    osVersion: 11
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Ventura
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-  - os: MacOS
-    osVersion: Big Sur
-    browserName: MicrosoftEdge
-    browserVersion: 141.0
-
-# =======================
-# Parallels per Platform
-# =======================
-parallelsPerPlatform: 1
-
-# ==========================================
-# LambdaTest Tunnel
-# (For localhost, staging/private websites)
-# ==========================================
-lambdaTestTunnel: true
-
-# ===================
-# Debugging features
-# ===================
-debug: false
-networkLogs: false
-video: true
-idleTimeout: 300
-
-# ===================
-# GTA compatibility
-# ===================
-platform: Windows 11
-browserVersion: "141.0"
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
