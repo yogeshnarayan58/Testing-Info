@@ -1,14 +1,5 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git log --oneline -5
-8965fca (HEAD -> feature/lambdatest-allure-setup, origin/feature/lambdatest-allure-setup) fix: keep lambdatest session artifacts out of git
-268b6f9 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/lambdatest-allure-setup
-192d00b (origin/main, origin/HEAD) RE repo updated successfully with Survey Mod lib version 26.17.4-dev
-cd9069e Survey Modernization Library version 26.17.4-dev published to Artifactory
-bebac7d Merge pull request #97 from niq-enterprise/image-config
-
-
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git show 8965fca --stat
+$ git show 8965fca -- playwright.config.ts
 commit 8965fca96ea84effa44cebfc3bb6306c8e347ed5 (HEAD -> feature/lambdatest-allure-setup, origin/feature/lambdatest-allure-setup)
 Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
 Date:   Tue Aug 18 06:24:01 2026 +0000
@@ -17,18 +8,17 @@ Date:   Tue Aug 18 06:24:01 2026 +0000
     
     Co-authored-by: Yogesh-Upadhyay-consultant_niq <304421628+Yogesh-Upadhyay-consultant_niq@users.noreply.github.com>
 
- e2e/.gitignore                                                    | 1 +
- e2e/.lt-sessions/session-mappings.json                            | 4 ----
- e2e/.lt-sessions/sessions.jsonl                                   | 6 ------
- ...9e15d1056605e247e-923022e1070d9e9a9842-1212-1786877219560.json | 7 -------
- ...e15d1056605e247e-923022e1070d9e9a9842-19016-1786874511274.json | 7 -------
- ...0e1baf811c479e479-b013306274b4d6ca8455-1212-1786877304922.json | 7 -------
- ...e1baf811c479e479-b013306274b4d6ca8455-19016-1786874546156.json | 7 -------
- e2e/.lt-sessions/worker-0.json                                    | 1 -
- e2e/playwright.config.ts                                          | 2 +-
- e2e/playwright/reporters/lt-session-reporter.ts                   | 7 ++++---
- e2e/playwright/setup/globalTeardown.ts                            | 8 ++++----
- e2e/utils/base-page-factory.ts                                    | 4 ++--
- e2e/utils/configurationDetails.ts                                 | 5 +++++
- 13 files changed, 17 insertions(+), 49 deletions(-)
+diff --git a/e2e/playwright.config.ts b/e2e/playwright.config.ts
+index a9a5785..a99c145 100644
+--- a/e2e/playwright.config.ts
++++ b/e2e/playwright.config.ts
+@@ -32,7 +32,7 @@ console.log('isLambdaTest =', isLambdaTest);
+ 
+ if (isLambdaTest) {
+   console.log('\n🌐 LambdaTest Cloud Execution Enabled');
+-  console.log('   User:', ltUser);
++  console.log('   Credentials:', ltUser && ltAccessKey ? 'configured' : 'missing');
+   console.log('   Project:', ltProject);
+   console.log('   Workers:', ltWorkers);
+ 
 (END)
