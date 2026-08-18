@@ -1,12 +1,438 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ cat ../.cycode-investigation/security.md
-# Scan Scope
+/**
+ * Custom Playwright reporter to capture LambdaTest session names.
+ * NOTE: This reporter does NOT create sessions - it only captures session names created by
+ * BasePageFactory (which uses getLambdaTestBuildName for consistent build naming).
+ * Stores test -> session mapping into individual per-test JSON files
+ * (test-results/.lt-sessions/test-<id>-<pid>-<timestamp>.json) to avoid concurrent write conflicts.
+ *
+ * This reporter is a complete no-op when LAMBDATEST !== 'true', so it has zero effect
+ * on the default/local test run.
+ */
+import { Reporter, TestCase, TestResult, FullResult } from '@playwright/test/reporter';
+import * as fs from 'fs';
+import * as path from 'path';
+import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
 
-status: FAILED
-reason: dependency_check_failed
-base_branch: main
-scan_scope: affected-files
-affected_files_count: 0
+class LTSessionReporter implements Reporter {
+  private testSessions = new Map<string, string>(); // fullName -> sessionName
 
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ 
+  onBegin() {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    console.log('[LT Reporter] Initialized - capturing LambdaTest sessions...');
+  }
+
+  onTestBegin(test: TestCase) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    process.env.__CURRENT_TEST_ID__ = test.id;
+    (global as any).__CURRENT_TEST_ID__ = test.id;
+
+    console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
+  }
+
+  onTestEnd(test: TestCase, result: TestResult) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    const testId = test.id;
+    const sessionDir = getLambdaTestSessionDir();
+    const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
+
+    let sessionName: string | null = null;
+
+    try {
+      // 1st priority: test-specific session file
+      if (fs.existsSync(testSessionFile)) {Collapse commentComment on line R45cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+
+Cycode Remediation Guideline
+✅ Do
+
+
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+    
+      
+    
+
+      
+    
+
+    
+  
+📋 References
+
+
+OWASP path traversal
+
+
+Tell us how you wish to proceed using one of the following commands:
+
+
+
+Tag
+Short Description
+
+
+
+
+#cycode_sast_ignore_here <reason>
+Ignore this violation — applies to this violation only
+
+
+#cycode_ai_remediation
+Request remediation guidance using Cycode AI
+
+
+
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve commentCollapse annotationCheck failure on line R45e2e/playwright/reporters/lt-session-reporter.ts#L45Check failure: e2e/playwright/reporters/lt-session-reporter.ts#L45Unsanitized dynamic input in file path found / Cycode: SASTView details
+        const data = JSON.parse(fs.readFileSync(testSessionFile, 'utf-8'));Collapse commentComment on line R46cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+
+Cycode Remediation Guideline
+✅ Do
+
+
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+    
+      
+    
+
+      
+    
+
+    
+  
+📋 References
+
+
+OWASP path traversal
+
+
+Tell us how you wish to proceed using one of the following commands:
+
+
+
+Tag
+Short Description
+
+
+
+
+#cycode_sast_ignore_here <reason>
+Ignore this violation — applies to this violation only
+
+
+#cycode_ai_remediation
+Request remediation guidance using Cycode AI
+
+
+
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve commentCollapse annotationCheck failure on line R46e2e/playwright/reporters/lt-session-reporter.ts#L46Check failure: e2e/playwright/reporters/lt-session-reporter.ts#L46Unsanitized dynamic input in file path found / Cycode: SASTView details
+        sessionName = data.sessionName;
+
+        // cleanup
+        try {
+          fs.unlinkSync(testSessionFile);Collapse commentComment on line R51cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+
+Cycode Remediation Guideline
+✅ Do
+
+
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+    
+      
+    
+
+      
+    
+
+    
+  
+📋 References
+
+
+OWASP path traversal
+
+
+Tell us how you wish to proceed using one of the following commands:
+
+
+
+Tag
+Short Description
+
+
+
+
+#cycode_sast_ignore_here <reason>
+Ignore this violation — applies to this violation only
+
+
+#cycode_ai_remediation
+Request remediation guidance using Cycode AI
+
+
+
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve commentCollapse annotationCheck failure on line R51e2e/playwright/reporters/lt-session-reporter.ts#L51Check failure: e2e/playwright/reporters/lt-session-reporter.ts#L51Unsanitized dynamic input in file path found / Cycode: SASTView details
+        } catch {
+          /* ignore cleanup failure */
+        }
+      }
+
+      // fallback: sessions.jsonl
+      if (!sessionName) {
+        const sessionsLogFile = path.join(sessionDir, 'sessions.jsonl');
+        const workerIndex = result.parallelIndex ?? 0;
+        const testStartTime = result.startTime?.getTime() || 0;
+
+        if (fs.existsSync(sessionsLogFile)) {
+          const lines = fs.readFileSync(sessionsLogFile, 'utf-8').split('\n').filter(Boolean);
+
+          let bestMatch: { sessionName: string; diff: number } | null = null;
+
+          for (const line of lines) {
+            try {
+              const s = JSON.parse(line);
+              if (s.workerIndex === workerIndex && s.timestamp && testStartTime) {
+                const diff = Math.abs(s.timestamp - testStartTime);
+                if (diff < 60000 && (!bestMatch || diff < bestMatch.diff)) {
+                  bestMatch = { sessionName: s.sessionName, diff };
+                }
+              }
+            } catch {
+              /* ignore malformed line */
+            }
+          }
+
+          if (bestMatch) sessionName = bestMatch.sessionName;
+        }
+      }
+    } catch (err) {
+      console.error('[LT Reporter] Error reading session:', err);
+    }
+
+    if (!sessionName) {
+      console.warn(`[LT Reporter] No session found for "${test.title}" (testId: ${testId})`);
+      return;
+    }
+
+    const fullName = test.titlePath().filter(Boolean).join(' › ');
+    // Normalize > separator to › for consistent mapping with globalTeardown
+    const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+
+    this.testSessions.set(normalizedFullName, sessionName);
+
+    console.log(`[LT Reporter] Stored: "${normalizedFullName}" -> ${sessionName}`);
+
+    // Write mapping per test/worker to avoid concurrent write conflicts
+    try {
+      fs.mkdirSync(sessionDir, { recursive: true });Collapse commentComment on line R104cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+
+Cycode Remediation Guideline
+✅ Do
+
+
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+    
+      
+    
+
+      
+    
+
+    
+  
+📋 References
+
+
+OWASP path traversal
+
+
+Tell us how you wish to proceed using one of the following commands:
+
+
+
+Tag
+Short Description
+
+
+
+
+#cycode_sast_ignore_here <reason>
+Ignore this violation — applies to this violation only
+
+
+#cycode_ai_remediation
+Request remediation guidance using Cycode AI
+
+
+
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve commentCollapse annotationCheck failure on line R104e2e/playwright/reporters/lt-session-reporter.ts#L104Check failure: e2e/playwright/reporters/lt-session-reporter.ts#L104Unsanitized dynamic input in file path found / Cycode: SASTView details
+
+      // Use a collision-resistant filename per test/process to prevent concurrent write conflicts
+      const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
+      const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
+      fs.writeFileSync(
+        mappingFile,
+        JSON.stringify(
+          {
+            testName: test.title,
+            fullName: normalizedFullName,
+            testId,
+            sessionName,
+            timestamp: Date.now(),
+          },
+          null,
+          2
+        ),
+        'utf-8'
+      );
+
+      console.log(`[LT Reporter] Mapping written to ${path.basename(mappingFile)}`);
+    } catch (err) {
+      console.error('[LT Reporter] Failed to write mapping:', err);
+    }
+  }
+
+  onEnd(result: FullResult) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    if (this.testSessions.size === 0) {
+      console.warn('[LT Reporter] No sessions captured.');
+      return;
+    }
+
+    try {
+      const sessionDir = getLambdaTestSessionDir();
+      fs.mkdirSync(sessionDir, { recursive: true });Collapse commentComment on line R141cycode-security-eu[bot] commented on Aug 18, 2026 cycode-security-eu[bot]on Aug 18, 2026More actions❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+
+Cycode Remediation Guideline
+✅ Do
+
+
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+    
+      
+    
+
+      
+    
+
+    
+  
+📋 References
+
+
+OWASP path traversal
+
+
+Tell us how you wish to proceed using one of the following commands:
+
+
+
+Tag
+Short Description
+
+
+
+
+#cycode_sast_ignore_here <reason>
+Ignore this violation — applies to this violation only
+
+
+#cycode_ai_remediation
+Request remediation guidance using Cycode AI
+
+
+
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates. ReactWrite a replyResolve commentCollapse annotationCheck failure on line R141e2e/playwright/reporters/lt-session-reporter.ts#L141Check failure: e2e/playwright/reporters/lt-session-reporter.ts#L141Unsanitized dynamic input in file path found / Cycode: SASTView details
+
+      const mappingFile = path.join(sessionDir, 'session-mappings.json');
+      fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions), null, 2));
+
+      console.log(`[LT Reporter] Saved ${this.testSessions.size} session mappings.`);
+    } catch (err) {
+      console.error('[LT Reporter] Failed to save mappings:', err);
+    }
+  }
+}
+
+export default LTSessionReporter;
