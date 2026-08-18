@@ -1,6 +1,12 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ ls -la ../.cycode-investigation/
-total 9
-drwxr-xr-x 1 ENCORA+Yogesh.Upadhyay 4096   0 Aug 18 12:47 ./
-drwxr-xr-x 1 ENCORA+Yogesh.Upadhyay 4096   0 Aug 18 12:47 ../
--rw-r--r-- 1 ENCORA+Yogesh.Upadhyay 4096 130 Aug 18 12:47 security.md
+$ cat ../.cycode-investigation/security.md
+# Scan Scope
+
+status: FAILED
+reason: dependency_check_failed
+base_branch: main
+scan_scope: affected-files
+affected_files_count: 0
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ 
