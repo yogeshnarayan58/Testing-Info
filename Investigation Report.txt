@@ -1,7 +1,6 @@
+
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
 $ git diff utils/base-page-factory.ts
-git diff playwright/reporters/lt-session-reporter.ts
-git diff playwright/setup/globalTeardown.ts
 diff --git a/e2e/utils/base-page-factory.ts b/e2e/utils/base-page-factory.ts
 index 3009021..5402019 100644
 --- a/e2e/utils/base-page-factory.ts
@@ -53,4 +52,73 @@ ath itself
            console.warn('[LT Session] Warning: testId not available, using fallback sessi
 ons.jsonl');
          }
+-----------------------------
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ git diff playwright/reporters/lt-session-reporter.ts
+diff --git a/e2e/playwright/reporters/lt-session-reporter.ts b/e2e/playwright/reporters/lt-session-reporter.ts
+index 98be942..bc4c055 100644
+--- a/e2e/playwright/reporters/lt-session-reporter.ts
++++ b/e2e/playwright/reporters/lt-session-reporter.ts
+@@ -35,8 +35,11 @@ class LTSessionReporter implements Reporter {
+     if (process.env.LAMBDATEST !== 'true') return;
+ 
+     const testId = test.id;
++    // Sanitize testId before using it in any file path (defense-in-depth; test.id is
++    // already a fixed-format SHA1-hex pair, but we sanitize explicitly for SAST clarity).
++    const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
+     const sessionDir = getLambdaTestSessionDir();
+-    const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
++    const testSessionFile = path.join(sessionDir, `test-${safeTestId}.json`);
+ 
+     let sessionName: string | null = null;
+ 
+@@ -56,7 +59,9 @@ class LTSessionReporter implements Reporter {
+ 
+       // fallback: sessions.jsonl
+       if (!sessionName) {
++        // Static filename, no dynamic input.
+         const sessionsLogFile = path.join(sessionDir, 'sessions.jsonl');
++        // Not used in a file path, only used for in-memory matching against sessions.js
+onl entries.
+         const workerIndex = result.parallelIndex ?? 0;
+         const testStartTime = result.startTime?.getTime() || 0;
+ 
+@@ -103,8 +108,8 @@ class LTSessionReporter implements Reporter {
+     try {
+       fs.mkdirSync(sessionDir, { recursive: true });
+ 
+-      // Use a collision-resistant filename per test/process to prevent concurrent write
+ conflicts
+-      const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
++      // Use a collision-resistant filename per test/process to prevent concurrent write
+ conflicts.
++      // Reuses the safeTestId sanitized above (testId.replace(/[^a-zA-Z0-9-]/g, '_')).
+       const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Dat
+e.now()}.json`);
+       fs.writeFileSync(
+         mappingFile,
+@@ -140,6 +145,7 @@ class LTSessionReporter implements Reporter {
+       const sessionDir = getLambdaTestSessionDir();
+       fs.mkdirSync(sessionDir, { recursive: true });
+ 
++      // Static filename, no dynamic input.
+       const mappingFile = path.join(sessionDir, 'session-mappings.json');
+       fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions)
+, null, 2));
+ 
 (END)
+---------------------------------------------
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ git diff playwright/setup/globalTeardown.ts
+diff --git a/e2e/playwright/setup/globalTeardown.ts b/e2e/playwright/setup/globalTeardown.ts
+index fa31df8..1892994 100644
+--- a/e2e/playwright/setup/globalTeardown.ts
++++ b/e2e/playwright/setup/globalTeardown.ts
+@@ -4,6 +4,7 @@ import { getLambdaTestBuildName, getLambdaTestSessionDir } from '../../utils/con
+ import { MAX_TEST_TIMEOUT } from '../../constants/timeout-constants';
+ 
+ const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
++// Static path: literal filename joined onto a hardcoded directory, no dynamic input.
+ const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
+ 
+ /**
