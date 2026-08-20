@@ -1,150 +1,335 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$  git diff utils/base-page-factory.ts
-bash:  git: command not found
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 hour ago
+e2e/utils/base-page-factory.ts
+        }
 
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ grep -n "testId\|workerIndex\|safeTestId\|safeWorkerIndex" utils/base-page-factory.ts
-112:        const workerIndex = Number.isFinite(rawWorkerIndex) ? rawWorkerIndex : 0;
-113:        const testId =
-115:        // Sanitize testId before using it in any file path (defense-in-depth; testId is
-118:        const safeTestId = testId ? String(testId).replace(/[^a-zA-Z0-9-]/g, '_') : null;
-126:        workerSessionMap.set(workerIndex, sessionName);
-132:          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
-137:        if (safeTestId) {
-139:            path.join(sessionDir, `test-${safeTestId}.json`),
-140:            JSON.stringify({ sessionName, timestamp, testId }),
-143:          console.log(`[LT Session] ✓ test-${safeTestId}.json written`);
-145:          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
-150:          path.join(sessionDir, `worker-${workerIndex}.json`),
-155:        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
+        // optional worker file
+        fs.writeFileSync(
+@cycode-security-eu
+cycode-security-eu Bot
+1 hour ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git diff playwright/setup/globalTeardown.ts
-diff --git a/e2e/playwright/setup/globalTeardown.ts b/e2e/playwright/setup/globalTeardown.ts
-index 1892994..1dc8ab6 100644
---- a/e2e/playwright/setup/globalTeardown.ts
-+++ b/e2e/playwright/setup/globalTeardown.ts
-@@ -7,6 +7,8 @@ const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
- // Static path: literal filename joined onto a hardcoded directory, no dynamic input.
- const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
- 
-+const sanitizeId = (value: unknown): string => String(value).replace(/[^a-zA-Z0-9_-]/g, '');
-+
- /**
-  * globalTeardown.ts: Runs after all tests complete.
-  *
-@@ -63,8 +65,10 @@ export default async () => {
-       console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
- 
-       for (const file of mappingFiles) {
-+        // Sanitize the on-disk filename up-front so both the path built below and the l
-og
-+        // statement in the catch block use the same sanitized value (never the raw entr
-y).
-+        const sanitizedFile = path.basename(file);
-         try {
--          const sanitizedFile = path.basename(file);
-           const filePath = path.join(sessionDir, sanitizedFile);
-           const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
- 
-@@ -77,7 +81,7 @@ export default async () => {
-             }
-           }
-         } catch (e) {
--          console.warn(`[global-teardown] Failed to parse mapping file ${file}:`, e);
-+          console.warn(`[global-teardown] Failed to parse mapping file ${sanitizedFile}:
-`, e);
-         }
-       }
-     } else {
-@@ -176,7 +180,9 @@ export default async () => {
-     for (const session of sessions) {
-       const sessionBuildId = session.build_id || session.buildId || session.build_number
-;
-       if (sessionBuildId) {
--        buildId = sessionBuildId.toString();
-+        // Sanitize once at the source: buildId flows into a log line, a URL, and a stat
-ic
-+        // properties file below, so sanitizing here covers all of those sinks.
-+        buildId = sanitizeId(sessionBuildId);
-         console.log(`[global-teardown] Extracted Build ID: ${buildId}`);
-         break;
-       }
-@@ -202,23 +208,26 @@ export default async () => {
-       console.log(`[global-teardown] Looking for session: ${sessionName}`);
-       const session = sessions.find((s: any) => s.name === sessionName);
-       if (!session) {
-+        // Session names come from the external LambdaTest API response; sanitize before
- logging.
-+        const safeAvailableNames = sessions
-+          .slice(0, 5)
-+          .map((s: any) => sanitizeId(s.name))
-+          .join(', ');
-         console.warn(`[global-teardown] Session "${sessionName}" not found in LT API`);
--        console.warn(
--          `[global-teardown]    Available sessions (first 5): ${sessions
--            .slice(0, 5)
--            .map((s: any) => s.name)
--            .join(', ')}`
--        );
-+        console.warn(`[global-teardown]    Available sessions (first 5): ${safeAvailable
-Names}`);
-         continue;
-       }
--      console.log(`[global-teardown] ✓ Found session in LT API: ${session.session_id}`);
-+      // session_id comes from the external LambdaTest API response; sanitize once and r
-euse
-+      // for the log line, the video link URL, and the status-update URL below.
-+      const safeSessionId = sanitizeId(session.session_id);
-+      console.log(`[global-teardown] ✓ Found session in LT API: ${safeSessionId}`);
- 
-       result.links = result.links || [];
-       result.links = result.links.filter((link: any) => link.name !== 'LambdaTest Video'
-);
- 
-       result.links.push({
-         name: 'LambdaTest Video',
--        url: `https://automation.lambdatest.com/logs/?sessionID=${session.session_id}`,
-+        url: `https://automation.lambdatest.com/logs/?sessionID=${safeSessionId}`,
-         type: 'link',
-       });
- 
-@@ -226,7 +235,7 @@ export default async () => {
-       const testStatus = result.status === 'passed' ? 'passed' : 'failed';
- 
-       try {
--        await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${session.ses
-sion_id}`, {
-+        await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${safeSession
-Id}`, {
-           method: 'PATCH',
-           headers: {
-             Authorization: `Basic ${auth}`,
-@@ -236,7 +245,7 @@ export default async () => {
-           signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
-         });
-       } catch (e) {
--        console.warn(`[global-teardown] Failed to update status for session ${session.se
-ssion_id}`, e);
-+        console.warn(`[global-teardown] Failed to update status for session ${safeSessio
-nId}`, e);
-       }
- 
-       // Safe: testResult.filePath was sanitized with path.basename() during file readin
-g
-@@ -249,7 +258,10 @@ export default async () => {
-       process.env.LT_BUILD_ID = buildId;
-     }
- 
--    const ltBuildId = buildId || process.env.LT_BUILD_ID;
-+    // process.env.LT_BUILD_ID is only ever set from the already-sanitized `buildId` abo
-ve
-+    // (a few lines up: `process.env.LT_BUILD_ID = buildId;`), but sanitize again defens
-ively
-+    // in case the env var was pre-populated by an external caller.
-+    const ltBuildId = buildId || (process.env.LT_BUILD_ID ? sanitizeId(process.env.LT_BU
-ILD_ID) : undefined);
- 
-     let buildUrl: string;
- 
-(END)
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 hour ago
+e2e/playwright/setup/globalTeardown.ts
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 hour ago
+e2e/utils/base-page-factory.ts
+        const safeTestId = testId ? String(testId).replace(/[^a-zA-Z0-9-]/g, '_') : null;
+
+        const sessionDir = getLambdaTestSessionDir();
+        fs.mkdirSync(sessionDir, { recursive: true });
+@cycode-security-eu
+cycode-security-eu Bot
+1 hour ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 hour ago
+e2e/playwright/setup/globalTeardown.ts
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 hour ago
+e2e/playwright/setup/globalTeardown.ts
+Yogesh Upadhyay
+Fix-code violation
+2e0eb45
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+    const testResults = allureFiles.map((file) => {
+      // Sanitize filename to prevent path traversal attacks
+      const sanitizedFile = path.basename(file);
+      const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 100 (CRITICAL)
+Severity: High
+
+Description
+Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as ..\.., to prevent path traversal attacks.
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+Do check for and remove any instances of the NULL byte ("%00") in user input to guard against poison NULL byte attacks.
+if (target.indexOf('\0') !== -1) {
+  // Handle or reject the input
+}
+Do use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+const path = require("path");
+var pathname = path.join("/public/", folder);
+if (pathname.indexOf("/public/") !== 0) {
+  // Handle or reject the input
+}
+❌ Don't
+Do not directly use user input to construct file paths. This can lead to unauthorized file access.
+📋 References
+OWASP Path Traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Safe: testResult.filePath was sanitized with path.basename() during file reading
+          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+        const sanitizedFile = path.basename(file);
+        try {
+          const filePath = path.join(sessionDir, sanitizedFile);
+          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+      }
+
+      // Safe: testResult.filePath was sanitized with path.basename() during file reading
+      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+      const mappingFiles = fs
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 11 minutes ago
+e2e/playwright/setup/globalTeardown.ts
+    const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+@cycode-security-eu
+cycode-security-eu Bot
+11 minutes ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
+Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
