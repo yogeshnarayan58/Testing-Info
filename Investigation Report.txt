@@ -1,27 +1,10 @@
-# Cycode Path-Traversal Fix — OWASP Canonicalization + Prefix Verification
+# Current Full File Dump
 
-This revision replaces the previous regex/`path.basename()`-based sanitization approach
-with OWASP's official Path Traversal Prevention pattern
-(https://owasp.org/www-community/attacks/Path_Traversal): canonicalize the fully-resolved
-path with `path.resolve()`, then verify it is still contained under the intended base
-directory with a `startsWith()` prefix check, throwing if it isn't.
+Complete, unabridged current content of the 4 files, as they exist on disk right now.
 
 ---
 
-## 1. Decision: shared utility vs. inline
-
-**Decision: kept ONE shared function, `safeJoin()`, in `e2e/utils/safe-path.ts`.**
-
-**One-line reason**: the same testId-based (and directory-listing-based) path
-construction is needed at 6 call sites across all 3 files (2 in
-`base-page-factory.ts`, 2 in `globalTeardown.ts`, 2 in `lt-session-reporter.ts`) — well
-over the "3+ call sites" threshold — so a single shared function avoids duplicating the
-`path.resolve()` + `startsWith()` verification logic six times and keeps the security
-control consistent and independently testable/auditable in one place.
-
----
-
-## 2. Complete final content of `e2e/utils/safe-path.ts`
+## 1. `e2e/utils/safe-path.ts`
 
 ```typescript
 import * as path from 'path';
@@ -68,281 +51,11 @@ export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): strin
 };
 ```
 
-**Key change from the previous version**: the old `safeJoin(baseDir, fileName)` called
-`path.basename(fileName)` *before* resolving — i.e. it pre-stripped any directory
-components as a first line of defense, with the resolve/`startsWith` check as a backup.
-The new version drops that pre-stripping entirely: the untrusted segment(s) are passed
-straight into `path.resolve()`, and the `startsWith()` prefix check on the canonicalized
-result is the *only* guard. This matches OWASP's documented pattern exactly and means the
-security guarantee no longer depends on every caller having remembered to sanitize its
-input first.
-
 ---
 
-## 3. Before/after for every changed call site
+## 2. `e2e/playwright/reporters/lt-session-reporter.ts`
 
-### 3.1 `e2e/utils/base-page-factory.ts`
-
-**Call site A — testId/workerIndex derivation (regex sanitizer removed)**
-
-Before:
 ```typescript
-        const rawWorkerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-        // Guarantee a finite numeric worker index before it is ever embedded in a filename.
-        const workerIndex = Number.isFinite(rawWorkerIndex) ? rawWorkerIndex : 0;
-        const testId =
-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-        // Sanitize testId before using it in any file path (defense-in-depth; testId is
-        // already a fixed-format SHA1-hex pair from Playwright's test.id, but we sanitize
-        // explicitly for SAST clarity and to match lt-session-reporter.ts).
-        const safeTestId = testId ? String(testId).replace(/[^a-zA-Z0-9-]/g, '_') : null;
-
-        const sessionDir = getLambdaTestSessionDir();
-        fs.mkdirSync(sessionDir, { recursive: true });
-```
-
-After:
-```typescript
-        const rawWorkerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-        // Guarantee a finite numeric worker index before it is ever embedded in a filename.
-        const workerIndex = Number.isFinite(rawWorkerIndex) ? rawWorkerIndex : 0;
-        const testId =
-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-
-        const sessionDir = getLambdaTestSessionDir();
-        fs.mkdirSync(sessionDir, { recursive: true });
-```
-
-**Call site B — per-test and per-worker file writes**
-
-Before:
-```typescript
-        // PRIMARY (parallel safe): write per-test session file
-        // safeJoin() re-verifies containment within sessionDir at the sink, on top of the
-        // upstream safeTestId regex sanitization above.
-        if (safeTestId) {
-          fs.writeFileSync(
-            safeJoin(sessionDir, `test-${safeTestId}.json`),
-            JSON.stringify({ sessionName, timestamp, testId }),
-            'utf-8'
-          );
-          console.log(`[LT Session] ✓ test-${safeTestId}.json written`);
-        } else {
-          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
-        }
-
-        // optional worker file - safeJoin() guards against workerIndex ever being anything
-        // other than a safe filename segment.
-        fs.writeFileSync(
-          safeJoin(sessionDir, `worker-${workerIndex}.json`),
-          JSON.stringify({ sessionName, timestamp }),
-          'utf-8'
-        );
-```
-
-After:
-```typescript
-        // PRIMARY (parallel safe): write per-test session file. safeJoin() applies OWASP's
-        // canonicalization + prefix verification (path.resolve() + startsWith() check) at the
-        // sink, so the raw testId never needs upfront regex/character stripping.
-        if (testId) {
-          fs.writeFileSync(
-            safeJoin(sessionDir, `test-${testId}.json`),
-            JSON.stringify({ sessionName, timestamp, testId }),
-            'utf-8'
-          );
-          console.log(`[LT Session] ✓ test-${testId}.json written`);
-        } else {
-          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
-        }
-
-        // optional worker file - safeJoin() verifies containment via OWASP's
-        // resolve() + startsWith() pattern rather than relying on workerIndex's numeric type alone.
-        fs.writeFileSync(
-          safeJoin(sessionDir, `worker-${workerIndex}.json`),
-          JSON.stringify({ sessionName, timestamp }),
-          'utf-8'
-        );
-```
-
-### 3.2 `e2e/playwright/setup/globalTeardown.ts`
-
-**Call site C — reading per-test mapping files**
-
-Before:
-```typescript
-      for (const file of mappingFiles) {
-        // Sanitize the on-disk filename up-front so both the path built below and the log
-        // statement in the catch block use the same sanitized value (never the raw entry).
-        const sanitizedFile = path.basename(file);
-        try {
-          // safeJoin() re-verifies containment within sessionDir at the sink.
-          const filePath = safeJoin(sessionDir, sanitizedFile);
-          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-```
-
-After:
-```typescript
-      for (const file of mappingFiles) {
-        // path.basename() here is only for safe log display in the catch block below; the
-        // actual path-traversal guard is safeJoin()'s OWASP canonicalization + prefix
-        // verification on the raw entry (see safe-path.ts).
-        const sanitizedFile = path.basename(file);
-        try {
-          // safeJoin(): path.resolve(sessionDir, file) then verify containment via
-          // startsWith() - OWASP's canonicalization + prefix-verification pattern.
-          const filePath = safeJoin(sessionDir, file);
-          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-```
-(`sanitizedFile` is kept only for the `console.warn` log line further down in the
-`catch` block — unrelated to the path-traversal fix, unchanged per the "keep log
-redaction unchanged" instruction.)
-
-**Call site D — reading Allure result files**
-
-Before:
-```typescript
-    const testResults = allureFiles.map((file) => {
-      // Sanitize filename to prevent path traversal attacks; safeJoin() re-verifies
-      // containment within ALLURE_RESULTS_DIR at the sink.
-      const sanitizedFile = path.basename(file);
-      const filePath = safeJoin(ALLURE_RESULTS_DIR, sanitizedFile);
-      const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      return { filePath, result };
-    });
-```
-
-After:
-```typescript
-    const testResults = allureFiles.map((file) => {
-      // safeJoin(): OWASP canonicalization (path.resolve) + prefix verification (startsWith)
-      // on the raw entry is the actual traversal guard here - no filename stripping needed.
-      const filePath = safeJoin(ALLURE_RESULTS_DIR, file);
-      const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      return { filePath, result };
-    });
-```
-(`sanitizedFile` was removed entirely here — it wasn't used for logging anywhere else in
-this block, so there was nothing to preserve.)
-
-**Call site E — comment-only updates at the two `testResult.filePath` writes**
-
-Before (appears twice — LT_SESSION injection step and video-link step):
-```typescript
-          // Safe: testResult.filePath was built via safeJoin() (basename + containment check)
-          // during file reading above.
-          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-```
-
-After:
-```typescript
-          // Safe: testResult.filePath was produced by safeJoin() above (OWASP canonicalization
-          // + prefix verification), so it is guaranteed to stay within ALLURE_RESULTS_DIR.
-          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
-```
-No logic changed at these two sites — `testResult.filePath` is the same value computed
-once in call site D and reused; only the comment was updated to reflect the new
-canonicalization-based guarantee instead of the old basename-based one.
-
-`sanitizeId()` (used for `buildId`, `session_id`, and the "available sessions" log line)
-was **left completely unchanged** — none of those values are ever used in a filesystem
-path (only in log lines, LambdaTest API URLs, and `environment.properties` content), so
-they are outside the scope of this path-traversal fix, per the instruction to keep
-existing log/console redaction unrelated to path traversal as-is.
-
-### 3.3 `e2e/playwright/reporters/lt-session-reporter.ts`
-
-**Call site F — resolving the per-test session file in `onTestEnd()`**
-
-Before:
-```typescript
-    const testId = test.id;
-    // Sanitize testId before using it in any file path (defense-in-depth; test.id is
-    // already a fixed-format SHA1-hex pair, but we sanitize explicitly for SAST clarity).
-    const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
-    const sessionDir = getLambdaTestSessionDir();
-    // safeJoin() re-verifies containment within sessionDir at the sink, on top of the
-    // safeTestId regex sanitization above.
-    const testSessionFile = safeJoin(sessionDir, `test-${safeTestId}.json`);
-```
-
-After:
-```typescript
-    const testId = test.id;
-    const sessionDir = getLambdaTestSessionDir();
-    // safeJoin() applies OWASP's canonicalization + prefix verification (path.resolve() +
-    // startsWith() check) directly on the raw testId segment - no upfront regex/character
-    // stripping is used or needed (see safe-path.ts).
-    const testSessionFile = safeJoin(sessionDir, `test-${testId}.json`);
-```
-
-**Call site G — writing the collision-resistant mapping file**
-
-Before:
-```typescript
-      // Use a collision-resistant filename per test/process to prevent concurrent write conflicts.
-      // Reuses the safeTestId sanitized above (testId.replace(/[^a-zA-Z0-9-]/g, '_')).
-      // safeJoin() re-verifies containment within sessionDir at the sink.
-      const mappingFile = safeJoin(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
-```
-
-After:
-```typescript
-      // Use a collision-resistant filename per test/process to prevent concurrent write conflicts.
-      // safeJoin() applies OWASP's canonicalization + prefix verification at the sink on the
-      // raw testId segment (same pattern as onTestEnd() above / safe-path.ts).
-      const mappingFile = safeJoin(sessionDir, `test-${testId}-${process.pid}-${Date.now()}.json`);
-```
-
-All other lines in this file (`onBegin`, `onTestBegin`, the `sessions.jsonl` fallback
-matching logic, `onEnd`'s static `session-mappings.json` write, and every
-`console.log`/`console.warn`/`console.error` call) are unchanged.
-
----
-
-## 4. Confirmation: OWASP canonicalization + prefix verification (not character stripping)
-
-`safeJoin()` in `e2e/utils/safe-path.ts` implements exactly the 5 steps requested, with no
-regex-based character whitelisting anywhere in the security-relevant path:
-
-| OWASP step | Line(s) in `safe-path.ts` |
-|---|---|
-| 1. Resolve the full intended path | `const resolvedPath = path.resolve(resolvedBase, ...untrustedSegments);` |
-| 2. Resolve the base directory | `const resolvedBase = path.resolve(baseDir);` |
-| 3. Verify containment | `const isWithinBase = resolvedPath === resolvedBase \|\| resolvedPath.startsWith(resolvedBase + path.sep);` |
-| 4. Throw on failure | `if (!isWithinBase) { throw new Error(...); }` |
-| 5. Use the verified path | `return resolvedPath;` — every call site (`fs.writeFileSync(safeJoin(...), ...)`, `fs.readFileSync(safeJoin(...), ...)`) uses this return value directly, never a separately-built `path.join()` result. |
-
-The previously-existing regex sanitizers (`safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_')`
-in `base-page-factory.ts` and `lt-session-reporter.ts`) have been **removed entirely** —
-the raw `testId` is now passed straight into `safeJoin()`, and `path.resolve()` +
-`startsWith()` is the sole guard. The one remaining `path.basename()` call (in
-`globalTeardown.ts`'s mapping-file loop) is kept **only** to produce a clean value for a
-log line in the `catch` block — it plays no role in constructing the actual read path,
-which now uses the raw `file` entry passed straight into `safeJoin()`. `sanitizeId()` in
-`globalTeardown.ts` remains for its original, unrelated purpose (redacting values that flow
-into log lines/URLs/`environment.properties`, never into an `fs.*` call).
-
-**No runtime behavior change**:
-- For every real input these functions ever see, `testId` is Playwright's `test.id` —
-  always the fixed format `/^[0-9a-f]{20}-[0-9a-f]{20}$/` (verified previously via
-  `playwright-core`'s `calculateSha1().digest("hex")`; see `/memories/repo/tooling-gotchas.md`)
-  — so removing the regex stripping does not change the string's value at all (it never
-  contained a character the regex would have replaced). `workerIndex` is a
-  `Number.isFinite`-guarded number, and `file`/on-disk entries come only from
-  `fs.readdirSync()` of directories this same code already controls. For all of these,
-  `path.resolve(resolvedBase, segment)` produces the exact same absolute path string that
-  `path.join(baseDir, segment)` produced before.
-- No JSON payload shape, log message wording (aside from the one `test-${testId}.json`
-  string, which is byte-identical to the old `test-${safeTestId}.json` string given the
-  input format above), or control flow (`if (testId)` vs. the old `if (safeTestId)`,
-  identical truthiness) was altered.
-- Verified via `get_errors` on all four files (no TypeScript diagnostics) after the change.
-  Per `/memories/repo/tooling-gotchas.md`, a real `playwright test` run cannot be exercised
-  in this sandbox (no LambdaTest network egress / no live-site credentials), so behavior
-  equivalence was confirmed by static type-check plus the path-equivalence reasoning above,
-  not an end-to-end run. No commands were run for this change, per the request.
-------------------------------------------------------------------
 /**
  * Custom Playwright reporter to capture LambdaTest session names.
  * NOTE: This reporter does NOT create sessions - it only captures session names created by
@@ -504,7 +217,13 @@ class LTSessionReporter implements Reporter {
 }
 
 export default LTSessionReporter;
--------------------------------------------------------------
+```
+
+---
+
+## 3. `e2e/playwright/setup/globalTeardown.ts`
+
+```typescript
 import * as fs from 'fs';
 import * as path from 'path';
 import { getLambdaTestBuildName, getLambdaTestSessionDir } from '../../utils/configurationDetails';
@@ -802,7 +521,13 @@ export default async () => {
     console.warn('[global-teardown] Failed to add LambdaTest info:', error);
   }
 };
--------------------------------------------------------------
+```
+
+---
+
+## 4. `e2e/utils/base-page-factory.ts`
+
+```typescript
 import { BasePage } from '@gfk/gta';
 import { chromium } from '@playwright/test';
 import fs from 'fs';
@@ -986,3 +711,4 @@ export class BasePageFactory {
     return await BasePage.initializer(browserName, browserOptions, contextOptions);
   }
 }
+```
