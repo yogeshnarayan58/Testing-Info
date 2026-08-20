@@ -1,124 +1,253 @@
+Violations detected ❌
+Status
 
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git diff utils/base-page-factory.ts
-diff --git a/e2e/utils/base-page-factory.ts b/e2e/utils/base-page-factory.ts
-index 3009021..5402019 100644
---- a/e2e/utils/base-page-factory.ts
-+++ b/e2e/utils/base-page-factory.ts
-@@ -107,9 +107,15 @@ export class BasePageFactory {
- 
-       // Store session info for reporter/global-teardown
-       try {
--        const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-+        const rawWorkerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-+        // Guarantee a finite numeric worker index before it is ever embedded in a filename.
-+        const workerIndex = Number.isFinite(rawWorkerIndex) ? rawWorkerIndex : 0;
-         const testId =
-           process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-+        // Sanitize testId before using it in any file path (defense-in-depth; testId is
-+        // already a fixed-format SHA1-hex pair from Playwright's test.id, but we saniti
-ze
-+        // explicitly for SAST clarity and to match lt-session-reporter.ts).
-+        const safeTestId = testId ? String(testId).replace(/[^a-zA-Z0-9-]/g, '_') : null
-;
- 
-         const sessionDir = getLambdaTestSessionDir();
-         fs.mkdirSync(sessionDir, { recursive: true });
-@@ -120,7 +126,7 @@ export class BasePageFactory {
-         workerSessionMap.set(workerIndex, sessionName);
-         currentLTSession = sessionName;
- 
--        // append sessions.jsonl (fallback)
-+        // append sessions.jsonl (fallback) - static filename, no dynamic input in the p
-ath itself
-         fs.appendFileSync(
-           path.join(sessionDir, 'sessions.jsonl'),
-           JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
-@@ -128,13 +134,13 @@ export class BasePageFactory {
-         );
- 
-         // PRIMARY (parallel safe): write per-test session file
--        if (testId) {
-+        if (safeTestId) {
-           fs.writeFileSync(
--            path.join(sessionDir, `test-${testId}.json`),
-+            path.join(sessionDir, `test-${safeTestId}.json`),
-             JSON.stringify({ sessionName, timestamp, testId }),
-             'utf-8'
-           );
--          console.log(`[LT Session] ✓ test-${testId}.json written`);
-+          console.log(`[LT Session] ✓ test-${safeTestId}.json written`);
-         } else {
-           console.warn('[LT Session] Warning: testId not available, using fallback sessi
-ons.jsonl');
-         }
------------------------------
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git diff playwright/reporters/lt-session-reporter.ts
-diff --git a/e2e/playwright/reporters/lt-session-reporter.ts b/e2e/playwright/reporters/lt-session-reporter.ts
-index 98be942..bc4c055 100644
---- a/e2e/playwright/reporters/lt-session-reporter.ts
-+++ b/e2e/playwright/reporters/lt-session-reporter.ts
-@@ -35,8 +35,11 @@ class LTSessionReporter implements Reporter {
-     if (process.env.LAMBDATEST !== 'true') return;
- 
-     const testId = test.id;
-+    // Sanitize testId before using it in any file path (defense-in-depth; test.id is
-+    // already a fixed-format SHA1-hex pair, but we sanitize explicitly for SAST clarity).
-+    const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
-     const sessionDir = getLambdaTestSessionDir();
--    const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
-+    const testSessionFile = path.join(sessionDir, `test-${safeTestId}.json`);
- 
-     let sessionName: string | null = null;
- 
-@@ -56,7 +59,9 @@ class LTSessionReporter implements Reporter {
- 
-       // fallback: sessions.jsonl
-       if (!sessionName) {
-+        // Static filename, no dynamic input.
-         const sessionsLogFile = path.join(sessionDir, 'sessions.jsonl');
-+        // Not used in a file path, only used for in-memory matching against sessions.js
-onl entries.
-         const workerIndex = result.parallelIndex ?? 0;
-         const testStartTime = result.startTime?.getTime() || 0;
- 
-@@ -103,8 +108,8 @@ class LTSessionReporter implements Reporter {
-     try {
-       fs.mkdirSync(sessionDir, { recursive: true });
- 
--      // Use a collision-resistant filename per test/process to prevent concurrent write
- conflicts
--      const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
-+      // Use a collision-resistant filename per test/process to prevent concurrent write
- conflicts.
-+      // Reuses the safeTestId sanitized above (testId.replace(/[^a-zA-Z0-9-]/g, '_')).
-       const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Dat
-e.now()}.json`);
-       fs.writeFileSync(
-         mappingFile,
-@@ -140,6 +145,7 @@ class LTSessionReporter implements Reporter {
-       const sessionDir = getLambdaTestSessionDir();
-       fs.mkdirSync(sessionDir, { recursive: true });
- 
-+      // Static filename, no dynamic input.
-       const mappingFile = path.join(sessionDir, 'session-mappings.json');
-       fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions)
-, null, 2));
- 
-(END)
----------------------------------------------
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ git diff playwright/setup/globalTeardown.ts
-diff --git a/e2e/playwright/setup/globalTeardown.ts b/e2e/playwright/setup/globalTeardown.ts
-index fa31df8..1892994 100644
---- a/e2e/playwright/setup/globalTeardown.ts
-+++ b/e2e/playwright/setup/globalTeardown.ts
-@@ -4,6 +4,7 @@ import { getLambdaTestBuildName, getLambdaTestSessionDir } from '../../utils/con
- import { MAX_TEST_TIMEOUT } from '../../constants/timeout-constants';
- 
- const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
-+// Static path: literal filename joined onto a hardcoded directory, no dynamic input.
- const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
- 
- /**
+Cycode check completed. Cycode found 8 violations.
+
+Violations summary
+Policy	🟣 Critical	🔴 High	🟠 Medium	🟡 Low	🔵 Info	Total
+Unsanitized dynamic input in file path	0	8	0	0	0	8
+Annotations
+ Check failure on line 98 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L98
+
+Unsanitized dynamic input in file path found
+ Check failure on line 158 in e2e/utils/base-page-factory.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/utils/base-page-factory.ts#L158
+
+Unsanitized dynamic input in file path found
+ Check failure on line 243 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L243
+
+Unsanitized dynamic input in file path found
+ Check failure on line 130 in e2e/utils/base-page-factory.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/utils/base-page-factory.ts#L130
+
+Unsanitized dynamic input in file path found
+ Check failure on line 136 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L136
+
+Unsanitized dynamic input in file path found
+ Check failure on line 69 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L69
+
+Unsanitized dynamic input in file path found
+ Check failure on line 59 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L59
+
+Unsanitized dynamic input in file path found
+ Check failure on line 58 in e2e/playwright/setup/globalTeardown.ts 
+
+@cycode-security-eu
+cycode-security-eu
+/ Cycode: SAST
+e2e/playwright/setup/globalTeardown.ts#L58
+
+Unsanitized dynamic input in file path found
+View more details on Cycode Security (EU)
+----------------------------------------------------------
+
+Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni… 
+df7c109
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/playwright/setup/globalTeardown.ts
+    const testResults = allureFiles.map((file) => {
+      // Sanitize filename to prevent path traversal attacks
+      const sanitizedFile = path.basename(file);
+      const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 100 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/playwright/setup/globalTeardown.ts
+      }
+
+      // Safe: testResult.filePath was sanitized with path.basename() during file reading
+      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/utils/base-page-factory.ts
+        }
+
+        // optional worker file
+        fs.writeFileSync(
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/playwright/setup/globalTeardown.ts
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Safe: testResult.filePath was sanitized with path.basename() during file reading
+          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/utils/base-page-factory.ts
+        const safeTestId = testId ? String(testId).replace(/[^a-zA-Z0-9-]/g, '_') : null;
+
+        const sessionDir = getLambdaTestSessionDir();
+        fs.mkdirSync(sessionDir, { recursive: true });
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/playwright/setup/globalTeardown.ts
+        try {
+          const sanitizedFile = path.basename(file);
+          const filePath = path.join(sessionDir, sanitizedFile);
+          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 1 minute ago
+e2e/playwright/setup/globalTeardown.ts
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+      const mappingFiles = fs
+@cycode-security-eu
+cycode-security-eu Bot
+1 minute ago
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 98 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
