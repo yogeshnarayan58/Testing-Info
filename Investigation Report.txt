@@ -1,42 +1,436 @@
+Line 61 C:/Users/Yogesh.Upadhyay/projects/disc-fe-omni-survey-mod/e2e/playwright/setup/globalTeardown.ts
+CHANGED
+
+    const testSessionMap = new Map<string, string>(); // fullName -> sessionName
+    const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+      const resolvedSessionDir = path.resolve(sessionDir);
+      const mappingFiles = fs
+        .readdirSync(sessionDir)
+        .readdirSync(resolvedSessionDir)
+        .filter((f) => f.startsWith('test-') && f.endsWith('.json'));
+        .filter((f) => f.startsWith('test-') && f.endsWith('.json') && !f.includes('../') && !f.includes('./'));
+
+      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+
+      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+---------------------------------------------------------
+The Cycode AI Confidence Score estimates the quality of the suggested code fix. Please review it carefully before applying.
+
+Line 62 C:/Users/Yogesh.Upadhyay/projects/disc-fe-omni-survey-mod/e2e/playwright/setup/globalTeardown.ts
+CHANGED
+
+
+
+
+    const testSessionMap = new Map<string, string>(); // fullName -> sessionName
+    const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+    // Sanitize and validate sessionDir to prevent path traversal
+    const safeSessionDir = path.resolve('/safe/base/directory', sessionDir);
+    if (!safeSessionDir.startsWith('/safe/base/directory')) {
+      throw new Error('Invalid session directory path');
+    }
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+    if (fs.existsSync(safeSessionDir)) {
+      const mappingFiles = fs
+        .readdirSync(sessionDir)
+        .readdirSync(safeSessionDir)
+        .filter((f) => f.startsWith('test-') && f.endsWith('.json'));
+
+      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+
+      for (const file of mappingFiles) {
+
+      for (const file of mappingFiles) {
+
+--------------------------------------------------
+Line 78 C:/Users/Yogesh.Upadhyay/projects/disc-fe-omni-survey-mod/e2e/playwright/setup/globalTeardown.ts
+CHANGED
+
+
+
+
+        try {
+          // safeJoin(): path.resolve(sessionDir, file) then verify containment via
+          // startsWith() - OWASP's canonicalization + prefix-verification pattern.
+          const sanitizedFileName = sanitizeId(file);
+          const sanitizedFileName = sanitizeId("hello.txt"); // Hard-coded safe value
+          const filePath = safeJoin(sessionDir, sanitizedFileName);
+          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+            if (data.fullName) {
+              testSessionMap.set(data.fullName.trim(), data.sessionName);
+            }
+
+            }
+--------------------------------------------------
+line 146 C:/Users/Yogesh.Upadhyay/projects/disc-fe-omni-survey-mod/e2e/playwright/setup/globalTeardown.ts
+CHANGED
+
+
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Safe: testResult.filePath was produced by safeJoin() above (OWASP canonicalization
+          // + prefix verification), so it is guaranteed to stay within ALLURE_RESULTS_DIR.
+          // Safe: testResult.filePath is validated to ensure it stays within ALLURE_RESULTS_DIR.
+          const safePath = path.resolve(ALLURE_RESULTS_DIR, testResult.filePath);
+          if (safePath.startsWith(ALLURE_RESULTS_DIR)) {
+          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+            fs.writeFileSync(safePath, JSON.stringify(result, null, 2));
+          } else {
+          console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
+            console.error(`[global-teardown]  Invalid file path: ${testResult.filePath}`);
+        }
+          console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
+      } else {
+        console.warn(`[global-teardown]  No session mapping found for: "${fullName}"`);
+      }
+
+      }
+
+-------------------------------------------------
+Line 256 AI Remediation
+Vulnerability Explanation
+The vulnerability here involves using unsanitized dynamic input (testResult.filePath) directly in a file system operation (fs.writeFileSync). Although the comment suggests that testResult.filePath was produced by a safe function (safeJoin()), there is no explicit validation or sanitization shown in the provided code snippet. This could potentially allow path traversal attacks if an attacker manipulates testResult.filePath to access unauthorized files or directories outside the intended ALLURE_RESULTS_DIR.
+
+Remediation Instructions
+Validate the file path: Ensure that testResult.filePath is explicitly validated to confirm it resides within the intended directory (ALLURE_RESULTS_DIR).
+Use a whitelist approach: Instead of directly using dynamic input, map the dynamic input to a predefined set of safe paths or use a switch-case structure to ensure only allowed paths are used.
+Sanitize the input: If dynamic input must be used, sanitize it by removing or escaping any path traversal sequences (e.g., ../ or ./).
+Use path resolution libraries: Utilize libraries or built-in functions (e.g., path.resolve() in Node.js) to resolve the path to its absolute form and verify it starts with the intended directory.
+Suggested Fix
+AI Confidence score ✨ 🟢 100%
+
+The Cycode AI Confidence Score estimates the quality of the suggested code fix. Please review it carefully before applying.
+
+C:/Users/Yogesh.Upadhyay/projects/disc-fe-omni-survey-mod/e2e/playwright/setup/globalTeardown.ts
+CHANGED
+
+
+
+
+        console.warn(`[global-teardown] Failed to update status for session ${safeSessionId}`, e);
+      }
+
+      // Safe: testResult.filePath was produced by safeJoin() above (OWASP canonicalization +
+      // prefix verification), so it is guaranteed to stay within ALLURE_RESULTS_DIR.
+      const resolvedPath = path.resolve(ALLURE_RESULTS_DIR, testResult.filePath);
+      if (!resolvedPath.startsWith(ALLURE_RESULTS_DIR)) {
+        throw new Error(`Invalid file path: ${testResult.filePath}`);
+      }
+      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+      fs.writeFileSync(resolvedPath, JSON.stringify(result, null, 2));
+      console.log(`[global-teardown] ✓ Added video link for "${testName}"`);
+    }
+
+    // Step 6: environment.properties write
+    if (buildId) {
+
+    if (buildId) {
+
+-------------------------------------------------
+This is the current code which have have the problem which we need to fix as cycode already suggested the fix understand and fix it 
+import * as fs from 'fs';
 import * as path from 'path';
+import { getLambdaTestBuildName, getLambdaTestSessionDir } from '../../utils/configurationDetails';
+import { safeJoin } from '../../utils/safe-path';
+import { MAX_TEST_TIMEOUT } from '../../constants/timeout-constants';
+
+const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
+// Static path: literal filename joined onto a hardcoded directory, no dynamic input.
+const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
+
+const sanitizeId = (value: unknown): string => String(value).replace(/[^a-zA-Z0-9_-]/g, '');
 
 /**
- * OWASP Path Traversal Prevention pattern (canonicalization + prefix verification),
- * applied at the fs sink instead of relying on upstream character-stripping /
- * regex-based sanitization of the untrusted segment(s).
+ * globalTeardown.ts: Runs after all tests complete.
  *
- * Reference: https://owasp.org/www-community/attacks/Path_Traversal
- *   1. Resolve the full intended path:  path.resolve(baseDir, ...untrustedSegments)
- *   2. Resolve the base directory:      path.resolve(baseDir)
- *   3. Verify the resolved path is still inside the resolved base
- *      (resolvedPath === resolvedBase || resolvedPath.startsWith(resolvedBase + path.sep))
- *   4. Throw if the check fails (traversal attempt detected)
- *   5. Use the verified resolvedPath instead of a plain path.join() result
+ * When LAMBDATEST=true, this:
+ *  - Reads the test-results/.lt-sessions/ test->session mapping files written by
+ *    lt-session-reporter.ts / base-page-factory.ts,
+ *  - Injects an LT_SESSION parameter into the matching Allure result files,
+ *  - Calls the LambdaTest Automation API to fetch session info (video link,
+ *    session id) and patch each session's pass/fail status,
+ *  - Writes allure-results/environment.properties with the LambdaTest build URL.
  *
- * This is used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
- * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment (test IDs,
- * worker indices, on-disk mapping/result filenames). The untrusted segment(s) are passed
- * through as-is — no upfront regex stripping is required or performed here; canonicalizing
- * the final path and verifying containment is the actual security control.
+ * When LAMBDATEST is not 'true', this is a complete no-op so local/default
+ * test runs are entirely unaffected.
  */
-export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
-  // Step 1 & 2: canonicalize both the intended target and the base directory.
-  const resolvedBase = path.resolve(baseDir);
-  const resolvedPath = path.resolve(resolvedBase, ...untrustedSegments);
+export default async () => {
+  const isLambdaTest = process.env.LAMBDATEST === 'true';
 
-  // Step 3: prefix verification - resolvedPath must be resolvedBase itself, or a path
-  // nested under it (the trailing path.sep prevents a sibling-directory bypass, e.g.
-  // resolvedBase = "/a/b" incorrectly matching a resolved path of "/a/bc").
-  const isWithinBase =
-    resolvedPath === resolvedBase || resolvedPath.startsWith(resolvedBase + path.sep);
-
-  // Step 4: reject anything that escaped the base directory.
-  if (!isWithinBase) {
-    throw new Error(
-      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${resolvedBase}"`
-    );
+  if (!isLambdaTest) {
+    return;
   }
 
-  // Step 5: callers must use this verified resolvedPath, never a raw path.join() result.
-  return resolvedPath;
+  try {
+    console.log('[global-teardown] Adding LambdaTest videos to Allure report...');
+
+    const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
+    const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
+    const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
+    const buildIdentifier =
+      process.env.SM_LT_BUILD_IDENTIFIER ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_RUN_NUMBER ||
+      undefined;
+
+    // Construct the actual build name used in LambdaTest.
+    // getLambdaTestBuildName centralizes the naming convention so that both
+    // playwright.config.ts and this teardown step use the same format, ensuring
+    // LambdaTest sessions are grouped correctly and can be reliably correlated.
+    const actualBuildName = getLambdaTestBuildName(ltBuild, buildIdentifier);
+
+    fs.mkdirSync(ALLURE_RESULTS_DIR, { recursive: true });
+
+    console.log('[global-teardown] Step 1: Reading test-session mappings...');
+    const sessionDir = getLambdaTestSessionDir();
+
+    const testSessionMap = new Map<string, string>(); // fullName -> sessionName
+    const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(sessionDir)) {
+      const mappingFiles = fs
+        .readdirSync(sessionDir)
+        .filter((f) => f.startsWith('test-') && f.endsWith('.json'));
+
+      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+
+      for (const file of mappingFiles) {
+        // path.basename() here is only for safe log display in the catch block below; the
+        // actual path-traversal guard is safeJoin()'s OWASP canonicalization + prefix
+        // verification on the raw entry (see safe-path.ts).
+        const sanitizedFile = path.basename(file);
+        try {
+          // safeJoin(): path.resolve(sessionDir, file) then verify containment via
+          // startsWith() - OWASP's canonicalization + prefix-verification pattern.
+          const sanitizedFileName = sanitizeId(file);
+          const filePath = safeJoin(sessionDir, sanitizedFileName);
+          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+          if (data.sessionName) {
+            if (data.fullName) {
+              testSessionMap.set(data.fullName.trim(), data.sessionName);
+            }
+            if (data.testId) {
+              testIdMap.set(data.testId, data.sessionName);
+            }
+          }
+        } catch (e) {
+          console.warn(`[global-teardown] Failed to parse mapping file ${sanitizedFile}:`, e);
+        }
+      }
+    } else {
+      console.warn(`[global-teardown] No LambdaTest session directory found at ${sessionDir}`);
+    }
+
+    // Step 2: Read Allure result files
+    console.log('[global-teardown] Step 2: Reading Allure result files...');
+    const allureFiles = fs.existsSync(ALLURE_RESULTS_DIR)
+      ? fs.readdirSync(ALLURE_RESULTS_DIR).filter((f) => f.endsWith('-result.json'))
+      : [];
+
+    console.log(`[global-teardown] Found ${allureFiles.length} Allure result files`);
+
+    const testResults = allureFiles.map((file) => {
+      // safeJoin(): OWASP canonicalization (path.resolve) + prefix verification (startsWith)
+      // on the raw entry is the actual traversal guard here - no filename stripping needed.
+      const filePath = safeJoin(ALLURE_RESULTS_DIR, file);
+      const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return { filePath, result };
+    });
+
+    // Step 3: Inject LT_SESSION into Allure result files
+    console.log('[global-teardown] Step 3: Injecting LT_SESSION into Allure files...');
+    for (const testResult of testResults) {
+      const result = testResult.result;
+
+      const testName = result.name?.trim();
+      if (!testName) continue;
+
+      const testId = result.testCaseId;
+
+      const labels = result.labels || [];
+      const parentSuite = labels.find((l: any) => l.name === 'parentSuite')?.value;
+      const suite = labels.find((l: any) => l.name === 'suite')?.value;
+      const subSuite = labels.find((l: any) => l.name === 'subSuite')?.value;
+
+      const fullName = [parentSuite, suite, subSuite, testName].filter(Boolean).join(' › ').trim();
+
+      // Normalize > separator to › for consistent mapping with reporter
+      const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+
+      let sessionName = testSessionMap.get(normalizedFullName);
+
+      if (!sessionName && testId) {
+        sessionName = testIdMap.get(testId);
+      }
+
+      if (sessionName) {
+        result.parameters = result.parameters || [];
+        const hasLTSession = result.parameters.some((p: any) => p.name === 'LT_SESSION');
+
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Safe: testResult.filePath was produced by safeJoin() above (OWASP canonicalization
+          // + prefix verification), so it is guaranteed to stay within ALLURE_RESULTS_DIR.
+          fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+          console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
+        }
+      } else {
+        console.warn(`[global-teardown]  No session mapping found for: "${fullName}"`);
+      }
+    }
+
+    // Step 4: Fetch LambdaTest sessions from API
+    console.log('[global-teardown] Step 4: Fetching LambdaTest sessions...');
+    if (!ltUser || !ltAccessKey) {
+      console.warn('[global-teardown] Missing LambdaTest credentials. Skipping API calls.');
+      return;
+    }
+
+    const auth = Buffer.from(`${ltUser}:${ltAccessKey}`).toString('base64');
+
+    const response = await fetch(
+      `https://api.lambdatest.com/automation/api/v1/sessions?build=${encodeURIComponent(actualBuildName)}&limit=100`,
+      {
+        headers: { Authorization: `Basic ${auth}` },
+        signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+      }
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(
+        `[global-teardown] LambdaTest API failed: ${response.status} ${response.statusText}` +
+          (errorBody ? ` Body: ${errorBody}` : '')
+      );
+    }
+
+    const data = await response.json();
+    const sessions = data?.data || [];
+
+    console.log(`[global-teardown] Found ${sessions.length} LambdaTest sessions`);
+
+    // Extract build ID from the first session that exposes it
+    let buildId: string | undefined;
+    for (const session of sessions) {
+      const sessionBuildId = session.build_id || session.buildId || session.build_number;
+      if (sessionBuildId) {
+        // Sanitize once at the source: buildId flows into a log line, a URL, and a static
+        // properties file below, so sanitizing here covers all of those sinks.
+        buildId = sanitizeId(sessionBuildId);
+        console.log(`[global-teardown] Extracted Build ID: ${buildId}`);
+        break;
+      }
+    }
+
+    // Step 5: Add LambdaTest video links to Allure
+    console.log('[global-teardown] Step 5: Adding video links to Allure files...');
+
+    for (const testResult of testResults) {
+      const result = testResult.result;
+      const testName = result.name?.trim();
+
+      if (!testName) continue;
+
+      const ltSessionParam = result.parameters?.find((p: any) => p.name === 'LT_SESSION');
+      const sessionName = ltSessionParam?.value;
+
+      if (!sessionName) {
+        console.warn(`[global-teardown] No LT_SESSION parameter for test: ${testName}`);
+        continue;
+      }
+
+      console.log(`[global-teardown] Looking for session: ${sessionName}`);
+      const session = sessions.find((s: any) => s.name === sessionName);
+      if (!session) {
+        // Session names come from the external LambdaTest API response; sanitize before logging.
+        const safeAvailableNames = sessions
+          .slice(0, 5)
+          .map((s: any) => sanitizeId(s.name))
+          .join(', ');
+        console.warn(`[global-teardown] Session "${sessionName}" not found in LT API`);
+        console.warn(`[global-teardown]    Available sessions (first 5): ${safeAvailableNames}`);
+        continue;
+      }
+      // session_id comes from the external LambdaTest API response; sanitize once and reuse
+      // for the log line, the video link URL, and the status-update URL below.
+      const safeSessionId = sanitizeId(session.session_id);
+      console.log(`[global-teardown] ✓ Found session in LT API: ${safeSessionId}`);
+
+      result.links = result.links || [];
+      result.links = result.links.filter((link: any) => link.name !== 'LambdaTest Video');
+
+      result.links.push({
+        name: 'LambdaTest Video',
+        url: `https://automation.lambdatest.com/logs/?sessionID=${safeSessionId}`,
+        type: 'link',
+      });
+
+      // Update LT status
+      const testStatus = result.status === 'passed' ? 'passed' : 'failed';
+
+      try {
+        await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${safeSessionId}`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Basic ${auth}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status_ind: testStatus }),
+          signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+        });
+      } catch (e) {
+        console.warn(`[global-teardown] Failed to update status for session ${safeSessionId}`, e);
+      }
+
+      // Safe: testResult.filePath was produced by safeJoin() above (OWASP canonicalization +
+      // prefix verification), so it is guaranteed to stay within ALLURE_RESULTS_DIR.
+      fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+      console.log(`[global-teardown] ✓ Added video link for "${testName}"`);
+    }
+
+    // Step 6: environment.properties write
+    if (buildId) {
+      process.env.LT_BUILD_ID = buildId;
+    }
+
+    // process.env.LT_BUILD_ID is only ever set from the already-sanitized `buildId` above
+    // (a few lines up: `process.env.LT_BUILD_ID = buildId;`), but sanitize again defensively
+    // in case the env var was pre-populated by an external caller.
+    const ltBuildId = buildId || (process.env.LT_BUILD_ID ? sanitizeId(process.env.LT_BUILD_ID) : undefined);
+
+    let buildUrl: string;
+
+    if (ltBuildId) {
+      // Use simple format: ?build=<id> (not pageType)
+      buildUrl = `https://automation.lambdatest.com/build?build=${ltBuildId}`;
+    } else {
+      // Fallback to build name search
+      buildUrl = `https://automation.lambdatest.com/build?buildName=${encodeURIComponent(actualBuildName)}`;
+    }
+
+    let envContent =
+      `LambdaTest.Build.URL=${buildUrl}\n` +
+      `LambdaTest.Build.Name=${actualBuildName}\n` +
+      (buildIdentifier ? `LambdaTest.Build.Identifier=${buildIdentifier}\n` : '') +
+      (ltBuildId ? `LambdaTest.Build.ID=${ltBuildId}\n` : '') +
+      `Execution.Mode=LambdaTest Cloud\n`;
+
+    // Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
+    fs.writeFileSync(ENV_PROPS_PATH, envContent, 'utf-8');
+
+    console.log('[global-teardown] LambdaTest videos added to Allure report successfully.');
+    console.log(`[global-teardown] Build URL: ${buildUrl}`);
+  } catch (error) {
+    console.warn('[global-teardown] Failed to add LambdaTest info:', error);
+  }
 };
+
