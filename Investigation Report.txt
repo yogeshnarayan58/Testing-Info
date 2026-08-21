@@ -1,55 +1,51 @@
-I've been unable to execute npx tsc --noEmit — the terminal command was skipped each time. Could you run it yourself and share the output, or let me know if I should retry?
+.env isn't listed as modified (confirmed untouched, and it's gitignored anyway so it wouldn't show). Both fixes compile cleanly. Here's the summary:
 
-In the meantime, here's the summary of changes made:
+Issue 1 — SSL certificate: no action needed, already valid
+.env line 24: NODE_EXTRA_CA_CERTS=C:\Users\Yogesh.Upadhyay\zscaler-root-ca.pem — already set.
+File exists on disk and is valid PEM (-----BEGIN CERTIFICATE-----).
+certutil -dump shows NotBefore: 02-02-2025, NotAfter: 20-06-2052 — not expired (26 years of validity left).
+I did not touch .env since nothing needed re-deriving. The unable to get local issuer certificate error you saw is not explained by a missing/stale/expired cert file — if it recurs, it's more likely a transient network/proxy issue or the fetch happening before the env var takes effect, not a bad cert.
+Issue 2 — session mapping: your stated hypothesis was ruled out, real bug found and fixed
+I compared all 4 assertContainedDir(...) call sites (globalTeardown.ts, base-page-factory.ts, lt-session-reporter.ts ×2) and verified with an isolated Node simulation that they resolve to the byte-identical path — not the cause. I also simulated MAPPING_FILENAME_RE against the real filename shape (test-<id>-<pid>-<timestamp>.json) — it matches correctly, and correctly rejects the temp test-<id>.json file. (No .lt-sessions dir exists yet in this sandbox since LambdaTest hasn't actually run here, so I couldn't grab a live filename, but the simulated one is byte-for-byte what the real code produces.)
 
-#cycode_sast_ignore_here comments added (32 total)
-safe-path.ts — 6
+Real root cause: base-page-factory.ts got testId from process.env.__CURRENT_TEST_ID__ || global.__CURRENT_TEST_ID__, which lt-session-reporter.ts's onTestBegin() sets. But Playwright reporters run in the main process while test files run in separate worker child processes — so that env/global write is never visible where createBasePage() actually runs. testId was therefore always null, so the precise per-test mapping file was never written, leaving everything dependent on a fragile 60-second timestamp-proximity fallback.
 
-Line	Reason
-18	baseDir is the caller's trusted base directory by contract, never attacker-controlled
-54	resolves symlinks on the trusted base directory only, not on untrusted segments
-59	sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below
-61	canonicalizes the joined path so the containment check below can't be bypassed via ".." or symlinks
-84	expectedRoot is the caller's trusted root boundary, not user input
-86	dir is verified for containment within resolvedRoot immediately below before being returned
+Fix: base-page-factory.ts now reads test.info().testId directly (imported test from @playwright/test), which works because it executes in the same worker process as the running test — no cross-process channel needed. Wrapped in try/catch since test.info() throws outside an active test (e.g. global-setup.ts's login flow also calls createBasePage()).
 
-globalTeardown.ts — 9
+Diffs applied:
+-import { chromium } from '@playwright/test';
++import { chromium, test } from '@playwright/test';
+...
+-        const testId =
+-          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
++        // Read testId directly from Playwright's own per-worker TestInfo instead of
++        // process.env/global set by the reporter: the reporter (onTestBegin/onTestEnd)
++        // runs in Playwright's main process, while this factory runs inside the test's
++        // worker process — a *separate* Node process that never sees the reporter's
++        // process.env or global mutations. test.info() reads the current test's info
++        // from within this same worker process, so it is the only reliable source here.
++        let testId: string | null = null;
++        try {
++          testId = test.info().testId;
++        } catch {
++          testId = null;
++        }
 
-Line	Reason
-7	Static path: process.cwd() + hardcoded literal 'allure-results'
-9	Static path: literal filename joined onto a hardcoded directory
-53	Static path: ALLURE_RESULTS_DIR built from process.cwd() + hardcoded literal
-57	Static path: process.cwd() + hardcoded literal 'test-results'
-83	Path validated via safeJoin() (mapping-file read)
-116	Path validated via safeJoin() (Allure result read)
-158	Path validated via safeJoin(), .json extension re-checked (Step 3 write)
-275	Path validated via safeJoin(), .json extension re-checked (Step 5 write)
-308	Safe: ENV_PROPS_PATH via path.join() with hardcoded dir/filename (existing precedent comment, tag prefix added)
-lt-session-reporter.ts — 11
 
-Line	Reason
-45	Static path: process.cwd() + 'test-results' (onTestEnd)
-57	Path already produced by safeJoin(); re-resolved as 2nd containment check
-73	Path validated via safeJoin()+sanitizeFilePath() (readFileSync)
-79	Path validated via safeJoin()+sanitizeFilePath() (unlinkSync)
-95	Path validated via safeJoin() (sessions.jsonl readFileSync)
-148	Path validated via assertContainedDir() (mkdirSync)
-156	Path validated via safeJoin(), extension re-checked (mapping writeFileSync)
-188	Static path: process.cwd() + 'test-results' (onEnd)
-193	Path validated via assertContainedDir() (mkdirSync)
-196	safeSessionDir validated; literal filename (path.join)
-198	mappingFile from hardcoded literal onto verified dir (writeFileSync)
-base-page-factory.ts — 6Line	Reason
-40	Static path: process.cwd() + 'storage/auth.json'
-118	Static path: process.cwd() + 'test-results'
-123	Path validated via assertContainedDir() (mkdirSync)
-133	Path validated via safeJoin() (appendFileSync sessions.jsonl)
-143	Path validated via safeJoin(); sanitizedTestId regex-sanitized (writeFileSync)
-154	Path validated via safeJoin(); workerIndex guaranteed finite (writeFileSync)
-Redundant comments removed
-All CWE-73, CWE-73 fix #1-#5, CWE-23, CWE-22, CWE-59, and "OWASP canonicalization" references across the 4 files, condensed into single-line explanations or replaced entirely by the ignore tags.
-safe-path.ts: simplified the safeJoin() JSDoc header (removed explicit CWE-73/22/59 citations).
-globalTeardown.ts: shortened the allowlist-pattern header comment and multiple multi-line "CWE-73 fix #N" / "safeJoin(): OWASP canonicalization..." blocks to one-liners.
-lt-session-reporter.ts: removed the large "CWE-73 hardening in this file" bullet list from the header JSDoc, and shortened several multi-line explanatory blocks (I also had to fully rewrite this file after a mid-edit corruption introduced stray non-breaking-space characters — verified via get_errors that it's now clean).
-base-page-factory.ts: shortened the CWE-73 comments on the session-dir validation, sessions.jsonl append, and worker-file write.
-Note: while editing lt-session-reporter.ts, one batch edit corrupted whitespace/merged two comment blocks; I recreated the file from scratch with the correct final content and confirmed no compile errors via get_errors. Please run npx tsc --noEmit (or your usual type-check command) on your end to give final confirmation, since I couldn't execute it here.
+onTestBegin(test: TestCase) {
+     if (process.env.LAMBDATEST !== 'true') return;
+ 
+-    process.env.__CURRENT_TEST_ID__ = test.id;
+-    (global as any).__CURRENT_TEST_ID__ = test.id;
+-
++    // NOTE: process.env / global set here are NOT visible to base-page-factory.ts —
++    // this reporter runs in Playwright's main process; base-page-factory.ts now
++    // reads test.info().testId directly instead (same-process, reliable).
+     console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
+   }
+
+Also restored class ITSessionReporter → class LTSessionReporter (an accidental rename typo from tonight's edit — cosmetic, no functional effect, but fixed for clarity).
+
+npx tsc --noEmit output: empty (no errors) — compiles cleanly.
+
+I did not run the test suite. Let me know how the LambdaTest run goes.
