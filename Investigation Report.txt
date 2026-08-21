@@ -1,51 +1,180 @@
-.env isn't listed as modified (confirmed untouched, and it's gitignored anyway so it wouldn't show). Both fixes compile cleanly. Here's the summary:
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ export NODE_EXTRA_CA_CERTS="C:\Users\Yogesh.Upadhyay\zscaler-root-ca.pem"
+npm run test:lambdatest
 
-Issue 1 — SSL certificate: no action needed, already valid
-.env line 24: NODE_EXTRA_CA_CERTS=C:\Users\Yogesh.Upadhyay\zscaler-root-ca.pem — already set.
-File exists on disk and is valid PEM (-----BEGIN CERTIFICATE-----).
-certutil -dump shows NotBefore: 02-02-2025, NotAfter: 20-06-2052 — not expired (26 years of validity left).
-I did not touch .env since nothing needed re-deriving. The unable to get local issuer certificate error you saw is not explained by a missing/stale/expired cert file — if it recurs, it's more likely a transient network/proxy issue or the fetch happening before the env var takes effect, not a bad cert.
-Issue 2 — session mapping: your stated hypothesis was ruled out, real bug found and fixed
-I compared all 4 assertContainedDir(...) call sites (globalTeardown.ts, base-page-factory.ts, lt-session-reporter.ts ×2) and verified with an isolated Node simulation that they resolve to the byte-identical path — not the cause. I also simulated MAPPING_FILENAME_RE against the real filename shape (test-<id>-<pid>-<timestamp>.json) — it matches correctly, and correctly rejects the temp test-<id>.json file. (No .lt-sessions dir exists yet in this sandbox since LambdaTest hasn't actually run here, so I couldn't grab a live filename, but the simulated one is byte-for-byte what the real code produces.)
+> e2e@1.0.0 test:lambdatest
+> cross-env LAMBDATEST=true npx playwright test
 
-Real root cause: base-page-factory.ts got testId from process.env.__CURRENT_TEST_ID__ || global.__CURRENT_TEST_ID__, which lt-session-reporter.ts's onTestBegin() sets. But Playwright reporters run in the main process while test files run in separate worker child processes — so that env/global write is never visible where createBasePage() actually runs. testId was therefore always null, so the precise per-test mapping file was never written, leaving everything dependent on a fragile 60-second timestamp-proximity fallback.
+◇ injected env (19) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = true
 
-Fix: base-page-factory.ts now reads test.info().testId directly (imported test from @playwright/test), which works because it executes in the same worker process as the running test — no cross-process channel needed. Wrapped in try/catch since test.info() throws outside an active test (e.g. global-setup.ts's login flow also calls createBasePage()).
+🌐 LambdaTest Cloud Execution Enabled
+   Credentials: configured
+   Project: OMNI SurveyMod
+   Workers: 1
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Connecting to LambdaTest cloud...
+Connected to LambdaTest (Session: Test-1787313717301)
+[LT Session] Warning: testId not available, using fallback sessions.jsonl
+[LT Session] Registered session: Test-1787313717301 (worker: 0)
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Diffs applied:
--import { chromium } from '@playwright/test';
-+import { chromium, test } from '@playwright/test';
-...
--        const testId =
--          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
-+        // Read testId directly from Playwright's own per-worker TestInfo instead of
-+        // process.env/global set by the reporter: the reporter (onTestBegin/onTestEnd)
-+        // runs in Playwright's main process, while this factory runs inside the test's
-+        // worker process — a *separate* Node process that never sees the reporter's
-+        // process.env or global mutations. test.info() reads the current test's info
-+        // from within this same worker process, so it is the only reliable source here.
-+        let testId: string | null = null;
-+        try {
-+          testId = test.info().testId;
-+        } catch {
-+          testId = null;
-+        }
+Running 2 tests using 1 worker
+
+[LT Reporter] Initialized - capturing LambdaTest sessions...
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = true
+
+🌐 LambdaTest Cloud Execution Enabled
+   Credentials: configured
+   Project: OMNI SurveyMod
+   Workers: 1
+     1 …art from scratch › All dimensions selection @StartFromScratch
+[LT Reporter] Test started: "All dimensions selection" (testId: 30f9e
+  ✘  1 …m scratch › All dimensions selection @StartFromScratch (5.0m)
+Auth state loaded from storage/auth.json
+Connecting to LambdaTest cloud...
+Connected to LambdaTest (Session: Test-1787313841024)
+[LT Session] ✓ test-30f9e15d1056605e247e-923022e1070d9e9a9842.json written
+[LT Session] Registered session: Test-1787313841024 (worker: 0)
+[LT Reporter] Stored: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection" -> Test-1787313841024
+[LT Reporter] Mapping written to test-30f9e15d1056605e247e-923022e1070d9e9a9842-33172-1787314150503.json
+◇ injected env (0) from .env // tip: ⌘ override existing { override:true }
+isLambdaTest = true
+
+🌐 LambdaTest Cloud Execution Enabled
+   Credentials: configured
+   Project: OMNI SurveyMod
+   Workers: 1
+     2 …art with a prompt › All dimensions selection @StartWithPrompt
+[LT Reporter] Test started: "All dimensions selection" (testId: a190e
+  ✓  2 …h a prompt › All dimensions selection @StartWithPrompt (1.3m)
+Auth state loaded from storage/auth.json
+Connecting to LambdaTest cloud...
+Connected to LambdaTest (Session: Test-1787314153236)
+[LT Session] ✓ test-a190e1baf811c479e479-b013306274b4d6ca8455.json written
+[LT Session] Registered session: Test-1787314153236 (worker: 1)
+[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection" -> Test-1787314153236
+[LT Reporter] Mapping written to test-a190e1baf811c479e479-b013306274b4d6ca8455-33172-1787314231749.json
+[global-teardown] Adding LambdaTest videos to Allure report...
+[global-teardown] Step 1: Reading test-session mappings...
+[global-teardown] Found 2 test-session mapping file(s)
+[global-teardown] Step 2: Reading Allure result files...
+[global-teardown] Found 30 Allure result files
+[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection": Test-1787314153236
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection": Test-1787313841024
+[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown] Step 4: Fetching LambdaTest sessions...
+[global-teardown] Found 9 LambdaTest sessions
+[global-teardown] Extracted Build ID: 101874057
+[global-teardown] Step 5: Adding video links to Allure files...
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1786874511333
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] Looking for session: Test-1786874511333
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1787314153236
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314155903948267POU
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1786874362544
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] Looking for session: Test-1786874362544
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] Looking for session: Test-1787313841024
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787313844016472732RWD
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] No LT_SESSION parameter for test: All dimensions selection
+[global-teardown] LambdaTest videos added to Allure report successfully.
+[global-teardown] Build URL: https://automation.lambdatest.com/build?build=101874057
 
 
-onTestBegin(test: TestCase) {
-     if (process.env.LAMBDATEST !== 'true') return;
- 
--    process.env.__CURRENT_TEST_ID__ = test.id;
--    (global as any).__CURRENT_TEST_ID__ = test.id;
--
-+    // NOTE: process.env / global set here are NOT visible to base-page-factory.ts —
-+    // this reporter runs in Playwright's main process; base-page-factory.ts now
-+    // reads test.info().testId directly instead (same-process, reliable).
-     console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
-   }
+  1) [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch 
 
-Also restored class ITSessionReporter → class LTSessionReporter (an accidental rename typo from tonight's edit — cosmetic, no functional effect, but fixed for clarity).
+    Test timeout of 300000ms exceeded.
 
-npx tsc --noEmit output: empty (no errors) — compiles cleanly.
+    attachment #1: screenshot (image/png) ───────────────────────────
+    test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────
 
-I did not run the test suite. Let me know how the LambdaTest run goes.
+    Error Context: test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ──────────────────────────
+    test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────
+
+  Slow test file: [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts (5.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch 
+  1 passed (8.8m)
+[LT Reporter] Saved 2 session mappings.
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
+$ 
