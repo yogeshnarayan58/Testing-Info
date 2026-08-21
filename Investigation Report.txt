@@ -1,207 +1,673 @@
-# Investigation: Dynamic File-Path Handling — `disc-fe-omnishopper-ui-automation` vs `disc-fe-omni-survey-mod/e2e`
+# LambdaTest Session Files — Verbatim Dump
 
-**Date:** 2026-08-21
-**Scope:** Read-only investigation. No files were modified, no security scanners were run.
-**Goal:** Determine whether `disc-fe-omnishopper-ui-automation` has the same category of
-"Unsanitized dynamic input in file path" (Cycode SAST / CWE-73 / CWE-22 family) code as
-`disc-fe-omni-survey-mod/e2e`, and whether they have solved it.
+## `src/lib/playwright/reporters/lt-session-reporter.ts`
 
----
+```typescript
+/**
+ * Custom Playwright reporter to capture LambdaTest session names.
+ * NOTE: This reporter does NOT create sessions - it only captures session names created by 
+ * BasePageFactory (which uses getLambdaTestBuildName for consistent build naming).
+ * Stores test -> session mapping into individual per-test JSON files 
+ * (.lt-sessions/test-<id>-<pid>-<timestamp>.json) to avoid concurrent write conflicts.
+ */
 
-## Summary / Verdict
+import { Reporter, TestCase, TestResult, FullResult } from "@playwright/test/reporter";
+import * as fs from "fs";
+import * as path from "path";
 
-**Yes — Omni Shopper has the same category of dynamic-path code, and no, it does not have an
-equivalent `safeJoin()` / validation utility.** Their code is essentially the *pre-hardening*
-version of our own files (same architecture, same filenames, same variable names in several
-places), with only light, inconsistent character-filtering in a couple of spots and **zero**
-path-containment/boundary checks anywhere. There is no evidence in their code that they have
-resolved this finding — it looks unaddressed.
+class LTSessionReporter implements Reporter {
+  private testSessions = new Map<string, string>(); // fullName -> sessionName
 
----
+  onBegin() {
+    if (process.env.LAMBDATEST !== "true") return;
+    
+    console.log("[LT Reporter] Initialized - capturing LambdaTest sessions...");
+  }
 
-## 1. Every dynamic file-path location found in Omni Shopper
+  onTestBegin(test: TestCase) {
+    if (process.env.LAMBDATEST !== "true") return;
+    
+    process.env.__CURRENT_TEST_ID__ = test.id;
+    (global as any).__CURRENT_TEST_ID__ = test.id;
 
-### `src/lib/common/utils/base-page-factory.ts`
-```ts
-// line 97-98
-const sessionDir = path.join(process.cwd(), '.lt-sessions');
-fs.mkdirSync(sessionDir, { recursive: true });
+    console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
+  }
 
-// line 108 — literal filename, but sessionDir itself is used unverified
-fs.appendFileSync(path.join(sessionDir, 'sessions.jsonl'), ...);
+  onTestEnd(test: TestCase, result: TestResult) {
+    if (process.env.LAMBDATEST !== "true") return;
 
-// line 116 — dynamic: testId (raw, from process.env.__CURRENT_TEST_ID__ / global)
-fs.writeFileSync(path.join(sessionDir, `test-${testId}.json`), ...);
+    const testId = test.id;
+    const sessionDir = path.join(process.cwd(), ".lt-sessions");
+    const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
 
-// line 127 — dynamic: workerIndex (Number(process.env.TEST_WORKER_INDEX))
-fs.writeFileSync(path.join(sessionDir, `worker-${workerIndex}.json`), ...);
+    let sessionName: string | null = null;
+
+    try {
+      // 1st priority: test-specific session file
+      if (fs.existsSync(testSessionFile)) {
+        const data = JSON.parse(fs.readFileSync(testSessionFile, "utf-8"));
+        sessionName = data.sessionName;
+
+        // cleanup
+        try {
+          fs.unlinkSync(testSessionFile);
+        } catch {}
+      }
+
+      // fallback: sessions.jsonl
+      if (!sessionName) {
+        const sessionsLogFile = path.join(sessionDir, "sessions.jsonl");
+        const workerIndex = result.parallelIndex ?? 0;
+        const testStartTime = result.startTime?.getTime() || 0;
+
+        if (fs.existsSync(sessionsLogFile)) {
+          const lines = fs.readFileSync(sessionsLogFile, "utf-8").split("\n").filter(Boolean);
+
+          let bestMatch: { sessionName: string; diff: number } | null = null;
+
+          for (const line of lines) {
+            try {
+              const s = JSON.parse(line);
+              if (s.workerIndex === workerIndex && s.timestamp && testStartTime) {
+                const diff = Math.abs(s.timestamp - testStartTime);
+                if (diff < 60000 && (!bestMatch || diff < bestMatch.diff)) {
+                  bestMatch = { sessionName: s.sessionName, diff };
+                }
+              }
+            } catch {}
+          }
+
+          if (bestMatch) sessionName = bestMatch.sessionName;
+        }
+      }
+    } catch (err) {
+      console.error("[LT Reporter] Error reading session:", err);
+    }
+
+    if (!sessionName) {
+      console.warn(`[LT Reporter] No session found for "${test.title}" (testId: ${testId})`);
+      return;
+    }
+
+    const fullName = test.titlePath().filter(Boolean).join(" › ");
+    // Normalize > separator to › for consistent mapping with globalTeardown
+    const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+    
+    this.testSessions.set(normalizedFullName, sessionName);
+
+    console.log(`[LT Reporter] Stored: "${normalizedFullName}" -> ${sessionName}`);
+
+    // Write mapping per test/worker to avoid concurrent write conflicts
+    try {
+      fs.mkdirSync(sessionDir, { recursive: true });
+
+      // Use a collision-resistant filename per test/process to prevent concurrent write conflicts
+      const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
+      const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
+      fs.writeFileSync(
+        mappingFile,
+        JSON.stringify({
+          testName: test.title,
+          fullName: normalizedFullName,
+          testId,
+          sessionName,
+          timestamp: Date.now(),
+        }, null, 2),
+        "utf-8"
+      );
+
+      console.log(`[LT Reporter] Mapping written to ${path.basename(mappingFile)}`);
+    } catch (err) {
+      console.error("[LT Reporter] Failed to write mapping:", err);
+    }
+  }
+
+  onEnd(result: FullResult) {
+    if (process.env.LAMBDATEST !== "true") return;
+
+    if (this.testSessions.size === 0) {
+      console.warn("[LT Reporter] No sessions captured.");
+      return;
+    }
+
+    try {
+      const sessionDir = path.join(process.cwd(), ".lt-sessions");
+      fs.mkdirSync(sessionDir, { recursive: true });
+
+      const mappingFile = path.join(sessionDir, "session-mappings.json");
+      fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions), null, 2));
+
+      console.log(`[LT Reporter] Saved ${this.testSessions.size} session mappings.`);
+    } catch (err) {
+      console.error("[LT Reporter] Failed to save mappings:", err);
+    }
+  }
+}
+
+export default LTSessionReporter;
 ```
-`testId` comes straight from Playwright's `test.id` (propagated via `__CURRENT_TEST_ID__`) and is
-used **completely unsanitized** — no character filtering, no traversal check, no containment check.
 
-### `src/lib/playwright/reporters/lt-session-reporter.ts`
-```ts
-// line 36 — dynamic: testId (test.id), UNSANITIZED here
-const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
+## `src/lib/common/utils/base-page-factory.ts`
 
-// line 54 — literal filename, but sessionDir itself unverified
-const sessionsLogFile = path.join(sessionDir, "sessions.jsonl");
+```typescript
+import { BasePage } from '@gfk/gta';
+import { chromium } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { config } from '../../playwright/config';
+import { WebActions } from '@gfk/gta/dist/core/web/webActions';
+import { getLambdaTestBuildName } from './configurationDetails';
 
-// line 101 — dynamic: safeTestId (locally sanitized), process.pid, Date.now()
-const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
-const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
+// Store session names with timestamp as key (for reporter lookup)
+export const sessionRegistry: Array<{ timestamp: number; sessionName: string; title?: string }> = [];
 
-// line 132 — literal
-const mappingFile = path.join(sessionDir, "session-mappings.json");
+// Map to store session per worker - each worker runs tests sequentially
+export const workerSessionMap = new Map<number, string>();
+
+// Global current session tracker - stores the last created session
+export let currentLTSession: string | null = null;
+
+export class BasePageFactory {
+  static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
+    const isLambdaTest = process.env.LAMBDATEST === 'true';
+
+    const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
+    const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
+    const ltProject = process.env.LT_PROJECT || 'OMNI Discover';
+    const ltBuildBase = process.env.LT_BUILD || 'Discover build';
+    const ltBuildIdentifier =
+      process.env.LT_BUILD_IDENTIFIER ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_RUN_NUMBER ||
+      undefined;
+    const ltBuild = getLambdaTestBuildName(ltBuildBase, ltBuildIdentifier);
+
+    const ltVideo = process.env.LT_VIDEO === 'false' ? false : true;
+    const ltNetwork = process.env.LT_NETWORK === 'true';
+    const ltConsole = process.env.LT_CONSOLE === 'true';
+
+    let storageState: string | undefined;
+    const authPath = path.resolve(process.cwd(), 'storage/auth.json');
+
+    if (fs.existsSync(authPath)) {
+      storageState = authPath;
+      console.log('Auth state loaded from storage/auth.json');
+    } else {
+      console.log('No auth state found - login required');
+    }
+    if (isLambdaTest) {
+      console.log('Connecting to LambdaTest cloud...');
+
+      const timestamp = Date.now();
+      const sessionName = `Test-${timestamp}`;
+
+      const ltOptions: any = {
+        platform: 'Windows 11',
+        project: ltProject,
+        build: ltBuild,
+        name: sessionName,
+        user: ltUser,
+        accessKey: ltAccessKey,
+        network: ltNetwork,
+        video: ltVideo,
+        console: ltConsole,
+      };
+
+      if (forceHeadless !== undefined) {
+        ltOptions.headless = forceHeadless;
+      }
+
+      const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+        JSON.stringify({
+          browserName: 'pw-chromium',
+          browserVersion: 'latest',
+          'LT:Options': ltOptions,
+        })
+      )}`;
+
+      const browser = await chromium.connect(wsEndpoint);
+      console.log(`Connected to LambdaTest (Session: ${sessionName})`);
+
+      const contextOptions: any = {
+        acceptDownloads: true,
+        viewport: { width: 1920, height: 1080 },
+      };
+
+      if (storageState) {
+        contextOptions.storageState = storageState;
+      }
+
+      const context = await browser.newContext(contextOptions);
+      const page = await context.newPage();
+
+      // Store session info for reporter/global-teardown
+      try {
+        const workerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
+        const testId =
+          process.env.__CURRENT_TEST_ID__ || (global as any).__CURRENT_TEST_ID__ || null;
+
+        const sessionDir = path.join(process.cwd(), '.lt-sessions');
+        fs.mkdirSync(sessionDir, { recursive: true });
+
+        // store in memory
+        (page as any).__LT_SESSION_NAME__ = sessionName;
+        sessionRegistry.push({ timestamp, sessionName });
+        workerSessionMap.set(workerIndex, sessionName);
+        currentLTSession = sessionName;
+
+        // append sessions.jsonl (fallback)
+        fs.appendFileSync(
+          path.join(sessionDir, 'sessions.jsonl'),
+          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
+          'utf-8'
+        );
+
+        // PRIMARY (parallel safe): write per-test session file
+        if (testId) {
+          fs.writeFileSync(
+            path.join(sessionDir, `test-${testId}.json`),
+            JSON.stringify({ sessionName, timestamp, testId }),
+            'utf-8'
+          );
+          console.log(`[LT Session] ✓ test-${testId}.json written`);
+        } else {
+          console.warn('[LT Session] ⚠ testId not available, using fallback sessions.jsonl');
+        }
+
+        // optional worker file
+        fs.writeFileSync(
+          path.join(sessionDir, `worker-${workerIndex}.json`),
+          JSON.stringify({ sessionName, timestamp }),
+          'utf-8'
+        );
+
+        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
+      } catch (err) {
+        console.warn('[LT Session] Could not store session info:', err);
+      }
+
+      // Inject into BasePage
+      (BasePage as any).browser = browser;
+      (BasePage as any).context = context;
+      (BasePage as any).page = page;
+      (BasePage as any).webActions = new WebActions(page, context);
+
+      return new (BasePage as any)();
+    }
+    const browserName = config.browser ?? 'chromium';
+    let browserOptions = config.browserOptions ?? {};
+
+    if (forceHeadless !== undefined) {
+      browserOptions = { ...browserOptions, headless: forceHeadless };
+    }
+
+    const contextOptions = {
+      acceptDownloads: true,
+      recordVideo: process.env.PWVIDEO ? { dir: 'screenshots' } : undefined,
+      viewport: null,
+      storageState,
+    };
+
+    return await BasePage.initializer(browserName, browserOptions, contextOptions);
+  }
+}
 ```
-Note: two *different* `testId` values are used in two different spots in the same file —
-line 36's `testSessionFile` uses the raw `testId` with **no** sanitization at all, while line
-101's `onTestEnd` mapping-write path uses a locally-sanitized `safeTestId`. Inconsistent even
-within the same file.
 
-### `src/lib/playwright/setup/globalTeardown.ts`
-```ts
-// line 44
-const sessionDir = path.join(process.cwd(), ".lt-sessions");
+## `src/lib/playwright/setup/globalTeardown.ts`
 
-// line 51 — dynamic: filenames from readdirSync(sessionDir), filtered only by
-// startsWith/endsWith (denylist-ish, not a real allowlist)
-const mappingFiles = fs.readdirSync(sessionDir).filter(f => f.startsWith('test-') && f.endsWith('.json'));
+```typescript
+import { getJiraFlagvalue, getSuiteName, shouldUpdateJira, getLambdaTestBuildName } from "../../common/utils/configurationDetails";
+import { updateJira } from "./jiraUpdateManager";
+import * as fs from "fs";
+import * as path from "path";
+import { MAX_TEST_TIMEOUT } from "../../constants/time-out-constants";
 
-// line 58 — dynamic: file (from the loop above), "sanitized" only via path.basename()
-const sanitizedFile = path.basename(file);
-const filePath = path.join(sessionDir, sanitizedFile);
-const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+const ALLURE_RESULTS_DIR = path.join(process.cwd(), "allure-results");
+const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, "environment.properties");
 
-// allureFiles listing — filtered only by endsWith("-result.json")
-const allureFiles = fs.readdirSync(ALLURE_RESULTS_DIR).filter((f) => f.endsWith("-result.json"));
+/**
+ * global-teardown.ts: This module is responsible for tearing down the global state after all tests have completed.
+ * It includes a default export function that runs after all tests, cleaning up any necessary global context.
+ * By centralizing these teardown operations, it ensures a consistent end state for all tests, improving test reliability.
+ * You can add any teardown setup code within this function.
+ * Note: Due to a known issue (https://github.com/microsoft/playwright/issues/23875),
+ * the last line of output from this function may be cleared by the line reporter.
+ */
+export default async () => {
+  const isLambdaTest = process.env.LAMBDATEST === "true";
 
-// dynamic: file, sanitized only via path.basename()
-const sanitizedFile = path.basename(file);
-const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+  if (isLambdaTest) {
+    try {
+      console.log("[global-teardown] Adding LambdaTest videos to Allure report...");
 
-// later write-back reuses the same filePath computed once, across the loop
-fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+      const ltUser = process.env.LAMBDATEST_USERNAME || process.env.LT_USERNAME;
+      const ltAccessKey = process.env.LAMBDATEST_ACCESS_KEY || process.env.LT_ACCESS_KEY;
+      const ltBuild = process.env.LT_BUILD || "Discover build";
+      const buildIdentifier =
+        process.env.LT_BUILD_IDENTIFIER ||
+        process.env.BUILD_NUMBER ||
+        process.env.GITHUB_RUN_NUMBER ||
+        undefined;
+      
+      // Construct the actual build name used in LambdaTest.
+      // getLambdaTestBuildName centralizes the naming convention (typically something like
+      // "BuildName-RunNumber") so that both Playwright configuration and this teardown step
+      // use the same format, ensuring LambdaTest sessions are grouped correctly and external
+      // tooling (like Allure or Jira sync) can reliably correlate results across runs.
+      const actualBuildName = getLambdaTestBuildName(ltBuild, buildIdentifier);
+
+      fs.mkdirSync(ALLURE_RESULTS_DIR, { recursive: true });
+
+      console.log("[global-teardown] Step 1: Reading test-session mappings...");
+      const sessionDir = path.join(process.cwd(), ".lt-sessions");
+
+      const testSessionMap = new Map<string, string>(); // fullName -> sessionName
+      const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+      // Read individual mapping files (one per test) to avoid concurrent write conflicts
+      if (fs.existsSync(sessionDir)) {
+        const mappingFiles = fs.readdirSync(sessionDir).filter(f => f.startsWith('test-') && f.endsWith('.json'));
+
+        console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+
+        for (const file of mappingFiles) {
+          try {
+            const sanitizedFile = path.basename(file);
+            const filePath = path.join(sessionDir, sanitizedFile);
+            const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+
+            if (data.sessionName) {
+              if (data.fullName) {
+                testSessionMap.set(data.fullName.trim(), data.sessionName);
+              }
+              if (data.testId) {
+                testIdMap.set(data.testId, data.sessionName);
+              }
+            }
+          } catch (e) {
+            console.warn(`[global-teardown] Failed to parse mapping file ${file}:`, e);
+          }
+        }
+      } else {
+        console.warn(`[global-teardown] No .lt-sessions directory found at ${sessionDir}`);
+      }
+
+      // Step 2: Read Allure result files
+      console.log("[global-teardown] Step 2: Reading Allure result files...");
+      const allureFiles = fs
+        .readdirSync(ALLURE_RESULTS_DIR)
+        .filter((f) => f.endsWith("-result.json"));
+
+      console.log(`[global-teardown] Found ${allureFiles.length} Allure result files`);
+
+      const testResults = allureFiles.map((file) => {
+        // Sanitize filename to prevent path traversal attacks
+        const sanitizedFile = path.basename(file);
+        const filePath = path.join(ALLURE_RESULTS_DIR, sanitizedFile);
+        const result = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+        return { filePath, result };
+      });
+
+         // Step 3: Inject LT_SESSION into Allure result files
+      console.log("[global-teardown] Step 3: Injecting LT_SESSION into Allure files...");
+      for (const testResult of testResults) {
+        const result = testResult.result;
+
+        const testName = result.name?.trim();
+        if (!testName) continue;
+
+        const testId = result.testCaseId;
+
+        const labels = result.labels || [];
+        const parentSuite = labels.find((l: any) => l.name === "parentSuite")?.value;
+        const suite = labels.find((l: any) => l.name === "suite")?.value;
+        const subSuite = labels.find((l: any) => l.name === "subSuite")?.value;
+
+        const fullName = [parentSuite, suite, subSuite, testName].filter(Boolean).join(" › ").trim();
+
+        // Normalize > separator to › for consistent mapping with reporter
+        const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+
+        let sessionName = testSessionMap.get(normalizedFullName);
+
+        if (!sessionName && testId) {
+          sessionName = testIdMap.get(testId);
+        }
+
+        if (sessionName) {
+          result.parameters = result.parameters || [];
+          const hasLTSession = result.parameters.some((p: any) => p.name === "LT_SESSION");
+
+          if (!hasLTSession) {
+            result.parameters.push({ name: "LT_SESSION", value: sessionName });
+            // Safe: testResult.filePath was sanitized with path.basename() during file reading 
+            fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+            console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
+          }
+        } else {
+          console.warn(`[global-teardown]  No session mapping found for: "${fullName}"`);
+        }
+      }
+
+      // Step 4: Fetch LambdaTest sessions from API
+      console.log("[global-teardown] Step 4: Fetching LambdaTest sessions...");
+      if (!ltUser || !ltAccessKey) {
+        console.warn("[global-teardown] Missing LambdaTest credentials. Skipping API calls.");
+        return;
+      }
+
+      const auth = Buffer.from(`${ltUser}:${ltAccessKey}`).toString("base64");
+
+      const response = await fetch(
+        `https://api.lambdatest.com/automation/api/v1/sessions?build=${encodeURIComponent(actualBuildName)}&limit=100`,
+        {
+          headers: { Authorization: `Basic ${auth}` },
+          signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+        }
+      );
+
+      if (!response.ok) {
+        const errorBody = await response.text().catch(() => "");
+        throw new Error(
+          `[global-teardown] LambdaTest API failed: ${response.status} ${response.statusText}` +
+            (errorBody ? ` Body: ${errorBody}` : "")
+        );
+      }
+
+      const data = await response.json();
+      const sessions = data?.data || [];
+
+      console.log(`[global-teardown] Found ${sessions.length} LambdaTest sessions`);
+
+      // Extract build ID from the first session that exposes it
+      let buildId: string | undefined;
+      for (const session of sessions) {
+        const sessionBuildId = session.build_id || session.buildId || session.build_number;
+        if (sessionBuildId) {
+          buildId = sessionBuildId.toString();
+          console.log(`[global-teardown] Extracted Build ID: ${buildId}`);
+          break;
+        }
+      }
+
+      // Step 5: Add LambdaTest video links to Allure
+      console.log("[global-teardown] Step 5: Adding video links to Allure files...");
+
+      for (const testResult of testResults) {
+        const result = testResult.result;
+        const testName = result.name?.trim();
+
+        if (!testName) continue;
+
+        const ltSessionParam = result.parameters?.find((p: any) => p.name === "LT_SESSION");
+        const sessionName = ltSessionParam?.value;
+
+        if (!sessionName) {
+          console.warn(`[global-teardown] No LT_SESSION parameter for test: ${testName}`);
+          continue;
+        }
+
+        console.log(`[global-teardown] Looking for session: ${sessionName}`);
+        const session = sessions.find((s: any) => s.name === sessionName);
+        if (!session) {
+          console.warn(`[global-teardown] Session "${sessionName}" not found in LT API`);
+          console.warn(`[global-teardown]    Available sessions (first 5): ${sessions.slice(0, 5).map((s: any) => s.name).join(", ")}`);
+          continue;
+        }
+        console.log(`[global-teardown] ✓ Found session in LT API: ${session.session_id}`);
+
+        result.links = result.links || [];
+        result.links = result.links.filter((link: any) => link.name !== "LambdaTest Video");
+
+        result.links.push({
+          name: "LambdaTest Video",
+          url: `https://automation.lambdatest.com/logs/?sessionID=${session.session_id}`,
+          type: "link",
+        });
+
+        // Update LT status
+        const testStatus = result.status === "passed" ? "passed" : "failed";
+
+        try {
+          await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${session.session_id}`, {
+            method: "PATCH",
+            headers: {
+              Authorization: `Basic ${auth}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status_ind: testStatus }),
+            signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+          });
+        } catch (e) {
+          console.warn(`[global-teardown] Failed to update status for session ${session.session_id}`, e);
+        }
+
+        // Safe: testResult.filePath was sanitized with path.basename() during file reading (line 87)
+        fs.writeFileSync(testResult.filePath, JSON.stringify(result, null, 2));
+        console.log(`[global-teardown] ✓ Added video link for "${testName}"`);
+      }
+
+      // Step 6: environment.properties write
+      if (buildId) {
+        process.env.LT_BUILD_ID = buildId;
+      }
+
+      const ltBuildId = buildId || process.env.LT_BUILD_ID;
+
+      let buildUrl: string;
+
+      if (ltBuildId) {
+        // Use simple format: ?build=<id> (not pageType)
+        buildUrl = `https://automation.lambdatest.com/build?build=${ltBuildId}`;
+      } else {
+        // Fallback to build name search
+        buildUrl = `https://automation.lambdatest.com/build?buildName=${encodeURIComponent(actualBuildName)}`;
+      }
+
+      let envContent =
+        `LambdaTest.Build.URL=${buildUrl}\n` +
+        `LambdaTest.Build.Name=${actualBuildName}\n` +
+        (buildIdentifier ? `LambdaTest.Build.Identifier=${buildIdentifier}\n` : "") +
+        (ltBuildId ? `LambdaTest.Build.ID=${ltBuildId}\n` : "") +
+        `Execution.Mode=LambdaTest Cloud\n`;
+
+      // #cycode_sast_ignore_here Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
+      fs.writeFileSync(ENV_PROPS_PATH, envContent, "utf-8");
+
+      console.log("[global-teardown] LambdaTest videos added to Allure report successfully.");
+      console.log(`[global-teardown] Build URL: ${buildUrl}`);
+    } catch (error) {
+      console.warn("[global-teardown] Failed to add LambdaTest info:", error);
+    }
+  }
+
+  const suiteName = getSuiteName();
+  const jiraFlagValue = getJiraFlagvalue();
+  const isEnabled = shouldUpdateJira();
+
+  console.log(`[global-teardown] Suite: ${suiteName}`);
+  console.log(`[global-teardown] Jira update flag: ${jiraFlagValue}`);
+
+  if (!isEnabled) {
+    console.log("[global-teardown] Jira sync disabled via environment flag.");
+    return;
+  }
+
+  try {
+    await updateJira();
+    console.log("[global-teardown] Jira execution status updated successfully.");
+  } catch (error) {
+    console.error("[global-teardown] Jira update failed. Test results NOT affected.", error);
+  }
+};
 ```
-`path.basename()` strips directory components but performs **no containment/boundary
-verification** — it just prevents the string from containing a `/`-based traversal in the
-*file* segment. It does not resolve + compare against a base directory the way
-`safeJoin` / `assertContainedDir` do in our repo.
 
-### `src/lib/common/utils/global-setup.ts`
-```ts
-// line 36-38
-const files = fs.readdirSync(LT_SESSIONS_DIR);
-files.forEach(file => {
-  fs.unlinkSync(path.join(LT_SESSIONS_DIR, file)); // dynamic: file, NO sanitization/containment check at all
-});
+## `src/lib/common/utils/global-setup.ts`
+
+```typescript
+/**
+ * @fileoverview Global setup for Playwright tests.
+ * Handles authentication state management and login initialization.
+ *
+ * This module is executed before running tests to establish authentication
+ * and prepare the testing environment.
+ */
+import fs from "fs";
+import path from "path";
+import { BasePageFactory } from "./base-page-factory";
+import { LoginPage } from "../pages/login-page/login-page";
+import { config } from "../../playwright/config";
+
+// Define constants
+const AUTH_FILE_PATH = "storage/auth.json";
+const LT_SESSIONS_DIR = ".lt-sessions";
+
+/**
+ * Performs global setup operations before tests are run.
+ * - Validates environment variables
+ * - Cleans up previous authentication state
+ * - Performs login to establish a new auth state
+ */
+async function globalSetup(): Promise<void> {
+  try {
+    console.log("Starting global setup...");
+
+    // Delete existing auth state if it exists
+    if (fs.existsSync(AUTH_FILE_PATH)) {
+      fs.unlinkSync(AUTH_FILE_PATH);
+      console.log("Old authentication state deleted.");
+    }
+
+    // Clean up LambdaTest session files from previous run
+    if (fs.existsSync(LT_SESSIONS_DIR)) {
+      const files = fs.readdirSync(LT_SESSIONS_DIR);
+      files.forEach(file => {
+        fs.unlinkSync(path.join(LT_SESSIONS_DIR, file));
+      });
+      console.log(`Cleared ${files.length} old LambdaTest session file(s).`);
+    } else {
+      // Create directory if it doesn't exist
+      fs.mkdirSync(LT_SESSIONS_DIR, { recursive: true });
+      console.log("Created .lt-sessions directory.");
+    }
+    
+    // Perform login and create new auth state (force headless mode for login)
+    console.log(`Logging in to ${config.BASE_URL} in headless mode...`);
+    const basePage = await BasePageFactory.createBasePage(true);
+    const loginPage = new LoginPage(basePage);
+    await loginPage.login(config.BASE_URL);
+    console.log("Authentication successful. New auth state created.");
+  } catch (error) {
+    console.error("Global setup failed:", error);
+
+    // Rethrow with context to ensure the setup failure is clearly indicated
+    if (error instanceof Error) {
+      throw new Error(`Global setup failed: ${error.message}`);
+    } else {
+      throw new Error("Global setup failed with an unknown error");
+    }
+  }
+}
+
+export default globalSetup;
 ```
-This is the weakest spot found: it `unlinkSync`s every entry returned by `readdirSync` joined
-onto the dir, with **zero filtering of any kind** (not even a filename pattern check).
-
-### `src/lib/common/pages/common-test-case/common-test-case.ts` (~line 744-756)
-```ts
-const sanitizedReportName = reportName.replace(/[^a-zA-Z0-9-_]/g, "-").toLowerCase();
-const sanitizedBrowserName = browserName.replace(/[^a-zA-Z0-9-_]/g, "-").toLowerCase();
-const sanitizedTestCaseName = testCaseName.replace(/[^a-zA-Z0-9-_]/g, "-").toLowerCase();
-const sanitizedEnvironment = environment.replace(/[^a-zA-Z0-9-_]/g, "-").toLowerCase();
-
-const screenshotPath = path.join(
-  "baseline-screenshots",
-  sanitizedReportName, sanitizedBrowserName, datasetShort, sanitizedEnvironment,
-  `${sanitizedTestCaseName}.png`
-);
-```
-This is their **best-hardened** spot — dynamic values (`reportName`, `browserName`,
-`testCaseName`, `environment`, all test-config-driven runtime values) are allowlist-filtered to
-`[a-zA-Z0-9-_]` before use. But there is still no `path.resolve()` + `startsWith()` boundary
-check afterward — no formal verification that the final joined path stays under
-`baseline-screenshots/`.
-
-### `src/lib/playwright/setup/testResultsReader.ts`
-```ts
-const resolveDefaultReportPath = () => path.resolve(process.cwd(), config.DEFAULT_REPORT_PATH);
-```
-`config.DEFAULT_REPORT_PATH` is a static config value, not a per-test/per-worker runtime value —
-not the same category as the rest (no test ID/session/worker index involved).
-
----
-
-## 2. Comparison table: Omni Shopper vs `disc-fe-omni-survey-mod/e2e`
-
-| File | Dynamic value | Sanitization present? | Containment/boundary check? |
-|---|---|---|---|
-| our `utils/base-page-factory.ts` | `sanitizedTestId`, `workerIndex` | ✅ regex allowlist (`[^a-zA-Z0-9_.-]`→`_`) inside `safeJoin` | ✅ `safeJoin` resolves + `startsWith(baseDir)` |
-| **their** `base-page-factory.ts:116,127` | `testId` (raw), `workerIndex` | ❌ none | ❌ none |
-| our `playwright/reporters/lt-session-reporter.ts` | `sanitizedTestId` | ✅ via `safeJoin` (+ local `sanitizeFilePath` re-check, defense-in-depth) | ✅ `safeJoin` + `assertContainedDir` + re-check at each sink |
-| **their** `lt-session-reporter.ts:36` | `testId` (raw) | ❌ none | ❌ none |
-| **their** `lt-session-reporter.ts:101` | `safeTestId` | ⚠️ partial regex allowlist only | ❌ none |
-| our `playwright/setup/globalTeardown.ts` | `file` from `readdirSync` | ✅ strict full-pattern regex allowlist (`MAPPING_FILENAME_RE`, `ALLURE_RESULT_FILENAME_RE`) | ✅ `safeJoin` resolve+prefix check, re-derived at each sink |
-| **their** `globalTeardown.ts` | `file` from `readdirSync` | ⚠️ `startsWith`/`endsWith` (partial, denylist-style) + `path.basename()` | ❌ none |
-| **their** `global-setup.ts:36-38` | `file` from `readdirSync` | ❌ none | ❌ none |
-| **their** `common-test-case.ts` | `reportName`, `browserName`, `testCaseName`, `environment` | ✅ regex allowlist | ❌ none |
-
----
-
-## 3. Would their pattern trip the same Cycode rule?
-
-Yes. The Cycode "Unsanitized dynamic input in file path" rule (CWE-73/CWE-22 family) flags any
-`fs.*` / `path.join` / `path.resolve` sink fed by a runtime-derived value without a recognized
-sanitizer chain. Omni Shopper's:
-
-- `base-page-factory.ts` (`testId`, `workerIndex` — completely raw)
-- `lt-session-reporter.ts:36` (`testId` — completely raw)
-- `global-setup.ts` (`file` from `readdirSync` — completely raw, most exposed of all)
-
-are **at least as exposed as our pre-fix code was**. Their `globalTeardown.ts` and
-`common-test-case.ts` do have partial mitigations (`path.basename()`, `startsWith`/`endsWith`
-filters, regex allowlisting), but none match Cycode's expected "resolve + boundary-check" shape
-that our `safeJoin` / `assertContainedDir` implements — SAST tools typically still flag
-`path.basename()`-only or denylist-only patterns because they don't verify the *final resolved
-path* stays inside a trusted root.
-
----
-
-## 4. Do they have an equivalent of our `safeJoin()` / `safe-path.ts`?
-
-**No.** There is no `safe-path.ts`, `safeJoin`, `assertContainedDir`, or any shared
-path-validation utility anywhere in `disc-fe-omnishopper-ui-automation`. Each file does its own
-ad-hoc, inconsistent partial sanitization (or none at all):
-
-- `global-setup.ts` → no sanitization whatsoever
-- `base-page-factory.ts` → no sanitization whatsoever
-- `lt-session-reporter.ts` → sanitizes in one place (line 101), not in another (line 36)
-- `globalTeardown.ts` → `path.basename()` + suffix/prefix string checks only
-- `common-test-case.ts` → character-allowlist regex only, no path resolution/boundary check
-
----
-
-## 5. Our project's reference implementation (for context)
-
-Our `e2e/utils/safe-path.ts` exports two helpers used across
-`utils/base-page-factory.ts`, `playwright/setup/globalTeardown.ts`, and
-`playwright/reporters/lt-session-reporter.ts`:
-
-- **`safeJoin(baseDir, ...untrustedSegments)`** — rejects empty segments, NUL bytes, traversal
-  sequences (`..`, `~`, backslashes, absolute paths, both POSIX and Windows-style, OS-agnostically);
-  allowlist-sanitizes each segment to `[a-zA-Z0-9_.-]`; resolves symlinks on the base dir via
-  `fs.realpathSync`; joins and re-resolves the final path; and verifies the result still starts
-  with the resolved base directory before returning it.
-- **`assertContainedDir(expectedRoot, dir)`** — verifies a directory value (e.g. from
-  `getLambdaTestSessionDir()`) resolves inside `expectedRoot` before it is trusted as a base for
-  further `fs` operations.
-
-This is the "resolve + boundary-check" pattern that is **entirely absent** from
-`disc-fe-omnishopper-ui-automation`.
-
----
-
-## Conclusion
-
-Omni Shopper has the same category of dynamic-path code (test IDs, worker indices, and
-directory-listing filenames flowing into `fs.readFileSync`/`writeFileSync`/`readdirSync`/
-`unlinkSync`/`path.join` calls) as our project had before hardening. There is **no evidence**
-they have solved the equivalent Cycode finding — no shared validation utility, no
-resolve+containment checks anywhere, and at least one location (`global-setup.ts`) with zero
-sanitization of any kind on a `readdirSync` → `unlinkSync` path. It appears unresolved /
-unaddressed in their repository.
