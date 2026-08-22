@@ -1,100 +1,58 @@
-# Investigation Only: OmniShopper Path Security, LambdaTest `.lt-sessions` and Cycode SAST
+I want to test ONE controlled fix for the Cycode SAST finding in servey-mod/e2e.
 
-## Objective
+Use the COMPLETE current code I provide for:
+- e2e/utils/safe-path.ts
+- e2e/playwright/reporters/lt-session-reporter.ts
+- e2e/playwright/setup/globalTeardown.ts
+- e2e/utils/base-page-factory.ts
+- configurationDetails.ts, specifically getLambdaTestSessionDir()
 
-This is an INVESTIGATION ONLY.
+Do NOT modify any files yet.
 
-DO NOT modify any source files.
-DO NOT refactor code.
-DO NOT add or remove Cycode suppressions.
-DO NOT change Cycode configuration.
-DO NOT change CI/CD configuration.
-DO NOT change dependencies.
-DO NOT create a PR.
-DO NOT implement a proposed fix.
+First, analyze the current implementation and then provide the COMPLETE replacement code only for the LambdaTest session-path flow.
 
-At the END of the investigation, create ONLY this report:
+Experiment we want to test:
 
-`docs/investigation/omnishopper-cycode-path-security.md`
+Instead of a generic helper such as:
 
-The purpose of this investigation is to understand how the OmniShopper repository handles filesystem paths, especially LambdaTest `.lt-sessions`, and whether any existing implementation provides useful evidence for a separate TypeScript/Playwright repository that currently receives Cycode SAST findings:
+safeJoin(baseDir, fileName)
 
-> Unsanitized dynamic input in file path
+where the trusted root is supplied as a function parameter, create a purpose-specific LambdaTest path helper where the trusted root is internally derived from the existing getLambdaTestSessionDir() / existing configuration behavior.
 
-Our current repository already contains stronger path validation than some of the OmniShopper code we have seen. Therefore, DO NOT assume OmniShopper is more secure or that its implementation should be copied.
+Example concept only:
 
-We are looking for useful structural/security patterns and evidence only.
+safeLambdaTestSessionPath(fileName)
 
----
+The existing security protections MUST remain:
+- null-byte rejection
+- traversal rejection
+- ../ and ~ rejection
+- backslash rejection
+- absolute/UNC/Windows drive-path rejection
+- filename character allowlist
+- realpath/symlink protection
+- containment verification
+- existing .json/filename validation where applicable
 
-# 1. Search All Filesystem and Path Handling
+IMPORTANT:
+- Do NOT hardcode ".lt-sessions" if getLambdaTestSessionDir() does anything else.
+- Preserve the exact existing behavior of getLambdaTestSessionDir().
+- Do NOT change .gitignore.
+- Do NOT change the .lt-sessions directory behavior.
+- Do NOT remove any security check.
+- Do NOT modify Allure handling yet.
+- Do NOT modify globalTeardown or base-page-factory yet unless required for the LambdaTest experiment.
+- Do NOT introduce unused variables.
+- Do NOT move existing try/catch boundaries.
+- Do NOT change error-handling behavior.
+- Do NOT invent missing code.
 
-Search the entire repository for:
+The goal is specifically to test whether Cycode treats a purpose-specific helper with an internally trusted LambdaTest root differently from the current generic helper that accepts the root as a parameter.
 
-### Node path APIs
+After reviewing the supplied code, give me:
+1. The complete replacement safe-path.ts required for this experiment.
+2. The exact minimal change required in lt-session-reporter.ts to use it.
+3. A short explanation of why each change is being made.
+4. TypeScript commands to compile/check the change before running Cycode.
 
-- `path.resolve`
-- `path.join`
-- `path.normalize`
-- `path.relative`
-- `path.isAbsolute`
-- `path.basename`
-- `path.dirname`
-
-### Node filesystem APIs
-
-- `fs.realpathSync`
-- `fs.realpath`
-- `fs.existsSync`
-- `fs.readFileSync`
-- `fs.writeFileSync`
-- `fs.appendFileSync`
-- `fs.mkdirSync`
-- `fs.unlinkSync`
-- `fs.rmSync`
-- `fs.cpSync`
-- `fs.renameSync`
-- `createWriteStream`
-- `createReadStream`
-
-### Security/helper concepts
-
-Search for helpers or equivalent implementations involving:
-
-- `safePath`
-- `safeJoin`
-- `sanitizePath`
-- `sanitizeFilePath`
-- `validatePath`
-- `validateFilePath`
-- `securePath`
-- `resolvePath`
-- `containedPath`
-- `assertContained`
-- `isPathSafe`
-- `isWithin`
-- `withinDirectory`
-- `allowedDirectory`
-- `baseDirectory`
-- `rootDirectory`
-
-Do not rely only on helper names. Identify equivalent logic even if it uses a different name.
-
----
-
-# 2. Trace Dynamic Input to Filesystem Sinks
-
-For relevant examples, trace the complete data flow:
-
-```text
-Dynamic value
-    ↓
-Validation / sanitization
-    ↓
-Path construction
-    ↓
-Normalization / resolution
-    ↓
-Containment / security check
-    ↓
-Filesystem operationx
+Do NOT claim this will definitely fix Cycode. This is a controlled experiment. If the supplied code shows that this approach would introduce a regression, say so instead of generating code.
