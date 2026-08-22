@@ -1,173 +1,338 @@
-# Investigation: Path Handling in OmniShopper vs. This Repo (Cycode "Unsanitized dynamic input in file path")
+# Cycode Experiment: `safeLambdaTestSessionPath` (internally-derived trusted root)
 
-Investigation only — no source files were modified. Repo scanned:
-`disc-fe-omnishopper-ui-automation` (external Playwright/TypeScript automation repo).
-Compared against the equivalent files already in this repo's `e2e/` tree.
+Status: **NOT APPLIED** — proposal/analysis only. No source files were changed as part of this
+document; it records a controlled-experiment design discussed for the "Unsanitized dynamic input
+in file path" Cycode SAST finding on the LambdaTest session-path flow (`.lt-sessions/`).
 
-## 1. Summary
+## Question being tested
 
-OmniShopper's LambdaTest session bookkeeping (`.lt-sessions/`) and Allure result
-post-processing use the same dynamic-path shape this repo's Cycode findings are
-about: `testId`, `workerIndex`, API-provided session names/IDs, and directory
-listings (`readdirSync`) are all interpolated into `path.join(...)` calls that
-then feed `fs.readFileSync` / `writeFileSync` / `unlinkSync` sinks.
+Does Cycode treat a **purpose-specific path helper whose trusted root is derived internally**
+(`safeLambdaTestSessionPath(fileName)`) differently from the current **generic helper that
+accepts the trusted root as a parameter** (`safeJoin(baseDir, fileName)`)?
 
-**Key finding: OmniShopper has no path-safety helper at all.** There is no
-`safeJoin`, `sanitizePath`, `assertContainedDir`, or equivalent containment
-check anywhere in that repo. The only mitigation present is ad-hoc, inconsistent
-input sanitization (regex replace on individual dynamic values) applied at some
-call sites but not others, with zero re-verification of the final resolved path
-before the filesystem sink. This repo's `e2e/utils/safe-path.ts`
-(`safeJoin` + `assertContainedDir`), already used in
-[globalTeardown.ts](playwright/setup/globalTeardown.ts),
-[lt-session-reporter.ts](playwright/reporters/lt-session-reporter.ts) and
-[base-page-factory.ts](utils/base-page-factory.ts), is strictly more defensive
-than anything found in OmniShopper. **Do not treat OmniShopper as a source of a
-better pattern to copy** — it is evidence of the *unmitigated* version of the
-same finding class, useful for illustrating what Cycode is flagging and why
-containment checks matter.
+## Current implementation (unchanged, in place today)
 
-## 2. Search Coverage
+`e2e/utils/safe-path.ts` exports two generic helpers, `safeJoin(baseDir, ...segments)` and
+`assertContainedDir(expectedRoot, dir)`. Call sites in
+[playwright/reporters/lt-session-reporter.ts](playwright/reporters/lt-session-reporter.ts),
+[playwright/setup/globalTeardown.ts](playwright/setup/globalTeardown.ts) and
+[utils/base-page-factory.ts](utils/base-page-factory.ts) resolve/validate the LambdaTest session
+directory themselves, then pass it in as `baseDir`:
 
-Searched `disc-fe-omnishopper-ui-automation` for all APIs/concepts requested:
-Node `path.*` / `fs.*` sinks, and helper-name/equivalent-logic patterns
-(`safePath`, `safeJoin`, `sanitizePath`, `validatePath`, `assertContained`,
-`isWithin`, `baseDirectory`, etc.). No helper of any kind exists; only inline,
-per-call-site sanitization was found in a handful of files. Files with
-relevant path/fs logic:
-
-| File | Role |
-|---|---|
-| [src/lib/playwright/reporters/lt-session-reporter.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/reporters/lt-session-reporter.ts) | Writes/reads/deletes per-test JSON files keyed by `testId` under `.lt-sessions/` |
-| [src/lib/common/utils/base-page-factory.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/common/utils/base-page-factory.ts) | Writes `.lt-sessions/test-<testId>.json`, `worker-<workerIndex>.json`, appends `sessions.jsonl` |
-| [src/lib/playwright/setup/globalTeardown.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/setup/globalTeardown.ts) | `readdirSync` over `.lt-sessions/` and `allure-results/`, then reads/writes each listed filename |
-| [src/lib/common/utils/global-setup.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/common/utils/global-setup.ts) | `readdirSync(".lt-sessions")` then `unlinkSync(path.join(dir, file))` per entry, no re-validation |
-| [src/lib/common/pages/common-test-case/common-test-case.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/common/pages/common-test-case/common-test-case.ts) | Builds `baseline-screenshots/<report>/<browser>/<dataset>/<env>/<testCase>.png` from regex-sanitized dynamic segments, no containment re-check |
-| [src/lib/playwright/setup/jiraUpdateManager.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/setup/jiraUpdateManager.ts) | `path.parse`/`path.basename` on report-name-derived strings for matching only (not an fs sink) |
-| [src/lib/playwright/setup/testResultsReader.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/setup/testResultsReader.ts) | `path.resolve(process.cwd(), config.DEFAULT_REPORT_PATH)` — config-driven, not attacker-controlled |
-| [src/lib/playwright/grafana-reporter.ts](../../../Downloads/disc-fe-omnishopper-ui-automation/src/lib/playwright/grafana-reporter.ts) | `path.basename` on test title only, no fs write |
-
-## 3. Traced Data Flows (OmniShopper)
-
-### 3a. `lt-session-reporter.ts` — per-test session file (representative example)
-```
-Dynamic value:      test.id (Playwright TestCase id, framework-controlled but
-                     still "external" to this file's own logic)
-Validation:          NONE at the write site in onTestEnd():
-                       const testSessionFile = path.join(sessionDir, `test-${testId}.json`);
-                       fs.existsSync(testSessionFile) / fs.readFileSync(...) / fs.unlinkSync(...)
-Path construction:   path.join(process.cwd(), ".lt-sessions") + template-literal filename
-Normalization:       NONE (no path.resolve/normalize, no realpath)
-Containment check:   NONE — no comparison of the final path against sessionDir
-Filesystem sink:     fs.existsSync / fs.readFileSync / fs.unlinkSync directly on the
-                     unvalidated joined path
-```
-Later in the same file (mapping-file write), a sanitizer is applied but only to
-the *input*, never to the *resulting path*:
-```
-const safeTestId = testId.replace(/[^a-zA-Z0-9-]/g, '_');
-const mappingFile = path.join(sessionDir, `test-${safeTestId}-${process.pid}-${Date.now()}.json`);
-fs.writeFileSync(mappingFile, ...)
-```
-This is character-allowlisting of one segment, not path containment — it
-prevents `../` style traversal in that one value but never verifies the final
-resolved path stays under `sessionDir`, and the read path above has no
-sanitization at all.
-
-### 3b. `globalTeardown.ts` — directory listing → per-file read/write
-```
-Dynamic value:      filenames from fs.readdirSync(sessionDir) / readdirSync(ALLURE_RESULTS_DIR)
-Validation:          NONE on the loop variable `file` itself
-Path construction:   const filePath = path.join(sessionDir, sanitizedFile)
-                     where sanitizedFile = path.basename(file)  // applied to filenames
-                     already returned by readdirSync (an allowlist would be
-                     stronger, since basename() is a no-op for a plain filename
-                     with no separators, which is what readdirSync always returns)
-Normalization:       NONE beyond path.join
-Containment check:   NONE — no check that the joined path is still inside sessionDir/ALLURE_RESULTS_DIR
-Filesystem sink:     fs.readFileSync(filePath, ...) then later fs.writeFileSync(testResult.filePath, ...)
-```
-`readdirSync` entries can't contain `..` as their own segment (the OS won't
-return that), so this particular flow is low real-world risk, but the code
-provides no structural guarantee of that — it relies on an implicit assumption
-about `readdirSync` behavior rather than an explicit containment check.
-
-### 3c. `base-page-factory.ts` — worker/session bookkeeping
-```
-Dynamic value:      process.env.TEST_WORKER_INDEX (Number(...), no NaN guard),
-                     process.env.__CURRENT_TEST_ID__ / global.__CURRENT_TEST_ID__
-Validation:          NONE — Number(process.env.TEST_WORKER_INDEX || 0) is used directly
-                     in `worker-${workerIndex}.json` even if it evaluates to NaN
-Path construction:   path.join(sessionDir, `worker-${workerIndex}.json`),
-                     path.join(sessionDir, `test-${testId}.json`)  (testId itself unsanitized here)
-Normalization:       NONE
-Containment check:   NONE
-Filesystem sink:     fs.appendFileSync / fs.writeFileSync
+```ts
+const safeSessionDir = assertContainedDir(
+  path.resolve(process.cwd(), 'test-results'),
+  getLambdaTestSessionDir()
+);
+...
+safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`);   // baseDir passed explicitly
 ```
 
-### 3d. `common-test-case.ts` — baseline screenshot path
+`getLambdaTestSessionDir()` (in `utils/configurationDetails.ts`) is:
+
+```ts
+export const getLambdaTestSessionDir = (): string =>
+  path.join(process.cwd(), 'test-results', '.lt-sessions');
 ```
-Dynamic value:      reportName, browserName, testCaseName, environment (all function params)
-Validation:          regex allowlist per segment: .replace(/[^a-zA-Z0-9-_]/g, "-")
-Path construction:   path.join("baseline-screenshots", sanitizedReportName, sanitizedBrowserName,
-                     datasetShort, sanitizedEnvironment, `${sanitizedTestCaseName}.png`)
-Normalization:       NONE (no path.resolve after join)
-Containment check:   NONE — never verifies the joined path is still under "baseline-screenshots/"
-Filesystem sink:     (screenshot write, further down in the same method, via Playwright's page.screenshot)
+
+## Prior, already-confirmed finding in this repo (important context)
+
+From repo memory / earlier session work on these exact files: re-routing a dynamic-filename sink
+through a **different externally-imported helper function** did **not** change Cycode's reported
+findings on `globalTeardown.ts` previously. The rule/pattern-based SAST engine does not appear to
+do interprocedural analysis through an imported-function boundary — it wants an inline allowlist
+gate visible directly at (or immediately before) the `fs.*` sink call, in the *same* function.
+
+**Prediction:** wrapping `safeJoin`/`assertContainedDir` in a new `safeLambdaTestSessionPath`
+helper (still defined in another file, still just delegating to the same two generic helpers)
+is very unlikely to change Cycode's finding — if anything it adds one more layer of indirection
+between the sink and the visible sanitizer, which is the opposite of what previously correlated
+with 0 findings (inline regex gate, same function as the sink). This is **not a security
+regression** — every existing check is preserved — it's a prediction that this specific structural
+change won't move the SAST result.
+
+## Proposed experimental code (not applied)
+
+### `e2e/utils/safe-path.ts` — add-only change
+
+Adds one new export after the existing `assertContainedDir`; `safeJoin` and `assertContainedDir`
+themselves are byte-for-byte unchanged. Requires one new import (`getLambdaTestSessionDir` from
+`./configurationDetails` — no circular dependency, since that module only imports `path`).
+
+```ts
+import * as fs from 'fs';
+import * as path from 'path';
+import { getLambdaTestSessionDir } from './configurationDetails';
+
+// ...existing safeJoin(baseDir, ...untrustedSegments) unchanged...
+
+// ...existing assertContainedDir(expectedRoot, dir) unchanged...
+
+/**
+ * Purpose-specific LambdaTest session-path helper (EXPERIMENTAL). Unlike safeJoin(), the
+ * trusted base directory is NOT accepted as a caller-supplied parameter: it is derived
+ * internally from getLambdaTestSessionDir() (that function's existing behavior/return value
+ * is unchanged) and independently re-verified via assertContainedDir() against the expected
+ * "test-results" root before any join happens. Callers only ever supply the untrusted/dynamic
+ * filename segment(s); they cannot pass in an arbitrary base directory.
+ *
+ * All existing checks are unchanged and still enforced, since this delegates to
+ * assertContainedDir() + safeJoin() rather than re-implementing them: null-byte rejection,
+ * traversal (`..`, `~`, `\`) rejection, absolute/UNC/Windows drive-path rejection, filename
+ * character allowlist, symlink resolution (fs.realpathSync), and post-join containment
+ * verification.
+ *
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if getLambdaTestSessionDir() resolves outside "test-results", or if the
+ *   resulting path would escape the session directory, or a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path inside the LambdaTest session directory
+ */
+export const safeLambdaTestSessionPath = (...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+  const expectedRoot = path.resolve(process.cwd(), 'test-results');
+  const trustedSessionDir = assertContainedDir(expectedRoot, getLambdaTestSessionDir());
+
+  return safeJoin(trustedSessionDir, ...untrustedSegments);
+};
 ```
-This is the closest OmniShopper comes to "good" sanitization (per-segment
-character allowlisting on every dynamic input before use), but it still stops
-at input sanitization and never re-validates the constructed path itself.
 
-## 4. Comparison Against This Repo's `safe-path.ts` Pattern
+### `e2e/playwright/reporters/lt-session-reporter.ts` — minimal call-site change
 
-This repo's [utils/safe-path.ts](utils/safe-path.ts) (already in the current
-selection) does what OmniShopper's code never does — it performs the full
-five-stage flow requested by this investigation:
+```ts
+// import block
+import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
+import { assertContainedDir, safeLambdaTestSessionPath } from '../../utils/safe-path';   // was: { safeJoin, assertContainedDir }
+```
 
-1. **Validation** — rejects segments containing `..`, `~`, `\`, absolute paths,
-   Windows drive/UNC forms, empty strings, and null bytes, *before* any join.
-2. **Sanitization** — allowlists each segment to `[a-zA-Z0-9_.-]`, rejecting
-   degenerate results (empty or all-underscore).
-3. **Path construction** — `path.join(realBaseDir, ...sanitizedSegments)` only
-   after both of the above pass.
-4. **Normalization/resolution** — `fs.realpathSync` on the base dir (symlink
-   resolution) plus `path.resolve`/`path.normalize` on the joined result.
-5. **Containment check** — explicit `startsWith(baseDirWithSeparator)` (or
-   exact-match) verification before the path is ever returned to a caller,
-   throwing otherwise.
+```ts
+// call site 1 (test-specific session file)
+const getTestSessionFile = () => safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);   // was: safeJoin(safeSessionDir, ...)
+```
 
-`assertContainedDir` provides the same containment guarantee for directories
-obtained indirectly (e.g. `getLambdaTestSessionDir()`), and the consuming
-files ([globalTeardown.ts](playwright/setup/globalTeardown.ts),
-[lt-session-reporter.ts](playwright/reporters/lt-session-reporter.ts),
-[base-page-factory.ts](utils/base-page-factory.ts)) additionally re-derive and
-re-check the path immediately before each individual `fs.*` sink call (see
-`sanitizeFilePath()` in `lt-session-reporter.ts`), plus enforce filename-shape
-regexes (`MAPPING_FILENAME_RE`, `ALLURE_RESULT_FILENAME_RE`) and extension
-checks (`.endsWith('.json')`) as defense-in-depth beyond what OmniShopper does
-anywhere.
+```ts
+// call site 2 (sessions.jsonl fallback)
+const sessionsLogFile = safeLambdaTestSessionPath('sessions.jsonl');   // was: safeJoin(safeSessionDir, 'sessions.jsonl')
+```
 
-| Aspect | OmniShopper | This repo (`safe-path.ts` + call sites) |
-|---|---|---|
-| Dedicated helper | None found | `safeJoin` / `assertContainedDir` |
-| Input character allowlisting | Partial, inconsistent (present in `common-test-case.ts`, absent in most `.lt-sessions` read paths) | Consistent, centralized in `safeJoin` |
-| Traversal/absolute-path pre-checks | None | Explicit (`..`, `~`, `\`, `isAbsolute`, UNC/drive regex) |
-| Symlink resolution | None | `fs.realpathSync` on base dir |
-| Post-join containment verification | None anywhere | Enforced in helper + re-checked at each sink |
-| Filename-shape/extension allowlisting at sink | None (some `readdirSync` filters use `startsWith`/`endsWith`) | Regex full-match allowlists + `.json` extension guard |
+```ts
+// call site 3 (per-test/process mapping file write)
+const mappingFile = safeLambdaTestSessionPath(`test-${sanitizedTestId}-${process.pid}-${Date.now()}.json`);   // was: safeJoin(safeSessionDir, ...)
+```
 
-## 5. Conclusion / Evidence for the Cycode Finding
+Everything else in the file is unchanged: `safeSessionDir` (from its own `assertContainedDir`
+call) is still needed for `mkdirSync(safeSessionDir, ...)` and `sanitizeFilePath()`'s
+defense-in-depth compare, so it stays declared/used — no unused variable is introduced.
+`onEnd()` (which never called `safeJoin`) is untouched. `globalTeardown.ts` and
+`base-page-factory.ts` are **not** touched by this experiment.
 
-OmniShopper's code is a real-world illustration of exactly the pattern Cycode
-flags as "Unsanitized dynamic input in file path": dynamic values
-(`testId`, `workerIndex`, API session data, directory-listing filenames) reach
-`fs.*` sinks via `path.join` with no post-construction containment check, and
-in several call sites (the read/delete paths in `lt-session-reporter.ts`,
-`global-setup.ts`'s cleanup loop, `base-page-factory.ts`'s `worker-*`/`test-*`
-writes) with no input sanitization either. It is useful only as a negative
-example — confirmation of what an *unmitigated* version of this finding looks
-like — not as a source of a stronger fix. This repo's existing `safe-path.ts`
-already implements a stricter, five-stage validate → sanitize → construct →
-normalize → contain pattern than anything present in OmniShopper, and should
-remain the reference implementation for addressing the Cycode finding here.
+## Why each change
+
+- **New `safeLambdaTestSessionPath`**: implements the "internally trusted root" shape requested,
+  without duplicating any validation logic — delegates to the existing, unmodified
+  `assertContainedDir`/`safeJoin`, so no check is weakened, removed, or reordered.
+- **Import swap**: `safeJoin` is no longer called directly in `lt-session-reporter.ts` after the
+  3 call-site edits, so keeping it imported would be an unused import; `assertContainedDir` is
+  still used directly (top of `onTestEnd`, and in `onEnd`), so it stays imported.
+- **3 call-site edits**: the entire surface of the experiment — implicit vs. explicit trusted
+  root at the dynamic-filename construction points. No other logic, error handling, or
+  try/catch boundary is touched.
+
+## Verification (before any real Cycode re-scan)
+
+```powershell
+cd e2e
+npx tsc --noEmit -p tsconfig.json
+```
+
+The local `cycode` CLI/MCP is not installed/authenticated in this sandbox (confirmed previously —
+`mcp_cycode-local_cycode_scanChangedFiles` fails with `spawn cycode ENOENT`, and a plain
+`cycode scan path --path .` in a terminal here exits 127 / command not found). An actual Cycode
+re-scan of this experiment has to happen in CI or wherever the real Cycode integration runs — it
+cannot be reproduced locally in this environment.
+
+## Conclusion
+
+This is an experiment to run, not a confirmed fix. Expected outcome based on this repo's prior,
+already-observed Cycode behavior: **no change** in the finding, since the sink call sites in
+`lt-session-reporter.ts` still resolve their path through an imported helper rather than an
+inline, same-function allowlist gate. If the goal is to actually influence the SAST result rather
+than just test the hypothesis, the previously-correlated-with-0-findings pattern is: an inline
+`.test()`/regex allowlist gate written directly in the same function as the `fs.*` sink call,
+with `safeJoin`/`assertContainedDir` layered on top only as additional defense-in-depth (not as
+the visible gate).
+--------------------
+
+
+Analysis of current implementation
+Current flow (all 3 files) is: caller resolves + validates the base dir itself, then passes it into a generic helper:
+const safeSessionDir = assertContainedDir(path.resolve(process.cwd(), 'test-results'), getLambdaTestSessionDir());
+...
+safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`);   // baseDir passed explicitly
+Your proposed experiment collapses that into a purpose-built wrapper where the root is derived inside the helper instead of passed in:
+safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);  // baseDir implicit
+Important prior finding from this repo (already validated empirically, not a guess): re-wrapping the same sink call in a different externally-imported helper function did not change Cycode's "Unsanitized dynamic input in file path" behavior last time this was tried on globalTeardown.ts — the pattern-based/rule-based SAST engine doesn't appear to do interprocedural analysis through an imported function boundary; it wants to see an inline allowlist gate directly at (or immediately before) the fs.* sink call site in the same function. safeLambdaTestSessionPath is still: (a) defined in another file, and (b) itself just delegates to assertContainedDir/safeJoin — so the actual sink call sites in lt-session-reporter.ts (fs.existsSync/readFileSync/unlinkSync/writeFileSync) end up one level more removed from a visible sanitizer than before, not less. Based on that documented precedent, I expect this experiment to behave the same as the current code from Cycode's perspective — likely no change, possibly worse (more indirection to trace). This is not a regression in actual security (all checks are preserved and still enforced at runtime), just a prediction that it won't move the needle on the specific SAST finding. Since you explicitly asked for the controlled experiment anyway, here it is, with that caveat up front.
+
+1. Complete replacement safe-path.ts
+import * as fs from 'fs';
+import * as path from 'path';
+import { getLambdaTestSessionDir } from './configurationDetails';
+
+/**
+ * Safely joins a base directory with dynamic/untrusted path segments, preventing
+ * path traversal and link-following into locations outside the intended base directory.
+ *
+ * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
+ * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
+ * (test IDs, worker indices, on-disk mapping/result filenames).
+ *
+ * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path
+ */
+export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
+  const normalizedBaseDir = path.resolve(baseDir);
+
+  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
+  // (\\server\share) - checked explicitly and OS-agnostically, since
+  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
+  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
+
+  for (const segment of untrustedSegments) {
+    if (segment.length === 0) {
+      throw new Error('Empty path segment is not allowed');
+    }
+    if (segment.indexOf('\0') !== -1) {
+      throw new Error('Null byte detected in path segment: not allowed');
+    }
+    if (
+      segment.includes('..') ||
+      segment.includes('~') ||
+      segment.includes('\\') ||
+      path.isAbsolute(segment) ||
+      WINDOWS_ABSOLUTE_RE.test(segment) ||
+      /^\.\/|^\.\.\/|^\//.test(segment)
+    ) {
+      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
+    }
+  }
+
+  const sanitizedSegments = untrustedSegments.map((segment) => {
+    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
+      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
+    }
+    return sanitized;
+  });
+
+  // Resolve symlinks on the base directory itself, if it exists yet.
+  let realBaseDir = normalizedBaseDir;
+  try {
+    realBaseDir = fs.realpathSync(normalizedBaseDir);
+  } catch {
+    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
+       to the resolved-but-not-yet-canonical path; the containment check
+       below still applies once it's created. */
+  }
+
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = path.join(realBaseDir, ...sanitizedSegments);
+  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
+  const normalizedPath = path.normalize(path.resolve(pathname));
+  const baseDirWithSeparator = realBaseDir + path.sep;
+
+  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
+    throw new Error(
+      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
+    );
+  }
+
+  return normalizedPath;
+};
+
+/**
+ * Verifies that `dir` resolves to a location inside (or exactly equal to)
+ * `expectedRoot`, and returns the resolved path. Used to confirm a directory
+ * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
+ * not been redirected outside the intended root before it's used as the base
+ * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
+ *
+ * @throws Error if dir does not resolve within expectedRoot
+ * @returns the resolved, verified directory path
+ */
+export const assertContainedDir = (expectedRoot: string, dir: string): string => {
+  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
+  const resolvedRoot = path.resolve(expectedRoot);
+  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
+  const resolvedDir = path.resolve(dir);
+
+  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
+    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
+  }
+
+  return resolvedDir;
+};
+
+/**
+ * Purpose-specific LambdaTest session-path helper (EXPERIMENTAL - see
+ * CYCODE_FINDINGS_REVIEW.md for context). Unlike safeJoin(), the trusted base
+ * directory is NOT accepted as a caller-supplied parameter: it is derived
+ * internally from getLambdaTestSessionDir() (that function's existing
+ * behavior/return value is unchanged) and independently re-verified via
+ * assertContainedDir() against the expected "test-results" root before any
+ * join happens. Callers only ever supply the untrusted/dynamic filename
+ * segment(s); they cannot pass in an arbitrary base directory.
+ *
+ * All existing checks are unchanged and still enforced, since this delegates
+ * to assertContainedDir() + safeJoin() rather than re-implementing them:
+ * null-byte rejection, traversal (`..`, `~`, `\`) rejection, absolute/UNC/
+ * Windows drive-path rejection, filename character allowlist, symlink
+ * resolution (fs.realpathSync), and post-join containment verification.
+ *
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if getLambdaTestSessionDir() resolves outside "test-results", or if
+ *   the resulting path would escape the session directory, or a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path inside the LambdaTest session directory
+ */
+export const safeLambdaTestSessionPath = (...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+  const expectedRoot = path.resolve(process.cwd(), 'test-results');
+  const trustedSessionDir = assertContainedDir(expectedRoot, getLambdaTestSessionDir());
+
+  return safeJoin(trustedSessionDir, ...untrustedSegments);
+};
+
+Change made: only an added import (getLambdaTestSessionDir from ./configurationDetails) and one new exported function (safeLambdaTestSessionPath) appended after assertContainedDir. safeJoin and assertContainedDir are byte-for-byte unchanged. No circular import risk — configurationDetails.ts only imports path.
+
+2. Minimal change in lt-session-reporter.ts
+// import block
+import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
+import { assertContainedDir, safeLambdaTestSessionPath } from '../../utils/safe-path';   // was: { safeJoin, assertContainedDir }
+
+// call site 1 (test-specific session file)
+const getTestSessionFile = () => safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);   // was: safeJoin(safeSessionDir, ...)
+
+// call site 2 (sessions.jsonl fallback)
+const sessionsLogFile = safeLambdaTestSessionPath('sessions.jsonl');   // was: safeJoin(safeSessionDir, 'sessions.jsonl')
+
+// call site 3 (per-test/process mapping file write)
+const mappingFile = safeLambdaTestSessionPath(`test-${sanitizedTestId}-${process.pid}-${Date.now()}.json`);   // was: safeJoin(safeSessionDir, ...)
+
+Everything else in the file (the safeSessionDir variable + its assertContainedDir call, mkdirSync(safeSessionDir, ...), sanitizeFilePath()'s defense-in-depth compare against safeSessionDir, onEnd()'s untouched path.join(safeSessionDir, 'session-mappings.json')) is unchanged — safeSessionDir is still needed for those, so it stays declared and used (no unused variable introduced).
+
+3. Why each change
+New safeLambdaTestSessionPath in safe-path.ts: implements exactly the "internally trusted root" shape you asked to test, without duplicating any validation logic (delegates to the existing, unmodified assertContainedDir/safeJoin), so no security check is weakened, removed, or reordered.
+Import swap in lt-session-reporter.ts: safeJoin is no longer called directly in this file after the 3 call-site edits, so keeping it imported would be an unused import; assertContainedDir is still directly used (top-of-onTestEnd and in onEnd), so it stays.
+3 call-site edits: replace safeJoin(safeSessionDir, X) with safeLambdaTestSessionPath(X) — this is the entire surface of the experiment (implicit vs. explicit trusted root at the dynamic-filename construction sites). No other logic, error handling, or try/catch boundary is touched.
+4. Verify before running Cycode
+
+cd e2e
+npx tsc --noEmit -p tsconfig.json
+then, per repo convention, re-check for new lint/type errors on just the two touched files:
+
+npx tsc --noEmit -p tsconfig.json --listFiles | findstr "safe-path.ts lt-session-reporter.ts"
+(the findstr step is optional/informational — the real gate is the first command exiting 0). Note: the local Cycode CLI/MCP is not installed/authenticated in this sandbox (confirmed in prior sessions), so an actual Cycode re-scan has to happen wherever your CI/dashboard Cycode integration runs — it cannot be reproduced locally here.
+
+Bottom line
+I have not made these edits — this is the proposed diff only, per your "do not modify yet" instruction. Given the documented precedent in this exact repo that re-routing a sink through a different externally-imported helper didn't change Cycode's finding on globalTeardown.ts, I'd treat this as a genuine experiment with an uncertain (likely negative) outcome rather than an expected fix — say the word if you want me to apply it as-is anyway, or want a variant that additionally inlines a visible allowlist .test() gate directly in lt-session-reporter.ts itself (the pattern that has previously correlated with 0 findings in this repo's other two files).
