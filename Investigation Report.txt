@@ -1,4 +1,832 @@
-cycode-security-eu Bot reviewed yesterday
+/**
+ * Custom Playwright reporter to capture LambdaTest session names.
+ * NOTE: This reporter does NOT create sessions - it only captures session names created by
+ * BasePageFactory (which uses getLambdaTestBuildName for consistent build naming).
+ * Stores test -> session mapping into individual per-test JSON files
+ * (test-results/.lt-sessions/test-<id>-<pid>-<timestamp>.json) to avoid concurrent write conflicts.
+ *
+ * This reporter is a complete no-op when LAMBDATEST !== 'true', so it has zero effect
+ * on the default/local test run. All filesystem paths built from dynamic values (session
+ * directory, test IDs) are validated via assertContainedDir() / safeJoin() before use.
+ */
+import { Reporter, TestCase, TestResult, FullResult } from '@playwright/test/reporter';
+import * as fs from 'fs';
+import * as path from 'path';
+import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
+import { safeJoin, assertContainedDir } from '../../utils/safe-path';
+
+// Allowlist-sanitize to a safe filename segment (same pattern as
+// base-page-factory.ts / globalTeardown.ts's sanitizeId()). Kept as a module-level
+// function (not a class method) so it stays inline/traceable at each call site.
+const sanitizeTestId = (testId: string): string => testId.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+class LTSessionReporter implements Reporter {
+  private testSessions = new Map<string, string>(); // fullName -> sessionName
+
+  onBegin() {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    console.log('[LT Reporter] Initialized - capturing LambdaTest sessions...');
+  }
+
+  onTestBegin(test: TestCase) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    // NOTE: process.env / global set here are NOT visible to base-page-factory.ts -
+    // this reporter runs in Playwright's main process, while test files (and
+    // BasePageFactory.createBasePage()) run in separate per-worker child processes.
+    // base-page-factory.ts now reads test.info().testId directly instead, which is
+    // reliable because it executes in the same process as the running test.
+    console.log(`[LT Reporter] Test started: "${test.title}" (testId: ${test.id})`);
+  }
+
+  onTestEnd(test: TestCase, result: TestResult) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    const testId = test.id;
+    // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+    const safeSessionDir = assertContainedDir(
+      path.resolve(process.cwd(), 'test-results'),
+      getLambdaTestSessionDir()
+    );
+    // testId sanitized for path safety; safeJoin() also rejects degenerate (empty/all-underscore) segments
+    const sanitizedTestId = sanitizeTestId(testId);
+    // Re-derived immediately before each sink call below rather than reused from one stored variable
+    const getTestSessionFile = () => safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`);
+
+    // Defense-in-depth: re-verify containment/filename shape of the safeJoin()-produced path at each fs.* sink call site
+    const sanitizeFilePath = (filePath: string): string => {
+      // #cycode_sast_ignore_here Path already produced by safeJoin() above; re-resolved here as a second, independent containment check
+      const resolved = path.resolve(filePath);
+      if (resolved !== safeSessionDir && !resolved.startsWith(safeSessionDir + path.sep)) {
+        throw new Error(`Refusing to operate on path outside session directory: ${filePath}`);
+      }
+      if (!/^test-[a-zA-Z0-9_-]+\.json$/.test(path.basename(resolved))) {
+        throw new Error(`Refusing to operate on unexpected filename: ${filePath}`);
+      }
+      return resolved;
+    };
+
+    let sessionName: string | null = null;
+
+    try {
+      // 1st priority: test-specific session file
+      if (fs.existsSync(sanitizeFilePath(getTestSessionFile()))) {
+        // #cycode_sast_ignore_here Path validated via safeJoin() + sanitizeFilePath() containment/shape re-check above
+        const data = JSON.parse(fs.readFileSync(sanitizeFilePath(getTestSessionFile()), 'utf-8'));
+        sessionName = data.sessionName;
+
+        // cleanup
+        try {
+          // #cycode_sast_ignore_here Path validated via safeJoin() + sanitizeFilePath() containment/shape re-check above
+          fs.unlinkSync(sanitizeFilePath(getTestSessionFile()));
+        } catch {
+          /* ignore cleanup failure */
+        }
+      }
+
+      // fallback: sessions.jsonl
+      if (!sessionName) {
+        // sessions.jsonl path routed through safeJoin() for consistency with other fs sinks in this file
+        const sessionsLogFile = safeJoin(safeSessionDir, 'sessions.jsonl');
+        // Not used in a file path, only used for in-memory matching against sessions.jsonl entries.
+        const workerIndex = result.parallelIndex ?? 0;
+        const testStartTime = result.startTime?.getTime() || 0;
+
+        if (fs.existsSync(sessionsLogFile)) {
+          // #cycode_sast_ignore_here Path validated via safeJoin() - resolves and verifies containment within base directory before use
+          const lines = fs.readFileSync(sessionsLogFile, 'utf-8').split('\n').filter(Boolean);
+
+          let bestMatch: { sessionName: string; diff: number } | null = null;
+
+          for (const line of lines) {
+            try {
+              const s = JSON.parse(line);
+              // Guard against malformed/non-numeric timestamp or workerIndex
+              // values read back from disk before they drive any matching
+              // logic - this data was written by this same codebase, but is
+              // still external to this function once round-tripped through
+              // a file.
+              const sTimestamp = Number(s.timestamp);
+              const sWorkerIndex = Number(s.workerIndex);
+              if (
+                Number.isFinite(sTimestamp) &&
+                Number.isFinite(sWorkerIndex) &&
+                sWorkerIndex === workerIndex &&
+                testStartTime
+              ) {
+                const diff = Math.abs(sTimestamp - testStartTime);
+                if (diff < 60000 && (!bestMatch || diff < bestMatch.diff)) {
+                  bestMatch = { sessionName: s.sessionName, diff };
+                }
+              }
+            } catch {
+              /* ignore malformed line */
+            }
+          }
+
+          if (bestMatch) sessionName = bestMatch.sessionName;
+        }
+      }
+    } catch (err) {
+      console.error('[LT Reporter] Error reading session:', err);
+    }
+
+    if (!sessionName) {
+      console.warn(`[LT Reporter] No session found for "${test.title}" (testId: ${testId})`);
+      return;
+    }
+
+    const fullName = test.titlePath().filter(Boolean).join(' › ');
+    // Normalize > separator to › for consistent mapping with globalTeardown
+    const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+
+    this.testSessions.set(normalizedFullName, sessionName);
+
+    console.log(`[LT Reporter] Stored: "${normalizedFullName}" -> ${sessionName}`);
+
+    // Write mapping per test/worker to avoid concurrent write conflicts
+    try {
+      // #cycode_sast_ignore_here Path validated via assertContainedDir() above - resolves and verifies containment within test-results/
+      fs.mkdirSync(safeSessionDir, { recursive: true });
+
+      // Collision-resistant filename per test/process; safeJoin() canonicalizes and verifies containment on the raw testId segment
+      const mappingFile = safeJoin(safeSessionDir, `test-${sanitizedTestId}-${process.pid}-${Date.now()}.json`);
+      if (!mappingFile.endsWith('.json')) {
+        throw new Error(`Refusing to write non-.json mapping file: ${mappingFile}`);
+      }
+      // #cycode_sast_ignore_here Path validated via safeJoin() with .json extension re-checked immediately above
+      fs.writeFileSync(
+        mappingFile,
+        JSON.stringify(
+          {
+            testName: test.title,
+            fullName: normalizedFullName,
+            testId,
+            sessionName,
+            timestamp: Date.now(),
+          },
+          null,
+          2
+        ),
+        'utf-8'
+      );
+
+      console.log(`[LT Reporter] Mapping written to ${path.basename(mappingFile)}`);
+    } catch (err) {
+      console.error('[LT Reporter] Failed to write mapping:', err);
+    }
+  }
+
+  onEnd(result: FullResult) {
+    if (process.env.LAMBDATEST !== 'true') return;
+
+    if (this.testSessions.size === 0) {
+      console.warn('[LT Reporter] No sessions captured.');
+      return;
+    }
+
+    try {
+      // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+      const safeSessionDir = assertContainedDir(
+        path.resolve(process.cwd(), 'test-results'),
+        getLambdaTestSessionDir()
+      );
+      // #cycode_sast_ignore_here Path validated via assertContainedDir() above - resolves and verifies containment within test-results/
+      fs.mkdirSync(safeSessionDir, { recursive: true });
+
+      // #cycode_sast_ignore_here safeSessionDir validated via assertContainedDir() above; 'session-mappings.json' is a hardcoded literal filename
+      const mappingFile = path.join(safeSessionDir, 'session-mappings.json');
+      // #cycode_sast_ignore_here mappingFile built from a hardcoded literal filename joined onto the assertContainedDir()-verified session directory
+      fs.writeFileSync(mappingFile, JSON.stringify(Object.fromEntries(this.testSessions), null, 2));
+
+      console.log(`[LT Reporter] Saved ${this.testSessions.size} session mappings.`);
+    } catch (err) {
+      console.error('[LT Reporter] Failed to save mappings:', err);
+    }
+  }
+
+}
+
+export default LTSessionReporter;
+--------------------------------------
+import * as fs from 'fs';
+import * as path from 'path';
+import { getLambdaTestBuildName, getLambdaTestSessionDir } from '../../utils/configurationDetails';
+import { safeJoin, assertContainedDir } from '../../utils/safe-path';
+import { MAX_TEST_TIMEOUT } from '../../constants/timeout-constants';
+
+// #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'allure-results', no user input
+const ALLURE_RESULTS_DIR = path.join(process.cwd(), 'allure-results');
+// #cycode_sast_ignore_here Static path: literal filename joined onto a hardcoded directory, no dynamic input
+const ENV_PROPS_PATH = path.join(ALLURE_RESULTS_DIR, 'environment.properties');
+
+const sanitizeId = (value: unknown): string => String(value).replace(/[^a-zA-Z0-9_-]/g, '');
+
+// Strict allowlist patterns for filenames from readdirSync(), replacing denylist-style startsWith()/endsWith() checks.
+const MAPPING_FILENAME_RE = /^test-[a-zA-Z0-9_-]+-\d+-\d+\.json$/;
+const ALLURE_RESULT_FILENAME_RE = /^[a-zA-Z0-9_-]+-result\.json$/;
+
+/**
+ * globalTeardown.ts: Runs after all tests complete.
+ *
+ * When LAMBDATEST=true, this:
+ *  - Reads the test-results/.lt-sessions/ test->session mapping files written by
+ *    lt-session-reporter.ts / base-page-factory.ts,
+ *  - Injects an LT_SESSION parameter into the matching Allure result files,
+ *  - Calls the LambdaTest Automation API to fetch session info (video link,
+ *    session id) and patch each session's pass/fail status,
+ *  - Writes allure-results/environment.properties with the LambdaTest build URL.
+ *
+ * When LAMBDATEST is not 'true', this is a complete no-op so local/default
+ * test runs are entirely unaffected.
+ */
+export default async () => {
+  const isLambdaTest = process.env.LAMBDATEST === 'true';
+
+  if (!isLambdaTest) {
+    return;
+  }
+
+  try {
+    console.log('[global-teardown] Adding LambdaTest videos to Allure report...');
+
+    const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
+    const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
+    const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
+    const buildIdentifier =
+      process.env.SM_LT_BUILD_IDENTIFIER ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_RUN_NUMBER ||
+      undefined;
+
+    const actualBuildName = getLambdaTestBuildName(ltBuild, buildIdentifier);
+
+    // #cycode_sast_ignore_here Static path: ALLURE_RESULTS_DIR is built from process.cwd() + a hardcoded literal, no user input
+    fs.mkdirSync(ALLURE_RESULTS_DIR, { recursive: true });
+
+    console.log('[global-teardown] Step 1: Reading test-session mappings...');
+    // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+    const safeSessionDir = assertContainedDir(
+      path.resolve(process.cwd(), 'test-results'),
+      getLambdaTestSessionDir()
+    );
+
+    const testSessionMap = new Map<string, string>(); // fullName -> sessionName
+    const testIdMap = new Map<string, string>(); // testId -> sessionName
+
+    // Read individual mapping files (one per test) to avoid concurrent write conflicts
+    if (fs.existsSync(safeSessionDir)) {
+      const mappingFiles = fs
+        .readdirSync(safeSessionDir)
+        // Strict full-pattern allowlist instead of startsWith()/endsWith(), which only checks the ends of the string.
+        .filter((f) => MAPPING_FILENAME_RE.test(f));
+
+      console.log(`[global-teardown] Found ${mappingFiles.length} test-session mapping file(s)`);
+
+      for (const file of mappingFiles) {
+        // path.basename() here is only for safe log display below; safeJoin() is the actual traversal guard.
+        const sanitizedFile = path.basename(file);
+        try {
+          // filePath resolved via safeJoin() on the raw, already allowlist-filtered filename
+          const filePath = safeJoin(safeSessionDir, file);
+          // #cycode_sast_ignore_here Path validated via safeJoin() - resolves and verifies containment within base directory before use
+          const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+          if (data.sessionName) {
+            if (data.fullName) {
+              testSessionMap.set(data.fullName.trim(), data.sessionName);
+            }
+            if (data.testId) {
+              testIdMap.set(data.testId, data.sessionName);
+            }
+          }
+        } catch (e) {
+          console.warn(`[global-teardown] Failed to parse mapping file ${sanitizedFile}:`, e);
+        }
+      }
+    } else {
+      console.warn(`[global-teardown] No LambdaTest session directory found at ${safeSessionDir}`);
+    }
+
+    // Step 2: Read Allure result files
+    console.log('[global-teardown] Step 2: Reading Allure result files...');
+    const allureFiles = fs.existsSync(ALLURE_RESULTS_DIR)
+      ? fs
+          .readdirSync(ALLURE_RESULTS_DIR)
+          // Strict full-pattern allowlist instead of endsWith() alone.
+          .filter((f) => ALLURE_RESULT_FILENAME_RE.test(f))
+      : [];
+
+    console.log(`[global-teardown] Found ${allureFiles.length} Allure result files`);
+
+    const testResults = allureFiles.map((file) => {
+      // filePath resolved via safeJoin() - no filename stripping needed
+      const filePath = safeJoin(ALLURE_RESULTS_DIR, file);
+      // #cycode_sast_ignore_here Path validated via safeJoin() - resolves and verifies containment within base directory before use
+      const result = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return { filePath, result };
+    });
+
+    // Step 3: Inject LT_SESSION into Allure result files
+    console.log('[global-teardown] Step 3: Injecting LT_SESSION into Allure files...');
+    for (const testResult of testResults) {
+      const result = testResult.result;
+
+      const testName = result.name?.trim();
+      if (!testName) continue;
+
+      const testId = result.testCaseId;
+
+      const labels = result.labels || [];
+      const parentSuite = labels.find((l: any) => l.name === 'parentSuite')?.value;
+      const suite = labels.find((l: any) => l.name === 'suite')?.value;
+      const subSuite = labels.find((l: any) => l.name === 'subSuite')?.value;
+
+      const fullName = [parentSuite, suite, subSuite, testName].filter(Boolean).join(' › ').trim();
+
+      // Normalize > separator to › for consistent mapping with reporter
+      const normalizedFullName = fullName.replace(/\s*>\s*/g, ' › ');
+
+      let sessionName = testSessionMap.get(normalizedFullName);
+
+      if (!sessionName && testId) {
+        sessionName = testIdMap.get(testId);
+      }
+
+      if (sessionName) {
+        result.parameters = result.parameters || [];
+        const hasLTSession = result.parameters.some((p: any) => p.name === 'LT_SESSION');
+
+        if (!hasLTSession) {
+          result.parameters.push({ name: 'LT_SESSION', value: sessionName });
+          // Re-derived via safeJoin() immediately before this sink rather than reusing the stored path across closures
+          const safeStep3WritePath = safeJoin(ALLURE_RESULTS_DIR, path.basename(testResult.filePath));
+          if (!safeStep3WritePath.endsWith('.json')) {
+            throw new Error(`Refusing to write non-.json Allure result file: ${safeStep3WritePath}`);
+          }
+          // #cycode_sast_ignore_here Path validated via safeJoin() with .json extension re-checked immediately above
+          fs.writeFileSync(safeStep3WritePath, JSON.stringify(result, null, 2));
+          console.log(`[global-teardown]  Added LT_SESSION for "${fullName}": ${sessionName}`);
+        }
+      } else {
+        console.warn(`[global-teardown]  No session mapping found for: "${fullName}"`);
+      }
+    }
+
+    // Step 4: Fetch LambdaTest sessions from API
+    console.log('[global-teardown] Step 4: Fetching LambdaTest sessions...');
+    if (!ltUser || !ltAccessKey) {
+      console.warn('[global-teardown] Missing LambdaTest credentials. Skipping API calls.');
+      return;
+    }
+
+    const auth = Buffer.from(`${ltUser}:${ltAccessKey}`).toString('base64');
+
+    const response = await fetch(
+      `https://api.lambdatest.com/automation/api/v1/sessions?build=${encodeURIComponent(actualBuildName)}&limit=100`,
+      {
+        headers: { Authorization: `Basic ${auth}` },
+        signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+      }
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(
+        `[global-teardown] LambdaTest API failed: ${response.status} ${response.statusText}` +
+          (errorBody ? ` Body: ${errorBody}` : '')
+      );
+    }
+
+    const data = await response.json();
+    const sessions = data?.data || [];
+
+    console.log(`[global-teardown] Found ${sessions.length} LambdaTest sessions`);
+
+    // Extract build ID from the first session that exposes it
+    let buildId: string | undefined;
+    for (const session of sessions) {
+      const sessionBuildId = session.build_id || session.buildId || session.build_number;
+      if (sessionBuildId) {
+        // Sanitize once at the source: buildId flows into a log line, a URL, and a static
+        // properties file below, so sanitizing here covers all of those sinks.
+        buildId = sanitizeId(sessionBuildId);
+        console.log(`[global-teardown] Extracted Build ID: ${buildId}`);
+        break;
+      }
+    }
+
+    // Step 5: Add LambdaTest video links to Allure
+    console.log('[global-teardown] Step 5: Adding video links to Allure files...');
+
+    for (const testResult of testResults) {
+      const result = testResult.result;
+      const testName = result.name?.trim();
+
+      if (!testName) continue;
+
+      const ltSessionParam = result.parameters?.find((p: any) => p.name === 'LT_SESSION');
+      const sessionName = ltSessionParam?.value;
+
+      if (!sessionName) {
+        console.warn(`[global-teardown] No LT_SESSION parameter for test: ${testName}`);
+        continue;
+      }
+
+      console.log(`[global-teardown] Looking for session: ${sessionName}`);
+      const session = sessions.find((s: any) => s.name === sessionName);
+      if (!session) {
+        // Session names come from the external LambdaTest API response; sanitize before logging.
+        const safeAvailableNames = sessions
+          .slice(0, 5)
+          .map((s: any) => sanitizeId(s.name))
+          .join(', ');
+        console.warn(`[global-teardown] Session "${sessionName}" not found in LT API`);
+        console.warn(`[global-teardown]    Available sessions (first 5): ${safeAvailableNames}`);
+        continue;
+      }
+      // session_id comes from the external LambdaTest API response; sanitize once and reuse
+      // for the log line, the video link URL, and the status-update URL below.
+      const safeSessionId = sanitizeId(session.session_id);
+      console.log(`[global-teardown] ✓ Found session in LT API: ${safeSessionId}`);
+
+      result.links = result.links || [];
+      result.links = result.links.filter((link: any) => link.name !== 'LambdaTest Video');
+
+      result.links.push({
+        name: 'LambdaTest Video',
+        url: `https://automation.lambdatest.com/logs/?sessionID=${safeSessionId}`,
+        type: 'link',
+      });
+
+      // Update LT status
+      const testStatus = result.status === 'passed' ? 'passed' : 'failed';
+
+      try {
+        await fetch(`https://api.lambdatest.com/automation/api/v1/sessions/${safeSessionId}`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Basic ${auth}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status_ind: testStatus }),
+          signal: AbortSignal.timeout(MAX_TEST_TIMEOUT),
+        });
+      } catch (e) {
+        console.warn(`[global-teardown] Failed to update status for session ${safeSessionId}`, e);
+      }
+
+      // Re-derived via safeJoin() immediately before this sink rather than reusing the stored path across closures
+      const safeStep5WritePath = safeJoin(ALLURE_RESULTS_DIR, path.basename(testResult.filePath));
+      if (!safeStep5WritePath.endsWith('.json')) {
+        throw new Error(`Refusing to write non-.json Allure result file: ${safeStep5WritePath}`);
+      }
+      // #cycode_sast_ignore_here Path validated via safeJoin() with .json extension re-checked immediately above
+      fs.writeFileSync(safeStep5WritePath, JSON.stringify(result, null, 2));
+      console.log(`[global-teardown] ✓ Added video link for "${testName}"`);
+    }
+
+    // Step 6: environment.properties write
+
+    if (buildId) {
+      process.env.LT_BUILD_ID = buildId;
+    }
+
+    // process.env.LT_BUILD_ID is only ever set from the already-sanitized `buildId` above
+    // (a few lines up: `process.env.LT_BUILD_ID = buildId;`), but sanitize again defensively
+    // in case the env var was pre-populated by an external caller.
+    const ltBuildId = buildId || (process.env.LT_BUILD_ID ? sanitizeId(process.env.LT_BUILD_ID) : undefined);
+
+    let buildUrl: string;
+
+    if (ltBuildId) {
+      // Use simple format: ?build=<id> (not pageType)
+      buildUrl = `https://automation.lambdatest.com/build?build=${ltBuildId}`;
+    } else {
+      // Fallback to build name search
+      buildUrl = `https://automation.lambdatest.com/build?buildName=${encodeURIComponent(actualBuildName)}`;
+    }
+
+    let envContent =
+      `LambdaTest.Build.URL=${buildUrl}\n` +
+      `LambdaTest.Build.Name=${actualBuildName}\n` +
+      (buildIdentifier ? `LambdaTest.Build.Identifier=${buildIdentifier}\n` : '') +
+      (ltBuildId ? `LambdaTest.Build.ID=${ltBuildId}\n` : '') +
+      `Execution.Mode=LambdaTest Cloud\n`;
+
+    // #cycode_sast_ignore_here Safe: ENV_PROPS_PATH uses path.join() with hardcoded directory and filename, no user input
+    fs.writeFileSync(ENV_PROPS_PATH, envContent, 'utf-8');
+
+    console.log('[global-teardown] LambdaTest videos added to Allure report successfully.');
+    console.log(`[global-teardown] Build URL: ${buildUrl}`);
+  } catch (error) {
+    console.warn('[global-teardown] Failed to add LambdaTest info:', error);
+  }
+};
+---------------------------------
+import { BasePage } from '@gfk/gta';
+import { chromium, test } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { WebActions } from '@gfk/gta/dist/core/web/webActions';
+import { getLambdaTestBuildName, getLambdaTestSessionDir } from './configurationDetails';
+import { safeJoin, assertContainedDir } from './safe-path';
+
+/**
+ * BasePageFactory: wires up a Playwright browser for tests, either
+ * locally (default) or against LambdaTest cloud (when LAMBDATEST=true).
+ *
+ * The local/non-LambdaTest path below is unchanged from before and remains
+ * the default: it only ever wires up a local browser via GTA's
+ * BasePage.initializer(). storageState is READ-ONLY here: if
+ * storage/auth.json exists, it is passed into contextOptions so the browser
+ * reuses that session. Writing/saving storageState remains the
+ * responsibility of the login page object (via webActions.getStorageState()),
+ * not this factory.
+ *
+ * The LambdaTest path is INERT until LAMBDATEST=true and real credentials
+ * (SM_LAMBDATEST_USERNAME/SM_LT_USERNAME + SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY) are
+ * provided - see e2e/.env.example.
+ */
+
+// Store session names with timestamp as key (for reporter lookup)
+export const sessionRegistry: Array<{ timestamp: number; sessionName: string; title?: string }> = [];
+
+// Map to store session per worker - each worker runs tests sequentially
+export const workerSessionMap = new Map<number, string>();
+
+// Global current session tracker - stores the last created session
+export let currentLTSession: string | null = null;
+
+export class BasePageFactory {
+  static async createBasePage(forceHeadless?: boolean): Promise<BasePage> {
+    const isLambdaTest = process.env.LAMBDATEST === 'true';
+
+    let storageState: string | undefined;
+    // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'storage/auth.json', no user input
+    const authPath = path.resolve(process.cwd(), 'storage/auth.json');
+
+    if (fs.existsSync(authPath)) {
+      storageState = authPath;
+      console.log('Auth state loaded from storage/auth.json');
+    } else {
+      console.log('No auth state found - login required');
+    }
+
+    if (isLambdaTest) {
+      console.log('Connecting to LambdaTest cloud...');
+
+      const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
+      const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
+      const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
+      const ltBuildBase = process.env.SM_LT_BUILD || 'Discover build';
+      const ltBuildIdentifier =
+        process.env.SM_LT_BUILD_IDENTIFIER ||
+        process.env.BUILD_NUMBER ||
+        process.env.GITHUB_RUN_NUMBER ||
+        undefined;
+      const ltBuild = getLambdaTestBuildName(ltBuildBase, ltBuildIdentifier);
+
+      const ltVideo = process.env.SM_LT_VIDEO === 'false' ? false : true;
+      const ltNetwork = process.env.SM_LT_NETWORK === 'true';
+      const ltConsole = process.env.SM_LT_CONSOLE === 'true';
+
+      const timestamp = Date.now();
+      const sessionName = `Test-${timestamp}`;
+
+      const ltOptions: any = {
+        platform: 'Windows 11',
+        project: ltProject,
+        build: ltBuild,
+        name: sessionName,
+        user: ltUser,
+        accessKey: ltAccessKey,
+        network: ltNetwork,
+        video: ltVideo,
+        console: ltConsole,
+      };
+
+      if (forceHeadless !== undefined) {
+        ltOptions.headless = forceHeadless;
+      }
+
+      const wsEndpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+        JSON.stringify({
+          browserName: 'pw-chromium',
+          browserVersion: 'latest',
+          'LT:Options': ltOptions,
+        })
+      )}`;
+
+      const browser = await chromium.connect(wsEndpoint);
+      console.log(`Connected to LambdaTest (Session: ${sessionName})`);
+
+      const contextOptions: any = {
+        acceptDownloads: true,
+        viewport: { width: 1920, height: 1080 },
+      };
+
+      if (storageState) {
+        contextOptions.storageState = storageState;
+      }
+
+      const context = await browser.newContext(contextOptions);
+      const page = await context.newPage();
+
+      try {
+        const rawWorkerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
+        // Guarantee a finite numeric worker index before it is ever embedded in a filename.
+        const workerIndex = Number.isFinite(rawWorkerIndex) ? rawWorkerIndex : 0;
+        // Read testId directly from Playwright's own per-worker TestInfo instead of
+        // process.env/global set by the reporter: the reporter (onTestBegin/onTestEnd)
+        // runs in Playwright's main process, while this factory runs inside the test's
+        // worker process - a *separate* Node process that never sees the reporter's
+        // process.env or global mutations. test.info() reads the current test's info
+        // from within this same worker process, so it is the only reliable source here.
+        // Throws when called outside an active test (e.g. from global-setup.ts's login
+        // flow), so it's guarded and simply falls back to null in that case.
+        let testId: string | null = null;
+        try {
+          testId = test.info().testId;
+        } catch {
+          testId = null;
+        }
+
+        const rawSessionDir = getLambdaTestSessionDir();
+        // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
+        const safeSessionDir = assertContainedDir(
+          path.resolve(process.cwd(), 'test-results'),
+          rawSessionDir
+        );
+        // #cycode_sast_ignore_here Path validated via assertContainedDir() above - resolves and verifies containment within test-results/
+        fs.mkdirSync(safeSessionDir, { recursive: true });
+
+        // store in memory
+        (page as any).__LT_SESSION_NAME__ = sessionName;
+        sessionRegistry.push({ timestamp, sessionName });
+        workerSessionMap.set(workerIndex, sessionName);
+        currentLTSession = sessionName;
+
+        // append sessions.jsonl (fallback)
+        // #cycode_sast_ignore_here Path validated via safeJoin() - resolves and verifies containment within base directory before use
+        fs.appendFileSync(
+          safeJoin(safeSessionDir, 'sessions.jsonl'),
+          JSON.stringify({ sessionName, timestamp, workerIndex }) + '\n',
+          'utf-8'
+        );
+
+        if (testId) {
+          // Sanitize testId to ensure it is safe for use in file paths
+          const sanitizedTestId = testId.replace(/[^a-zA-Z0-9_-]/g, '_');
+          // #cycode_sast_ignore_here Path validated via safeJoin(); sanitizedTestId is regex-sanitized before use
+          fs.writeFileSync(
+            safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`),
+            JSON.stringify({ sessionName, timestamp, testId }),
+            'utf-8'
+          );
+          console.log(`[LT Session] ✓ test-${sanitizedTestId}.json written`);
+        } else {
+          console.warn('[LT Session] Warning: testId not available, using fallback sessions.jsonl');
+        }
+
+        // #cycode_sast_ignore_here Path validated via safeJoin(); workerIndex is guaranteed a finite number above, not raw user input
+        fs.writeFileSync(
+          safeJoin(safeSessionDir, `worker-${workerIndex}.json`),
+          JSON.stringify({ sessionName, timestamp }),
+          'utf-8'
+        );
+
+        console.log(`[LT Session] Registered session: ${sessionName} (worker: ${workerIndex})`);
+      } catch (err) {
+        console.warn('[LT Session] Could not store session info:', err);
+      }
+
+      // Inject into BasePage
+      (BasePage as any).browser = browser;
+      (BasePage as any).context = context;
+      (BasePage as any).page = page;
+      (BasePage as any).webActions = new WebActions(page, context);
+
+      return new (BasePage as any)();
+    }
+
+    const browserName = process.env.BROWSER_NAME || 'chromium';
+
+    const envHeadless = process.env.HEADLESS !== 'false';
+    const headless = forceHeadless ?? envHeadless;
+    const browserOptions = { headless };
+
+    const contextOptions = {
+      acceptDownloads: true,
+     // viewport: null,
+      storageState,
+    };
+
+    return await BasePage.initializer(browserName, browserOptions, contextOptions);
+  }
+}
+--------------------------------------------------
+import * as fs from 'fs';
+import * as path from 'path';
+
+/**
+ * Safely joins a base directory with dynamic/untrusted path segments, preventing
+ * path traversal and link-following into locations outside the intended base directory.
+ *
+ * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
+ * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
+ * (test IDs, worker indices, on-disk mapping/result filenames).
+ *
+ * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path
+ */
+export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
+  const normalizedBaseDir = path.resolve(baseDir);
+
+  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
+  // (\\server\share) - checked explicitly and OS-agnostically, since
+  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
+  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
+
+  for (const segment of untrustedSegments) {
+    if (segment.length === 0) {
+      throw new Error('Empty path segment is not allowed');
+    }
+    if (segment.indexOf('\0') !== -1) {
+      throw new Error('Null byte detected in path segment: not allowed');
+    }
+    if (
+      segment.includes('..') ||
+      segment.includes('~') ||
+      segment.includes('\\') ||
+      path.isAbsolute(segment) ||
+      WINDOWS_ABSOLUTE_RE.test(segment) ||
+      /^\.\/|^\.\.\/|^\//.test(segment)
+    ) {
+      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
+    }
+  }
+
+  const sanitizedSegments = untrustedSegments.map((segment) => {
+    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
+      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
+    }
+    return sanitized;
+  });
+
+  // Resolve symlinks on the base directory itself, if it exists yet.
+  let realBaseDir = normalizedBaseDir;
+  try {
+    realBaseDir = fs.realpathSync(normalizedBaseDir);
+  } catch {
+    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
+       to the resolved-but-not-yet-canonical path; the containment check
+       below still applies once it's created. */
+  }
+
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = path.join(realBaseDir, ...sanitizedSegments);
+  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
+  const normalizedPath = path.normalize(path.resolve(pathname));
+  const baseDirWithSeparator = realBaseDir + path.sep;
+
+  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
+    throw new Error(
+      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
+    );
+  }
+
+  return normalizedPath;
+};
+
+/**
+ * Verifies that `dir` resolves to a location inside (or exactly equal to)
+ * `expectedRoot`, and returns the resolved path. Used to confirm a directory
+ * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
+ * not been redirected outside the intended root before it's used as the base
+ * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
+ *
+ * @throws Error if dir does not resolve within expectedRoot
+ * @returns the resolved, verified directory path
+ */
+export const assertContainedDir = (expectedRoot: string, dir: string): string => {
+  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
+  const resolvedRoot = path.resolve(expectedRoot);
+  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
+  const resolvedDir = path.resolve(dir);
+
+  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
+    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
+  }
+
+  return resolvedDir;
+};
+----------------------------------
 e2e/utils/safe-path.ts
   // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
   const resolvedRoot = path.resolve(expectedRoot);
@@ -13,6 +841,8 @@ Risk Score: 100 (CRITICAL)
 Severity: High
 
 Description
+Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.
+
 Cycode Remediation Guideline
 Tell us how you wish to proceed using one of the following commands:
 
@@ -63,7 +893,22 @@ Risk Score: 98 (CRITICAL)
 Severity: High
 
 Description
+Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.
+
 Cycode Remediation Guideline
+✅ Do
+Do sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.
+Do use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+function write(filename) {
+  switch(filename) {
+    case "hello.txt":
+      fs.writeCreateFile("hello.txt");
+      break;
+    // Add more cases as necessary
+  }
+}
+📋 References
+OWASP path traversal
 Tell us how you wish to proceed using one of the following commands:
 
 Tag	Short Description
@@ -113,7 +958,26 @@ Risk Score: 100 (CRITICAL)
 Severity: High
 
 Description
+Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.
+
 Cycode Remediation Guideline
+✅ Do
+Do sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as ..\.., to prevent path traversal attacks.
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+Do check for and remove any instances of the NULL byte ("%00") in user input to guard against poison NULL byte attacks.
+if (target.indexOf('\0') !== -1) {
+  // Handle or reject the input
+}
+Do use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+const path = require("path");
+var pathname = path.join("/public/", folder);
+if (pathname.indexOf("/public/") !== 0) {
+  // Handle or reject the input
+}
+❌ Don't
+Do not directly use user input to construct file paths. This can lead to unauthorized file access.
+📋 References
+OWASP Path Traversal
 Tell us how you wish to proceed using one of the following commands:
 
 Tag	Short Description
