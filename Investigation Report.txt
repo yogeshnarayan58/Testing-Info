@@ -1,180 +1,174 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ export NODE_EXTRA_CA_CERTS="C:\Users\Yogesh.Upadhyay\zscaler-root-ca.pem"
-npm run test:lambdatest
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
+  const resolvedRoot = path.resolve(expectedRoot);
+  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
+  const resolvedDir = path.resolve(dir);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-> e2e@1.0.0 test:lambdatest
-> cross-env LAMBDATEST=true npx playwright test
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-◇ injected env (19) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = true
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1787313717301)
-[LT Session] Warning: testId not available, using fallback sessions.jsonl
-[LT Session] Registered session: Test-1787313717301 (worker: 0)
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-Running 2 tests using 1 worker
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/playwright/reporters/lt-session-reporter.ts
+    // Defense-in-depth: re-verify containment/filename shape of the safeJoin()-produced path at each fs.* sink call site
+    const sanitizeFilePath = (filePath: string): string => {
+      // #cycode_sast_ignore_here Path already produced by safeJoin() above; re-resolved here as a second, independent containment check
+      const resolved = path.resolve(filePath);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-[LT Reporter] Initialized - capturing LambdaTest sessions...
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = true
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-     1 …art from scratch › All dimensions selection @StartFromScratch
-[LT Reporter] Test started: "All dimensions selection" (testId: 30f9e
-  ✘  1 …m scratch › All dimensions selection @StartFromScratch (5.0m)
-Auth state loaded from storage/auth.json
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1787313841024)
-[LT Session] ✓ test-30f9e15d1056605e247e-923022e1070d9e9a9842.json written
-[LT Session] Registered session: Test-1787313841024 (worker: 0)
-[LT Reporter] Stored: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection" -> Test-1787313841024
-[LT Reporter] Mapping written to test-30f9e15d1056605e247e-923022e1070d9e9a9842-33172-1787314150503.json
-◇ injected env (0) from .env // tip: ⌘ override existing { override:true }
-isLambdaTest = true
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-     2 …art with a prompt › All dimensions selection @StartWithPrompt
-[LT Reporter] Test started: "All dimensions selection" (testId: a190e
-  ✓  2 …h a prompt › All dimensions selection @StartWithPrompt (1.3m)
-Auth state loaded from storage/auth.json
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1787314153236)
-[LT Session] ✓ test-a190e1baf811c479e479-b013306274b4d6ca8455.json written
-[LT Session] Registered session: Test-1787314153236 (worker: 1)
-[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection" -> Test-1787314153236
-[LT Reporter] Mapping written to test-a190e1baf811c479e479-b013306274b4d6ca8455-33172-1787314231749.json
-[global-teardown] Adding LambdaTest videos to Allure report...
-[global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] Found 2 test-session mapping file(s)
-[global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 30 Allure result files
-[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection": Test-1787314153236
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection": Test-1787313841024
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Found 9 LambdaTest sessions
-[global-teardown] Extracted Build ID: 101874057
-[global-teardown] Step 5: Adding video links to Allure files...
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1786874511333
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] Looking for session: Test-1786874511333
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874513707923099LKS
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1787314153236
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314155903948267POU
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1786874362544
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] Looking for session: Test-1786874362544
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1786874364060144914GII
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] Looking for session: Test-1787313841024
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787313844016472732RWD
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] No LT_SESSION parameter for test: All dimensions selection
-[global-teardown] LambdaTest videos added to Allure report successfully.
-[global-teardown] Build URL: https://automation.lambdatest.com/build?build=101874057
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+  // Resolve symlinks on the base directory itself, if it exists yet.
+  let realBaseDir = normalizedBaseDir;
+  try {
+    realBaseDir = fs.realpathSync(normalizedBaseDir);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-  1) [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch 
+Risk Score: 98 (CRITICAL)
+Severity: High
 
-    Test timeout of 300000ms exceeded.
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-    attachment #1: screenshot (image/png) ───────────────────────────
-    test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-    Error Context: test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\error-context.md
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+ */
+export const assertContainedDir = (expectedRoot: string, dir: string): string => {
+  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
+  const resolvedRoot = path.resolve(expectedRoot);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-    attachment #3: trace (application/zip) ──────────────────────────
-    test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\trace.zip
-    Usage:
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-        npx playwright show-trace test-results\survey-start-from-scratch--0fa48-ch-All-dimensions-selection-lambdatest-chromium\trace.zip
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-    ─────────────────────────────────────────────────────────────────
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-  Slow test file: [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts (5.0m)
-  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
-  1 failed
-    [lambdatest-chromium] › tests\survey\start-from-scratch.spec.ts:17:7 › Start from scratch › All dimensions selection @StartFromScratch 
-  1 passed (8.8m)
-[LT Reporter] Saved 2 session mappings.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+ */
+export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
+  const normalizedBaseDir = path.resolve(baseDir);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
 
-To open last HTML report run:
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-  npx playwright show-report
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/lambdatest-allure-setup)
-$ 
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+  }
+
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = path.join(realBaseDir, ...sanitizedSegments);
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 100 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed yesterday
+e2e/utils/safe-path.ts
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = path.join(realBaseDir, ...sanitizedSegments);
+  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
+  const normalizedPath = path.normalize(path.resolve(pathname));
+@cycode-security-eu
+cycode-security-eu Bot
+yesterday
+❗Cycode: SAST violation: 'Unsanitized dynamic input in file path'.
+
+Risk Score: 100 (CRITICAL)
+Severity: High
+
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
+
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
