@@ -1,142 +1,131 @@
-# Investigation: `.github/workflows/cycode_remediator.yml`
+Investigated the actual code (no files touched yet — this is the proposed diff only, per your request to review first).
 
-## Full file content
+What I verified vs. guessed
+Locator	Status
+ds-addButton	✅ Confirmed real, but only found in omnishopper's DataSelector.clickAddIcon(), used there for adding a second+ folder while one is already selected. This repo's setDimensionSelection() currently opens the picker by clicking the dimension's own tile (ds-noDataPrompt_X), not an add button — there is no evidence this repo's DOM even has/needs ds-addButton for a first-time selection. I did not wire it in to avoid guessing at a UI path that could break the currently-passing flow. Flagging this as a deviation from your literal step 3/4 instructions.
+ds-removeIcon-icon	✅ Confirmed real — found verbatim in omnishopper's data-selector-resources.json (removeIcon). Safe to reuse.
+[data-cy='Selected-option']	❌ Guessed — not found anywhere in either repo.
+ds-selectionMenu_Delete-icon	❌ Guessed — not found anywhere in either repo.
+ds-checkbox-label-${text} (your suggested pattern)	❌ Does not match either repo. This repo's real checkboxLabel is div.item-container:has-text('${text}') niq-checkbox >> nth=0 — I reused the existing one, not your guessed pattern.
+Placeholder text ("Select Product" etc.)	⚠️ Partially confirmed — a captured i18n bundle in test-results has "Select product" / "Select period" (lowercase, no Retailer/Geography/Demographic keys found). I used a generic /^select\b/i heuristic, not exact strings.
+Reading "currently displayed value"	⚠️ Assumption: reusing the same ${dim}NoDataPrompt tile element (via .getText(), mirroring omnishopper's fetchMadlibDimensionValue()) for both empty and selected states — justified because the existing code already clicks this same element unconditionally regardless of state, implying it's a persistent single trigger/display tile, not a "no-data-only" element. Not confirmed against a live DOM (no browser access in this sandbox).
+checkSelection/setMadlibFolder/enterTextInSearchField mechanics	✅ Cross-checked against omnishopper's data-selector.ts — confirms no isChecked/isSelected() exists there, matching your note; this repo's existing add/search flow is functionally equivalent and untouched.
+Proposed diff
+1. select-panelist.locator.json — add 3 resources after checkboxLabel:
+     {
+       "elementName": "checkboxLabel",
+       "selectorType": "playwrights",
+       "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0"
+     },
++    {
++      "elementName": "removeIcon",
++      "selectorType": "tag",
++      "selectorValue": "[data-test-id='ds-removeIcon-icon']"
++    },
++    {
++      "elementName": "selectedOption",
++      "selectorType": "tag",
++      "selectorValue": "[data-cy='Selected-option']"
++    },
++    {
++      "elementName": "deleteMenuIcon",
++      "selectorType": "tag",
++      "selectorValue": "[data-test-id='ds-selectionMenu_Delete-icon']"
++    },
+     {
+       "elementName": "categoryItem",
 
-```yaml
-name: "Cycode Remediator"
+2. select-panelist.page.ts — new private helpers after enterTextInSearchField() (~line 64), plus a check-before-click block inserted at the top of setDimensionSelection() (~line 87, right before the existing "Step 1: Click dimension prompt"):
+   private async enterTextInSearchField(inputText: string): Promise<void> {
+     const searchField = this.webActionHandler.getWebElement(
+       this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+     );
+     await searchField.waitFor();
+     await searchField.enterText("");
+     await searchField.enterText(inputText);
+   }
++
++  /**
++   * Reads the value currently displayed on a dimension's tile (same element
++   * setDimensionSelection() clicks to open the picker) — placeholder text like
++   * "Select Product" when empty, or the selected value once something's chosen.
++   */
++  private async getCurrentDimensionValue(dimensionPromptResource: string): Promise<string> {
++    const dimensionElement = this.webActionHandler.getWebElement(
++      this.resourceManager.getResource(dimensionPromptResource, SELECT_PANELIST_PAGE_COMPONENT_NAME)
++    );
++    await dimensionElement.waitFor();
++    const text = await dimensionElement.getText();
++    return (text ?? '').trim();
++  }
++
++  /**
++   * Best-effort placeholder heuristic (NOT a confirmed exact string per dimension —
++   * only "Select product"/"Select period" were found, lowercase, in captured i18n data).
++   */
++  private isPlaceholderValue(value: string): boolean {
++    return value.length === 0 || /^select\b/i.test(value.trim());
++  }
++
++  /** True if every desired item is already reflected in the current displayed text. */
++  private dimensionAlreadyMatches(currentValue: string, itemsToSelect: string[]): boolean {
++    if (this.isPlaceholderValue(currentValue) || itemsToSelect.length === 0) {
++      return false;
++    }
++    const normalizedCurrent = currentValue.toLowerCase();
++    return itemsToSelect.every((item) => normalizedCurrent.includes(item.toLowerCase()));
++  }
++
++  /**
++   * Removes the current selection before re-selecting. Direct remove-icon click first;
++   * falls back to hover + delete-menu-icon. `selectedOption`/`deleteMenuIcon` locators
++   * are UNVERIFIED — flagged in PR description, not found in either codebase.
++   */
++  private async removeCurrentDimensionSelection(): Promise<void> {
++    const removeIcon = this.webActionHandler.getWebElement(
++      this.resourceManager.getResource('removeIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
++    );
++    try {
++      if (await removeIcon.isVisible()) {
++        await removeIcon.click();
++        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
++        return;
++      }
++    } catch {
++      // fall through to hover + delete-menu fallback
++    }
++
++    const selectedOption = this.webActionHandler.getWebElement(
++      this.resourceManager.getResource('selectedOption', SELECT_PANELIST_PAGE_COMPONENT_NAME)
++    );
++    await selectedOption.waitFor();
++    await selectedOption.hover();
++
++    const deleteMenuIcon = this.webActionHandler.getWebElement(
++      this.resourceManager.getResource('deleteMenuIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
++    );
++    await deleteMenuIcon.waitFor();
++    await deleteMenuIcon.click();
++    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
++  }
 
-run-name: "cycode-issues-remediate"
+   ): Promise<void> {
+     try {
++      // Step 0: Check-before-click — skip if already correct, remove first if a
++      // different value is selected, otherwise fall through to the existing add flow.
++      const currentValue = await this.getCurrentDimensionValue(dimensionPromptResource);
++      if (this.dimensionAlreadyMatches(currentValue, itemsToSelect)) {
++        console.log(`↷ Dimension '${dimensionPromptResource}' already set to '${currentValue}' — skipping`);
++        return;
++      }
++      if (!this.isPlaceholderValue(currentValue)) {
++        console.log(`✎ Dimension '${dimensionPromptResource}' has a different value ('${currentValue}') — removing first`);
++        await this.removeCurrentDimensionSelection();
++      }
++
+       // Step 1: Click dimension prompt
+       const dimensionPrompt = this.webActionHandler.getWebElement(
 
-on:
-  workflow_dispatch:
-    inputs:
-      branch_name:
-        description: "Branch to scan"
-        required: true
-        default: "main"
-        type: string
+Everything after that (steps 1–7: click tile, search icon, parent items, child items, Done) is unchanged.
 
-      cwe_id:
-        description: "CWE ID to scan"
-        required: true
-        default: "CWE-93"
-        type: string
-
-      max_violations:
-        description: "Maximum violations allowed"
-        required: true
-        default: "100"
-        type: string
-
-permissions:
-  contents: read
-  actions: read
-  pull-requests: write
-  security-events: write
-  id-token: write
-
-jobs:
-  cycode-issues-remediate:
-    name: cycode-issues-remediate
-    runs-on: 1-core
-
-    timeout-minutes: 60
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch_name }}
-          fetch-depth: 0
-
-      - name: Generate App Token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.CCOE_GH_REPOS_APP_ID }}
-          private-key: ${{ secrets.CCOE_GH_REPOS_APP_KEY }}
-          owner: ${{ github.repository_owner }}
-
-      - name: Run Cycode SAST Remediation
-        uses: niq-enterprise/ddm-cycode-remediator/.github@sast-workflow
-        with:
-          cwe_id: ${{ inputs.cwe_id }}
-          max_violations: ${{ inputs.max_violations }}
-          branch_name: ${{ inputs.branch_name }}
-          cycode_client_id: ${{ secrets.CYCODE_CLI_CLIENT_ID }}
-          cycode_client_secret: ${{ secrets.CYCODE_CLI_CLIENT_SECRET }}
-          github_token: ${{ steps.app-token.outputs.token }}
-```
-
-## 1. Trigger
-
-`workflow_dispatch` only — a **manual trigger**. There is no `pull_request`, `push`, or `schedule`
-trigger defined. It never runs automatically.
-
-It declares three required inputs (all `type: string`, all with defaults so they're never empty):
-
-| Input | Default | Purpose |
-|---|---|---|
-| `branch_name` | `main` | Branch to check out and scan |
-| `cwe_id` | `CWE-93` | The specific CWE (weakness class) to remediate |
-| `max_violations` | `100` | Cap on how many violations the remediation step will process/allow |
-
-## 2. What it actually does
-
-1. **Checkout code** — checks out the repo at `ref: ${{ inputs.branch_name }}` with full history
-   (`fetch-depth: 0`).
-2. **Generate App Token** — mints a short-lived GitHub App installation token via
-   `actions/create-github-app-token@v2`, using the org's `CCOE_GH_REPOS_APP_ID` /
-   `CCOE_GH_REPOS_APP_KEY` secrets. This token is used later so the remediation action can push
-   commits / open PRs with elevated permissions instead of the default `GITHUB_TOKEN`.
-3. **Run Cycode SAST Remediation** — calls a *reusable external composite action*
-   `niq-enterprise/ddm-cycode-remediator/.github@sast-workflow` (an org-wide shared workflow/action
-   in a separate `niq-enterprise` repo, pinned to the `sast-workflow` ref), passing:
-   - `cwe_id`, `max_violations`, `branch_name` (from the workflow inputs)
-   - `cycode_client_id` / `cycode_client_secret` (Cycode API credentials)
-   - `github_token` (the freshly minted App token)
-
-So in plain terms: it checks out a chosen branch, authenticates against Cycode's API using
-org secrets, and runs a shared remediation routine (defined in another repo) that is scoped to a
-single CWE class and capped at a max number of violations — presumably to auto-fix/PR fixes for
-that vulnerability type on that branch. It does **not** take a PR number as input; it operates on
-a **branch**, not a specific pull request (though the remediator action itself may open a PR as
-part of its remediation — that detail lives in the external `niq-enterprise/ddm-cycode-remediator`
-repo, not in this file).
-
-**Required input parameters to run it:** `branch_name`, `cwe_id`, `max_violations` — all have
-defaults, so a user could trigger it with defaults and only override what they need.
-
-## 3. Secrets/credentials required
-
-This workflow will not work unless these repository (or org) secrets are configured:
-
-- `CCOE_GH_REPOS_APP_ID` — GitHub App ID used to mint the installation token
-- `CCOE_GH_REPOS_APP_KEY` — GitHub App private key
-- `CYCODE_CLI_CLIENT_ID` — Cycode API client ID
-- `CYCODE_CLI_CLIENT_SECRET` — Cycode API client secret
-
-These are referenced via `${{ secrets.* }}` and are presumably defined at the org level (naming
-convention `CCOE_*` suggests a shared Cloud/CCOE-managed GitHub App used across NIQ repos), not
-necessarily per-repo. If any of the four secrets are missing/misconfigured in this repo (or the
-org doesn't grant this repo access to them), the token-generation or remediation step will fail.
-
-Also relevant permissions block (not secrets, but required grants for the job's default token):
-`contents: read`, `actions: read`, `pull-requests: write`, `security-events: write`, `id-token: write`.
-
-## 4. How someone would actually start it
-
-Because the only trigger is `workflow_dispatch`, it must be started manually:
-
-- Go to the repo's **Actions** tab on GitHub.
-- Select **"Cycode Remediator"** from the workflow list on the left.
-- Click the **"Run workflow"** button/dropdown (appears because `workflow_dispatch` is defined).
-- Fill in (or accept defaults for) `branch_name`, `cwe_id`, and `max_violations`.
-- Click **Run workflow** to dispatch it on the selected branch.
-
-Alternatively it can be triggered via the GitHub CLI/API, e.g.
-`gh workflow run cycode_remediator.yml -f branch_name=main -f cwe_id=CWE-93 -f max_violations=100`,
-or the REST API `POST /repos/{owner}/{repo}/actions/workflows/cycode_remediator.yml/dispatches`.
-
-No PR event, push, or schedule will ever fire it automatically.
-</content>
+Want me to apply this as-is, or adjust the ds-addButton gap first (e.g. confirm with you whether this repo's remove flow should re-click the tile vs. some add button before I finalize)?
