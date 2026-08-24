@@ -1,131 +1,100 @@
-Investigated the actual code (no files touched yet — this is the proposed diff only, per your request to review first).
+1. Current code (unreviewed) — method names, files, locators
+File: start-from-scratch.page.ts
+Locators: start-from-scratch.locator.json
 
-What I verified vs. guessed
-Locator	Status
-ds-addButton	✅ Confirmed real, but only found in omnishopper's DataSelector.clickAddIcon(), used there for adding a second+ folder while one is already selected. This repo's setDimensionSelection() currently opens the picker by clicking the dimension's own tile (ds-noDataPrompt_X), not an add button — there is no evidence this repo's DOM even has/needs ds-addButton for a first-time selection. I did not wire it in to avoid guessing at a UI path that could break the currently-passing flow. Flagging this as a deviation from your literal step 3/4 instructions.
-ds-removeIcon-icon	✅ Confirmed real — found verbatim in omnishopper's data-selector-resources.json (removeIcon). Safe to reuse.
-[data-cy='Selected-option']	❌ Guessed — not found anywhere in either repo.
-ds-selectionMenu_Delete-icon	❌ Guessed — not found anywhere in either repo.
-ds-checkbox-label-${text} (your suggested pattern)	❌ Does not match either repo. This repo's real checkboxLabel is div.item-container:has-text('${text}') niq-checkbox >> nth=0 — I reused the existing one, not your guessed pattern.
-Placeholder text ("Select Product" etc.)	⚠️ Partially confirmed — a captured i18n bundle in test-results has "Select product" / "Select period" (lowercase, no Retailer/Geography/Demographic keys found). I used a generic /^select\b/i heuristic, not exact strings.
-Reading "currently displayed value"	⚠️ Assumption: reusing the same ${dim}NoDataPrompt tile element (via .getText(), mirroring omnishopper's fetchMadlibDimensionValue()) for both empty and selected states — justified because the existing code already clicks this same element unconditionally regardless of state, implying it's a persistent single trigger/display tile, not a "no-data-only" element. Not confirmed against a live DOM (no browser access in this sandbox).
-checkSelection/setMadlibFolder/enterTextInSearchField mechanics	✅ Cross-checked against omnishopper's data-selector.ts — confirms no isChecked/isSelected() exists there, matching your note; this repo's existing add/search flow is functionally equivalent and untouched.
+Step	Method	Locator(s) used
+Product Offering modal	selectProductOffering() (L41-57)	productOfferingHeading — playwrights / role=heading[name="Product Offering"]; nextButton — text / "Next"
+Dataset search/select	searchAndSelectDataset() (L58-79)	searchToggle — css / [data-test-id='dataset-picker-search-bar-toggle-search-button-icon']; searchInput — css / [data-test-id='dataset-picker-search-bar-input']; datasetByLabel (dynamic) — tag / [data-test-id^='rv-dataset-id-selector']:has-text('${text}')
+Next after dataset select	proceedToNextAfterDatasetSelection() (L107-117)	nextButton — same as above
+"Choose a view" / Apply	applyEntireDataset() (L119-137)	dialogElement — css / [data-test-id='title-second-dialog']; applyButton — css  / [data-test-id='apply-dataset-btn']
+Important gap already found: entireDatasetOption ([data-test-id='rv-default-dataview']) is defined in the JSON but is never referenced in the .ts file — applyEntireDataset() never clicks it, just waits for the dialog and clicks Apply, assuming the backend default is pre-selected. There is no locator anywhere that reports which view is currently selected (no aria-checked/.selected class captured).
+
+What I can/can't implement per your 3 checks
+#1 (Product Offering already selected): No locator exists for "an offering is selected/highlighted" — there's no offering-option resource at all (confirmed in the earlier investigation). Best available proxy using only real locators: check if productOfferingHeading is even visible; if not, we're already past this screen — skip.
+#2 (dataset already selected): No locator exists for "a dataset tile is currently selected/highlighted". Best available proxy: check if chooseDatasetBreadcrumb ("Choose a dataset") is visible; if not, we've already moved past dataset selection — skip.
+#3 (Entire Dataset already selected vs. different view selected): Cannot be implemented — no locator captures selection state for entireDatasetOption or any other view, and it's unused today. The only thing I can honestly check is whether the dialogElement (Choose-a-view dialog) is showing at all; if not, skip the whole apply step. I am not inventing a selected-state check for Entire Dataset vs. another view — flagging this as a real gap rather than guessing.
 Proposed diff
-1. select-panelist.locator.json — add 3 resources after checkboxLabel:
-     {
-       "elementName": "checkboxLabel",
-       "selectorType": "playwrights",
-       "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0"
-     },
-+    {
-+      "elementName": "removeIcon",
-+      "selectorType": "tag",
-+      "selectorValue": "[data-test-id='ds-removeIcon-icon']"
-+    },
-+    {
-+      "elementName": "selectedOption",
-+      "selectorType": "tag",
-+      "selectorValue": "[data-cy='Selected-option']"
-+    },
-+    {
-+      "elementName": "deleteMenuIcon",
-+      "selectorType": "tag",
-+      "selectorValue": "[data-test-id='ds-selectionMenu_Delete-icon']"
-+    },
-     {
-       "elementName": "categoryItem",
 
-2. select-panelist.page.ts — new private helpers after enterTextInSearchField() (~line 64), plus a check-before-click block inserted at the top of setDimensionSelection() (~line 87, right before the existing "Step 1: Click dimension prompt"):
-   private async enterTextInSearchField(inputText: string): Promise<void> {
-     const searchField = this.webActionHandler.getWebElement(
-       this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-     );
-     await searchField.waitFor();
-     await searchField.enterText("");
-     await searchField.enterText(inputText);
-   }
-+
-+  /**
-+   * Reads the value currently displayed on a dimension's tile (same element
-+   * setDimensionSelection() clicks to open the picker) — placeholder text like
-+   * "Select Product" when empty, or the selected value once something's chosen.
-+   */
-+  private async getCurrentDimensionValue(dimensionPromptResource: string): Promise<string> {
-+    const dimensionElement = this.webActionHandler.getWebElement(
-+      this.resourceManager.getResource(dimensionPromptResource, SELECT_PANELIST_PAGE_COMPONENT_NAME)
-+    );
-+    await dimensionElement.waitFor();
-+    const text = await dimensionElement.getText();
-+    return (text ?? '').trim();
-+  }
-+
-+  /**
-+   * Best-effort placeholder heuristic (NOT a confirmed exact string per dimension —
-+   * only "Select product"/"Select period" were found, lowercase, in captured i18n data).
-+   */
-+  private isPlaceholderValue(value: string): boolean {
-+    return value.length === 0 || /^select\b/i.test(value.trim());
-+  }
-+
-+  /** True if every desired item is already reflected in the current displayed text. */
-+  private dimensionAlreadyMatches(currentValue: string, itemsToSelect: string[]): boolean {
-+    if (this.isPlaceholderValue(currentValue) || itemsToSelect.length === 0) {
-+      return false;
-+    }
-+    const normalizedCurrent = currentValue.toLowerCase();
-+    return itemsToSelect.every((item) => normalizedCurrent.includes(item.toLowerCase()));
-+  }
-+
-+  /**
-+   * Removes the current selection before re-selecting. Direct remove-icon click first;
-+   * falls back to hover + delete-menu-icon. `selectedOption`/`deleteMenuIcon` locators
-+   * are UNVERIFIED — flagged in PR description, not found in either codebase.
-+   */
-+  private async removeCurrentDimensionSelection(): Promise<void> {
-+    const removeIcon = this.webActionHandler.getWebElement(
-+      this.resourceManager.getResource('removeIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-+    );
-+    try {
-+      if (await removeIcon.isVisible()) {
-+        await removeIcon.click();
-+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-+        return;
-+      }
-+    } catch {
-+      // fall through to hover + delete-menu fallback
-+    }
-+
-+    const selectedOption = this.webActionHandler.getWebElement(
-+      this.resourceManager.getResource('selectedOption', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-+    );
-+    await selectedOption.waitFor();
-+    await selectedOption.hover();
-+
-+    const deleteMenuIcon = this.webActionHandler.getWebElement(
-+      this.resourceManager.getResource('deleteMenuIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
-+    );
-+    await deleteMenuIcon.waitFor();
-+    await deleteMenuIcon.click();
-+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-+  }
-
-   ): Promise<void> {
+   async selectProductOffering(_productOffering: string): Promise<void> {
      try {
-+      // Step 0: Check-before-click — skip if already correct, remove first if a
-+      // different value is selected, otherwise fall through to the existing add flow.
-+      const currentValue = await this.getCurrentDimensionValue(dimensionPromptResource);
-+      if (this.dimensionAlreadyMatches(currentValue, itemsToSelect)) {
-+        console.log(`↷ Dimension '${dimensionPromptResource}' already set to '${currentValue}' — skipping`);
+       const productOfferingHeading = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('productOfferingHeading', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
++
++      // Check-before-click: stale/carried-over session state can leave the app already
++      // past this screen. No locator exists for "an offering is selected" — the closest
++      // confirmed signal is whether this screen is even showing.
++      const isProductOfferingScreenShown = await productOfferingHeading.isVisible().catch(() => false);
++      if (!isProductOfferingScreenShown) {
++        console.log('↷ Product Offering screen not shown — assuming already passed, skipping');
 +        return;
 +      }
-+      if (!this.isPlaceholderValue(currentValue)) {
-+        console.log(`✎ Dimension '${dimensionPromptResource}' has a different value ('${currentValue}') — removing first`);
-+        await this.removeCurrentDimensionSelection();
++
+       await productOfferingHeading.waitFor(SMALL_TIMEOUT);
+
+       const nextButton = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await nextButton.waitFor(SMALL_TIMEOUT);
+       await nextButton.click();
+     } catch (error) {
+       throw new Error(`Failed to select product offering: ${error instanceof Error ? error.message : error}`);
+     }
+   }
+
+   async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
+     try {
++      // Check-before-click: no locator exists for "a dataset tile is already selected" —
++      // the closest confirmed signal is whether the "Choose a dataset" screen is still
++      // showing at all. If it's gone, a dataset must already be selected — skip search.
++      const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
++        this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
++      );
++      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
++      if (!isOnDatasetScreen) {
++        console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
++        return;
 +      }
 +
-       // Step 1: Click dimension prompt
-       const dimensionPrompt = this.webActionHandler.getWebElement(
+       const searchToggle = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await searchToggle.waitFor(SMALL_TIMEOUT);
+       await searchToggle.click();
+   async applyEntireDataset(): Promise<void> {
+     try {
+       const dialogElement = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('dialogElement', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
++
++      // Check-before-click: if the "Choose a view" dialog isn't showing at all, the
++      // flow may already be past this step (stale session) — skip. NOTE: there is no
++      // locator in this codebase for "which view is currently selected" —
++      // entireDatasetOption ([data-test-id='rv-default-dataview']) is defined but unused
++      // and has no confirmed selected/checked attribute, so the "skip only if Entire
++      // Dataset already selected, click if a different view is selected" branch from
++      // the request is NOT implemented here — flagging as a real gap, not guessing.
++      const isChooseViewDialogShown = await dialogElement.isVisible().catch(() => false);
++      if (!isChooseViewDialogShown) {
++        console.log('↷ "Choose a view" dialog not shown — assuming already applied/passed, skipping');
++        return;
++      }
++
+       await dialogElement.waitFor(SMALL_TIMEOUT);
+       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
 
-Everything after that (steps 1–7: click tile, search icon, parent items, child items, Done) is unchanged.
+       const applyButton = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await applyButton.waitFor(SMALL_TIMEOUT);
+       await applyButton.click();
+     } catch (error) {
+       throw new Error(`Failed to apply entire dataset: ${error instanceof Error ? error.message : error}`);
+     }
+   }
 
-Want me to apply this as-is, or adjust the ds-addButton gap first (e.g. confirm with you whether this repo's remove flow should re-click the tile vs. some add button before I finalize)?
+
+No changes to proceedToNextAfterDatasetSelection() or the locator JSON — everything reuses existing, already-confirmed resources.
+
+Want me to apply this as-is, given the acknowledged gap on check #3?
+
