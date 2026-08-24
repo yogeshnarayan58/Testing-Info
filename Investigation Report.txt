@@ -1,7 +1,7 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --grep @DatasetSelection
-◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
+◇ injected env (21) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -13,32 +13,54 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 2 tests using 2 workers
+Running 10 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-  ✘  1 …t from scratch › Select dataset (footer assertion) @DatasetSelection (3ms)
-  ✘  2 …t from scratch › Select dataset (footer assertion) @DatasetSelection (3ms)
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+  ✓   1 …h › Land on page + click Start from Scratch @LandStartFromScratch (21.7s)
+  ✓   2 …h › Land on page + click Start from Scratch @LandStartFromScratch (21.7s)
+Auth state loaded from storage/auth.json
+Auth state loaded from storage/auth.json
+  ✘   3 …from scratch › Select dataset (footer assertion) @DatasetSelection (1.7s)
+  ✘   4 …from scratch › Select dataset (footer assertion) @DatasetSelection (1.7s)
+↷ "Choose a dataset" screen not shown — assuming already selected, skipping search
+↷ "Choose a dataset" screen not shown — assuming already selected, skipping search
+  -   5 …spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
+  -   6 …:7 › Start from scratch › Panelist button / response count @ResponseCount
+  -   7 … › Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
+  -   8 …spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
+  -   9 …:7 › Start from scratch › Panelist button / response count @ResponseCount
+  -  10 … › Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
 
 
   1) [chromium] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
 
-    TypeError: Cannot read properties of undefined (reading 'selectProductOffering')
+    Error: expect(received).toBeTruthy()
 
-      35 |
-      36 |   test('Select dataset (footer assertion)', { tag: '@DatasetSelection'}, async () => {
-    > 37 |     await surveyPage.selectProductOffering('');
-         |                      ^
-      38 |     await surveyPage.searchAndSelectDataset(
-      39 |       datasetConfig.searchTerm,
-      40 |       String(DATASET_NAME),
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:37:22
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy();
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:45:15
+
+    attachment #1: screenshot (image/png) ────────────────────────────────────────
+    test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\error-context.md
 
     Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\error-context.md
 
-    attachment #3: trace (application/zip) ───────────────────────────────────────
+    attachment #4: trace (application/zip) ───────────────────────────────────────
     test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\trace.zip
     Usage:
 
@@ -46,24 +68,34 @@ Running 2 tests using 2 workers
 
     ──────────────────────────────────────────────────────────────────────────────
 
-  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:36:7 › Start fromscratch › Select dataset (footer assertion) @DatasetSelection 
+  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
 
-    TypeError: Cannot read properties of undefined (reading 'selectProductOffering')
+    Error: expect(received).toBeTruthy()
 
-      35 |
-      36 |   test('Select dataset (footer assertion)', { tag: '@DatasetSelection'}, async () => {
-    > 37 |     await surveyPage.selectProductOffering('');
-         |                      ^
-      38 |     await surveyPage.searchAndSelectDataset(
-      39 |       datasetConfig.searchTerm,
-      40 |       String(DATASET_NAME),
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:37:22
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy();
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:45:15
+
+    attachment #1: screenshot (image/png) ────────────────────────────────────────
+    test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\test-failed-1.png
+    ──────────────────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\error-context.md
 
     Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\error-context.md
 
-    attachment #3: trace (application/zip) ───────────────────────────────────────
+    attachment #4: trace (application/zip) ───────────────────────────────────────
     test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\trace.zip
     Usage:
 
@@ -74,11 +106,6 @@ Running 2 tests using 2 workers
   2 failed
     [chromium] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
     [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ 
+  6 did not run
+  2 passed (1.3m)
+-----------------------
