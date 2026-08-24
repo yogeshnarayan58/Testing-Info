@@ -1,21 +1,142 @@
-Summary of changes
-1. start-from-scratch.spec.ts:18
+# Investigation: `.github/workflows/cycode_remediator.yml`
 
-   test('All dimensions selection', { tag: '@StartFromScratch' }, async () => {
--    test.setTimeout(300000);
-     const basePage = await BasePageFactory.createBasePage();
-2. start-with-prompt.spec.ts:15-16
+## Full file content
 
--test.describe('Start with a prompt', () => {
--  test('All dimensions selection', { tag: '@StartWithPrompt' }, async () => {
-+test.describe('Start with a prompt', { tag: '@StartWithPrompt' }, () => {
-+  test('All dimensions selection', { tag: '@StartWithPrompt' }, async () => {
-(the test's tag was already @StartWithPrompt, so it just needed to be duplicated onto describe; test.setTimeout(300000) in this file was untouched since only the from-scratch spec's timeout was flagged)
+```yaml
+name: "Cycode Remediator"
 
-3. dev-test-data.json:60-92 — added a new sibling dataset "US Homescan Panel 2yrs Total" with its own searchTerm: "Homescan", datasetIndex: 0, and Homescan-appropriate dimensionSelections (grocery category, household-income demographic slice, etc.), matching the exact shape of the existing entry.
+run-name: "cycode-issues-remediate"
 
-Important discrepancy found — please confirm: your request described the existing dataset entries as having sourceType, dataView, navUrlWithDataSetId fields "etc." Those fields don't actually exist anywhere in this repo's dev-test-data.json or in searchAndSelectDataset() — that field vocabulary belongs to the other workspace folder (disc-fe-omnishopper-ui-automation), a different project. I built the new entry using this repo's actual shape (searchTerm, datasetIndex, dimensionSelections) instead of inventing unused fields.
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: "Branch to scan"
+        required: true
+        default: "main"
+        type: string
 
-On the navigationURL trailing-slash question: common.navigationURL ("survey") is not read by any code — navigateToSurvey() in both page objects hardcodes the literal string 'survey' via new URL('survey', appBaseURL) rather than reading from the JSON. Since it's dead/unused data, a trailing slash wouldn't change any behavior either way. I left it unchanged; flag if you want it removed entirely as unused, or if some other consumer actually reads it that I haven't found.
+      cwe_id:
+        description: "CWE ID to scan"
+        required: true
+        default: "CWE-93"
+        type: string
 
-Type-check: npx tsc --noEmit in e2e completed with no output — no errors introduced
+      max_violations:
+        description: "Maximum violations allowed"
+        required: true
+        default: "100"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+  security-events: write
+  id-token: write
+
+jobs:
+  cycode-issues-remediate:
+    name: cycode-issues-remediate
+    runs-on: 1-core
+
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch_name }}
+          fetch-depth: 0
+
+      - name: Generate App Token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CCOE_GH_REPOS_APP_ID }}
+          private-key: ${{ secrets.CCOE_GH_REPOS_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Run Cycode SAST Remediation
+        uses: niq-enterprise/ddm-cycode-remediator/.github@sast-workflow
+        with:
+          cwe_id: ${{ inputs.cwe_id }}
+          max_violations: ${{ inputs.max_violations }}
+          branch_name: ${{ inputs.branch_name }}
+          cycode_client_id: ${{ secrets.CYCODE_CLI_CLIENT_ID }}
+          cycode_client_secret: ${{ secrets.CYCODE_CLI_CLIENT_SECRET }}
+          github_token: ${{ steps.app-token.outputs.token }}
+```
+
+## 1. Trigger
+
+`workflow_dispatch` only — a **manual trigger**. There is no `pull_request`, `push`, or `schedule`
+trigger defined. It never runs automatically.
+
+It declares three required inputs (all `type: string`, all with defaults so they're never empty):
+
+| Input | Default | Purpose |
+|---|---|---|
+| `branch_name` | `main` | Branch to check out and scan |
+| `cwe_id` | `CWE-93` | The specific CWE (weakness class) to remediate |
+| `max_violations` | `100` | Cap on how many violations the remediation step will process/allow |
+
+## 2. What it actually does
+
+1. **Checkout code** — checks out the repo at `ref: ${{ inputs.branch_name }}` with full history
+   (`fetch-depth: 0`).
+2. **Generate App Token** — mints a short-lived GitHub App installation token via
+   `actions/create-github-app-token@v2`, using the org's `CCOE_GH_REPOS_APP_ID` /
+   `CCOE_GH_REPOS_APP_KEY` secrets. This token is used later so the remediation action can push
+   commits / open PRs with elevated permissions instead of the default `GITHUB_TOKEN`.
+3. **Run Cycode SAST Remediation** — calls a *reusable external composite action*
+   `niq-enterprise/ddm-cycode-remediator/.github@sast-workflow` (an org-wide shared workflow/action
+   in a separate `niq-enterprise` repo, pinned to the `sast-workflow` ref), passing:
+   - `cwe_id`, `max_violations`, `branch_name` (from the workflow inputs)
+   - `cycode_client_id` / `cycode_client_secret` (Cycode API credentials)
+   - `github_token` (the freshly minted App token)
+
+So in plain terms: it checks out a chosen branch, authenticates against Cycode's API using
+org secrets, and runs a shared remediation routine (defined in another repo) that is scoped to a
+single CWE class and capped at a max number of violations — presumably to auto-fix/PR fixes for
+that vulnerability type on that branch. It does **not** take a PR number as input; it operates on
+a **branch**, not a specific pull request (though the remediator action itself may open a PR as
+part of its remediation — that detail lives in the external `niq-enterprise/ddm-cycode-remediator`
+repo, not in this file).
+
+**Required input parameters to run it:** `branch_name`, `cwe_id`, `max_violations` — all have
+defaults, so a user could trigger it with defaults and only override what they need.
+
+## 3. Secrets/credentials required
+
+This workflow will not work unless these repository (or org) secrets are configured:
+
+- `CCOE_GH_REPOS_APP_ID` — GitHub App ID used to mint the installation token
+- `CCOE_GH_REPOS_APP_KEY` — GitHub App private key
+- `CYCODE_CLI_CLIENT_ID` — Cycode API client ID
+- `CYCODE_CLI_CLIENT_SECRET` — Cycode API client secret
+
+These are referenced via `${{ secrets.* }}` and are presumably defined at the org level (naming
+convention `CCOE_*` suggests a shared Cloud/CCOE-managed GitHub App used across NIQ repos), not
+necessarily per-repo. If any of the four secrets are missing/misconfigured in this repo (or the
+org doesn't grant this repo access to them), the token-generation or remediation step will fail.
+
+Also relevant permissions block (not secrets, but required grants for the job's default token):
+`contents: read`, `actions: read`, `pull-requests: write`, `security-events: write`, `id-token: write`.
+
+## 4. How someone would actually start it
+
+Because the only trigger is `workflow_dispatch`, it must be started manually:
+
+- Go to the repo's **Actions** tab on GitHub.
+- Select **"Cycode Remediator"** from the workflow list on the left.
+- Click the **"Run workflow"** button/dropdown (appears because `workflow_dispatch` is defined).
+- Fill in (or accept defaults for) `branch_name`, `cwe_id`, and `max_violations`.
+- Click **Run workflow** to dispatch it on the selected branch.
+
+Alternatively it can be triggered via the GitHub CLI/API, e.g.
+`gh workflow run cycode_remediator.yml -f branch_name=main -f cwe_id=CWE-93 -f max_violations=100`,
+or the REST API `POST /repos/{owner}/{repo}/actions/workflows/cycode_remediator.yml/dispatches`.
+
+No PR event, push, or schedule will ever fire it automatically.
+</content>
