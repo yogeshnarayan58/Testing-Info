@@ -1,338 +1,418 @@
-# Cycode Experiment: `safeLambdaTestSessionPath` (internally-derived trusted root)
+# Manager PR Feedback vs. OmniShopper (`disc-fe-omnishopper-ui-automation`) Patterns
 
-Status: **NOT APPLIED** — proposal/analysis only. No source files were changed as part of this
-document; it records a controlled-experiment design discussed for the "Unsanitized dynamic input
-in file path" Cycode SAST finding on the LambdaTest session-path flow (`.lt-sessions/`).
+Investigation only — no files were modified. This compares 7 open PR-review items against the actual
+code in `disc-fe-omnishopper-ui-automation` to see what can be copied/adapted vs. what still needs to
+be built from scratch for `disc-fe-omni-survey-mod/e2e`.
 
-## Question being tested
+Reference (our current "big single test"):
+[e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts)
 
-Does Cycode treat a **purpose-specific path helper whose trusted root is derived internally**
-(`safeLambdaTestSessionPath(fileName)`) differently from the current **generic helper that
-accepts the trusted root as a parameter** (`safeJoin(baseDir, fileName)`)?
+---
 
-## Current implementation (unchanged, in place today)
+## 1. TEST STRUCTURE — split into discrete `test()` blocks vs. one big test
 
-`e2e/utils/safe-path.ts` exports two generic helpers, `safeJoin(baseDir, ...segments)` and
-`assertContainedDir(expectedRoot, dir)`. Call sites in
-[playwright/reporters/lt-session-reporter.ts](playwright/reporters/lt-session-reporter.ts),
-[playwright/setup/globalTeardown.ts](playwright/setup/globalTeardown.ts) and
-[utils/base-page-factory.ts](utils/base-page-factory.ts) resolve/validate the LambdaTest session
-directory themselves, then pass it in as `baseDir`:
+**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
 
+OmniShopper's `basket-analysis.spec.ts` (the closest equivalent to a full "flow" report/survey) is
+split into ~9 independent `test()` blocks, each covering exactly one discrete concern, with a shared
+`test.describe.serial(...)` only around the specific sub-steps that truly depend on a prior saved
+report:
+
+`src/lib/tests/reports/basket-analysis/basket-analysis.spec.ts`
 ```ts
-const safeSessionDir = assertContainedDir(
-  path.resolve(process.cwd(), 'test-results'),
-  getLambdaTestSessionDir()
-);
-...
-safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`);   // baseDir passed explicitly
-```
+// lines 39-46
+test.describe("Basket analysis", async () => {
+    let dataSelector: DataSelector;
+    let commonTestCase: CommonTestCase;
+    let formatPanel: FormatPanel;
 
-`getLambdaTestSessionDir()` (in `utils/configurationDetails.ts`) is:
-
-```ts
-export const getLambdaTestSessionDir = (): string =>
-  path.join(process.cwd(), 'test-results', '.lt-sessions');
-```
-
-## Prior, already-confirmed finding in this repo (important context)
-
-From repo memory / earlier session work on these exact files: re-routing a dynamic-filename sink
-through a **different externally-imported helper function** did **not** change Cycode's reported
-findings on `globalTeardown.ts` previously. The rule/pattern-based SAST engine does not appear to
-do interprocedural analysis through an imported-function boundary — it wants an inline allowlist
-gate visible directly at (or immediately before) the `fs.*` sink call, in the *same* function.
-
-**Prediction:** wrapping `safeJoin`/`assertContainedDir` in a new `safeLambdaTestSessionPath`
-helper (still defined in another file, still just delegating to the same two generic helpers)
-is very unlikely to change Cycode's finding — if anything it adds one more layer of indirection
-between the sink and the visible sanitizer, which is the opposite of what previously correlated
-with 0 findings (inline regex gate, same function as the sink). This is **not a security
-regression** — every existing check is preserved — it's a prediction that this specific structural
-change won't move the SAST result.
-
-## Proposed experimental code (not applied)
-
-### `e2e/utils/safe-path.ts` — add-only change
-
-Adds one new export after the existing `assertContainedDir`; `safeJoin` and `assertContainedDir`
-themselves are byte-for-byte unchanged. Requires one new import (`getLambdaTestSessionDir` from
-`./configurationDetails` — no circular dependency, since that module only imports `path`).
-
-```ts
-import * as fs from 'fs';
-import * as path from 'path';
-import { getLambdaTestSessionDir } from './configurationDetails';
-
-// ...existing safeJoin(baseDir, ...untrustedSegments) unchanged...
-
-// ...existing assertContainedDir(expectedRoot, dir) unchanged...
-
-/**
- * Purpose-specific LambdaTest session-path helper (EXPERIMENTAL). Unlike safeJoin(), the
- * trusted base directory is NOT accepted as a caller-supplied parameter: it is derived
- * internally from getLambdaTestSessionDir() (that function's existing behavior/return value
- * is unchanged) and independently re-verified via assertContainedDir() against the expected
- * "test-results" root before any join happens. Callers only ever supply the untrusted/dynamic
- * filename segment(s); they cannot pass in an arbitrary base directory.
- *
- * All existing checks are unchanged and still enforced, since this delegates to
- * assertContainedDir() + safeJoin() rather than re-implementing them: null-byte rejection,
- * traversal (`..`, `~`, `\`) rejection, absolute/UNC/Windows drive-path rejection, filename
- * character allowlist, symlink resolution (fs.realpathSync), and post-join containment
- * verification.
- *
- * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
- * @throws Error if getLambdaTestSessionDir() resolves outside "test-results", or if the
- *   resulting path would escape the session directory, or a segment is empty/unsafe
- * @returns the safe, joined, canonicalized path inside the LambdaTest session directory
- */
-export const safeLambdaTestSessionPath = (...untrustedSegments: string[]): string => {
-  // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
-  const expectedRoot = path.resolve(process.cwd(), 'test-results');
-  const trustedSessionDir = assertContainedDir(expectedRoot, getLambdaTestSessionDir());
-
-  return safeJoin(trustedSessionDir, ...untrustedSegments);
-};
-```
-
-### `e2e/playwright/reporters/lt-session-reporter.ts` — minimal call-site change
-
-```ts
-// import block
-import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
-import { assertContainedDir, safeLambdaTestSessionPath } from '../../utils/safe-path';   // was: { safeJoin, assertContainedDir }
-```
-
-```ts
-// call site 1 (test-specific session file)
-const getTestSessionFile = () => safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);   // was: safeJoin(safeSessionDir, ...)
-```
-
-```ts
-// call site 2 (sessions.jsonl fallback)
-const sessionsLogFile = safeLambdaTestSessionPath('sessions.jsonl');   // was: safeJoin(safeSessionDir, 'sessions.jsonl')
-```
-
-```ts
-// call site 3 (per-test/process mapping file write)
-const mappingFile = safeLambdaTestSessionPath(`test-${sanitizedTestId}-${process.pid}-${Date.now()}.json`);   // was: safeJoin(safeSessionDir, ...)
-```
-
-Everything else in the file is unchanged: `safeSessionDir` (from its own `assertContainedDir`
-call) is still needed for `mkdirSync(safeSessionDir, ...)` and `sanitizeFilePath()`'s
-defense-in-depth compare, so it stays declared/used — no unused variable is introduced.
-`onEnd()` (which never called `safeJoin`) is untouched. `globalTeardown.ts` and
-`base-page-factory.ts` are **not** touched by this experiment.
-
-## Why each change
-
-- **New `safeLambdaTestSessionPath`**: implements the "internally trusted root" shape requested,
-  without duplicating any validation logic — delegates to the existing, unmodified
-  `assertContainedDir`/`safeJoin`, so no check is weakened, removed, or reordered.
-- **Import swap**: `safeJoin` is no longer called directly in `lt-session-reporter.ts` after the
-  3 call-site edits, so keeping it imported would be an unused import; `assertContainedDir` is
-  still used directly (top of `onTestEnd`, and in `onEnd`), so it stays imported.
-- **3 call-site edits**: the entire surface of the experiment — implicit vs. explicit trusted
-  root at the dynamic-filename construction points. No other logic, error handling, or
-  try/catch boundary is touched.
-
-## Verification (before any real Cycode re-scan)
-
-```powershell
-cd e2e
-npx tsc --noEmit -p tsconfig.json
-```
-
-The local `cycode` CLI/MCP is not installed/authenticated in this sandbox (confirmed previously —
-`mcp_cycode-local_cycode_scanChangedFiles` fails with `spawn cycode ENOENT`, and a plain
-`cycode scan path --path .` in a terminal here exits 127 / command not found). An actual Cycode
-re-scan of this experiment has to happen in CI or wherever the real Cycode integration runs — it
-cannot be reproduced locally in this environment.
-
-## Conclusion
-
-This is an experiment to run, not a confirmed fix. Expected outcome based on this repo's prior,
-already-observed Cycode behavior: **no change** in the finding, since the sink call sites in
-`lt-session-reporter.ts` still resolve their path through an imported helper rather than an
-inline, same-function allowlist gate. If the goal is to actually influence the SAST result rather
-than just test the hypothesis, the previously-correlated-with-0-findings pattern is: an inline
-`.test()`/regex allowlist gate written directly in the same function as the `fs.*` sink call,
-with `safeJoin`/`assertContainedDir` layered on top only as additional defense-in-depth (not as
-the visible gate).
---------------------
-
-
-Analysis of current implementation
-Current flow (all 3 files) is: caller resolves + validates the base dir itself, then passes it into a generic helper:
-const safeSessionDir = assertContainedDir(path.resolve(process.cwd(), 'test-results'), getLambdaTestSessionDir());
-...
-safeJoin(safeSessionDir, `test-${sanitizedTestId}.json`);   // baseDir passed explicitly
-Your proposed experiment collapses that into a purpose-built wrapper where the root is derived inside the helper instead of passed in:
-safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);  // baseDir implicit
-Important prior finding from this repo (already validated empirically, not a guess): re-wrapping the same sink call in a different externally-imported helper function did not change Cycode's "Unsanitized dynamic input in file path" behavior last time this was tried on globalTeardown.ts — the pattern-based/rule-based SAST engine doesn't appear to do interprocedural analysis through an imported function boundary; it wants to see an inline allowlist gate directly at (or immediately before) the fs.* sink call site in the same function. safeLambdaTestSessionPath is still: (a) defined in another file, and (b) itself just delegates to assertContainedDir/safeJoin — so the actual sink call sites in lt-session-reporter.ts (fs.existsSync/readFileSync/unlinkSync/writeFileSync) end up one level more removed from a visible sanitizer than before, not less. Based on that documented precedent, I expect this experiment to behave the same as the current code from Cycode's perspective — likely no change, possibly worse (more indirection to trace). This is not a regression in actual security (all checks are preserved and still enforced at runtime), just a prediction that it won't move the needle on the specific SAST finding. Since you explicitly asked for the controlled experiment anyway, here it is, with that caveat up front.
-
-1. Complete replacement safe-path.ts
-import * as fs from 'fs';
-import * as path from 'path';
-import { getLambdaTestSessionDir } from './configurationDetails';
-
-/**
- * Safely joins a base directory with dynamic/untrusted path segments, preventing
- * path traversal and link-following into locations outside the intended base directory.
- *
- * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
- * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
- * (test IDs, worker indices, on-disk mapping/result filenames).
- *
- * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
- * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
- * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
- * @returns the safe, joined, canonicalized path
- */
-export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
-  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
-  const normalizedBaseDir = path.resolve(baseDir);
-
-  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
-  // (\\server\share) - checked explicitly and OS-agnostically, since
-  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
-  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
-
-  for (const segment of untrustedSegments) {
-    if (segment.length === 0) {
-      throw new Error('Empty path segment is not allowed');
-    }
-    if (segment.indexOf('\0') !== -1) {
-      throw new Error('Null byte detected in path segment: not allowed');
-    }
-    if (
-      segment.includes('..') ||
-      segment.includes('~') ||
-      segment.includes('\\') ||
-      path.isAbsolute(segment) ||
-      WINDOWS_ABSOLUTE_RE.test(segment) ||
-      /^\.\/|^\.\.\/|^\//.test(segment)
-    ) {
-      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
-    }
-  }
-
-  const sanitizedSegments = untrustedSegments.map((segment) => {
-    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
-      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
-    }
-    return sanitized;
-  });
-
-  // Resolve symlinks on the base directory itself, if it exists yet.
-  let realBaseDir = normalizedBaseDir;
-  try {
-    realBaseDir = fs.realpathSync(normalizedBaseDir);
-  } catch {
-    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
-       to the resolved-but-not-yet-canonical path; the containment check
-       below still applies once it's created. */
-  }
-
-  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
-  const pathname = path.join(realBaseDir, ...sanitizedSegments);
-  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
-  const normalizedPath = path.normalize(path.resolve(pathname));
-  const baseDirWithSeparator = realBaseDir + path.sep;
-
-  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
-    throw new Error(
-      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
+    test(
+      "QuickLook: Should display correct preview information when template is selected",
+      { tag: "@QuickLook" },
+      async () => { /* ...one concern: template preview... */ }
     );
+```
+```ts
+// line 77
+test(
+  "Insights Panel: Should validate business questions and report metadata",
+  { tag: "@Insights" },
+  async () => { /* ...one concern: insights panel... */ }
+);
+```
+```ts
+// line 111
+test(
+  "Madlib Validation: Should validate madlib text content matches expected pattern",
+  { tag: "@MadlibValidation" },
+  async () => { /* ...one concern: madlib text... */ }
+);
+```
+```ts
+// lines 139-146
+test(
+  "Validate default format panel",
+  { tag: "@FormatPanelDefaultVerification" },
+  async () => { /* ...one concern: format panel defaults... */ }
+);
+```
+```ts
+// line 156
+test(
+  "Validate People prompt",
+  { tag: "@PeopleDialog" },
+  async () => { /* ...one concern: people dialog... */ }
+);
+```
+Then a `test.describe.serial` groups only the steps that are genuinely sequential/dependent
+(run → save → export → snapshot → copy):
+```ts
+// lines 182-186
+test.describe.serial(
+  "Run, PPT Export, Excel Export, Add Blank Report",
+  { tag: ["@Report_E2E_Flow"] },
+  () => {
+    test("Report Generation: Validates dimension selection and successful execution", { tag: "@RunReport" }, async () => { ... });
+    test("openCurrentReportFMS", { tag: "@openCurrentReportFMS" }, async () => { ... });
+    test("Validate PPT export", { tag: "@ValidatePPTExport" }, async () => { ... });
+    test("Validate Excel export", { tag: "@ValidateExcelExport" }, async () => { ... });
+    test("Validate FullScreen", { tag: "@ValidateFullScreen" }, async () => { ... });
+    test("Validate presentationMode", { tag: "@PresentationMode" }, async () => { ... });
+    test("Validate snapshot", { tag: "@Snapshot" }, async () => { ... });
+    test("Validate Add Blank Report", { tag: "@ValidateAddBlankReport" }, async () => { ... });
   }
+);
+```
+This exact same 9-block pattern is repeated across every other report spec in the repo (e.g.
+`assortment-optimizer.spec.ts`, `buyer-turnover-product.spec.ts`, `trip-groups.spec.ts`, etc.) — it's
+a repo-wide convention, not a one-off.
 
-  return normalizedPath;
-};
+By contrast, our [start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) is currently
+**one** `test('All dimensions selection', ...)` block that does navigate → click start-from-scratch →
+select product offering → search/select dataset → proceed → apply entire dataset → complete panelist
+selection flow, all in a single test with a single `assertTrue` at the very end.
 
-/**
- * Verifies that `dir` resolves to a location inside (or exactly equal to)
- * `expectedRoot`, and returns the resolved path. Used to confirm a directory
- * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
- * not been redirected outside the intended root before it's used as the base
- * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
- *
- * @throws Error if dir does not resolve within expectedRoot
- * @returns the resolved, verified directory path
- */
-export const assertContainedDir = (expectedRoot: string, dir: string): string => {
-  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
-  const resolvedRoot = path.resolve(expectedRoot);
-  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
-  const resolvedDir = path.resolve(dir);
+**Action**: adopt OmniShopper's per-concern `test()` split (land on page / select dataset / select
+filters / proceed) with tags per test, using `test.describe.serial` only for the steps that must run
+in order.
 
-  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
-    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
+---
+
+## 2. DATASET-SELECTION EXTRACTION — separate reusable file, boolean-returning method, caller asserts
+
+**Verdict: NOT SOLVED THERE EITHER (build from scratch)**
+
+OmniShopper has no interactive "dataset selection" UI flow at all — their "dataset" is not chosen via
+search/click in the UI during the test; it's baked directly into a URL read from JSON test data and
+navigated to directly:
+
+`src/lib/tests/reports/basket-analysis/basket-analysis.spec.ts` (lines 27-31)
+```ts
+const reportTestData = findDataSetByName(testData, config.DATASET);
+...
+let reportUrl = config.BASE_URL + reportTestData?.navUrlWithDataSetId;
+```
+`findDataSetByName` (in `src/lib/common/utils/helper-service.ts`, lines ~18-77) is purely a JSON
+lookup utility (given a dataset name string, return its config object) — it has no UI interaction, no
+`Promise<boolean>` return, and nothing for a spec file to `assert()` against. It is not the pattern
+asked about (a UI-driving method returning a boolean success flag).
+
+We searched all of `src/lib/common` for anything resembling "click dataset → return boolean → caller
+asserts" and found nothing matching that shape anywhere in the repo.
+
+Interestingly, **our own repo already has this exact pattern**, just not yet applied to the
+dataset-selection step — `panelist-flow.helper.ts` already does it for the *panelist selection* step:
+
+`e2e/page-objects/common/panelist-flow.helper.ts`
+```ts
+export async function completePanelistSelectionFlow(
+  basePage: BasePage,
+  dimensionSelections: DimensionSelectionsArg
+): Promise<boolean> {
+  const selectPanelistPage = new SelectPanelistPage(basePage);
+  await selectPanelistPage.setDimensionSelections(dimensionSelections);
+  await selectPanelistPage.clickSearchForPanelists();
+  await selectPanelistPage.click250Responses();
+  await selectPanelistPage.clickProceedToSurveyBuilder();
+  return selectPanelistPage.isBuildSurveyPageLoaded();
+}
+```
+called from the spec with the caller doing the `assert`:
+```ts
+const isLoaded = await completePanelistSelectionFlow(basePage, datasetConfig.dimensionSelections);
+assertTrue(isLoaded, 'Panelist selection flow did not complete successfully');
+```
+Meanwhile `searchAndSelectDataset(...)` (the actual dataset-selection step) is still inline as a
+`void`-returning method directly on `StartFromScratchPage`:
+
+`e2e/page-objects/survey/start-from-scratch.page.ts` (lines ~59-77)
+```ts
+async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
+    try {
+      const searchToggle = this.webActionHandler.getWebElement(...);
+      await searchToggle.waitFor(SMALL_TIMEOUT);
+      await searchToggle.click();
+      const searchInput = this.webActionHandler.getWebElement(...);
+      await searchInput.waitFor(SMALL_TIMEOUT);
+      await searchInput.enterText(searchTerm);
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      const datasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await datasetElement.waitFor(SMALL_TIMEOUT);
+      await datasetElement.click();
+    } catch (error) {
+      throw new Error(`Failed to search and select dataset "${datasetLabel}": ${...}`);
+    }
+}
+```
+**Action**: since OmniShopper offers no template to copy for this specific item, mirror our own
+existing `panelist-flow.helper.ts` shape — extract dataset-selection into e.g.
+`e2e/page-objects/common/dataset-selection.helper.ts` with a method like
+`async selectDataset(basePage, searchTerm, datasetLabel): Promise<boolean>` that returns whether the
+dataset was actually selected (e.g. verifying the Next button/dialog appeared), leaving the
+`assert`/`assertTrue` call in the spec file.
+
+---
+
+## 3. NAVIGATE/BASE-URL DEDUP — one shared navigation utility vs. per-page-object duplication
+
+**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)** — with one known exception
+
+Base URL itself has a single source of truth in `src/lib/playwright/config.ts` (`config.BASE_URL`),
+and the actual navigation call is centralized in the shared base class `CommonTestCase`, which nearly
+every page object/component extends:
+
+`src/lib/common/pages/common-test-case/common-test-case.ts` (lines ~348-357)
+```ts
+public async navigateToUrl(
+    targetUrl: string,
+    timeout: number = NAVIGATION_TIMEOUT
+): Promise<void> {
+    try {
+      await this.webActionHandler.navigateTo(targetUrl, timeout, "domcontentloaded");
+    } catch (navigationError) {
+      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
+      throw navigationError;
+    }
+}
+
+public async navigateToReportUrl(targetUrl: string): Promise<void> {
+    console.log(`Navigating to report URL: ${targetUrl}`);
+    await this.navigateToUrl(targetUrl, MAX_TEST_TIMEOUT);
+    // ...retry-once-on-error-banner logic...
+}
+```
+`grep` confirms 32 classes extend `CommonTestCase` (`DataSelector`, `LandingPage`, `InsightsPanel`,
+`ChooseAtemplatePage`, `QuickLookPage`, `ReportFlowPage`, `ReportPage`, `Snapshot`, `ExportComponent`,
+`ConfigurePanel`, `FindMyStuff`, every per-report component class, etc.), so `navigateToUrl` /
+`navigateToReportUrl` is genuinely one shared method reused everywhere, not reimplemented per page
+object. Some subclasses (e.g. `InsightsPanel`) even wrap it and delegate via `super.navigateToUrl(...)`
+rather than duplicating:
+
+`src/lib/common/components/insights-panel/insights-panel.ts` (lines ~119-130)
+```ts
+public async navigateToUrl(
+    targetUrl: string,
+    timeout: number = MAX_TEST_TIMEOUT
+): Promise<void> {
+    try {
+      console.info(`Navigating to URL: ${targetUrl}`);
+      await super.navigateToUrl(targetUrl, timeout);
+      ...
+```
+
+**Known exception**: `FormatPanel` does **not** extend `CommonTestCase` and duplicates the raw
+navigation call instead of reusing the shared method:
+
+`src/lib/common/components/format-panel/formatPanel.ts` (lines ~25-35)
+```ts
+export class FormatPanel {
+  ...
+  public async navigateToUrlAndCheckMadlibVisbility(targetUrl: string) {
+      await this.webActionHandler.navigateTo(targetUrl, MAX_TEST_TIMEOUT,"domcontentloaded");
+      ...
+```
+So the dedup pattern is real and dominant (30+ classes), but not 100% consistently applied — worth
+noting as their own residual tech debt, not a reason to avoid copying the pattern.
+
+**Action**: create one shared `navigateToUrl`/`navigateToBaseUrl` on our common base page class (if
+not already present) and make every survey page object extend/reuse it instead of computing/reading
+`BASE_URL` independently — same shape as `CommonTestCase.navigateToUrl`.
+
+---
+
+## 4. TAGGING STRATEGY — `@regression` / `@sanity` / `@smoke` / `@production`
+
+**Verdict: PARTIALLY SOLVED (adapt this)**
+
+OmniShopper tags **every** test extensively (301 tag occurrences across 29 spec files), e.g.:
+
+```ts
+// basket-analysis.spec.ts
+test("QuickLook: ...", { tag: "@QuickLook" }, async () => {...});
+test("Insights Panel: ...", { tag: "@Insights" }, async () => {...});
+test("Madlib Validation: ...", { tag: "@MadlibValidation" }, async () => {...});
+test("Validate default format panel", { tag: "@FormatPanelDefaultVerification" }, async () => {...});
+test.describe.serial("Run, PPT Export, ...", { tag: ["@Report_E2E_Flow"] }, () => {
+  test(..., { tag: "@RunReport" }, ...);
+  test(..., { tag: "@ValidatePPTExport" }, ...);
+  test(..., { tag: "@ValidateExcelExport" }, ...);
+  test(..., { tag: "@ValidateFullScreen" }, ...);
+  test(..., { tag: "@PresentationMode" }, ...);
+  test(..., { tag: "@Snapshot" }, ...);
+  test(..., { tag: "@ValidateAddBlankReport" }, ...);
+});
+```
+Same feature-scoped tags repeat consistently across other report specs (`@QuickLook`, `@Insights`,
+`@MadlibValidation`, `@Pivot List Verification`, `@PeopleDialog`, etc. in `shifting-analyse-product.spec.ts`,
+`switching-intensity-retailer.spec.ts`, `trip-groups.spec.ts`, and others).
+
+However, **the specific tags asked about (`@regression`, `@sanity`, `@smoke`, `@production`) are not
+used anywhere** — confirmed via repo-wide search (0 matches, case-insensitive) across all `.spec.ts`
+files. The closest things found are:
+- `package.json` script names `test:regression` / `test:regression:ui` (an npm script label, not a
+  Playwright tag on any test).
+- `PROD_*` as an environment/dataset naming prefix in test-data and CI workflow inputs (an
+  environment selector, not a Playwright `@production` tag).
+
+So: they have a mature *feature/step-based* tagging strategy (great to copy the mechanics of — tag
+object syntax, `test.describe.serial` grouping with tags), but not the specific
+sanity/smoke/regression/production tier tags the review comment is asking for.
+
+**Action**: adopt OmniShopper's `{ tag: "@X" }` / `{ tag: ["@X"] }` syntax and per-step tagging
+discipline, but still need to introduce our own `@regression`/`@sanity`/`@smoke`/`@production` tier
+tags from scratch — neither repo has that specific taxonomy yet.
+
+---
+
+## 5. FALLBACK STRATEGY FOR PRE-SELECTED FILTERS — skip-if-already-selected / change-if-different
+
+**Verdict: NOT SOLVED THERE EITHER (build from scratch)**
+
+Searched `data-selector.ts` (their dimension/filter selection component) for any pre-click state check
+(`isChecked`, `getAttribute('checked')`, "already selected", `isSelected()`) — no matches. Their
+selection methods click unconditionally every time:
+
+`src/lib/common/components/data-selector/data-selector.ts` (lines ~193-207, `setDimensionSelection`)
+```ts
+for (const selection of selections) {
+  if (searchReq) {
+    await this.enterTextInSearchField(selection);
   }
+  await this.webActionHandler
+    .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
+    .waitFor();
+  // Click the checkbox corresponding to the selection — no prior state check
+  const selectionElement = this.webActionHandler.getWebElement(
+    this.resourceManager.getDynamicResource("checkboxLabel", selection, DS_COMPONENT_NAME)
+  );
+  await selectionElement.click();
+}
+```
+There's a superficially related pattern in `configure-panel.ts`, but it's for **read-only assertion**
+of a radio button's default state, not a pre-click decision gate:
 
-  return resolvedDir;
-};
+`src/lib/common/pages/configure-panel/configure-panel.ts` (lines ~99-104, `validateBreakdownSection`)
+```ts
+const checkedAttr = await radioButton.getAttribute("checked");
+const isChecked = checkedAttr === "checked";
+assert(isChecked).toBe(expectedOption.default);
+```
+This only verifies an expected default state matches — it never uses the checked value to decide
+whether to click/skip/change a selection. Nothing in either repo implements "check first, skip if same
+value already selected, handle differently if a different value is selected."
 
-/**
- * Purpose-specific LambdaTest session-path helper (EXPERIMENTAL - see
- * CYCODE_FINDINGS_REVIEW.md for context). Unlike safeJoin(), the trusted base
- * directory is NOT accepted as a caller-supplied parameter: it is derived
- * internally from getLambdaTestSessionDir() (that function's existing
- * behavior/return value is unchanged) and independently re-verified via
- * assertContainedDir() against the expected "test-results" root before any
- * join happens. Callers only ever supply the untrusted/dynamic filename
- * segment(s); they cannot pass in an arbitrary base directory.
- *
- * All existing checks are unchanged and still enforced, since this delegates
- * to assertContainedDir() + safeJoin() rather than re-implementing them:
- * null-byte rejection, traversal (`..`, `~`, `\`) rejection, absolute/UNC/
- * Windows drive-path rejection, filename character allowlist, symlink
- * resolution (fs.realpathSync), and post-join containment verification.
- *
- * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
- * @throws Error if getLambdaTestSessionDir() resolves outside "test-results", or if
- *   the resulting path would escape the session directory, or a segment is empty/unsafe
- * @returns the safe, joined, canonicalized path inside the LambdaTest session directory
- */
-export const safeLambdaTestSessionPath = (...untrustedSegments: string[]): string => {
-  // #cycode_sast_ignore_here Static path: process.cwd() joined with hardcoded literal 'test-results', no user input
-  const expectedRoot = path.resolve(process.cwd(), 'test-results');
-  const trustedSessionDir = assertContainedDir(expectedRoot, getLambdaTestSessionDir());
+**Action**: this needs to be designed and built from scratch for our filter/dimension selection code
+(e.g. in `select-panelist.page.ts` / dataset-selection helper) — check the checkbox/chip's current
+state before clicking; skip the click if the desired value is already selected; if a different value
+is selected, deselect/replace it first.
 
-  return safeJoin(trustedSessionDir, ...untrustedSegments);
-};
+---
 
-Change made: only an added import (getLambdaTestSessionDir from ./configurationDetails) and one new exported function (safeLambdaTestSessionPath) appended after assertContainedDir. safeJoin and assertContainedDir are byte-for-byte unchanged. No circular import risk — configurationDetails.ts only imports path.
+## 6. TEST DATA STRUCTURE — multiple dataset entries in one JSON file
 
-2. Minimal change in lt-session-reporter.ts
-// import block
-import { getLambdaTestSessionDir } from '../../utils/configurationDetails';
-import { assertContainedDir, safeLambdaTestSessionPath } from '../../utils/safe-path';   // was: { safeJoin, assertContainedDir }
+**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
 
-// call site 1 (test-specific session file)
-const getTestSessionFile = () => safeLambdaTestSessionPath(`test-${sanitizedTestId}.json`);   // was: safeJoin(safeSessionDir, ...)
+`src/lib/tests/reports/basket-analysis/test-data/dev-test-data.json` has (at least) two full sibling
+dataset entries under one `datasets` object:
+```json
+{
+    "common": {
+        "navigationURL": "/report/flow/US-2506063/US-2506063",
+        "thumbnailSrc": "https://discoverassets.blob.core.windows.net/thumbnails-revamp-optimized/panel/Basket_analysis.webp"
+    },
+    "datasets": {
+        "Omni Agg SI 3yrs Synd": {
+            "sourceType": "Panel On Demand Omnishopper",
+            "dataView": "Entire Dataset",
+            "navUrlWithDataSetId": "/report/flow/US-2506063/US-2506063/155535/OrderId_4011",
+            "dimensionSelections": [ /* ... */ ],
+            "formatPanelSelections": [ /* ... */ ]
+        },
+        "HSCN Agg SI 5yrs Synd": {
+            "sourceType": "Panel On Demand Homescan",
+            "dataView": "Entire Dataset",
+            "navUrlWithDataSetId": "/report/flow/US-2506063/US-2506063/155486/OrderId_2927",
+            "dimensionSelections": [ /* ... */ ]
+        }
+    }
+}
+```
+The spec selects the active one at runtime via `findDataSetByName(testData, config.DATASET)`
+(`basket-analysis.spec.ts` line 29), i.e. the dataset to run is chosen by an env var against a JSON
+keyed by dataset name, not hardcoded to a single entry.
 
-// call site 2 (sessions.jsonl fallback)
-const sessionsLogFile = safeLambdaTestSessionPath('sessions.jsonl');   // was: safeJoin(safeSessionDir, 'sessions.jsonl')
+By contrast, our [dev-test-data.json](../e2e/test-data/dev-test-data.json) currently has exactly **one**
+dataset entry (`"Omni Agg SI 3yrs Synd"`) under `datasets`, and `start-from-scratch.spec.ts` derives
+`DATASET_NAME` by just taking `Object.keys(testData.datasets)[0]` — i.e. structurally ready for
+multiple entries, but not yet populated with more than one.
 
-// call site 3 (per-test/process mapping file write)
-const mappingFile = safeLambdaTestSessionPath(`test-${sanitizedTestId}-${process.pid}-${Date.now()}.json`);   // was: safeJoin(safeSessionDir, ...)
+**Action**: add additional sibling dataset entries to our `dev-test-data.json` (mirroring OmniShopper's
+`datasets: { "<name1>": {...}, "<name2>": {...} }` shape) and drive selection via an env var/config
+value instead of always picking `Object.keys(...)[0]`.
 
-Everything else in the file (the safeSessionDir variable + its assertContainedDir call, mkdirSync(safeSessionDir, ...), sanitizeFilePath()'s defense-in-depth compare against safeSessionDir, onEnd()'s untouched path.join(safeSessionDir, 'session-mappings.json')) is unchanged — safeSessionDir is still needed for those, so it stays declared and used (no unused variable introduced).
+---
 
-3. Why each change
-New safeLambdaTestSessionPath in safe-path.ts: implements exactly the "internally trusted root" shape you asked to test, without duplicating any validation logic (delegates to the existing, unmodified assertContainedDir/safeJoin), so no security check is weakened, removed, or reordered.
-Import swap in lt-session-reporter.ts: safeJoin is no longer called directly in this file after the 3 call-site edits, so keeping it imported would be an unused import; assertContainedDir is still directly used (top-of-onTestEnd and in onEnd), so it stays.
-3 call-site edits: replace safeJoin(safeSessionDir, X) with safeLambdaTestSessionPath(X) — this is the entire surface of the experiment (implicit vs. explicit trusted root at the dynamic-filename construction sites). No other logic, error handling, or try/catch boundary is touched.
-4. Verify before running Cycode
+## 7. NAMING CONVENTIONS — outcome-specific test names vs. generic names
 
-cd e2e
-npx tsc --noEmit -p tsconfig.json
-then, per repo convention, re-check for new lint/type errors on just the two touched files:
+**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
 
-npx tsc --noEmit -p tsconfig.json --listFiles | findstr "safe-path.ts lt-session-reporter.ts"
-(the findstr step is optional/informational — the real gate is the first command exiting 0). Note: the local Cycode CLI/MCP is not installed/authenticated in this sandbox (confirmed in prior sessions), so an actual Cycode re-scan has to happen wherever your CI/dashboard Cycode integration runs — it cannot be reproduced locally here.
+Real test names pulled directly from their spec files — each names the specific expected behavior,
+not just the feature area:
+- `"QuickLook: Should display correct preview information when template is selected"` —
+  `basket-analysis.spec.ts` line 42
+- `"Insights Panel: Should validate business questions and report metadata"` —
+  `basket-analysis.spec.ts` line 77
+- `"Madlib Validation: Should validate madlib text content matches expected pattern"` —
+  `basket-analysis.spec.ts` line 111
+- `"Report Generation: Validates dimension selection and successful execution"` —
+  `basket-analysis.spec.ts` line ~192 (inside the `Report_E2E_Flow` describe.serial block)
+- `"Validate Add Blank Report"` — `basket-analysis.spec.ts` (final test in the serial block)
 
-Bottom line
-I have not made these edits — this is the proposed diff only, per your "do not modify yet" instruction. Given the documented precedent in this exact repo that re-routing a sink through a different externally-imported helper didn't change Cycode's finding on globalTeardown.ts, I'd treat this as a genuine experiment with an uncertain (likely negative) outcome rather than an expected fix — say the word if you want me to apply it as-is anyway, or want a variant that additionally inlines a visible allowlist .test() gate directly in lt-session-reporter.ts itself (the pattern that has previously correlated with 0 findings in this repo's other two files).
+Compare to our current single test name in
+[start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts):
+```ts
+test('All dimensions selection', { tag: '@StartFromScratch' }, async () => { ... });
+```
+which is generic/step-agnostic and doesn't describe an expected outcome (nor, once split per item 1,
+would one name cover all the distinct steps it currently contains).
+
+**Action**: once split into discrete tests (item 1), name each using OmniShopper's
+`"<Area>: Should <specific expected outcome>"` convention, e.g. `"Start From Scratch: Should land on
+survey creation page"`, `"Dataset Selection: Should select the correct dataset by search term"`,
+`"Panelist Filters: Should apply all configured dimension selections"`, etc.
+
+---
+
+## Summary Table
+
+| # | Item | Verdict |
+|---|---|---|
+| 1 | Test structure (discrete tests vs. one big test) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
+| 2 | Dataset-selection extraction (boolean method, caller asserts) | NOT SOLVED THERE EITHER (build from scratch) |
+| 3 | Navigate/base-URL dedup | ALREADY SOLVED IN OMNI SHOPPER (copy this), minor exception noted |
+| 4 | Tagging strategy (@regression/@sanity/@smoke/@production) | PARTIALLY SOLVED (adapt this) |
+| 5 | Fallback strategy for pre-selected filters | NOT SOLVED THERE EITHER (build from scratch) |
+| 6 | Test data structure (multiple datasets in one JSON) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
+| 7 | Naming conventions (outcome-specific names) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
