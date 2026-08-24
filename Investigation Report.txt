@@ -1,100 +1,84 @@
-1. Current code (unreviewed) — method names, files, locators
-File: start-from-scratch.page.ts
-Locators: start-from-scratch.locator.json
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --grep @DatasetSelection
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Step	Method	Locator(s) used
-Product Offering modal	selectProductOffering() (L41-57)	productOfferingHeading — playwrights / role=heading[name="Product Offering"]; nextButton — text / "Next"
-Dataset search/select	searchAndSelectDataset() (L58-79)	searchToggle — css / [data-test-id='dataset-picker-search-bar-toggle-search-button-icon']; searchInput — css / [data-test-id='dataset-picker-search-bar-input']; datasetByLabel (dynamic) — tag / [data-test-id^='rv-dataset-id-selector']:has-text('${text}')
-Next after dataset select	proceedToNextAfterDatasetSelection() (L107-117)	nextButton — same as above
-"Choose a view" / Apply	applyEntireDataset() (L119-137)	dialogElement — css / [data-test-id='title-second-dialog']; applyButton — css  / [data-test-id='apply-dataset-btn']
-Important gap already found: entireDatasetOption ([data-test-id='rv-default-dataview']) is defined in the JSON but is never referenced in the .ts file — applyEntireDataset() never clicks it, just waits for the dialog and clicks Apply, assuming the backend default is pre-selected. There is no locator anywhere that reports which view is currently selected (no aria-checked/.selected class captured).
+Running 2 tests using 2 workers
 
-What I can/can't implement per your 3 checks
-#1 (Product Offering already selected): No locator exists for "an offering is selected/highlighted" — there's no offering-option resource at all (confirmed in the earlier investigation). Best available proxy using only real locators: check if productOfferingHeading is even visible; if not, we're already past this screen — skip.
-#2 (dataset already selected): No locator exists for "a dataset tile is currently selected/highlighted". Best available proxy: check if chooseDatasetBreadcrumb ("Choose a dataset") is visible; if not, we've already moved past dataset selection — skip.
-#3 (Entire Dataset already selected vs. different view selected): Cannot be implemented — no locator captures selection state for entireDatasetOption or any other view, and it's unused today. The only thing I can honestly check is whether the dialogElement (Choose-a-view dialog) is showing at all; if not, skip the whole apply step. I am not inventing a selected-state check for Entire Dataset vs. another view — flagging this as a real gap rather than guessing.
-Proposed diff
-
-   async selectProductOffering(_productOffering: string): Promise<void> {
-     try {
-       const productOfferingHeading = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('productOfferingHeading', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-+
-+      // Check-before-click: stale/carried-over session state can leave the app already
-+      // past this screen. No locator exists for "an offering is selected" — the closest
-+      // confirmed signal is whether this screen is even showing.
-+      const isProductOfferingScreenShown = await productOfferingHeading.isVisible().catch(() => false);
-+      if (!isProductOfferingScreenShown) {
-+        console.log('↷ Product Offering screen not shown — assuming already passed, skipping');
-+        return;
-+      }
-+
-       await productOfferingHeading.waitFor(SMALL_TIMEOUT);
-
-       const nextButton = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await nextButton.waitFor(SMALL_TIMEOUT);
-       await nextButton.click();
-     } catch (error) {
-       throw new Error(`Failed to select product offering: ${error instanceof Error ? error.message : error}`);
-     }
-   }
-
-   async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
-     try {
-+      // Check-before-click: no locator exists for "a dataset tile is already selected" —
-+      // the closest confirmed signal is whether the "Choose a dataset" screen is still
-+      // showing at all. If it's gone, a dataset must already be selected — skip search.
-+      const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-+        this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-+      );
-+      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
-+      if (!isOnDatasetScreen) {
-+        console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
-+        return;
-+      }
-+
-       const searchToggle = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await searchToggle.waitFor(SMALL_TIMEOUT);
-       await searchToggle.click();
-   async applyEntireDataset(): Promise<void> {
-     try {
-       const dialogElement = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('dialogElement', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-+
-+      // Check-before-click: if the "Choose a view" dialog isn't showing at all, the
-+      // flow may already be past this step (stale session) — skip. NOTE: there is no
-+      // locator in this codebase for "which view is currently selected" —
-+      // entireDatasetOption ([data-test-id='rv-default-dataview']) is defined but unused
-+      // and has no confirmed selected/checked attribute, so the "skip only if Entire
-+      // Dataset already selected, click if a different view is selected" branch from
-+      // the request is NOT implemented here — flagging as a real gap, not guessing.
-+      const isChooseViewDialogShown = await dialogElement.isVisible().catch(() => false);
-+      if (!isChooseViewDialogShown) {
-+        console.log('↷ "Choose a view" dialog not shown — assuming already applied/passed, skipping');
-+        return;
-+      }
-+
-       await dialogElement.waitFor(SMALL_TIMEOUT);
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-       const applyButton = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await applyButton.waitFor(SMALL_TIMEOUT);
-       await applyButton.click();
-     } catch (error) {
-       throw new Error(`Failed to apply entire dataset: ${error instanceof Error ? error.message : error}`);
-     }
-   }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+  ✘  1 …t from scratch › Select dataset (footer assertion) @DatasetSelection (3ms)
+  ✘  2 …t from scratch › Select dataset (footer assertion) @DatasetSelection (3ms)
 
 
-No changes to proceedToNextAfterDatasetSelection() or the locator JSON — everything reuses existing, already-confirmed resources.
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
 
-Want me to apply this as-is, given the acknowledged gap on check #3?
+    TypeError: Cannot read properties of undefined (reading 'selectProductOffering')
 
+      35 |
+      36 |   test('Select dataset (footer assertion)', { tag: '@DatasetSelection'}, async () => {
+    > 37 |     await surveyPage.selectProductOffering('');
+         |                      ^
+      38 |     await surveyPage.searchAndSelectDataset(
+      39 |       datasetConfig.searchTerm,
+      40 |       String(DATASET_NAME),
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:37:22
+
+    Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\error-context.md
+
+    Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ───────────────────────────────────────
+    test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────────────────────
+
+  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:36:7 › Start fromscratch › Select dataset (footer assertion) @DatasetSelection 
+
+    TypeError: Cannot read properties of undefined (reading 'selectProductOffering')
+
+      35 |
+      36 |   test('Select dataset (footer assertion)', { tag: '@DatasetSelection'}, async () => {
+    > 37 |     await surveyPage.selectProductOffering('');
+         |                      ^
+      38 |     await surveyPage.searchAndSelectDataset(
+      39 |       datasetConfig.searchTerm,
+      40 |       String(DATASET_NAME),
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:37:22
+
+    Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\error-context.md
+
+    Error Context: test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\error-context.md
+
+    attachment #3: trace (application/zip) ───────────────────────────────────────
+    test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--69deb-t-dataset-footer-assertion--Microsoft-Edge\trace.zip
+
+    ──────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
+    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:36:7 › Start from scratch › Select dataset (footer assertion) @DatasetSelection 
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ 
