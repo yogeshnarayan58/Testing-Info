@@ -1,418 +1,249 @@
-# Manager PR Feedback vs. OmniShopper (`disc-fe-omnishopper-ui-automation`) Patterns
+# Grafana Reporter Investigation — `disc-fe-omnishopper-ui-automation`
 
-Investigation only — no files were modified. This compares 7 open PR-review items against the actual
-code in `disc-fe-omnishopper-ui-automation` to see what can be copied/adapted vs. what still needs to
-be built from scratch for `disc-fe-omni-survey-mod/e2e`.
+Investigation only — no files were modified.
 
-Reference (our current "big single test"):
-[e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts)
-
----
-
-## 1. TEST STRUCTURE — split into discrete `test()` blocks vs. one big test
-
-**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
-
-OmniShopper's `basket-analysis.spec.ts` (the closest equivalent to a full "flow" report/survey) is
-split into ~9 independent `test()` blocks, each covering exactly one discrete concern, with a shared
-`test.describe.serial(...)` only around the specific sub-steps that truly depend on a prior saved
-report:
-
-`src/lib/tests/reports/basket-analysis/basket-analysis.spec.ts`
-```ts
-// lines 39-46
-test.describe("Basket analysis", async () => {
-    let dataSelector: DataSelector;
-    let commonTestCase: CommonTestCase;
-    let formatPanel: FormatPanel;
-
-    test(
-      "QuickLook: Should display correct preview information when template is selected",
-      { tag: "@QuickLook" },
-      async () => { /* ...one concern: template preview... */ }
-    );
-```
-```ts
-// line 77
-test(
-  "Insights Panel: Should validate business questions and report metadata",
-  { tag: "@Insights" },
-  async () => { /* ...one concern: insights panel... */ }
-);
-```
-```ts
-// line 111
-test(
-  "Madlib Validation: Should validate madlib text content matches expected pattern",
-  { tag: "@MadlibValidation" },
-  async () => { /* ...one concern: madlib text... */ }
-);
-```
-```ts
-// lines 139-146
-test(
-  "Validate default format panel",
-  { tag: "@FormatPanelDefaultVerification" },
-  async () => { /* ...one concern: format panel defaults... */ }
-);
-```
-```ts
-// line 156
-test(
-  "Validate People prompt",
-  { tag: "@PeopleDialog" },
-  async () => { /* ...one concern: people dialog... */ }
-);
-```
-Then a `test.describe.serial` groups only the steps that are genuinely sequential/dependent
-(run → save → export → snapshot → copy):
-```ts
-// lines 182-186
-test.describe.serial(
-  "Run, PPT Export, Excel Export, Add Blank Report",
-  { tag: ["@Report_E2E_Flow"] },
-  () => {
-    test("Report Generation: Validates dimension selection and successful execution", { tag: "@RunReport" }, async () => { ... });
-    test("openCurrentReportFMS", { tag: "@openCurrentReportFMS" }, async () => { ... });
-    test("Validate PPT export", { tag: "@ValidatePPTExport" }, async () => { ... });
-    test("Validate Excel export", { tag: "@ValidateExcelExport" }, async () => { ... });
-    test("Validate FullScreen", { tag: "@ValidateFullScreen" }, async () => { ... });
-    test("Validate presentationMode", { tag: "@PresentationMode" }, async () => { ... });
-    test("Validate snapshot", { tag: "@Snapshot" }, async () => { ... });
-    test("Validate Add Blank Report", { tag: "@ValidateAddBlankReport" }, async () => { ... });
-  }
-);
-```
-This exact same 9-block pattern is repeated across every other report spec in the repo (e.g.
-`assortment-optimizer.spec.ts`, `buyer-turnover-product.spec.ts`, `trip-groups.spec.ts`, etc.) — it's
-a repo-wide convention, not a one-off.
-
-By contrast, our [start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) is currently
-**one** `test('All dimensions selection', ...)` block that does navigate → click start-from-scratch →
-select product offering → search/select dataset → proceed → apply entire dataset → complete panelist
-selection flow, all in a single test with a single `assertTrue` at the very end.
-
-**Action**: adopt OmniShopper's per-concern `test()` split (land on page / select dataset / select
-filters / proceed) with tags per test, using `test.describe.serial` only for the steps that must run
-in order.
+**File found at**: `disc-fe-omnishopper-ui-automation/src/lib/playwright/grafana-reporter.ts`
+(searched by filename glob `**/grafana-reporter.ts` and `**/*grafana*` across the whole workspace —
+this is the only match; it is **not** at the repo root and not under `src/lib/common/`.)
 
 ---
 
-## 2. DATASET-SELECTION EXTRACTION — separate reusable file, boolean-returning method, caller asserts
+## Complete, verbatim file content
 
-**Verdict: NOT SOLVED THERE EITHER (build from scratch)**
+`disc-fe-omnishopper-ui-automation/src/lib/playwright/grafana-reporter.ts`
 
-OmniShopper has no interactive "dataset selection" UI flow at all — their "dataset" is not chosen via
-search/click in the UI during the test; it's baked directly into a URL read from JSON test data and
-navigated to directly:
-
-`src/lib/tests/reports/basket-analysis/basket-analysis.spec.ts` (lines 27-31)
 ```ts
-const reportTestData = findDataSetByName(testData, config.DATASET);
-...
-let reportUrl = config.BASE_URL + reportTestData?.navUrlWithDataSetId;
-```
-`findDataSetByName` (in `src/lib/common/utils/helper-service.ts`, lines ~18-77) is purely a JSON
-lookup utility (given a dataset name string, return its config object) — it has no UI interaction, no
-`Promise<boolean>` return, and nothing for a spec file to `assert()` against. It is not the pattern
-asked about (a UI-driving method returning a boolean success flag).
+import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig } from "@playwright/test";
+import * as path from 'path';
+import { config } from './config';
+import { PostgresActions, CustomReporterOptions, CommonReporterUtils } from "@gfk/gta";
 
-We searched all of `src/lib/common` for anything resembling "click dataset → return boolean → caller
-asserts" and found nothing matching that shape anywhere in the repo.
 
-Interestingly, **our own repo already has this exact pattern**, just not yet applied to the
-dataset-selection step — `panelist-flow.helper.ts` already does it for the *panelist selection* step:
+class GrafanaPlaywrightReporter implements Reporter {
 
-`e2e/page-objects/common/panelist-flow.helper.ts`
-```ts
-export async function completePanelistSelectionFlow(
-  basePage: BasePage,
-  dimensionSelections: DimensionSelectionsArg
-): Promise<boolean> {
-  const selectPanelistPage = new SelectPanelistPage(basePage);
-  await selectPanelistPage.setDimensionSelections(dimensionSelections);
-  await selectPanelistPage.clickSearchForPanelists();
-  await selectPanelistPage.click250Responses();
-  await selectPanelistPage.clickProceedToSurveyBuilder();
-  return selectPanelistPage.isBuildSurveyPageLoaded();
-}
-```
-called from the spec with the caller doing the `assert`:
-```ts
-const isLoaded = await completePanelistSelectionFlow(basePage, datasetConfig.dimensionSelections);
-assertTrue(isLoaded, 'Panelist selection flow did not complete successfully');
-```
-Meanwhile `searchAndSelectDataset(...)` (the actual dataset-selection step) is still inline as a
-`void`-returning method directly on `StartFromScratchPage`:
+    private areaId: number | undefined;
+    private domainId: number | undefined;
+    private teamId: number | undefined;
+    private options: CustomReporterOptions;
+    private projectId: number | undefined;
+    private environmentName: string;
+    private commonReporterUtils: CommonReporterUtils | undefined;
+    private postgresActions: PostgresActions;
+    private previousTestCaseId: string | null | undefined;
+    private resultID: number | undefined;
 
-`e2e/page-objects/survey/start-from-scratch.page.ts` (lines ~59-77)
-```ts
-async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
-    try {
-      const searchToggle = this.webActionHandler.getWebElement(...);
-      await searchToggle.waitFor(SMALL_TIMEOUT);
-      await searchToggle.click();
-      const searchInput = this.webActionHandler.getWebElement(...);
-      await searchInput.waitFor(SMALL_TIMEOUT);
-      await searchInput.enterText(searchTerm);
-      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      const datasetElement = this.webActionHandler.getWebElement(
-        this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-      );
-      await datasetElement.waitFor(SMALL_TIMEOUT);
-      await datasetElement.click();
-    } catch (error) {
-      throw new Error(`Failed to search and select dataset "${datasetLabel}": ${...}`);
+    constructor(options: CustomReporterOptions) {
+        this.options = options;
+        console.log(`Custom reporter - Custom options received`);
+        this.environmentName = config.ENV;
+        this.postgresActions = new PostgresActions(config.postgresAPIUrl);
     }
-}
-```
-**Action**: since OmniShopper offers no template to copy for this specific item, mirror our own
-existing `panelist-flow.helper.ts` shape — extract dataset-selection into e.g.
-`e2e/page-objects/common/dataset-selection.helper.ts` with a method like
-`async selectDataset(basePage, searchTerm, datasetLabel): Promise<boolean>` that returns whether the
-dataset was actually selected (e.g. verifying the Next button/dialog appeared), leaving the
-`assert`/`assertTrue` call in the spec file.
 
----
 
-## 3. NAVIGATE/BASE-URL DEDUP — one shared navigation utility vs. per-page-object duplication
-
-**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)** — with one known exception
-
-Base URL itself has a single source of truth in `src/lib/playwright/config.ts` (`config.BASE_URL`),
-and the actual navigation call is centralized in the shared base class `CommonTestCase`, which nearly
-every page object/component extends:
-
-`src/lib/common/pages/common-test-case/common-test-case.ts` (lines ~348-357)
-```ts
-public async navigateToUrl(
-    targetUrl: string,
-    timeout: number = NAVIGATION_TIMEOUT
-): Promise<void> {
-    try {
-      await this.webActionHandler.navigateTo(targetUrl, timeout, "domcontentloaded");
-    } catch (navigationError) {
-      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
-      throw navigationError;
+    async initialize(): Promise<void> {
+        if (!this.commonReporterUtils) {
+            throw new Error('CommonReporterUtils not initialized. Call onBegin first.');
+        }
+        const { areaId, domainId, teamId, projectId } = await this.commonReporterUtils.getOrCreateIds();
+        this.areaId = areaId;
+        this.domainId = domainId;
+        this.teamId = teamId;
+        this.projectId = projectId;
     }
-}
 
-public async navigateToReportUrl(targetUrl: string): Promise<void> {
-    console.log(`Navigating to report URL: ${targetUrl}`);
-    await this.navigateToUrl(targetUrl, MAX_TEST_TIMEOUT);
-    // ...retry-once-on-error-banner logic...
-}
-```
-`grep` confirms 32 classes extend `CommonTestCase` (`DataSelector`, `LandingPage`, `InsightsPanel`,
-`ChooseAtemplatePage`, `QuickLookPage`, `ReportFlowPage`, `ReportPage`, `Snapshot`, `ExportComponent`,
-`ConfigurePanel`, `FindMyStuff`, every per-report component class, etc.), so `navigateToUrl` /
-`navigateToReportUrl` is genuinely one shared method reused everywhere, not reimplemented per page
-object. Some subclasses (e.g. `InsightsPanel`) even wrap it and delegate via `super.navigateToUrl(...)`
-rather than duplicating:
+    async onBegin(fullConfig: FullConfig, suite: Suite) {
+        console.log(`Custom reporter - Starting the run with ${suite.allTests().length} tests`);
+        this.commonReporterUtils = new CommonReporterUtils(this.options, this.environmentName, config.postgresAPIUrl);
+        await this.initialize();
+    }
 
-`src/lib/common/components/insights-panel/insights-panel.ts` (lines ~119-130)
-```ts
-public async navigateToUrl(
-    targetUrl: string,
-    timeout: number = MAX_TEST_TIMEOUT
-): Promise<void> {
-    try {
-      console.info(`Navigating to URL: ${targetUrl}`);
-      await super.navigateToUrl(targetUrl, timeout);
-      ...
-```
-
-**Known exception**: `FormatPanel` does **not** extend `CommonTestCase` and duplicates the raw
-navigation call instead of reusing the shared method:
-
-`src/lib/common/components/format-panel/formatPanel.ts` (lines ~25-35)
-```ts
-export class FormatPanel {
-  ...
-  public async navigateToUrlAndCheckMadlibVisbility(targetUrl: string) {
-      await this.webActionHandler.navigateTo(targetUrl, MAX_TEST_TIMEOUT,"domcontentloaded");
-      ...
-```
-So the dedup pattern is real and dominant (30+ classes), but not 100% consistently applied — worth
-noting as their own residual tech debt, not a reason to avoid copying the pattern.
-
-**Action**: create one shared `navigateToUrl`/`navigateToBaseUrl` on our common base page class (if
-not already present) and make every survey page object extend/reuse it instead of computing/reading
-`BASE_URL` independently — same shape as `CommonTestCase.navigateToUrl`.
-
----
-
-## 4. TAGGING STRATEGY — `@regression` / `@sanity` / `@smoke` / `@production`
-
-**Verdict: PARTIALLY SOLVED (adapt this)**
-
-OmniShopper tags **every** test extensively (301 tag occurrences across 29 spec files), e.g.:
-
-```ts
-// basket-analysis.spec.ts
-test("QuickLook: ...", { tag: "@QuickLook" }, async () => {...});
-test("Insights Panel: ...", { tag: "@Insights" }, async () => {...});
-test("Madlib Validation: ...", { tag: "@MadlibValidation" }, async () => {...});
-test("Validate default format panel", { tag: "@FormatPanelDefaultVerification" }, async () => {...});
-test.describe.serial("Run, PPT Export, ...", { tag: ["@Report_E2E_Flow"] }, () => {
-  test(..., { tag: "@RunReport" }, ...);
-  test(..., { tag: "@ValidatePPTExport" }, ...);
-  test(..., { tag: "@ValidateExcelExport" }, ...);
-  test(..., { tag: "@ValidateFullScreen" }, ...);
-  test(..., { tag: "@PresentationMode" }, ...);
-  test(..., { tag: "@Snapshot" }, ...);
-  test(..., { tag: "@ValidateAddBlankReport" }, ...);
-});
-```
-Same feature-scoped tags repeat consistently across other report specs (`@QuickLook`, `@Insights`,
-`@MadlibValidation`, `@Pivot List Verification`, `@PeopleDialog`, etc. in `shifting-analyse-product.spec.ts`,
-`switching-intensity-retailer.spec.ts`, `trip-groups.spec.ts`, and others).
-
-However, **the specific tags asked about (`@regression`, `@sanity`, `@smoke`, `@production`) are not
-used anywhere** — confirmed via repo-wide search (0 matches, case-insensitive) across all `.spec.ts`
-files. The closest things found are:
-- `package.json` script names `test:regression` / `test:regression:ui` (an npm script label, not a
-  Playwright tag on any test).
-- `PROD_*` as an environment/dataset naming prefix in test-data and CI workflow inputs (an
-  environment selector, not a Playwright `@production` tag).
-
-So: they have a mature *feature/step-based* tagging strategy (great to copy the mechanics of — tag
-object syntax, `test.describe.serial` grouping with tags), but not the specific
-sanity/smoke/regression/production tier tags the review comment is asking for.
-
-**Action**: adopt OmniShopper's `{ tag: "@X" }` / `{ tag: ["@X"] }` syntax and per-step tagging
-discipline, but still need to introduce our own `@regression`/`@sanity`/`@smoke`/`@production` tier
-tags from scratch — neither repo has that specific taxonomy yet.
-
----
-
-## 5. FALLBACK STRATEGY FOR PRE-SELECTED FILTERS — skip-if-already-selected / change-if-different
-
-**Verdict: NOT SOLVED THERE EITHER (build from scratch)**
-
-Searched `data-selector.ts` (their dimension/filter selection component) for any pre-click state check
-(`isChecked`, `getAttribute('checked')`, "already selected", `isSelected()`) — no matches. Their
-selection methods click unconditionally every time:
-
-`src/lib/common/components/data-selector/data-selector.ts` (lines ~193-207, `setDimensionSelection`)
-```ts
-for (const selection of selections) {
-  if (searchReq) {
-    await this.enterTextInSearchField(selection);
-  }
-  await this.webActionHandler
-    .getWebElement(this.resourceManager.getResource("dsSelectionsViewPort", DS_COMPONENT_NAME))
-    .waitFor();
-  // Click the checkbox corresponding to the selection — no prior state check
-  const selectionElement = this.webActionHandler.getWebElement(
-    this.resourceManager.getDynamicResource("checkboxLabel", selection, DS_COMPONENT_NAME)
-  );
-  await selectionElement.click();
-}
-```
-There's a superficially related pattern in `configure-panel.ts`, but it's for **read-only assertion**
-of a radio button's default state, not a pre-click decision gate:
-
-`src/lib/common/pages/configure-panel/configure-panel.ts` (lines ~99-104, `validateBreakdownSection`)
-```ts
-const checkedAttr = await radioButton.getAttribute("checked");
-const isChecked = checkedAttr === "checked";
-assert(isChecked).toBe(expectedOption.default);
-```
-This only verifies an expected default state matches — it never uses the checked value to decide
-whether to click/skip/change a selection. Nothing in either repo implements "check first, skip if same
-value already selected, handle differently if a different value is selected."
-
-**Action**: this needs to be designed and built from scratch for our filter/dimension selection code
-(e.g. in `select-panelist.page.ts` / dataset-selection helper) — check the checkbox/chip's current
-state before clicking; skip the click if the desired value is already selected; if a different value
-is selected, deselect/replace it first.
-
----
-
-## 6. TEST DATA STRUCTURE — multiple dataset entries in one JSON file
-
-**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
-
-`src/lib/tests/reports/basket-analysis/test-data/dev-test-data.json` has (at least) two full sibling
-dataset entries under one `datasets` object:
-```json
-{
-    "common": {
-        "navigationURL": "/report/flow/US-2506063/US-2506063",
-        "thumbnailSrc": "https://discoverassets.blob.core.windows.net/thumbnails-revamp-optimized/panel/Basket_analysis.webp"
-    },
-    "datasets": {
-        "Omni Agg SI 3yrs Synd": {
-            "sourceType": "Panel On Demand Omnishopper",
-            "dataView": "Entire Dataset",
-            "navUrlWithDataSetId": "/report/flow/US-2506063/US-2506063/155535/OrderId_4011",
-            "dimensionSelections": [ /* ... */ ],
-            "formatPanelSelections": [ /* ... */ ]
-        },
-        "HSCN Agg SI 5yrs Synd": {
-            "sourceType": "Panel On Demand Homescan",
-            "dataView": "Entire Dataset",
-            "navUrlWithDataSetId": "/report/flow/US-2506063/US-2506063/155486/OrderId_2927",
-            "dimensionSelections": [ /* ... */ ]
+    async onTestEnd(testCase: TestCase, result: TestResult): Promise<void> {
+        try {
+            if (this.projectId) {
+                const isRetry = this.previousTestCaseId === testCase.id;
+                const suiteName = path.basename(testCase.parent?.title, '.ts');
+                // testCaseId: To read from test case tags/annotation
+                // testCycleName: process.env.JIRA_CYCLE_NAME || '',
+                // releaseVersion: process.env.VERSION_NAME || '',
+                this.resultID = await this.postgresActions.createOrUpdateTestResults(
+                    {
+                        suiteName: suiteName,
+                        testcaseName: testCase.title,
+                        status: result.status,
+                        executionTime: result.startTime,
+                        executionDuration: result.duration,
+                        envName: this.environmentName,
+                        projectId: this.projectId,
+                    },
+                    isRetry,
+                    this.resultID
+                );
+                console.log('Custom reporter: - Test result created:', this.resultID);
+                this.previousTestCaseId = testCase.id;
+            } else {
+                console.error('Custom reporter - Project ID is not available');
+            }
+        } catch (error) {
+            console.error('Custom reporter - Error creating test result:', error);
         }
     }
 }
+
+export default GrafanaPlaywrightReporter;
 ```
-The spec selects the active one at runtime via `findDataSetByName(testData, config.DATASET)`
-(`basket-analysis.spec.ts` line 29), i.e. the dataset to run is chosen by an env var against a JSON
-keyed by dataset name, not hardcoded to a single entry.
 
-By contrast, our [dev-test-data.json](../e2e/test-data/dev-test-data.json) currently has exactly **one**
-dataset entry (`"Omni Agg SI 3yrs Synd"`) under `datasets`, and `start-from-scratch.spec.ts` derives
-`DATASET_NAME` by just taking `Object.keys(testData.datasets)[0]` — i.e. structurally ready for
-multiple entries, but not yet populated with more than one.
-
-**Action**: add additional sibling dataset entries to our `dev-test-data.json` (mirroring OmniShopper's
-`datasets: { "<name1>": {...}, "<name2>": {...} }` shape) and drive selection via an env var/config
-value instead of always picking `Object.keys(...)[0]`.
+(71 lines total — no imports, comments, or code were omitted above.)
 
 ---
 
-## 7. NAMING CONVENTIONS — outcome-specific test names vs. generic names
+## 1. Reporter array entry in `playwright.config.ts`
 
-**Verdict: ALREADY SOLVED IN OMNI SHOPPER (copy this)**
+`disc-fe-omnishopper-ui-automation/playwright.config.ts` (lines 76-92):
 
-Real test names pulled directly from their spec files — each names the specific expected behavior,
-not just the feature area:
-- `"QuickLook: Should display correct preview information when template is selected"` —
-  `basket-analysis.spec.ts` line 42
-- `"Insights Panel: Should validate business questions and report metadata"` —
-  `basket-analysis.spec.ts` line 77
-- `"Madlib Validation: Should validate madlib text content matches expected pattern"` —
-  `basket-analysis.spec.ts` line 111
-- `"Report Generation: Validates dimension selection and successful execution"` —
-  `basket-analysis.spec.ts` line ~192 (inside the `Report_E2E_Flow` describe.serial block)
-- `"Validate Add Blank Report"` — `basket-analysis.spec.ts` (final test in the serial block)
-
-Compare to our current single test name in
-[start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts):
 ```ts
-test('All dimensions selection', { tag: '@StartFromScratch' }, async () => { ... });
+reporter: process.env.CI
+    ? [
+        ['list'],
+        ['json', { outputFile: 'playwright-report/test-results.json' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : []),
+        [
+          './src/lib/playwright/grafana-reporter.ts',
+          {
+            areaName: process.env.AREA_NAME || 'TestArea',
+            domainName: process.env.DOMAIN_NAME || 'TechTest',
+            teamName: process.env.TEAM_NAME || 'DiscoverOmniTest',
+            projectName: process.env.PROJECT_NAME || 'GTATesting'
+          }
+        ]
+      ]
+    : [
+        ['list'],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : [])
+      ],
 ```
-which is generic/step-agnostic and doesn't describe an expected outcome (nor, once split per item 1,
-would one name cover all the distinct steps it currently contains).
 
-**Action**: once split into discrete tests (item 1), name each using OmniShopper's
-`"<Area>: Should <specific expected outcome>"` convention, e.g. `"Start From Scratch: Should land on
-survey creation page"`, `"Dataset Selection: Should select the correct dataset by search term"`,
-`"Panelist Filters: Should apply all configured dimension selections"`, etc.
+Key points:
+- The Grafana reporter is **only registered when `process.env.CI` is truthy** — it's entirely skipped
+  in local/non-CI runs (the `else` branch has no Grafana entry at all).
+- The options object passed as the reporter's second array element (`CustomReporterOptions`, matching
+  the constructor parameter in `grafana-reporter.ts`) is:
+  - `areaName: process.env.AREA_NAME || 'TestArea'`
+  - `domainName: process.env.DOMAIN_NAME || 'TechTest'`
+  - `teamName: process.env.TEAM_NAME || 'DiscoverOmniTest'`
+  - `projectName: process.env.PROJECT_NAME || 'GTATesting'`
+
+These four values are later resolved by `CommonReporterUtils.getOrCreateIds()` (from `@gfk/gta`) into
+numeric `areaId` / `domainId` / `teamId` / `projectId` inside `initialize()`.
 
 ---
 
-## Summary Table
+## 2. Environment variables referenced
 
-| # | Item | Verdict |
+Searched `grafana-reporter.ts` itself for `process.env` — **none appear directly in this file**; it
+reads everything through `config` (imported from `./config`, i.e.
+`src/lib/playwright/config.ts`) and through the `options` object passed in from `playwright.config.ts`.
+
+Environment variables involved in the full chain (declared in `playwright.config.ts` and
+`src/lib/playwright/config.ts`):
+
+| Variable | Where read | Purpose |
 |---|---|---|
-| 1 | Test structure (discrete tests vs. one big test) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
-| 2 | Dataset-selection extraction (boolean method, caller asserts) | NOT SOLVED THERE EITHER (build from scratch) |
-| 3 | Navigate/base-URL dedup | ALREADY SOLVED IN OMNI SHOPPER (copy this), minor exception noted |
-| 4 | Tagging strategy (@regression/@sanity/@smoke/@production) | PARTIALLY SOLVED (adapt this) |
-| 5 | Fallback strategy for pre-selected filters | NOT SOLVED THERE EITHER (build from scratch) |
-| 6 | Test data structure (multiple datasets in one JSON) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
-| 7 | Naming conventions (outcome-specific names) | ALREADY SOLVED IN OMNI SHOPPER (copy this) |
+| `AREA_NAME` | `playwright.config.ts` line 85 | `areaName` option (default `'TestArea'`) |
+| `DOMAIN_NAME` | `playwright.config.ts` line 86 | `domainName` option (default `'TechTest'`) |
+| `TEAM_NAME` | `playwright.config.ts` line 87 | `teamName` option (default `'DiscoverOmniTest'`) |
+| `PROJECT_NAME` | `playwright.config.ts` line 88 | `projectName` option (default `'GTATesting'`) |
+| `POSTGRES_API_URL` | `src/lib/playwright/config.ts` line 94 (`config.postgresAPIUrl`) | Base API URL passed to `PostgresActions` / `CommonReporterUtils` |
+| `CI` | `playwright.config.ts` line 76 | Gates whether the Grafana reporter is registered at all |
+| `ENV` | `src/lib/playwright/config.ts` (`config.ENV`) → `this.environmentName` in the reporter constructor | Tagged onto every result as `envName` |
+
+Also present in `.env.example`/`.env` (`#Grafana Configuration` section) as the documented defaults:
+```
+POSTGRES_API_URL='https://postgres-api.qa.in.gfk.com/report-postgres/api/v1'
+AREA_NAME='TestArea'
+DOMAIN_NAME='TechTest'
+TEAM_NAME='DiscoverOmniTest'
+PROJECT_NAME='GTATesting'
+```
+(This is a committed `.env.example` default pointing at an internal QA API host, not a live secret —
+shown as-is since it's already plaintext in the repo. No API key/token is present in this section.)
+
+---
+
+## 3. Documentation / README / setup instructions
+
+**None found.** Searched:
+- All `*.md` files in the repo (root `README.md`, `docs/**`) for `Grafana`/`grafana`/`postgres`/`Postgres`
+  — zero matches in any Markdown file.
+- `docs/PRODUCTION_TESTING_GUIDE.md` contains many `--reporter=...` occurrences, but every one of them
+  is a generic Playwright CLI flag (`--reporter=html`, `--reporter=allure-playwright`, `--reporter=line`)
+  used for ad-hoc local runs — none reference the custom Grafana reporter or explain how to
+  configure/enable it.
+
+The only "documentation" that exists is the inline `#Grafana Configuration` comment header in
+`.env`/`.env.example` (shown above) listing the four env vars with example defaults, plus the
+one-line inline comment in `src/lib/playwright/config.ts`:
+```ts
+// Grafana Playwright Reporter configuration
+postgresAPIUrl: process.env.POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1',
+```
+There is no dedicated setup guide, onboarding doc, or README section explaining what this reporter
+does, how the areaId/domainId/teamId/projectId resolution works, or how to interpret results in
+Grafana itself.
+
+---
+
+## 4. Does it send data to an external API? What's the endpoint pattern?
+
+**Yes** — it sends data to an external HTTP API (a "postgres-api" service, presumably backing a
+Grafana dashboard), not directly to Grafana's own API. The reporter itself never calls `fetch`/`axios`
+directly — all network calls are delegated to two classes imported from the private `@gfk/gta` package:
+
+- `PostgresActions` (constructed with `config.postgresAPIUrl`) — `.createOrUpdateTestResults(...)` is
+  called in `onTestEnd()` for every test, sending:
+  ```ts
+  {
+    suiteName,        // spec file name (path.basename of parent suite title)
+    testcaseName,     // test title
+    status,           // 'passed' | 'failed' | 'timedOut' | 'skipped' | ...
+    executionTime,    // result.startTime
+    executionDuration,// result.duration
+    envName,          // config.ENV
+    projectId,        // resolved numeric ID
+  }
+  ```
+  plus an `isRetry` flag and the previous `resultID` (for update-vs-create semantics).
+- `CommonReporterUtils` (constructed with `options`, `environmentName`, `config.postgresAPIUrl`) —
+  `.getOrCreateIds()` is called once in `onBegin()`/`initialize()` to resolve
+  `areaName`/`domainName`/`teamName`/`projectName` strings into numeric
+  `areaId`/`domainId`/`teamId`/`projectId` (presumably an upsert-by-name lookup against the API).
+
+**Endpoint pattern** (constructed from `config.postgresAPIUrl` base + implied REST resource paths,
+inferred from the method names since `@gfk/gta`'s internals are a private package not present in
+`node_modules` here and could not be inspected directly):
+
+```
+Base URL:  <POSTGRES_API_URL>            e.g. https://postgres-api.qa.in.gfk.com/report-postgres/api/v1
+Calls made (inferred from PostgresActions/CommonReporterUtils method names, not the literal paths):
+  - getOrCreateIds()             → some "area/domain/team/project" lookup-or-create endpoint(s) under the base URL
+  - createOrUpdateTestResults()  → some "test-results" create/update endpoint under the base URL
+```
+No API key, token, or auth header is visible anywhere in `grafana-reporter.ts`, `config.ts`, or the
+`.env.example` Grafana section — only the base URL and the four naming/grouping strings
+(area/domain/team/project) are passed. If `PostgresActions`/`CommonReporterUtils` do send credentials,
+they are handled entirely inside the private `@gfk/gta` package (not visible in this workspace).
+
+---
+
+## Summary
+
+| Item | Finding |
+|---|---|
+| File location | `disc-fe-omnishopper-ui-automation/src/lib/playwright/grafana-reporter.ts` (71 lines, shown in full above) |
+| Registered in `playwright.config.ts` | Only under `process.env.CI` branch, with `{ areaName, domainName, teamName, projectName }` options, all `process.env.*` with hardcoded fallbacks |
+| Direct `process.env` reads in the file itself | None — all env access is one level removed, via `config` (from `./config`) and the `options` object |
+| Env vars in the full chain | `AREA_NAME`, `DOMAIN_NAME`, `TEAM_NAME`, `PROJECT_NAME`, `POSTGRES_API_URL`, `CI`, `ENV` |
+| Dedicated documentation | None found in any `.md` file — only inline `.env`/`.env.example` comment header and one config.ts comment |
+| External API call | Yes, via `@gfk/gta`'s `PostgresActions`/`CommonReporterUtils` classes against `config.postgresAPIUrl`; exact REST paths are internal to that private package and not visible locally |
