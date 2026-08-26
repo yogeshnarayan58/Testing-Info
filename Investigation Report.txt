@@ -1,188 +1,13 @@
-# Dataset Selection Boolean Fix — `searchAndSelectDataset()`
-
-File: [e2e/page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts)
-
-## Original Request (verbatim)
-
-> In searchAndSelectDataset() (start-from-scratch.page.ts), fix the return
-> value for each condition — do not re-verify a condition using the same
-> check that already satisfied it, and do not use isDatasetSelectionConfirmed()
-> after a click, since that method checks "Choose a dataset" screen visibility
-> (chooseDatasetBreadcrumb), which is expected to have changed/disappeared
-> after a successful click — reusing it there would produce the same false
-> result as calling it in Condition 1.
->
-> Condition 1 ("Choose a dataset" screen not shown, assumed already selected):
-> return true directly — the trigger condition IS the confirmation.
->
-> Condition 2 (default dataset text already matches): return true directly —
-> the text match IS the confirmation.
->
-> Condition 3 (target dataset tile already visible, clicked directly): after
-> the click, verify the click actually worked using a check that is NOT
-> chooseDatasetBreadcrumb-based — e.g. re-checking that the same
-> datasetByLabel element (or its selected/highlighted state) reflects the
-> choice, or another confirmed-real signal. Do not call
-> isDatasetSelectionConfirmed() here. If no reliable post-click check exists
-> without live DOM inspection, say so explicitly and return true with a
-> clear comment flagging that the click's success is currently assumed, not
-> verified — do not invent an unconfirmed locator.
->
-> Condition 4 (normal search-and-select flow): same treatment as Condition 3
-> — verify using a real post-click signal, not chooseDatasetBreadcrumb, or
-> flag explicitly if nothing reliable exists yet without live DOM inspection.
->
-> Show me the diff before applying. Run npx tsc --noEmit and show output.
-> If clean, run npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
-> and show the actual pass/fail result — not a summary.
->
-> Once everything above is done, write this entire prompt and your full
-> response (diff, explanations, tsc output, test result) into
-> e2e/DATASET_SELECTION_BOOLEAN_FIX.md, formatted as markdown with clear
-> headers — same as the earlier MANAGER_FEEDBACK_VS_OMNISHOPPER.md file.
-
-## Root Cause
-
-All four early-return / final-return branches in `searchAndSelectDataset()` called
-`this.isDatasetSelectionConfirmed()`, which only checks the visibility of
-`chooseDatasetBreadcrumb` (`[data-test-id='dataset-picker-title']`):
-
-- **Condition 1** already used `chooseDatasetBreadcrumb.isVisible()` as its trigger
-  (`!isOnDatasetScreen`). Calling `isDatasetSelectionConfirmed()` afterward re-read the
-  exact same element and could only echo the same result — not an independent check.
-- **Condition 2** matched selection via `defaultDatasetElement`'s text — an unrelated
-  element to `chooseDatasetBreadcrumb`, so the follow-up call added no real verification.
-- **Conditions 3 and 4** clicked a dataset tile and then called
-  `isDatasetSelectionConfirmed()`, expecting it to confirm the click worked. But that
-  method checks whether the **"Choose a dataset" screen itself is still visible** — a
-  screen that is expected to disappear/navigate away after a *successful* click. So a
-  successful click could make the check return `false` (looking like failure), while a
-  no-op could leave the breadcrumb still visible (looking like it "confirmed" nothing
-  happened) — the check is inverted/meaningless as a post-click signal.
-
-## Diff Applied
-
-```diff
---- a/e2e/page-objects/survey/start-from-scratch.page.ts
-+++ b/e2e/page-objects/survey/start-from-scratch.page.ts
-@@ searchAndSelectDataset(...)
-       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-       if (!isOnDatasetScreen) {
-         console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
--        return this.isDatasetSelectionConfirmed();
-+        // The trigger condition IS the confirmation here — the breadcrumb's absence is
-+        // what we just checked above. Calling isDatasetSelectionConfirmed() would re-check
-+        // that exact same chooseDatasetBreadcrumb element and only echo the same result.
-+        return true;
-       }
-
-       // Check-before-search: the 'defaultDataset' element (confirmed "default-dataset-selected"
-       // class) reflects whatever dataset was previously chosen. It may not exist at all if
-       // nothing was ever selected — that's treated as "not matched", not an error.
-       const defaultDatasetElement = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('defaultDataset', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
-       const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
-       if (isDefaultDatasetAlreadySelected) {
-         console.log(`↷ Dataset "${datasetLabel}" already selected as default — skipping search`);
--        return this.isDatasetSelectionConfirmed();
-+        // The defaultDataset text match IS the confirmation — no need to also check
-+        // chooseDatasetBreadcrumb, an unrelated element.
-+        return true;
-       }
-
-       // Check-before-search: if the desired dataset tile is already visible on the
-       // unfiltered list, skip the search-toggle/search-input steps entirely and click it.
-       const existingDatasetElement = this.webActionHandler.getWebElement(
-         this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
-       if (isDatasetAlreadyVisible) {
-         console.log(`↷ Dataset "${datasetLabel}" already visible — skipping search, clicking directly`);
-         await existingDatasetElement.click();
--        return this.isDatasetSelectionConfirmed();
-+        // NOTE: no confirmed post-click signal exists for "dataset tile click succeeded"
-+        // without live DOM inspection. isDatasetSelectionConfirmed() checks the "Choose a
-+        // dataset" screen's OWN visibility (chooseDatasetBreadcrumb), which is expected to
-+        // change/disappear after a successful click — reusing it here would produce the
-+        // same false result as Condition 1 above. Returning true directly; the click's
-+        // success is currently ASSUMED, not verified.
-+        return true;
-       }
-
-       const searchToggle = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await searchToggle.waitFor(SMALL_TIMEOUT);
-       await searchToggle.click();
-
-       const searchInput = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('searchInput', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await searchInput.waitFor(SMALL_TIMEOUT);
-       await searchInput.enterText(searchTerm);
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-       const datasetElement = this.webActionHandler.getWebElement(
-         this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       await datasetElement.waitFor(SMALL_TIMEOUT);
-       await datasetElement.click();
--      return this.isDatasetSelectionConfirmed();
-+      // NOTE: same limitation as the already-visible branch above — no confirmed
-+      // post-click signal exists for "dataset tile click succeeded" without live DOM
-+      // inspection. isDatasetSelectionConfirmed() checks the "Choose a dataset" screen's
-+      // OWN visibility (chooseDatasetBreadcrumb), which is expected to change/disappear
-+      // after a successful click, so it cannot be reused here either. Returning true
-+      // directly; the click's success is currently ASSUMED, not verified.
-+      return true;
-     } catch (error) {
-       throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
-     }
-   }
-```
-
-`isDatasetSelectionConfirmed()` itself was **not deleted** — it's a public method with no
-other callers found in the codebase (`grep_search` for `isDatasetSelectionConfirmed`
-outside this file returned nothing), but removing it wasn't requested and it may still be
-a useful standalone "is the picker screen showing" check for other call sites in the
-future.
-
-## Explanation Per Condition
-
-| Condition | Trigger check | Old return | New return | Why |
-|---|---|---|---|---|
-| 1 | `!chooseDatasetBreadcrumb.isVisible()` | `isDatasetSelectionConfirmed()` (re-reads same element) | `true` | Trigger check already IS the confirmation; re-checking is a no-op that can only repeat the same answer. |
-| 2 | `defaultDatasetElement` text includes `datasetLabel` | `isDatasetSelectionConfirmed()` (unrelated element) | `true` | Text match against `defaultDataset` already proves the label is selected; `chooseDatasetBreadcrumb` has nothing to do with that element. |
-| 3 | `datasetByLabel` tile already visible → clicked | `isDatasetSelectionConfirmed()` (screen-visibility, inverted after click) | `true` + explicit comment | No resource in `start-from-scratch.locator.json` represents a "tile selected/highlighted" state (only `datasetByLabel`, `defaultDataset`, `chooseDatasetBreadcrumb`, `applyButton`, etc. exist) and confirming a new one requires live DOM inspection not available in this session — flagged as an assumption rather than inventing an unverified locator. |
-| 4 | search → `datasetByLabel` tile found → clicked | `isDatasetSelectionConfirmed()` (screen-visibility, inverted after click) | `true` + explicit comment | Same limitation as Condition 3 — no confirmed real post-click signal exists yet without live DOM inspection. |
-
-## `npx tsc --noEmit` Output
-
-Command:
-```
-cd e2e
-npx tsc --noEmit
-```
-
-Result: **clean — no output, no errors.**
-
-## `npx playwright test e2e/tests/survey/start-from-scratch.spec.ts` Output
-
-Command:
-```
-cd e2e
-npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --reporter=list
-```
-
-Captured console output from the run (global setup + test execution):
-
-```
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx tsc --noEmit"
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts"
+◇ injected env (21) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
 Terms page not shown or already accepted, continuing login...
 Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
 Authentication successful. New auth state created.
@@ -190,36 +15,234 @@ Global setup completed. Auth state saved.
 
 Running 10 tests using 2 workers
 
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+      1 …Start from scratch option on the survey home page @LandStartFromScratch
+  ✓   1 …om scratch option on the survey home page @LandStartFromScratch (47.9s)     2 …Start from scratch option on the survey home page @LandStartFromScratch
+Auth state loaded from storage/auth.json
+  ✓   2 …rom scratch option on the survey home page @LandStartFromScratch (1.2m) ✓   3 …ataset and confirm the Choose a dataset screen @DatasetSelection (6.2s) Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+      4 …ld enable Search for Panelists after all 5 filters are set @DataSummary
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+      5 …t the dataset and confirm the Choose a dataset screen @DatasetSelectio
+  ✓   5 …ataset and confirm the Choose a dataset screen @DatasetSelection (8.3s) Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+      6 …ld enable Search for Panelists after all 5 filters are set @DataSummary
 ✓ Dimension 'productNoDataPrompt' selection completed
 ✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removin
+  ✓   4 …le Search for Panelists after all 5 filters are set @DataSummary (1.2m) Dimension 'retailerNoDataPrompt' selection completed
+✓ Dimension 'productNoDataPrompt' selection completed
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
 ✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-```
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+  ✓   6 …e Search for Panelists after all 5 filters are set @DataSummary (58.1s) — removing first
+✓ Dimension 'retailerNoDataPrompt' selection completed
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+✓ Dimension 'periodNoDataPrompt' selection completed
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+      7 …oceed to survey builder after selecting a response count @ResponseCoun
+  ✓   7 …o survey builder after selecting a response count @ResponseCount (5.1s) Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+      8 …igate to the Build Survey page after proceeding @ProceedToSurveyBuilde
+  ✓   8 …o the Build Survey page after proceeding @ProceedToSurveyBuilder (2.9s✓ Dimension 'periodNoDataPrompt' selection completed
+      9 …oceed to survey builder after selecting a response count @ResponseCoun
+  ✓   9 …o survey builder after selecting a response count @ResponseCount (3.8s     10 …igate to the Build Survey page after proceeding @ProceedToSurveyBuilde
+  ✓  10 …o the Build Survey page after proceeding @ProceedToSurveyBuilder (1.1s)
+  10 passed (3.7m)
 
-The `"already selected as default — skipping search"` line confirms **Condition 2** of the
-fixed method executed and returned `true` directly (no `isDatasetSelectionConfirmed()`
-re-check), matching the new code path.
+To open last HTML report run:
 
-Final result, read from Playwright's own run-status file
-([test-results/.last-run.json](test-results/.last-run.json)) after the process exited
-(node process no longer present):
+  npx playwright show-report
 
-```json
-{
-  "status": "passed",
-  "failedTests": []
-}
-```
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts & echo EXITCODE=%errorlevel%"
+cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:1 char:1
++ cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey- ...
++ ~~~~
+    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && tasklist | findstr /i node"
+cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:1 char:1
++ cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey- ...
++ ~~~~
+    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "echo idle-check"
+cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a 
+path was included, verify that the path is correct and try again.
+At line:1 char:1
++ cmd /c "echo idle-check"
++ ~~~~
+    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts"
+◇ injected env (21) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-**Actual result: PASSED — 10/10 tests, 0 failures.**
+Running 10 tests using 2 workers
 
-### Note on obtaining this result
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+  ✓   1 …m scratch option on the survey home page @LandStartFromScratch (47.1s)
+  ✓   2 …m scratch option on the survey home page @LandStartFromScratch (52.3s)
+Auth state loaded from storage/auth.json
+Auth state loaded from storage/auth.json
+  ✓   3 …taset and confirm the Choose a dataset screen @DatasetSelection (5.7s)
+↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+  ✓   4 …taset and confirm the Choose a dataset screen @DatasetSelection (8.0s)
+      5 …d enable Search for Panelists after all 5 filters are set @DataSummary
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+      6 …d enable Search for Panelists after all 5 filters are set @DataSummary
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✓ Dimension 'productNoDataPrompt' selection completed
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+✓ Dimension 'productNoDataPrompt' selection completed
+✓ Dimension 'retailerNoDataPrompt' selection completed
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✓ Dimension 'retailerNoDataPrompt' selection completed
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   5 … Search for Panelists after all 5 filters are set @DataSummary (54.3s)
+  ✓   7 … survey builder after selecting a response count @ResponseCount (4.3s)
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+  ✓   8 … the Build Survey page after proceeding @ProceedToSurveyBuilder (1.3s)
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   6 …e Search for Panelists after all 5 filters are set @DataSummary (1.1m)
+  ✓   9 … survey builder after selecting a response count @ResponseCount (4.3s)
+  ✓  10 … the Build Survey page after proceeding @ProceedToSurveyBuilder (1.1s)
 
-The terminal in this sandbox reuses a single session across tool calls, and a couple of
-interim `run_in_terminal`/status-check calls returned interleaved/partial console
-snapshots of the in-progress run rather than a final summary (a known artifact of this
-environment noted in repo memory — long-running Playwright invocations can still be
-writing output when a subsequent command is sent to the same terminal). The authoritative,
-final pass/fail result above was confirmed via Playwright's own `.last-run.json`
-status file once the underlying `node` process had actually exited, not by trusting any
-single truncated stdout snapshot.
+  10 passed (3.3m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^UGet-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime, Path
+Get-Process : The term 'Get-Process' is not recognized as the name of a 
+cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try 
+again.
+At line:1 char:1
++ Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, S ...
++ ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Get-Process:String) [], Comma 
+   ndNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "taskkill /F /IM node.exe /T 2>nul & echo done"
+done
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --reporter=list"
+◇ injected env (21) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 10 tests using 2 workers
+
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+  ✓   1 …om scratch option on the survey home page @LandStartFromScratch (1.0m)
+  ✓   2 …om scratch option on the survey home page @LandStartFromScratch (1.0m)
+Auth state loaded from storage/auth.json
+Auth state loaded from storage/auth.json
+  ✓   3 …taset and confirm the Choose a dataset screen @DatasetSelection (4.8s)
+  ✓   4 …taset and confirm the Choose a dataset screen @DatasetSelection (3.8s)
+↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+      5 …d enable Search for Panelists after all 5 filters are set @DataSummary
+      6 …d enable Search for Panelists after all 5 filters are set @DataSummary
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✓ Dimension 'productNoDataPrompt' selection completed
+✓ Dimension 'productNoDataPrompt' selection completed
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+✓ Dimension 'retailerNoDataPrompt' selection completed
+✓ Dimension 'retailerNoDataPrompt' selection completed
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   5 … Search for Panelists after all 5 filters are set @DataSummary (48.7s)
+  ✓   7 … survey builder after selecting a response count @ResponseCount (3.6s)
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   6 … Search for Panelists after all 5 filters are set @DataSummary (48.7s)
+  ✓   8 … survey builder after selecting a response count @ResponseCount (3.6s)
+  ✓   9 …the Build Survey page after proceeding @ProceedToSurveyBuilder (810ms)
+  ✓  10 …the Build Survey page after proceeding @ProceedToSurveyBuilder (771ms)
+
+  10 passed (3.2m)
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime"
+powershell : The term 'powershell' is not recognized as the name of a 
+cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try 
+again.
+At line:1 char:1
++ powershell -NoProfile -Command "Get-Process node -ErrorAction Silent ...
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
+   dNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime"
+powershell : The term 'powershell' is not recognized as the name of a 
+cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try 
+again.
+At line:1 char:1
++ powershell -NoProfile -Command "Get-Process node -ErrorAction Silent ...
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
+   dNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Content 'C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\test-results\.last-run.json' -Raw"
+powershell : The term 'powershell' is not recognized as the name of a 
+cmdlet, function, script file, or operable program. Check the spelling of the 
+name, or if a path was included, verify that the path is correct and try 
+again.
+At line:1 char:1
++ powershell -NoProfile -Command "Get-Content 'C:\Users\Yogesh.Upadhya ...
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
+   dNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> 
