@@ -1,34 +1,251 @@
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-  ✓   1 …› Land on page + click Start from Scratch @LandStartFromScratch (21.8s)
-  ✓   2 …› Land on page + click Start from Scratch @LandStartFromScratch (28.0s)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  ✓   3 …om scratch › Select dataset (footer assertion) @DatasetSelection (3.3s)
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      4 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
-  ✓   5 …om scratch › Select dataset (footer assertion) @DatasetSelection (4.0s)
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      6 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-✓ Dimension 'productNoDataPrompt' selection completed
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-✓ Dimension 'productNoDataPrompt' selection completed
-✓ Dimension 'retailerNoDataPrompt' selection completed
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-✓ Dimension 'retailerNoDataPrompt' selection completed
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   4 …:7 › Start from scratch › Data summary / 5 filters @DataSummary (42.5s)
-  ✓   7 …t from scratch › Panelist button / response count @ResponseCount (4.0s)
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-  ✓   8 …rom scratch › Proceed to survey builder @ProceedToSurveyBuilder (836ms)
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   6 …:7 › Start from scratch › Data summary / 5 filters @DataSummary (44.8s)
-  ✓   9 …t from scratch › Panelist button / response count @ResponseCount (3.9s)
-  ✓  10 …rom scratch › Proceed to survey builder @ProceedToSurveyBuilder (769ms)
+# Start With Prompt — Current State Investigation
+
+Investigation only — no files were modified as part of this report.
+
+## 1. `e2e/tests/survey/start-with-prompt.spec.ts` (full current content)
+
+```typescript
+import { test } from '@playwright/test';
+import { BasePageFactory } from '../../utils/base-page-factory';
+import { StartWithPromptPage } from '../../page-objects/survey/start-with-prompt.page';
+import { assertTrue } from '../../page-objects/common/assert-utils';
+import testData from '../../test-data/dev-test-data.json';
+
+const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = testData.datasets[DATASET_NAME];
+
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
+
+test.describe('Start with a prompt', { tag: '@StartWithPrompt' }, () => {
+  test('All dimensions selection', { tag: '@StartWithPrompt' }, async () => {
+    const basePage = await BasePageFactory.createBasePage();
+    const promptPage = new StartWithPromptPage(basePage);
+
+    try {
+      await promptPage.navigateToSurvey();
+      await promptPage.clickStartWithPrompt();
+
+      const isVisible = await promptPage.isDatasetTypeSelectorVisible(0);
+      assertTrue(isVisible);
+    } finally {
+      await basePage.getWebActions().closeBrowser();
+    }
+  });
+});
+```
+
+**Observation**: this spec is minimal/incomplete relative to `start-from-scratch.spec.ts` — it only
+navigates, clicks "Start with a prompt", and asserts the first dataset-type selector is visible. It
+never calls `selectDatasetType()`, `searchAndSelectDataset()`, `applyDataset()`, does not touch any
+panelist/filter/dimension flow, and never reaches the prompt textarea or "Generate Survey" button.
+`datasetConfig` is read from `dev-test-data.json` but never actually used in the test body.
+
+## 2. `e2e/page-objects/survey/start-with-prompt.page.ts` (full current content)
+
+```typescript
+import { BasePage } from '@gfk/gta';
+import { CommonPage } from '../common/common-page';
+import { SMALL_TIMEOUT, UI_STATE_UPDATE_DELAY } from '../../constants/timeout-constants';
+import { envConfig } from '../../config/env.config';
+import startWithPromptPageResources from '../../locators/survey/start-with-prompt.locator.json';
+
+const START_WITH_PROMPT_PAGE_COMPONENT_NAME = 'startWithPromptPage';
+
+export class StartWithPromptPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      START_WITH_PROMPT_PAGE_COMPONENT_NAME,
+      startWithPromptPageResources
+    );
+  }
+
+  async navigateToSurvey(): Promise<void> {
+    const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
+    await this.navigateToUrl(surveyURL);
+  }
+
+  async clickStartWithPrompt(): Promise<void> {
+    try {
+      const startWithPrompt = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('startWithPrompt', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await startWithPrompt.waitFor(SMALL_TIMEOUT);
+      await startWithPrompt.click();
+    } catch (error) {
+      throw new Error(`Failed to click Start with a prompt: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async isDatasetTypeSelectorVisible(index = 0): Promise<boolean> {
+    try {
+      const datasetTypeSelector = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetTypeSelector', String(index), START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await datasetTypeSelector.waitFor(SMALL_TIMEOUT);
+      return datasetTypeSelector.isVisible();
+    } catch (error) {
+      throw new Error(`Failed to check dataset type selector visibility: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async selectDatasetType(index: number): Promise<void> {
+    try {
+      const datasetTypeOption = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetTypeSelector', String(index), START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await datasetTypeOption.waitFor(SMALL_TIMEOUT);
+      await datasetTypeOption.click();
+
+      const nextDatasetButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('nextDatasetButton', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await nextDatasetButton.waitFor(SMALL_TIMEOUT);
+      await nextDatasetButton.click();
+    } catch (error) {
+      throw new Error(`Failed to select dataset type at index ${index}: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async searchAndSelectDataset(searchTerm: string, datasetLabel: string): Promise<void> {
+    try {
+      const searchToggle = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('datasetSearchToggle', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await searchToggle.waitFor(SMALL_TIMEOUT);
+      await searchToggle.click();
+
+      const searchInput = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('datasetSearchInput', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await searchInput.waitFor(SMALL_TIMEOUT);
+      await searchInput.enterText(searchTerm);
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const datasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetByText', datasetLabel, START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await datasetElement.waitFor(SMALL_TIMEOUT);
+      await datasetElement.click();
+    } catch (error) {
+      throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async applyDataset(): Promise<void> {
+    try {
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const applyButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('applyDatasetButton', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+      );
+      await applyButton.waitFor(SMALL_TIMEOUT);
+      await applyButton.click();
+    } catch (error) {
+      throw new Error(`Failed to apply dataset: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  public getBasePage(): BasePage {
+    return this.basePage;
+  }
+}
+```
+
+**Observation**: `StartWithPromptPage` stops after `applyDataset()`. There is no method here for:
+- the panelist/dimension/filter selection steps (Product/Retailer/Geography/Demographic/Period),
+- the "How many responses are you looking for?" step,
+- the prompt textarea ("Please provide the context..."),
+- or clicking "Generate Survey" (`proceed-to-survey`).
+
+## 3. `e2e/locators/survey/start-with-prompt.locator.json` (full current content)
+
+```json
+{
+  "name": "Arthur AI Page",
+  "webElements": [
+    { "elementName": "startWithPrompt", "selectorType": "text", "selectorValue": "Start with a prompt" },
+    { "elementName": "datasetTypeSelector", "selectorType": "css", "selectorValue": "[data-test-id='rv-dataset-type-selector${text}']" },
+    { "elementName": "nextDatasetButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
+    { "elementName": "datasetSearchToggle", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']" },
+    { "elementName": "datasetSearchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
+    { "elementName": "datasetByText", "selectorType": "text", "selectorValue": "${text}" },
+    { "elementName": "applyDatasetButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" }
+  ]
+}
+```
+
+No entries exist for a prompt textarea or a "Generate Survey"/`proceed-to-survey` button.
+
+## Question 1 — Does it reuse `SelectPanelistPage`?
+
+**No.** `StartWithPromptPage` has zero references to `SelectPanelistPage` and does not import it.
+Confirmed via a workspace-wide search for `SelectPanelistPage` — it is only referenced in:
+- [e2e/page-objects/common/select-panelist.page.ts](page-objects/common/select-panelist.page.ts) (its own definition)
+- [e2e/page-objects/common/panelist-flow.helper.ts](page-objects/common/panelist-flow.helper.ts) (a shared helper that instantiates it)
+- [e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) (imports/uses it directly)
+
+`start-with-prompt.spec.ts` and `start-with-prompt.page.ts` do not use `SelectPanelistPage` or
+`panelist-flow.helper.ts` at all. The "Start with a prompt" flow currently has **no** implementation
+of the panelist/dimension/filter steps — it would need to either reuse `SelectPanelistPage` /
+`panelist-flow.helper.ts` (same underlying `<panelist-dataselector>` component per the library HTML
+below) or get its own separate implementation added.
+
+## Question 2 — Do resources for the prompt textarea / "Generate Survey" button already exist?
+
+**No — neither exists yet in `start-with-prompt.locator.json` (or anywhere else in `e2e/`).** They
+would need to be added fresh. What's confirmed from the actual Angular library source
+([libs/survey-mod-lib/.../select-panelist.component.html](../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html)):
+
+```html
+@if(surveyCommonService.flowType().arthur) {
+  <div class="d-flex flex-column prompt-container">
+    <div>Please provide the context of what kind of a survey you are looking for to proceed with survey generation</div>
+      <textarea class="prompt-input" rows="2"
+          placeholder="E.g. Generate a few questions on the effectiveness of the product(s)"
+          [(ngModel)]="userPrompt" (ngModelChange)="onPromptInput()">
+      </textarea>
+    ...
+  </div>
+}
+
+<div class="footer">
+  <button class="cancel">Cancel</button>
+  <button class="next" data-test-id="proceed-to-survey"
+          [disabled]="!selectedResponses || (surveyCommonService.flowType().arthur && (!userPrompt.trim() || isPromptSettling()))"
+          (click)="proceedToSurveyBuilder()">
+    {{surveyCommonService.flowType().arthur ? 'Generate Survey' : 'Proceed to survey builder'}}
+  </button>
+</div>
+```
+
+Key findings on these two elements:
+
+- **"Generate Survey" button**: confirmed `data-test-id="proceed-to-survey"` on the `<button class="next">`.
+  This is the SAME button element used for both flows — its visible label toggles between
+  `'Generate Survey'` (Arthur/prompt flow) and `'Proceed to survey builder'` (scratch flow) based on
+  `surveyCommonService.flowType().arthur`. It is `disabled` until `selectedResponses` is set, and (for
+  the Arthur/prompt flow specifically) also until `userPrompt.trim()` is non-empty and
+  `isPromptSettling()` is false.
+- **Prompt textarea**: has **no `data-test-id`** — only `class="prompt-input"` (plus `rows="2"`,
+  `placeholder="E.g. Generate a few questions on the effectiveness of the product(s)"`, and Angular
+  `[(ngModel)]="userPrompt"` / `(ngModelChange)="onPromptInput()"` bindings). Any locator added for it
+  would have to target the class or placeholder text, not a test-id, unless one is added to the
+  component template.
+- This whole block, including the button, lives inside `<panelist-dataselector>` in
+  `select-panelist.component.html` — i.e. it's part of the same shared panelist/data-selector screen
+  already driven by `SelectPanelistPage` for the scratch flow, not a separate page/component.
+
+## Summary
+
+| Item | Current state |
+|---|---|
+| `start-with-prompt.spec.ts` | Minimal — only tests dataset-type-selector visibility after clicking "Start with a prompt"; no dimension/panelist/prompt/generate-survey coverage |
+| `start-with-prompt.page.ts` | Covers: navigate, click "Start with a prompt", dataset type selection, dataset search/select, apply dataset. Stops there. |
+| `start-with-prompt.locator.json` | 7 resources, all dataset-type/dataset-picker related. No prompt-textarea or generate-survey/proceed-to-survey resource. |
+| Reuses `SelectPanelistPage`? | **No** — no reference anywhere in the prompt flow's spec/page-object files. |
+| `proceed-to-survey` button resource | **Does not exist yet** in `start-with-prompt.locator.json` — confirmed live DOM attribute `data-test-id="proceed-to-survey"` exists in library source, needs to be added |
+| Prompt textarea resource | **Does not exist yet** — and the underlying element has no `data-test-id` at all (only `class="prompt-input"`), so it needs a non-test-id selector (or a template change) once added |
