@@ -1,120 +1,16 @@
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx tsc --noEmit"
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts"
-◇ injected env (21) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 10 tests using 2 workers
-
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-      1 …Start from scratch option on the survey home page @LandStartFromScratch
-  ✓   1 …om scratch option on the survey home page @LandStartFromScratch (47.9s)     2 …Start from scratch option on the survey home page @LandStartFromScratch
-Auth state loaded from storage/auth.json
-  ✓   2 …rom scratch option on the survey home page @LandStartFromScratch (1.2m) ✓   3 …ataset and confirm the Choose a dataset screen @DatasetSelection (6.2s) Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      4 …ld enable Search for Panelists after all 5 filters are set @DataSummary
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-      5 …t the dataset and confirm the Choose a dataset screen @DatasetSelectio
-  ✓   5 …ataset and confirm the Choose a dataset screen @DatasetSelection (8.3s) Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      6 …ld enable Search for Panelists after all 5 filters are set @DataSummary
-✓ Dimension 'productNoDataPrompt' selection completed
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removin
-  ✓   4 …le Search for Panelists after all 5 filters are set @DataSummary (1.2m) Dimension 'retailerNoDataPrompt' selection completed
-✓ Dimension 'productNoDataPrompt' selection completed
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-  ✓   6 …e Search for Panelists after all 5 filters are set @DataSummary (58.1s) — removing first
-✓ Dimension 'retailerNoDataPrompt' selection completed
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-✓ Dimension 'periodNoDataPrompt' selection completed
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-      7 …oceed to survey builder after selecting a response count @ResponseCoun
-  ✓   7 …o survey builder after selecting a response count @ResponseCount (5.1s) Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-      8 …igate to the Build Survey page after proceeding @ProceedToSurveyBuilde
-  ✓   8 …o the Build Survey page after proceeding @ProceedToSurveyBuilder (2.9s✓ Dimension 'periodNoDataPrompt' selection completed
-      9 …oceed to survey builder after selecting a response count @ResponseCoun
-  ✓   9 …o survey builder after selecting a response count @ResponseCount (3.8s     10 …igate to the Build Survey page after proceeding @ProceedToSurveyBuilde
-  ✓  10 …o the Build Survey page after proceeding @ProceedToSurveyBuilder (1.1s)
-  10 passed (3.7m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts & echo EXITCODE=%errorlevel%"
-cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
-script file, or operable program. Check the spelling of the name, or if a 
-path was included, verify that the path is correct and try again.
-At line:1 char:1
-+ cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey- ...
-+ ~~~~
-    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
-   ndException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && tasklist | findstr /i node"
-cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
-script file, or operable program. Check the spelling of the name, or if a 
-path was included, verify that the path is correct and try again.
-At line:1 char:1
-+ cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey- ...
-+ ~~~~
-    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
-   ndException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Ucmd /c "echo idle-check"
-cmd : The term 'cmd' is not recognized as the name of a cmdlet, function, 
-script file, or operable program. Check the spelling of the name, or if a 
-path was included, verify that the path is correct and try again.
-At line:1 char:1
-+ cmd /c "echo idle-check"
-+ ~~~~
-    + CategoryInfo          : ObjectNotFound: (cmd:String) [], CommandNotFou 
-   ndException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts"
-◇ injected env (21) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 10 tests using 2 workers
-
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-  ✓   1 …m scratch option on the survey home page @LandStartFromScratch (47.1s)
-  ✓   2 …m scratch option on the survey home page @LandStartFromScratch (52.3s)
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+  ✓   1 …› Land on page + click Start from Scratch @LandStartFromScratch (21.8s)
+  ✓   2 …› Land on page + click Start from Scratch @LandStartFromScratch (28.0s)
 Auth state loaded from storage/auth.json
 Auth state loaded from storage/auth.json
-  ✓   3 …taset and confirm the Choose a dataset screen @DatasetSelection (5.7s)
+  ✓   3 …om scratch › Select dataset (footer assertion) @DatasetSelection (3.3s)
 ↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-  ✓   4 …taset and confirm the Choose a dataset screen @DatasetSelection (8.0s)
-      5 …d enable Search for Panelists after all 5 filters are set @DataSummary
+      4 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
+  ✓   5 …om scratch › Select dataset (footer assertion) @DatasetSelection (4.0s)
 ✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
 ↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      6 …d enable Search for Panelists after all 5 filters are set @DataSummary
+      6 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
 ✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
 ✓ Dimension 'productNoDataPrompt' selection completed
 ✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
@@ -123,126 +19,16 @@ Auth state loaded from storage/auth.json
 ✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
 ↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
 ↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+✓ Dimension 'retailerNoDataPrompt' selection completed
 ✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-✓ Dimension 'retailerNoDataPrompt' selection completed
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   5 … Search for Panelists after all 5 filters are set @DataSummary (54.3s)
-  ✓   7 … survey builder after selecting a response count @ResponseCount (4.3s)
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-  ✓   8 … the Build Survey page after proceeding @ProceedToSurveyBuilder (1.3s)
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   6 …e Search for Panelists after all 5 filters are set @DataSummary (1.1m)
-  ✓   9 … survey builder after selecting a response count @ResponseCount (4.3s)
-  ✓  10 … the Build Survey page after proceeding @ProceedToSurveyBuilder (1.1s)
-
-  10 passed (3.3m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^UGet-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime, Path
-Get-Process : The term 'Get-Process' is not recognized as the name of a 
-cmdlet, function, script file, or operable program. Check the spelling of the 
-name, or if a path was included, verify that the path is correct and try 
-again.
-At line:1 char:1
-+ Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, S ...
-+ ~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (Get-Process:String) [], Comma 
-   ndNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "taskkill /F /IM node.exe /T 2>nul & echo done"
-done
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> cmd /c "cd /d C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e && npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --reporter=list"
-◇ injected env (21) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 10 tests using 2 workers
-
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-  ✓   1 …om scratch option on the survey home page @LandStartFromScratch (1.0m)
-  ✓   2 …om scratch option on the survey home page @LandStartFromScratch (1.0m)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  ✓   3 …taset and confirm the Choose a dataset screen @DatasetSelection (4.8s)
-  ✓   4 …taset and confirm the Choose a dataset screen @DatasetSelection (3.8s)
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-      5 …d enable Search for Panelists after all 5 filters are set @DataSummary
-      6 …d enable Search for Panelists after all 5 filters are set @DataSummary
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-✓ Dimension 'productNoDataPrompt' selection completed
-✓ Dimension 'productNoDataPrompt' selection completed
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-✓ Dimension 'retailerNoDataPrompt' selection completed
-✓ Dimension 'retailerNoDataPrompt' selection completed
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
 ↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
 ↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
 ✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   5 … Search for Panelists after all 5 filters are set @DataSummary (48.7s)
-  ✓   7 … survey builder after selecting a response count @ResponseCount (3.6s)
+  ✓   4 …:7 › Start from scratch › Data summary / 5 filters @DataSummary (42.5s)
+  ✓   7 …t from scratch › Panelist button / response count @ResponseCount (4.0s)
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+  ✓   8 …rom scratch › Proceed to survey builder @ProceedToSurveyBuilder (836ms)
 ✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   6 … Search for Panelists after all 5 filters are set @DataSummary (48.7s)
-  ✓   8 … survey builder after selecting a response count @ResponseCount (3.6s)
-  ✓   9 …the Build Survey page after proceeding @ProceedToSurveyBuilder (810ms)
-  ✓  10 …the Build Survey page after proceeding @ProceedToSurveyBuilder (771ms)
-
-  10 passed (3.2m)
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime"
-powershell : The term 'powershell' is not recognized as the name of a 
-cmdlet, function, script file, or operable program. Check the spelling of the 
-name, or if a path was included, verify that the path is correct and try 
-again.
-At line:1 char:1
-+ powershell -NoProfile -Command "Get-Process node -ErrorAction Silent ...
-+ ~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
-   dNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, StartTime"
-powershell : The term 'powershell' is not recognized as the name of a 
-cmdlet, function, script file, or operable program. Check the spelling of the 
-name, or if a path was included, verify that the path is correct and try 
-again.
-At line:1 char:1
-+ powershell -NoProfile -Command "Get-Process node -ErrorAction Silent ...
-+ ~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
-   dNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> ^Upowershell -NoProfile -Command "Get-Content 'C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\test-results\.last-run.json' -Raw"
-powershell : The term 'powershell' is not recognized as the name of a 
-cmdlet, function, script file, or operable program. Check the spelling of the 
-name, or if a path was included, verify that the path is correct and try 
-again.
-At line:1 char:1
-+ powershell -NoProfile -Command "Get-Content 'C:\Users\Yogesh.Upadhya ...
-+ ~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (powershell:String) [], Comman 
-   dNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-PS C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod> 
+  ✓   6 …:7 › Start from scratch › Data summary / 5 filters @DataSummary (44.8s)
+  ✓   9 …t from scratch › Panelist button / response count @ResponseCount (3.9s)
+  ✓  10 …rom scratch › Proceed to survey builder @ProceedToSurveyBuilder (769ms)
