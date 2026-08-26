@@ -1,111 +1,102 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
-◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+PART 1 — Bring searchAndSelectDataset() (start-with-prompt.page.ts) up to
+the same fixed pattern already proven in start-from-scratch.page.ts's
+version — same fallback checks, adapted to this file's own resource names
+(datasetTypeSelector, nextDatasetButton, datasetSearchToggle,
+datasetSearchInput, datasetByText, applyDatasetButton — do NOT rename these
+or assume they match start-from-scratch's names 1:1).
 
-Running 10 tests using 2 workers
+IMPORTANT — before implementing the above, first check whether an
+equivalent to defaultDataset ([data-test-id='rv-default-dataset']) and
+chooseDatasetBreadcrumb ([data-test-id='dataset-picker-title']) exists on
+THIS flow's dataset screens — do not assume they do just because
+btn-next-dataset and apply-dataset-btn are shared between both flows. If
+you cannot confirm these elements exist (via existing captured DOM/test-
+results, or by reasoning from the shared component structure), STOP here
+and report exactly that — do not invent a locator or guess to make Part 1
+"work," and do not proceed to Parts 2-4. We would need one live DOM check
+before continuing, the same way rv-default-dataset itself was originally
+confirmed.
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-  ✘   1 …› Land on page + click Start from Scratch @LandStartFromScratch (25.1s)
-Auth state loaded from storage/auth.json
-  ✘   2 …› Land on page + click Start from Scratch @LandStartFromScratch (28.9s)
-Auth state loaded from storage/auth.json
-  -   3 …tart from scratch › Select dataset (footer assertion) @DatasetSelection
-  -   4 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
-  -   5 … › Start from scratch › Panelist button / response count @ResponseCount
-  -   6 … Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
-  -   7 …tart from scratch › Select dataset (footer assertion) @DatasetSelection
-  -   8 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
-  -   9 … › Start from scratch › Panelist button / response count @ResponseCount
-  -  10 … Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
+If confirmed to exist, implement:
+1. Check-before-select: if a dataset is already applied/showing, skip the
+   type-selector/search flow entirely (mirror the defaultDataset +
+   already-visible logic from the fixed start-from-scratch version, using
+   whatever equivalent locators actually exist here).
+2. Change the return type from Promise<void> to Promise<boolean>, following
+   the same lesson learned today: only re-verify with an independent check
+   when a real action (click) just happened — never re-check using the
+   exact condition that already triggered a branch (e.g. do not call a
+   breadcrumb-visibility check inside the branch that fired because the
+   breadcrumb was already gone).
 
+Show the diff for this part first before continuing to Part 2.
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
+---
 
-    Error: expect(received).toBeTruthy()
+PART 2 — After applyDataset() succeeds, add the dimension/response-count
+steps by reusing SelectPanelistPage DIRECTLY (import and instantiate it,
+same as start-from-scratch.spec.ts does) — do NOT reimplement filter logic
+here, it already has today's fallback fixes built in. Call
+setDimensionSelections(datasetConfig.dimensionSelections), then
+clickSearchForPanelists(), then click250Responses() — same individual-call
+pattern as start-from-scratch, not the bundled panelist-flow.helper.ts,
+since Part 3 needs to insert a step before the final button click.
 
-    Received: false
+---
 
-       at ..\page-objects\common\assert-utils.ts:14
+PART 3 — Add the two genuinely new pieces:
 
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
+1. New locator: { "elementName": "promptTextarea", "selectorType": "css",
+   "selectorValue": "textarea.prompt-input" } (confirmed real, no
+   data-test-id exists on this element per prior investigation of the
+   library source).
 
-    attachment #1: screenshot (image/png) ──────────────────────────────────────
-    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────
+2. New locator: { "elementName": "generateSurveyButton", "selectorType":
+   "css", "selectorValue": "[data-test-id='proceed-to-survey']" } (confirmed
+   real from library source — note this is the SAME button element used by
+   the scratch flow's "Proceed to survey builder", just showing different
+   text/disabled-condition here).
 
-    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\error-context.md
+3. New method fillPromptAndGenerate(promptText: string): enter promptText
+   into promptTextarea, then wait for generateSurveyButton to become
+   enabled before clicking — do NOT assume it's clickable immediately after
+   typing. The button's real disabled condition (confirmed from library
+   source) is: !selectedResponses || (!userPrompt.trim() ||
+   isPromptSettling()) — the isPromptSettling() name implies a debounce
+   after typing. Use a real wait-for-enabled-state check if the framework
+   supports one; otherwise use UI_STATE_UPDATE_DELAY as a minimum,
+   explicitly commented as a fallback assumption, not a confirmed-correct
+   wait.
 
-    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\error-context.md
+---
 
-    attachment #4: trace (application/zip) ─────────────────────────────────────
-    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\trace.zip
-    Usage:
+PART 4 — Update start-with-prompt.spec.ts to chain all of the above:
+navigate -> click Start with a prompt -> select dataset type -> search and
+select dataset (assert the new boolean return from Part 1) -> apply dataset
+-> dimension selections via SelectPanelistPage -> search for panelists ->
+click250Responses() -> fillPromptAndGenerate() with sample text (e.g.
+"Generate a few questions about product satisfaction") -> assert the flow
+reached the next screen. For that final assertion, first check what a real,
+existing indicator of "next screen reached" would be (e.g. a question-
+generation or Build Survey page element) — do not guess a locator, report
+if nothing confirmed is available yet.
 
-        npx playwright show-trace test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\trace.zip
+Use datasetConfig.dimensionSelections and datasetConfig.searchTerm from
+dev-test-data.json (same source start-from-scratch already uses) — do not
+invent new test data.
 
-    ────────────────────────────────────────────────────────────────────────────
+---
 
-  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
+For all 4 parts: run npx tsc --noEmit after each part and show output
+before moving to the next part. Do NOT run the Playwright test until all 4
+parts compile clean together.
 
-    Error: expect(received).toBeTruthy()
+If Part 1's DOM check fails to confirm the needed elements exist (see
+IMPORTANT note above), stop immediately after Part 1 and report that —
+do not proceed to Parts 2-4 in that case.
 
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────
-    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────
-    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────
-
-  2 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
-    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
-  8 did not run
-
-To open last HTML report run:
-
-  npx playwright show-report
+Once everything compiles and the full test has been run, create
+e2e/START_WITH_PROMPT_IMPLEMENTATION.md documenting every change made
+across all 4 parts (or the stop-point if Part 1 didn't confirm), the
+diffs, the tsc output, and the actual test run output — same structure as
+DATASET_SELECTION_BOOLEAN_FIX.md.
