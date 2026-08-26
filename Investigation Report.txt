@@ -1,72 +1,7 @@
-import { test } from '@playwright/test';
-import { BasePage } from '@gfk/gta';
-import { BasePageFactory } from '../../utils/base-page-factory';
-import { StartFromScratchPage } from '../../page-objects/survey/start-from-scratch.page';
-import { SelectPanelistPage } from '../../page-objects/common/select-panelist.page';
-import { assertTrue } from '../../page-objects/common/assert-utils';
-import testData from '../../test-data/dev-test-data.json';
-
-const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
-const DATASET_NAME = datasetNames[0];
-const datasetConfig = testData.datasets[DATASET_NAME];
-
-if (!datasetConfig) {
-  throw new Error('No dataset found in dev-test-data.json');
-}
-
-test.describe.serial('Start from scratch', () => {
-  let basePage: BasePage;
-  let surveyPage: StartFromScratchPage;
-  let selectPanelistPage: SelectPanelistPage;
-
-  test.afterAll(async () => {
-    if (basePage) {
-      await basePage.getWebActions().closeBrowser();
-    }
-  });
-
-  test('Land on page + click Start from Scratch', { tag: '@LandStartFromScratch' }, async () => {
-    basePage = await BasePageFactory.createBasePage();
-    surveyPage = new StartFromScratchPage(basePage);
-
-    await surveyPage.navigateToSurvey();
-    await surveyPage.clickStartFromScratch();
-  });
-
-  test('Select dataset (footer assertion)', { tag: '@DatasetSelection' }, async () => {
-    await surveyPage.selectProductOffering('');
-    await surveyPage.searchAndSelectDataset(
-      datasetConfig.searchTerm,
-      String(DATASET_NAME),
-      datasetConfig.datasetIndex
+async isStartFromScratchVisible(): Promise<boolean> {
+    const startFromScratch = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
     );
-
-    const isDatasetSelectionConfirmed = await surveyPage.isDatasetSelectionConfirmed();
-    assertTrue(
-      isDatasetSelectionConfirmed,
-      `Expected "Choose a dataset" confirmation not visible after selecting ${DATASET_NAME}`
-    );
-
-    await surveyPage.proceedToNextAfterDatasetSelection();
-    await surveyPage.applyEntireDataset();
-  });
-
-  test('Data summary / 5 filters', { tag: '@DataSummary' }, async () => {
-    selectPanelistPage = new SelectPanelistPage(basePage);
-    await selectPanelistPage.setDimensionSelections(datasetConfig.dimensionSelections);
-
-    const isSearchButtonVisible = await selectPanelistPage.isSearchForPanelistsButtonVisible();
-    assertTrue(isSearchButtonVisible, 'Search for Panelists button not visible after setting dimension selections');
-  });
-
-  test('Panelist button / response count', { tag: '@ResponseCount' }, async () => {
-    await selectPanelistPage.clickSearchForPanelists();
-    await selectPanelistPage.click250Responses();
-  });
-
-  test('Proceed to survey builder', { tag: '@ProceedToSurveyBuilder' }, async () => {
-    await selectPanelistPage.clickProceedToSurveyBuilder();
-    const isLoaded = await selectPanelistPage.isBuildSurveyPageLoaded();
-    assertTrue(isLoaded, 'Build Survey page did not load after proceeding');
-  });
-});
+    await startFromScratch.waitFor(SMALL_TIMEOUT);
+    return await startFromScratch.isVisible();
+  }
