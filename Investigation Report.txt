@@ -1,262 +1,225 @@
-## PART 1 — Dataset selection
+# Dataset Selection Boolean Fix — `searchAndSelectDataset()`
 
-### 1. `searchAndSelectDataset()` — original implementation (before this change), start-from-scratch.page.ts
+File: [e2e/page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts)
 
-```typescript
-async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
-  try {
-    // Check-before-click: no locator exists for "a dataset tile is already selected" —
-    // the closest confirmed signal is whether the "Choose a dataset" screen is still
-    // showing at all. If it's gone, a dataset must already be selected — skip search.
-    const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-    if (!isOnDatasetScreen) {
-      console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
-      return;
-    }
+## Original Request (verbatim)
 
-    // Check-before-search: the 'defaultDataset' element (confirmed "default-dataset-selected"
-    // class) reflects whatever dataset was previously chosen. It may not exist at all if
-    // nothing was ever selected — that's treated as "not matched", not an error.
-    const defaultDatasetElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('defaultDataset', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
-    const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
-    if (isDefaultDatasetAlreadySelected) {
-      console.log(`↷ Dataset "${datasetLabel}" already selected as default — skipping search`);
-      return;
-    }
+> In searchAndSelectDataset() (start-from-scratch.page.ts), fix the return
+> value for each condition — do not re-verify a condition using the same
+> check that already satisfied it, and do not use isDatasetSelectionConfirmed()
+> after a click, since that method checks "Choose a dataset" screen visibility
+> (chooseDatasetBreadcrumb), which is expected to have changed/disappeared
+> after a successful click — reusing it there would produce the same false
+> result as calling it in Condition 1.
+>
+> Condition 1 ("Choose a dataset" screen not shown, assumed already selected):
+> return true directly — the trigger condition IS the confirmation.
+>
+> Condition 2 (default dataset text already matches): return true directly —
+> the text match IS the confirmation.
+>
+> Condition 3 (target dataset tile already visible, clicked directly): after
+> the click, verify the click actually worked using a check that is NOT
+> chooseDatasetBreadcrumb-based — e.g. re-checking that the same
+> datasetByLabel element (or its selected/highlighted state) reflects the
+> choice, or another confirmed-real signal. Do not call
+> isDatasetSelectionConfirmed() here. If no reliable post-click check exists
+> without live DOM inspection, say so explicitly and return true with a
+> clear comment flagging that the click's success is currently assumed, not
+> verified — do not invent an unconfirmed locator.
+>
+> Condition 4 (normal search-and-select flow): same treatment as Condition 3
+> — verify using a real post-click signal, not chooseDatasetBreadcrumb, or
+> flag explicitly if nothing reliable exists yet without live DOM inspection.
+>
+> Show me the diff before applying. Run npx tsc --noEmit and show output.
+> If clean, run npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
+> and show the actual pass/fail result — not a summary.
+>
+> Once everything above is done, write this entire prompt and your full
+> response (diff, explanations, tsc output, test result) into
+> e2e/DATASET_SELECTION_BOOLEAN_FIX.md, formatted as markdown with clear
+> headers — same as the earlier MANAGER_FEEDBACK_VS_OMNISHOPPER.md file.
 
-    // Check-before-search: if the desired dataset tile is already visible on the
-    // unfiltered list, skip the search-toggle/search-input steps entirely and click it.
-    const existingDatasetElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
-    if (isDatasetAlreadyVisible) {
-      console.log(`↷ Dataset "${datasetLabel}" already visible — skipping search, clicking directly`);
-      await existingDatasetElement.click();
-      return;
-    }
+## Root Cause
 
-    const searchToggle = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await searchToggle.waitFor(SMALL_TIMEOUT);
-    await searchToggle.click();
+All four early-return / final-return branches in `searchAndSelectDataset()` called
+`this.isDatasetSelectionConfirmed()`, which only checks the visibility of
+`chooseDatasetBreadcrumb` (`[data-test-id='dataset-picker-title']`):
 
-    const searchInput = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('searchInput', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await searchInput.waitFor(SMALL_TIMEOUT);
-    await searchInput.enterText(searchTerm);
-    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+- **Condition 1** already used `chooseDatasetBreadcrumb.isVisible()` as its trigger
+  (`!isOnDatasetScreen`). Calling `isDatasetSelectionConfirmed()` afterward re-read the
+  exact same element and could only echo the same result — not an independent check.
+- **Condition 2** matched selection via `defaultDatasetElement`'s text — an unrelated
+  element to `chooseDatasetBreadcrumb`, so the follow-up call added no real verification.
+- **Conditions 3 and 4** clicked a dataset tile and then called
+  `isDatasetSelectionConfirmed()`, expecting it to confirm the click worked. But that
+  method checks whether the **"Choose a dataset" screen itself is still visible** — a
+  screen that is expected to disappear/navigate away after a *successful* click. So a
+  successful click could make the check return `false` (looking like failure), while a
+  no-op could leave the breadcrumb still visible (looking like it "confirmed" nothing
+  happened) — the check is inverted/meaningless as a post-click signal.
 
-    const datasetElement = this.webActionHandler.getWebElement(
-      this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await datasetElement.waitFor(SMALL_TIMEOUT);
-    await datasetElement.click();
-  } catch (error) {
-    throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
-  }
-}
-```
+## Diff Applied
 
-### 2. `panelist-flow.helper.ts` — target pattern (full file)
+```diff
+--- a/e2e/page-objects/survey/start-from-scratch.page.ts
++++ b/e2e/page-objects/survey/start-from-scratch.page.ts
+@@ searchAndSelectDataset(...)
+       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+       if (!isOnDatasetScreen) {
+         console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
+-        return this.isDatasetSelectionConfirmed();
++        // The trigger condition IS the confirmation here — the breadcrumb's absence is
++        // what we just checked above. Calling isDatasetSelectionConfirmed() would re-check
++        // that exact same chooseDatasetBreadcrumb element and only echo the same result.
++        return true;
+       }
 
-```typescript
-import { BasePage } from '@gfk/gta';
-import { SelectPanelistPage } from './select-panelist.page';
+       // Check-before-search: the 'defaultDataset' element (confirmed "default-dataset-selected"
+       // class) reflects whatever dataset was previously chosen. It may not exist at all if
+       // nothing was ever selected — that's treated as "not matched", not an error.
+       const defaultDatasetElement = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('defaultDataset', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
+       const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
+       if (isDefaultDatasetAlreadySelected) {
+         console.log(`↷ Dataset "${datasetLabel}" already selected as default — skipping search`);
+-        return this.isDatasetSelectionConfirmed();
++        // The defaultDataset text match IS the confirmation — no need to also check
++        // chooseDatasetBreadcrumb, an unrelated element.
++        return true;
+       }
 
-type DimensionSelectionsArg = Parameters<SelectPanelistPage['setDimensionSelections']>[0];
+       // Check-before-search: if the desired dataset tile is already visible on the
+       // unfiltered list, skip the search-toggle/search-input steps entirely and click it.
+       const existingDatasetElement = this.webActionHandler.getWebElement(
+         this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
+       if (isDatasetAlreadyVisible) {
+         console.log(`↷ Dataset "${datasetLabel}" already visible — skipping search, clicking directly`);
+         await existingDatasetElement.click();
+-        return this.isDatasetSelectionConfirmed();
++        // NOTE: no confirmed post-click signal exists for "dataset tile click succeeded"
++        // without live DOM inspection. isDatasetSelectionConfirmed() checks the "Choose a
++        // dataset" screen's OWN visibility (chooseDatasetBreadcrumb), which is expected to
++        // change/disappear after a successful click — reusing it here would produce the
++        // same false result as Condition 1 above. Returning true directly; the click's
++        // success is currently ASSUMED, not verified.
++        return true;
+       }
 
-export async function completePanelistSelectionFlow(
-  basePage: BasePage,
-  dimensionSelections: DimensionSelectionsArg
-): Promise<boolean> {
-  const selectPanelistPage = new SelectPanelistPage(basePage);
-  await selectPanelistPage.setDimensionSelections(dimensionSelections);
-  await selectPanelistPage.clickSearchForPanelists();
-  await selectPanelistPage.click250Responses();
-  await selectPanelistPage.clickProceedToSurveyBuilder();
-  return selectPanelistPage.isBuildSurveyPageLoaded();
-}
-```
+       const searchToggle = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await searchToggle.waitFor(SMALL_TIMEOUT);
+       await searchToggle.click();
 
-### What `searchAndSelectDataset()` originally did, step by step
+       const searchInput = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('searchInput', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await searchInput.waitFor(SMALL_TIMEOUT);
+       await searchInput.enterText(searchTerm);
+       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
 
-1. Reads `chooseDatasetBreadcrumb` — if the "Choose a dataset" screen isn't showing at all, **returns silently** (`void`), assuming a prior selection already happened.
-2. Reads `defaultDataset` text — if it already matches `datasetLabel`, **returns silently**.
-3. Checks if the target dataset tile (`datasetByLabel`) is already visible unfiltered — if so, clicks it and **returns silently**.
-4. Otherwise, clicks `searchToggle` → types into `searchInput` → waits → clicks the resolved `datasetByLabel` element.
-5. Any thrown error along the way is caught and re-thrown as a new `Error` with a `Failed to search and select dataset "<label>"` message.
-6. Return type was `Promise<void>` in every branch — there was no way for the caller to distinguish "already selected, skipped" from "searched and selected" from "did nothing because it detected an unexpected state." The caller then had to make a **second, separate call** to `isDatasetSelectionConfirmed()` to get any boolean signal at all.
-
-### Gap vs. `panelist-flow.helper.ts`'s shape (as originally assessed)
-
-`completePanelistSelectionFlow()` is a standalone exported function that chains several void-returning page-object action calls and ends by calling one boolean-returning verification method (`isBuildSurveyPageLoaded()`), returning that boolean directly to the caller — the caller then asserts on it. `searchAndSelectDataset()` didn't match that shape: it returned `void` in every branch and required the spec to call a second method (`isDatasetSelectionConfirmed()`) afterward to get a boolean. See PART B below for the change made to close this gap.
-
----
-
-## PART 2 — Navigate / base URL
-
-### 1. `CommonPage` — original file (before this change), `e2e/page-objects/common/common-page.ts`
-
-```typescript
-/**
- * Common base page object for this project's page objects.
- *
- * Mirrors Omni Shopper's CommonTestCase (src/lib/common/pages/common-test-case/common-test-case.ts):
- * initializes webActionHandler/resourceManager from BasePage in the constructor and exposes a
- * single shared navigateToUrl() implementation, so page objects no longer need to duplicate the
- * try/catch/navigateTo navigation logic.
- */
-import { BasePage, WebActions } from '@gfk/gta';
-import { ResourceManager } from '../../utils/resource-manager';
-import { NAVIGATION_TIMEOUT } from '../../constants/timeout-constants';
-
-export class CommonPage {
-  protected webActionHandler: WebActions;
-  protected resourceManager: ResourceManager;
-
-  constructor(protected basePage: BasePage) {
-    this.webActionHandler = basePage.getWebActions();
-    this.resourceManager = new ResourceManager({});
-  }
-
-  public async navigateToUrl(targetUrl: string, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-    try {
-      await this.webActionHandler.navigateTo(targetUrl, timeout, 'domcontentloaded');
-    } catch (navigationError) {
-      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
-      throw navigationError;
-    }
-  }
-}
-```
-
-### 2. Every place that independently computed/read a base URL (before this change)
-
-| File | Code | Notes |
-|---|---|---|
-| playwright.config.ts (lines 7-8) | `const baseURL = process.env.BASE_URL \|\| 'https://si.connect.nielseniq.io/reportexperience-dev';`<br>`const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : \`${baseURL}/\`;` | Own fallback literal + own trailing-slash normalization. |
-| helpers/global-setup.ts (line 28) | `const baseURL = process.env.BASE_URL \|\| 'https://si.connect.nielseniq.io/reportexperience-dev';` | Same fallback literal, re-typed independently. |
-| page-objects/survey/start-from-scratch.page.ts (lines 18-20) | Same fallback literal + same normalization + own `/survey` URL construction | |
-| page-objects/survey/start-with-prompt.page.ts (lines 18-20) | Identical 3 lines to start-from-scratch.page.ts, verbatim | |
-| page-objects/common/login.page.ts (lines 92-94) | Own trailing-slash normalization + `/survey` URL construction (baseURL itself passed in as a param, not re-read from `process.env`) | |
-
-The fallback literal `'https://si.connect.nielseniq.io/reportexperience-dev'` was hard-coded independently in **4 places**, and the `endsWith('/') ? ... : ...` + `new URL('survey', ...)` construction was duplicated **3 times**.
-
-### 3. Omnishopper's pattern for comparison
-
-`config.ts` — single source of the base URL via a getter (`get BASE_URL()`), consumed everywhere as `config.BASE_URL`. `CommonTestCase.navigateToUrl()` is the shared navigation method (~30 classes extend it), with `navigateToReportUrl()` layered on top for retry/wait logic. The documented exception is `FormatPanel`, which doesn't extend `CommonTestCase` and calls `webActionHandler.navigateTo()` directly.
-
-### 4. Original assessment
-
-The navigation *method* (`navigateToUrl`) was already an equivalent, verbatim mirror of omnishopper's `CommonTestCase.navigateToUrl()`. The base URL *resolution* was not equivalent — omnishopper has one `config.BASE_URL` source; this repo had the same fallback literal and the same join logic duplicated across multiple files. **Partially there** — the navigation method matched, the base-URL sourcing didn't.
-
----
-
-## PART A — Implemented: single BASE_URL source + shared URL-join helper
-
-### What changed
-
-1. **New file** [e2e/config/env.config.ts](env.config.ts) — the single shared source for the base URL, mirroring omnishopper's `config.BASE_URL` getter:
-   ```typescript
-   export const DEFAULT_BASE_URL = 'https://si.connect.nielseniq.io/reportexperience-dev';
-
-   export const envConfig = {
-     get BASE_URL(): string {
-       return process.env.BASE_URL || DEFAULT_BASE_URL;
-     },
-   };
-   ```
-   It's implemented as a **getter** (not a plain constant computed at import time) so it still reads the correct value regardless of when `dotenv.config()` ran relative to this module being imported — the env var is only read at the moment `.BASE_URL` is accessed, not at module-load time.
-
-2. **[playwright.config.ts](playwright.config.ts)** — replaced its own `process.env.BASE_URL || '...'` line with `const baseURL = envConfig.BASE_URL;`. Trailing-slash normalization for Playwright's `use.baseURL` option stays local to this file (it's the one place that needs a *normalized-with-trailing-slash* value for Playwright's own config, not a joined page URL).
-
-3. **[helpers/global-setup.ts](helpers/global-setup.ts)** — replaced its own `process.env.BASE_URL || '...'` line with `const baseURL = envConfig.BASE_URL;`.
-
-4. **[page-objects/common/common-page.ts](page-objects/common/common-page.ts)** — added a new `buildUrl(baseURL, relativePath)` method alongside `navigateToUrl()`, extracting the `endsWith('/') + new URL(path, base)` join logic that was previously copy-pasted in 3 files:
-   ```typescript
-   public buildUrl(baseURL: string, relativePath: string): string {
-     const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-     return new URL(relativePath, normalizedBaseURL).toString();
+       const datasetElement = this.webActionHandler.getWebElement(
+         this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       await datasetElement.waitFor(SMALL_TIMEOUT);
+       await datasetElement.click();
+-      return this.isDatasetSelectionConfirmed();
++      // NOTE: same limitation as the already-visible branch above — no confirmed
++      // post-click signal exists for "dataset tile click succeeded" without live DOM
++      // inspection. isDatasetSelectionConfirmed() checks the "Choose a dataset" screen's
++      // OWN visibility (chooseDatasetBreadcrumb), which is expected to change/disappear
++      // after a successful click, so it cannot be reused here either. Returning true
++      // directly; the click's success is currently ASSUMED, not verified.
++      return true;
+     } catch (error) {
+       throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
+     }
    }
-   ```
-   Because it's on `CommonPage`, every subclass (`StartFromScratchPage`, `StartWithPromptPage`, `LoginPage`, etc.) inherits it automatically — no re-import needed to use it, only to supply a base URL.
-
-5. **[page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts)** and **[page-objects/survey/start-with-prompt.page.ts](page-objects/survey/start-with-prompt.page.ts)** — `navigateToSurvey()` in both files now reads:
-   ```typescript
-   async navigateToSurvey(): Promise<void> {
-     const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
-     await this.navigateToUrl(surveyURL);
-   }
-   ```
-   replacing their own 3-line fallback-literal + normalize + `new URL(...)` block. Both files now import `envConfig` from `../../config/env.config`.
-
-6. **[page-objects/common/login.page.ts](page-objects/common/login.page.ts)** — `login()` still takes `baseURL` as a parameter (it does not read `process.env.BASE_URL` itself, that responsibility stays with the caller in `global-setup.ts`, which now sources it from `envConfig`), but the internal join logic was replaced with:
-   ```typescript
-   const surveyURL = this.buildUrl(baseURL, 'survey');
-   ```
-
-### Where the single source now lives
-
-`envConfig.BASE_URL` in `e2e/config/env.config.ts` is the **only** place the fallback literal `'https://si.connect.nielseniq.io/reportexperience-dev'` appears. `playwright.config.ts`, `global-setup.ts`, `start-from-scratch.page.ts`, and `start-with-prompt.page.ts` all consume it from there instead of re-declaring it.
-
-The URL-join logic (`endsWith('/')` + `new URL(path, base)`) now lives **only** in `CommonPage.buildUrl()`. `login.page.ts`, `start-from-scratch.page.ts`, and `start-with-prompt.page.ts` all call `this.buildUrl(...)` instead of re-implementing it.
-
-### tsc --noEmit result after Part A
-
-```
-> npx tsc --noEmit
-(no output — compiles clean)
 ```
 
----
+`isDatasetSelectionConfirmed()` itself was **not deleted** — it's a public method with no
+other callers found in the codebase (`grep_search` for `isDatasetSelectionConfirmed`
+outside this file returned nothing), but removing it wasn't requested and it may still be
+a useful standalone "is the picker screen showing" check for other call sites in the
+future.
 
-## PART B — Implemented: `searchAndSelectDataset()` returns `Promise<boolean>`
+## Explanation Per Condition
 
-### What changed
+| Condition | Trigger check | Old return | New return | Why |
+|---|---|---|---|---|
+| 1 | `!chooseDatasetBreadcrumb.isVisible()` | `isDatasetSelectionConfirmed()` (re-reads same element) | `true` | Trigger check already IS the confirmation; re-checking is a no-op that can only repeat the same answer. |
+| 2 | `defaultDatasetElement` text includes `datasetLabel` | `isDatasetSelectionConfirmed()` (unrelated element) | `true` | Text match against `defaultDataset` already proves the label is selected; `chooseDatasetBreadcrumb` has nothing to do with that element. |
+| 3 | `datasetByLabel` tile already visible → clicked | `isDatasetSelectionConfirmed()` (screen-visibility, inverted after click) | `true` + explicit comment | No resource in `start-from-scratch.locator.json` represents a "tile selected/highlighted" state (only `datasetByLabel`, `defaultDataset`, `chooseDatasetBreadcrumb`, `applyButton`, etc. exist) and confirming a new one requires live DOM inspection not available in this session — flagged as an assumption rather than inventing an unverified locator. |
+| 4 | search → `datasetByLabel` tile found → clicked | `isDatasetSelectionConfirmed()` (screen-visibility, inverted after click) | `true` + explicit comment | Same limitation as Condition 3 — no confirmed real post-click signal exists yet without live DOM inspection. |
 
-**[page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts)** — `searchAndSelectDataset()`'s return type changed from `Promise<void>` to `Promise<boolean>`. Every branch that previously ended with a bare `return;` (or fell through to the end of the function) now ends with `return this.isDatasetSelectionConfirmed();` instead:
+## `npx tsc --noEmit` Output
 
-- Branch 1 — "Choose a dataset" screen not shown at all (assumed already selected): now `return this.isDatasetSelectionConfirmed();` instead of `return;`.
-- Branch 2 — default dataset text already matches `datasetLabel`: now `return this.isDatasetSelectionConfirmed();` instead of `return;`.
-- Branch 3 — target dataset tile already visible unfiltered, clicked directly: now `return this.isDatasetSelectionConfirmed();` instead of `return;`.
-- Branch 4 — normal search-toggle → search-input → click flow: now ends with `return this.isDatasetSelectionConfirmed();` instead of falling off the end of the `try` block with an implicit `void`.
-
-The existing `isDatasetSelectionConfirmed()` method itself was **not removed** — it's now called internally by `searchAndSelectDataset()` from all four branches instead of being called separately by the spec.
-
-**[tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts)** — the `'Dataset Selection'` test now assigns and asserts on `searchAndSelectDataset()`'s own return value directly, removing the second `isDatasetSelectionConfirmed()` call:
-```typescript
-const isDatasetSelectionConfirmed = await surveyPage.searchAndSelectDataset(
-  datasetConfig.searchTerm,
-  String(DATASET_NAME),
-  datasetConfig.datasetIndex
-);
-
-assertTrue(
-  isDatasetSelectionConfirmed,
-  `Expected "Choose a dataset" confirmation not visible after selecting ${DATASET_NAME}`
-);
+Command:
+```
+cd e2e
+npx tsc --noEmit
 ```
 
-### Known caveat (flagged, not silently "fixed")
+Result: **clean — no output, no errors.**
 
-Branch 1 fires precisely when `chooseDatasetBreadcrumb.isVisible()` is `false` (the "Choose a dataset" screen is not showing at all). Immediately returning `this.isDatasetSelectionConfirmed()` — which itself waits for and checks the same `chooseDatasetBreadcrumb` locator — will, in the common case, evaluate that locator again and find it still not visible, yielding `false`. That is the literal, mechanical result of folding the confirmation check into every branch as requested; it is not something this change silently overrode with a hardcoded `true` for that branch. This is a pre-existing ambiguity in the original code (already called out in that branch's own comment: *"no locator exists for 'a dataset tile is already selected'"*) surfacing more visibly now that the branch's outcome feeds directly into the caller's assertion instead of being invisible behind a `void` return. No fix for this ambiguity was applied — only the literal boolean-fold requested.
+## `npx playwright test e2e/tests/survey/start-from-scratch.spec.ts` Output
 
-### tsc --noEmit result after Part B
+Command:
+```
+cd e2e
+npx playwright test e2e/tests/survey/start-from-scratch.spec.ts --reporter=list
+```
+
+Captured console output from the run (global setup + test execution):
 
 ```
-> npx tsc --noEmit
-(no output — compiles clean)
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 10 tests using 2 workers
+
+↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
+✓ Dimension 'productNoDataPrompt' selection completed
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
 ```
 
-### Playwright test
+The `"already selected as default — skipping search"` line confirms **Condition 2** of the
+fixed method executed and returned `true` directly (no `isDatasetSelectionConfirmed()`
+re-check), matching the new code path.
 
-Not run, per instruction — only `tsc --noEmit` was executed for both parts.
+Final result, read from Playwright's own run-status file
+([test-results/.last-run.json](test-results/.last-run.json)) after the process exited
+(node process no longer present):
+
+```json
+{
+  "status": "passed",
+  "failedTests": []
+}
+```
+
+**Actual result: PASSED — 10/10 tests, 0 failures.**
+
+### Note on obtaining this result
+
+The terminal in this sandbox reuses a single session across tool calls, and a couple of
+interim `run_in_terminal`/status-check calls returned interleaved/partial console
+snapshots of the in-progress run rather than a final summary (a known artifact of this
+environment noted in repo memory — long-running Playwright invocations can still be
+writing output when a subsequent command is sent to the same terminal). The authoritative,
+final pass/fail result above was confirmed via Playwright's own `.last-run.json`
+status file once the underlying `node` process had actually exited, not by trusting any
+single truncated stdout snapshot.
