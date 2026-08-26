@@ -1,7 +1,345 @@
-async isStartFromScratchVisible(): Promise<boolean> {
-    const startFromScratch = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await startFromScratch.waitFor(SMALL_TIMEOUT);
-    return await startFromScratch.isVisible();
+# Investigation: Dataset Selection Shape vs. Helper Pattern, and Navigate/Base-URL Structure
+
+Investigation only — no files were modified as part of this report.
+
+---
+
+## PART 1 — Dataset selection: current implementation vs. `panelist-flow.helper.ts` pattern
+
+### 1a. `searchAndSelectDataset()` — current full implementation
+File: [start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts)
+
+```ts
+async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
+    try {
+      // Check-before-click: no locator exists for "a dataset tile is already selected" —
+      // the closest confirmed signal is whether the "Choose a dataset" screen is still
+      // showing at all. If it's gone, a dataset must already be selected — skip search.
+      const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+      if (!isOnDatasetScreen) {
+        console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
+        return;
+      }
+
+      // Check-before-search: the 'defaultDataset' element (confirmed "default-dataset-selected"
+      // class) reflects whatever dataset was previously chosen. It may not exist at all if
+      // nothing was ever selected — that's treated as "not matched", not an error.
+      const defaultDatasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('defaultDataset', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
+      const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
+      if (isDefaultDatasetAlreadySelected) {
+        console.log(`↷ Dataset "${datasetLabel}" already selected as default — skipping search`);
+        return;
+      }
+
+      // Check-before-search: if the desired dataset tile is already visible on the
+      // unfiltered list, skip the search-toggle/search-input steps entirely and click it.
+      const existingDatasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
+      if (isDatasetAlreadyVisible) {
+        console.log(`↷ Dataset "${datasetLabel}" already visible — skipping search, clicking directly`);
+        await existingDatasetElement.click();
+        return;
+      }
+
+      const searchToggle = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await searchToggle.waitFor(SMALL_TIMEOUT);
+      await searchToggle.click();
+
+      const searchInput = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('searchInput', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await searchInput.waitFor(SMALL_TIMEOUT);
+      await searchInput.enterText(searchTerm);
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const datasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await datasetElement.waitFor(SMALL_TIMEOUT);
+      await datasetElement.click();
+    } catch (error) {
+      throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
+    }
+}
+```
+
+Return type: `Promise<void>`. It performs actions and either returns silently or throws. It never
+returns a boolean signal for the caller to assert on — the caller (the spec) currently does its own
+separate follow-up call, `isDatasetSelectionConfirmed()`, to get a boolean it can `assertTrue()` on:
+
+```ts
+// start-from-scratch.spec.ts, 'Dataset Selection' test
+await surveyPage.searchAndSelectDataset(datasetConfig.searchTerm, String(DATASET_NAME), datasetConfig.datasetIndex);
+
+const isDatasetSelectionConfirmed = await surveyPage.isDatasetSelectionConfirmed();
+assertTrue(isDatasetSelectionConfirmed, `Expected "Choose a dataset" confirmation not visible after selecting ${DATASET_NAME}`);
+```
+
+### 1b. `panelist-flow.helper.ts` — full current implementation
+File: [panelist-flow.helper.ts](page-objects/common/panelist-flow.helper.ts)
+
+```ts
+import { BasePage } from '@gfk/gta';
+import { SelectPanelistPage } from './select-panelist.page';
+
+type DimensionSelectionsArg = Parameters<SelectPanelistPage['setDimensionSelections']>[0];
+
+export async function completePanelistSelectionFlow(
+  basePage: BasePage,
+  dimensionSelections: DimensionSelectionsArg
+): Promise<boolean> {
+  const selectPanelistPage = new SelectPanelistPage(basePage);
+  await selectPanelistPage.setDimensionSelections(dimensionSelections);
+  await selectPanelistPage.clickSearchForPanelists();
+  await selectPanelistPage.click250Responses();
+  await selectPanelistPage.clickProceedToSurveyBuilder();
+  return selectPanelistPage.isBuildSurveyPageLoaded();
+}
+```
+
+This is a standalone **function** (not a class method) that:
+1. Instantiates the page object itself.
+2. Chains several page-object action calls internally (a whole multi-step flow, not just one step).
+3. Returns the final step's boolean check directly as its own `Promise<boolean>` — the caller gets
+   one boolean back and is expected to `assertTrue()` it, with no intermediate boolean checks
+   needed in the spec itself.
+
+**Important note**: `completePanelistSelectionFlow()` is currently unused in
+`start-from-scratch.spec.ts` — that spec calls the individual `SelectPanelistPage` methods directly
+(`setDimensionSelections`, `clickSearchForPanelists`, `click250Responses`,
+`clickProceedToSurveyBuilder`) rather than this helper, with an inline
+`isSearchForPanelistsButtonVisible()` / `isProceedToSurveyBuilderVisible()` boolean check after each
+call instead of one boolean at the very end.
+
+### Step-by-step: what `searchAndSelectDataset()` does today
+1. Read `chooseDatasetBreadcrumb.isVisible()` — if the "Choose a dataset" screen isn't showing at
+   all, log and `return` early (void).
+2. Read `defaultDataset` element's text — if it already contains the target dataset label, log and
+   `return` early (void).
+3. Check if the target dataset tile (`datasetByLabel`) is already visible in the unfiltered list —
+   if so, click it and `return` (void).
+4. Otherwise: click `searchToggle` → wait/enter text into `searchInput` → delay → wait/click the now
+   dynamically-resolved `datasetByLabel` element.
+5. Any thrown error along the way is caught and re-thrown with a wrapped, dataset-label-specific
+   message.
+6. In every branch, the method resolves to `undefined` — there is no boolean return value
+   anywhere in this method.
+
+### Gap between current shape and the `panelist-flow.helper.ts` target shape
+| Aspect | `searchAndSelectDataset()` today | `panelist-flow.helper.ts` pattern |
+|---|---|---|
+| Return type | `Promise<void>` | `Promise<boolean>` |
+| Success signal | None returned — caller must separately call `isDatasetSelectionConfirmed()` to get a boolean | The function's own return value **is** the boolean signal |
+| Location | Instance method on `StartFromScratchPage` | Standalone exported function, not a class method |
+| Scope of responsibility | One step only (search + select) | Multiple chained steps (whole flow: dimensions → search → responses → proceed) bundled into a single function |
+| Caller responsibility today | Caller must call two separate methods (`searchAndSelectDataset()` then `isDatasetSelectionConfirmed()`) and pass the second one's result to `assertTrue()` | Caller calls one function and passes its single resolved value directly to `assertTrue()` |
+| Instantiation | Method lives on an already-constructed `StartFromScratchPage` instance (constructed once in the earlier "Land on page" test and reused) | Helper constructs its own `SelectPanelistPage` instance internally, using a passed-in `basePage` |
+
+To match the `panelist-flow.helper.ts` shape, `searchAndSelectDataset()` would need to stop
+returning `void` and instead resolve its own boolean confirmation (folding in the same check
+`isDatasetSelectionConfirmed()` does today) so the spec could do
+`assertTrue(await surveyPage.searchAndSelectDataset(...))` without a second, separate call. No
+extraction is written here per your instruction — this is only the shape/gap description.
+
+---
+
+## PART 2 — Navigate / base-URL structure
+
+### 2.1 Our `CommonPage` class — full current implementation
+File: [common-page.ts](page-objects/common/common-page.ts)
+
+```ts
+/**
+ * Common base page object for this project's page objects.
+ *
+ * Mirrors Omni Shopper's CommonTestCase (src/lib/common/pages/common-test-case/common-test-case.ts):
+ * initializes webActionHandler/resourceManager from BasePage in the constructor and exposes a
+ * single shared navigateToUrl() implementation, so page objects no longer need to duplicate the
+ * try/catch/navigateTo navigation logic.
+ */
+import { BasePage, WebActions } from '@gfk/gta';
+import { ResourceManager } from '../../utils/resource-manager';
+import { NAVIGATION_TIMEOUT } from '../../constants/timeout-constants';
+
+export class CommonPage {
+  protected webActionHandler: WebActions;
+  protected resourceManager: ResourceManager;
+
+  constructor(protected basePage: BasePage) {
+    this.webActionHandler = basePage.getWebActions();
+    this.resourceManager = new ResourceManager({});
   }
+
+  /**
+   * Navigates the browser to the specified URL within the given timeout.
+   *
+   * @param targetUrl - The full URL to navigate to.
+   * @param timeout - Optional maximum time to wait for navigation. Defaults to NAVIGATION_TIMEOUT.
+   */
+  public async navigateToUrl(targetUrl: string, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
+    try {
+      await this.webActionHandler.navigateTo(targetUrl, timeout, 'domcontentloaded');
+    } catch (navigationError) {
+      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
+      throw navigationError;
+    }
+  }
+}
+```
+
+`CommonPage.navigateToUrl()` itself takes an already-built `targetUrl` string — it does **not**
+compute or know about `BASE_URL` at all. It is a pure "go to this URL" wrapper. Every page object
+that needs to navigate to the app's survey URL has to build that full URL itself, then pass it into
+this shared method.
+
+### 2.2 Every place in our codebase that computes/reads a base URL independently
+
+Search performed: `process.env.BASE_URL` and `new URL(` across `e2e/**/*.ts`.
+
+| File | Line(s) | What it does |
+|---|---|---|
+| [helpers/global-setup.ts](helpers/global-setup.ts#L28) | 28 | `const baseURL = process.env.BASE_URL \|\| 'https://si.connect.nielseniq.io/reportexperience-dev';` — used directly for login, no `new URL()` join |
+| [page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts#L18-L20) | 18–20 | `process.env.BASE_URL \|\| '...'` → `baseURL.endsWith('/') ? ... : ...` → `new URL('survey', appBaseURL).toString()` |
+| [page-objects/survey/start-with-prompt.page.ts](page-objects/survey/start-with-prompt.page.ts#L18-L20) | 18–20 | Identical 3-line block to `start-from-scratch.page.ts`, duplicated verbatim (same fallback string, same `endsWith('/')` normalization, same `new URL('survey', ...)` join) |
+| [page-objects/common/login.page.ts](page-objects/common/login.page.ts#L92-L94) | ~92–94 | Same `endsWith('/')` normalization + `new URL('survey', appBaseURL).toString()` pattern, but starting from a `baseURL` parameter passed into `login()` rather than reading `process.env.BASE_URL` itself at that point |
+| [playwright.config.ts](playwright.config.ts#L7-L8) | 7–8 | `const baseURL = process.env.BASE_URL \|\| '...'` → `normalizedBaseURL` (trailing-slash normalize) — sets Playwright's own `use.baseURL` config, a separate concern from the page objects' own URL building |
+
+Every one of the 3 fallback default strings (`'https://si.connect.nielseniq.io/reportexperience-dev'`)
+is copy-pasted independently in `global-setup.ts`, `start-from-scratch.page.ts`,
+`start-with-prompt.page.ts`, and `playwright.config.ts` — 4 separate hard-coded copies of the same
+literal default, not a single shared constant.
+
+The `endsWith('/') ? ... : ...` + `new URL('survey', appBaseURL).toString()` join logic is
+duplicated identically in 3 places: `start-from-scratch.page.ts`, `start-with-prompt.page.ts`, and
+`login.page.ts`.
+
+### 2.3 Omnishopper's pattern (for comparison)
+
+`config.ts` ([disc-fe-omnishopper-ui-automation/src/lib/playwright/config.ts](../../disc-fe-omnishopper-ui-automation/src/lib/playwright/config.ts#L60-L90)):
+```ts
+baseURLs: {
+  DEV: 'https://si.connect.nielseniq.io/reportexperience-dev',
+  SI: 'https://si.connect.nielseniq.io/reportexperience',
+  UAT: 'https://uat.connect.nielseniq.io/reportexperience',
+  LOCAL: 'http://localhost:4200',
+  EUSI: 'https://eusi.connect.nielseniq.io/reportexperience',
+  PROD_US: 'https://connect.nielseniq.com/discover',
+  PROD_EU: 'https://eu.connect.nielseniq.com/discover',
+  PROD_APAC: 'https://apac.connect.nielseniq.com/discover',
+  PROD_CALATAM: 'https://calatam.connect.nielseniq.com/discover'
+},
+
+getBaseURL(env: string = 'DEV') {
+  return this.baseURLs[env as keyof typeof this.baseURLs];
+},
+
+// Dynamically returns the URL based on process.env.ENV (defaults to DEV)
+get BASE_URL() {
+  return this.getBaseURL(process.env.ENV || config.ENV);
+},
+```
+
+`CommonTestCase.navigateToUrl()` / `navigateToReportUrl()`
+([common-test-case.ts](../../disc-fe-omnishopper-ui-automation/src/lib/common/pages/common-test-case/common-test-case.ts#L342-L385)):
+```ts
+public async navigateToUrl(targetUrl: string, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
+  try {
+    await this.webActionHandler.navigateTo(targetUrl, timeout, "domcontentloaded");
+  } catch (navigationError) {
+    console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
+    throw navigationError;
+  }
+}
+
+public async navigateToReportUrl(targetUrl: string): Promise<void> {
+  console.log(`Navigating to report URL: ${targetUrl}`);
+  await this.navigateToUrl(targetUrl, MAX_TEST_TIMEOUT);
+  const madlibContent = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource("Madlib content", COMMON_COMPONENT_NAME)
+  );
+  await madlibContent.waitFor(MAX_TEST_TIMEOUT, "visible");
+  const initialErrorMessage = await this.checkForErrors();
+  if (initialErrorMessage) {
+    console.warn("Error banner detected after navigation. Retrying once...");
+    await this.navigateToUrl(targetUrl, MAX_TEST_TIMEOUT);
+    await madlibContent.waitFor(MAX_TEST_TIMEOUT, "visible");
+    await this.webActionHandler.delay(SMALL_TIMEOUT);
+    const retryErrorMessage = await this.checkForErrors();
+    if (retryErrorMessage) {
+      throw new Error(`Report page failed to load correctly: ${retryErrorMessage}`);
+    }
+  }
+  console.log("Report page loaded successfully");
+}
+```
+
+Spec usage is always `await landingPage.navigateToUrl(config.BASE_URL)` or
+`await commonTestCase.navigateToReportUrl(reportUrl)` — `config.BASE_URL` is the single computed
+source of truth (a getter keyed off `process.env.ENV`, with **one** `baseURLs` map holding every
+environment's literal string), never re-read or re-computed inline in a page object.
+
+**The one documented exception** — `FormatPanel` does not extend `CommonTestCase`, so it has its own
+inline copy of the navigation call:
+```ts
+// formatPanel.ts
+public async navigateToUrlAndCheckMadlibVisbility(targetUrl: string) {
+  await this.webActionHandler.navigateTo(targetUrl, MAX_TEST_TIMEOUT, "domcontentloaded");
+  const reportMenuIcon = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource("formatPanelId", FP_COMPONENT_NAME)
+  );
+  await reportMenuIcon.waitFor();
+}
+```
+This still receives an already-built `targetUrl` (from `config.BASE_URL` at the call site) — it
+does not itself branch on `process.env`/build a URL independently, it just re-implements the
+navigate-and-wait call instead of inheriting it.
+
+Also worth noting: `InsightsPanel.navigateToUrl()` *does* extend/override `CommonTestCase`'s method
+(calls `super.navigateToUrl(...)` after some logging) — this is a thin override, not an independent
+re-computation, and is a different case from `FormatPanel`'s standalone reimplementation.
+
+### 2.4 Honest assessment
+
+**Partially there — closer to duplicated-per-page-object than fully equivalent.**
+
+What matches:
+- `CommonPage.navigateToUrl()` is structurally identical to omnishopper's
+  `CommonTestCase.navigateToUrl()` — same signature, same `try/catch` + `console.error` + re-throw,
+  same default-timeout-parameter pattern, same underlying `webActionHandler.navigateTo(url, timeout,
+  'domcontentloaded')` call. The doc comment in our file even states this is an intentional mirror.
+- Both give page objects one shared, inherited method instead of each page object independently
+  calling `webActionHandler.navigateTo()` raw.
+
+What is genuinely different (not just "different naming," but structurally different):
+1. **No `config.BASE_URL` equivalent exists in this repo.** There is no single environment-keyed
+   `baseURLs` map with a computed getter. Instead, the literal fallback string
+   `'https://si.connect.nielseniq.io/reportexperience-dev'` is hard-coded independently in 4 places
+   (`global-setup.ts`, `start-from-scratch.page.ts`, `start-with-prompt.page.ts`,
+   `playwright.config.ts`), each reading `process.env.BASE_URL` itself rather than one shared
+   source.
+2. **The `/survey` URL-join logic (`endsWith('/')` + `new URL('survey', appBaseURL)`) is
+   copy-pasted 3 times** (`start-from-scratch.page.ts`, `start-with-prompt.page.ts`,
+   `login.page.ts`) rather than living in one shared helper/method the way `CommonTestCase` centralizes
+   navigation.
+3. **There is no `navigateToReportUrl()`-equivalent** (no shared post-navigation "wait for content,
+   check for error banner, retry once" wrapper) in this repo's `CommonPage` — every caller here just
+   uses the bare `navigateToUrl()`.
+4. Omnishopper's one exception (`FormatPanel`) is a single documented outlier out of 32 classes; our
+   repo's base-URL computation, by contrast, is duplicated in the majority of the few places that do
+   navigation at all (4 of the ~5 files that touch `BASE_URL`/URL construction), so proportionally
+   the duplication here is more widespread relative to the size of this codebase, even though the
+   absolute number of duplicated spots is much smaller (this is a much smaller e2e suite overall).
+
+So: the **navigation call itself** (`navigateToUrl`) is already equivalent in shape to omnishopper's
+pattern. The **base-URL sourcing and survey-URL construction** is not — that part is duplicated
+per-page-object here, with no shared `config`-style single source of truth.
