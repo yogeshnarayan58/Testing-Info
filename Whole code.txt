@@ -1,58 +1,111 @@
-I want to test ONE controlled fix for the Cycode SAST finding in servey-mod/e2e.
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Use the COMPLETE current code I provide for:
-- e2e/utils/safe-path.ts
-- e2e/playwright/reporters/lt-session-reporter.ts
-- e2e/playwright/setup/globalTeardown.ts
-- e2e/utils/base-page-factory.ts
-- configurationDetails.ts, specifically getLambdaTestSessionDir()
+Running 10 tests using 2 workers
 
-Do NOT modify any files yet.
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+  ✘   1 …› Land on page + click Start from Scratch @LandStartFromScratch (25.1s)
+Auth state loaded from storage/auth.json
+  ✘   2 …› Land on page + click Start from Scratch @LandStartFromScratch (28.9s)
+Auth state loaded from storage/auth.json
+  -   3 …tart from scratch › Select dataset (footer assertion) @DatasetSelection
+  -   4 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
+  -   5 … › Start from scratch › Panelist button / response count @ResponseCount
+  -   6 … Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
+  -   7 …tart from scratch › Select dataset (footer assertion) @DatasetSelection
+  -   8 …ec.ts:58:7 › Start from scratch › Data summary / 5 filters @DataSummary
+  -   9 … › Start from scratch › Panelist button / response count @ResponseCount
+  -  10 … Start from scratch › Proceed to survey builder @ProceedToSurveyBuilder
 
-First, analyze the current implementation and then provide the COMPLETE replacement code only for the LambdaTest session-path flow.
 
-Experiment we want to test:
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
 
-Instead of a generic helper such as:
+    Error: expect(received).toBeTruthy()
 
-safeJoin(baseDir, fileName)
+    Received: false
 
-where the trusted root is supplied as a function parameter, create a purpose-specific LambdaTest path helper where the trusted root is internally derived from the existing getLambdaTestSessionDir() / existing configuration behavior.
+       at ..\page-objects\common\assert-utils.ts:14
 
-Example concept only:
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy();
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
 
-safeLambdaTestSessionPath(fileName)
+    attachment #1: screenshot (image/png) ──────────────────────────────────────
+    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────
 
-The existing security protections MUST remain:
-- null-byte rejection
-- traversal rejection
-- ../ and ~ rejection
-- backslash rejection
-- absolute/UNC/Windows drive-path rejection
-- filename character allowlist
-- realpath/symlink protection
-- containment verification
-- existing .json/filename validation where applicable
+    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\error-context.md
 
-IMPORTANT:
-- Do NOT hardcode ".lt-sessions" if getLambdaTestSessionDir() does anything else.
-- Preserve the exact existing behavior of getLambdaTestSessionDir().
-- Do NOT change .gitignore.
-- Do NOT change the .lt-sessions directory behavior.
-- Do NOT remove any security check.
-- Do NOT modify Allure handling yet.
-- Do NOT modify globalTeardown or base-page-factory yet unless required for the LambdaTest experiment.
-- Do NOT introduce unused variables.
-- Do NOT move existing try/catch boundaries.
-- Do NOT change error-handling behavior.
-- Do NOT invent missing code.
+    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\error-context.md
 
-The goal is specifically to test whether Cycode treats a purpose-specific helper with an internally trusted LambdaTest root differently from the current generic helper that accepts the root as a parameter.
+    attachment #4: trace (application/zip) ─────────────────────────────────────
+    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\trace.zip
+    Usage:
 
-After reviewing the supplied code, give me:
-1. The complete replacement safe-path.ts required for this experiment.
-2. The exact minimal change required in lt-session-reporter.ts to use it.
-3. A short explanation of why each change is being made.
-4. TypeScript commands to compile/check the change before running Cycode.
+        npx playwright show-trace test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-chromium\trace.zip
 
-Do NOT claim this will definitely fix Cycode. This is a controlled experiment. If the supplied code shows that this approach would introduce a regression, say so instead of generating code.
+    ────────────────────────────────────────────────────────────────────────────
+
+  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy();
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────
+    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\error-context.md
+
+    Error Context: test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────
+    test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--0c463-ge-click-Start-from-Scratch-Microsoft-Edge\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
+    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Land on page + click Start from Scratch @LandStartFromScratch 
+  8 did not run
+
+To open last HTML report run:
+
+  npx playwright show-report
