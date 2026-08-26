@@ -1,57 +1,72 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
-◇ injected env (21) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+import { test } from '@playwright/test';
+import { BasePage } from '@gfk/gta';
+import { BasePageFactory } from '../../utils/base-page-factory';
+import { StartFromScratchPage } from '../../page-objects/survey/start-from-scratch.page';
+import { SelectPanelistPage } from '../../page-objects/common/select-panelist.page';
+import { assertTrue } from '../../page-objects/common/assert-utils';
+import testData from '../../test-data/dev-test-data.json';
 
-Running 10 tests using 2 workers
+const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = testData.datasets[DATASET_NAME];
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-  ✓   1 …Land on page + click Start from Scratch @LandStartFromScratch (50.0s)
-  ✓   2 …Land on page + click Start from Scratch @LandStartFromScratch (45.2s)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  ✓   3 … scratch › Select dataset (footer assertion) @DatasetSelection (6.1s)
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-  ✓   4 … scratch › Select dataset (footer assertion) @DatasetSelection (8.0s)
-      5 ….ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
-↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-      6 ….ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
-✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
-✓ Dimension 'productNoDataPrompt' selection completed
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-✓ Dimension 'productNoDataPrompt' selection completed
-✓ Dimension 'retailerNoDataPrompt' selection completed
-✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-✓ Dimension 'retailerNoDataPrompt' selection completed
-↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   5 … › Start from scratch › Data summary / 5 filters @DataSummary (53.1s)
-  ✓   7 …rom scratch › Panelist button / response count @ResponseCount (18.6s)
-↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
-✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
-✓ Dimension 'periodNoDataPrompt' selection completed
-  ✓   6 …7 › Start from scratch › Data summary / 5 filters @DataSummary (1.0m)
-  ✓   8 …from scratch › Panelist button / response count @ResponseCount (5.2s)
-  ✓   9 …om scratch › Proceed to survey builder @ProceedToSurveyBuilder (2.6s)
-  ✓  10 …om scratch › Proceed to survey builder @ProceedToSurveyBuilder (2.5s)
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
 
-  10 passed (3.3m)
+test.describe.serial('Start from scratch', () => {
+  let basePage: BasePage;
+  let surveyPage: StartFromScratchPage;
+  let selectPanelistPage: SelectPanelistPage;
 
-To open last HTML report run:
+  test.afterAll(async () => {
+    if (basePage) {
+      await basePage.getWebActions().closeBrowser();
+    }
+  });
 
-  npx playwright show-report
+  test('Land on page + click Start from Scratch', { tag: '@LandStartFromScratch' }, async () => {
+    basePage = await BasePageFactory.createBasePage();
+    surveyPage = new StartFromScratchPage(basePage);
+
+    await surveyPage.navigateToSurvey();
+    await surveyPage.clickStartFromScratch();
+  });
+
+  test('Select dataset (footer assertion)', { tag: '@DatasetSelection' }, async () => {
+    await surveyPage.selectProductOffering('');
+    await surveyPage.searchAndSelectDataset(
+      datasetConfig.searchTerm,
+      String(DATASET_NAME),
+      datasetConfig.datasetIndex
+    );
+
+    const isDatasetSelectionConfirmed = await surveyPage.isDatasetSelectionConfirmed();
+    assertTrue(
+      isDatasetSelectionConfirmed,
+      `Expected "Choose a dataset" confirmation not visible after selecting ${DATASET_NAME}`
+    );
+
+    await surveyPage.proceedToNextAfterDatasetSelection();
+    await surveyPage.applyEntireDataset();
+  });
+
+  test('Data summary / 5 filters', { tag: '@DataSummary' }, async () => {
+    selectPanelistPage = new SelectPanelistPage(basePage);
+    await selectPanelistPage.setDimensionSelections(datasetConfig.dimensionSelections);
+
+    const isSearchButtonVisible = await selectPanelistPage.isSearchForPanelistsButtonVisible();
+    assertTrue(isSearchButtonVisible, 'Search for Panelists button not visible after setting dimension selections');
+  });
+
+  test('Panelist button / response count', { tag: '@ResponseCount' }, async () => {
+    await selectPanelistPage.clickSearchForPanelists();
+    await selectPanelistPage.click250Responses();
+  });
+
+  test('Proceed to survey builder', { tag: '@ProceedToSurveyBuilder' }, async () => {
+    await selectPanelistPage.clickProceedToSurveyBuilder();
+    const isLoaded = await selectPanelistPage.isBuildSurveyPageLoaded();
+    assertTrue(isLoaded, 'Build Survey page did not load after proceeding');
+  });
+});
