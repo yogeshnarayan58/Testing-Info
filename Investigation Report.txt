@@ -1,53 +1,673 @@
-Extracted the real Playwright trace and found the actual strict-mode violation error — ground truth from the real DOM, not a guess:
-locator('text=Choose a dataset') resolved to 3 elements (not 2):
-  1) <span id="select-dataset" class="selected-value no-data interactive"> Choose a dataset </span>   — aka #select-dataset
-     (this is the main-page "select a dataset" trigger/placeholder button, NOT part of the dialog)
-  2) <span aria-current="page" data-test-id="-last-item" class="niq-breadcrumb-trail ng-star-inserted"> Choose a dataset </span>
-     (the breadcrumb link, inside the "Breadcrumb" nav)
-  3) <div data-test-id="dataset-picker-title" class="title-second-dialog ng-star-inserted"> Choose a dataset </div>
-     (the actual dialog section heading — this is the one we want)
+import { test, expect } from '@playwright/test';
 
-Also from the accessibility snapshot: the real heading is a plain <div>, not an ARIA role="heading" element — so scoping by role would silently match nothing. The one reliable, unique, real attribute is data-test-id="dataset-picker-title" on element #3.
+test('test', async ({ page }) => {
+  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=jZtmjstgQLHsDm-OdIx5_d9Mjrz7ZZQ0EoCw_FeqylM&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=b5be9kboWf_HmJx3FH4NLAZwQLK48VOohL_HhRpUAX4&code_challenge=qtfGvYBpTRLxNfuQedYLfmfiKn4u1csExwdA9Lmrgts&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username' }).click();
+  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByText('Start from scratch').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-removeIcon"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('US LOC OMNI SUPER ');
+  await page.getByText('US LOC OMNI SUPER').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('US LOC OMNI SUPER ');
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').press('ArrowRight');
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('#US LOC OMNI SUPER CATEGORY MA');
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('APPLIANCES');
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-removeIcon"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Channel');
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').getByText('Channel').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Dollar');
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.locator('[data-test-id="ds-Geography_Dimension"]').click();
+  await page.locator('[data-test-id="ds-removeIcon"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Total US');
+  await page.locator('[data-test-id="-icon"]').first().click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.locator('[data-test-id="ds-Period_Dimension"]').click();
+  await page.locator('[data-test-id="ds-removeIcon"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Months"]').click();
+  await page.locator('[data-test-id="ds-filterIcon"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('Sep 25');
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] [data-test-id="-icon"]').click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.getByRole('button', { name: 'Search for Panelists' }).click();
+  await page.getByRole('button', { name: 'Search for Panelists' }).click();
+});
+-------------------------------------
+code which is in main and was working 
 
-Bonus finding (not fixing, just flagging): the existing dialogElement locator ([data-test-id='title-second-dialog']) appears to be based on a misread — title-second-dialog is actually this same div's CSS class, not its data-test-id (which is dataset-picker-title). That means dialogElement.isVisible() in applyEntireDataset() likely never matches anything real today. Separate issue — didn't touch it since it wasn't asked.
 
-Proposed diff
-start-from-scratch.locator.json
--    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "text", "selectorValue": "Choose a dataset" }
-+    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-title']" }
+{
+  "name": "Survey Generation Page",
+  "webElements": [
+    { "elementName": "startWithScratch", "selectorType": "text", "selectorValue": "Start from scratch" },
+    { "elementName": "productOfferingHeading", "selectorType": "playwrights", "selectorValue": "role=heading[name=\"Product Offering\"]" },
+    { "elementName": "nextButton", "selectorType": "text", "selectorValue": "Next" },
+    { "elementName": "searchToggle", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']" },
+    { "elementName": "searchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
+    { "elementName": "datasetByLabel", "selectorType": "tag", "selectorValue": "[data-test-id^='rv-dataset-id-selector']:has-text('${text}')" },
+    { "elementName": "firstDataset", "selectorType": "css", "selectorValue": "[data-test-id^='rv-dataset-id-selector']" },
+    { "elementName": "entireDatasetOption", "selectorType": "tag", "selectorValue": "[data-test-id='rv-default-dataview']" },
+    { "elementName": "dialogElement", "selectorType": "css", "selectorValue": "[data-test-id='title-second-dialog']" },
+    { "elementName": "applyButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" },
+    { "elementName": "selectPanelistsHeading", "selectorType": "text", "selectorValue": "Select Panelists" }
+  ]
+}
+--------------
 
-start-from-scratch.page.ts — in searchAndSelectDataset():
+{
+  "name": "Select Panelist Page",
+  "webElements": [
+    {
+      "elementName": "selectPanelistsTab",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-selectPanelistsTab']"
+    },
+    {
+      "elementName": "productNoDataPrompt",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Product']"
+    },
+    {
+      "elementName": "retailerNoDataPrompt",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Retailer']"
+    },
+    {
+      "elementName": "geographyNoDataPrompt",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Geography']"
+    },
+    {
+      "elementName": "demographicNoDataPrompt",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Demographic']"
+    },
+    {
+      "elementName": "periodNoDataPrompt",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-noDataPrompt_Period']"
+    },
+    {
+      "elementName": "searchIcon",
+      "selectorType": "playwrights",
+      "selectorValue": "[data-test-id='ds-filterIcon-icon']:visible >> nth=0"
+    },
+    {
+      "elementName": "dsSearchBarInput",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-searchBar-input']"
+    },
+    {
+      "elementName": "dsSelectionsViewPort",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-virtualScrollViewport']"
+    },
+    {
+      "elementName": "checkboxLabel",
+      "selectorType": "playwrights",
+      "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0"
+    },
+    {
+      "elementName": "categoryItem",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0"
+    },
+    {
+      "elementName": "doneIcon",
+      "selectorType": "tag",
+      "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']"
+    },
+    {
+      "elementName": "searchForPanelistsButton",
+      "selectorType": "tag",
+      "selectorValue": "[id='report-btn-run']"
+    },
+    {
+      "elementName": "250ResponsesButton",
+      "selectorType": "text",
+      "selectorValue": "250 Responses"
+    },
+    {
+      "elementName": "proceedToSurveyBuilderButton",
+      "selectorType": "text",
+      "selectorValue": "Proceed to survey builder"
+    },
+    {
+      "elementName": "buildSurveyButton",
+      "selectorType": "text",
+      "selectorValue": "Build Survey"
+    },
+    {
+      "elementName": "buildSurveyPageHeading",
+      "selectorType": "text",
+      "selectorValue": "text= Build Survey >>nth=0"
+    }
+  ]
+}
+-------------
+import { BasePage, WebActions } from '@gfk/gta';
+import { ResourceManager } from '../../utils/resource-manager';
+import selectPanelistPageResources from '../../locators/survey/select-panelist.locator.json';
+import { PANEL_TRANSITION_DELAY, UI_STATE_UPDATE_DELAY } from '../../constants/timeout-constants';
 
-       const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
--      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
-+      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-       if (!isOnDatasetScreen) {
-         console.log('↷ "Choose a dataset" screen not shown — assuming already selected, skipping search');
-         return;
-       }
+const SELECT_PANELIST_PAGE_COMPONENT_NAME = 'selectPanelistPage';
 
-Note: isDatasetSelectionConfirmed() also uses chooseDatasetBreadcrumb and automatically benefits from the fix — no code change needed there.
-
-Apply this? (I'll also clean up the temp trace-extraction files I created under test-results/.../_inspect/ — those aren't part of the deliverable.)
-----------------------
-created this file should I keep it or remove it 
-const fs = require('fs');
-const s = fs.readFileSync('0-trace.trace', 'utf8');
-const needle = '"class":"dialog-title-text"';
-let idx = s.indexOf(needle);
-while (idx !== -1) {
-  console.log('---MATCH at', idx, '---');
-  console.log(s.slice(idx - 150, idx + 400));
-  idx = s.indexOf(needle, idx + 1);
+/**
+ * DimensionSelection interface defines hierarchy and UI interaction flags per dimension.
+ */
+interface DimensionSelection {
+  dimensionTab: string;
+  items: string[];
+  parentItems?: string[];
+  requiresFilterIconClick?: boolean;
+  filterIconClickAfterParent?: boolean;
+  skipParentSearch?: boolean;
 }
 
-const needle2 = 'resolved to 3 elements';
-let idx2 = s.indexOf(needle2);
-if (idx2 !== -1) {
-  console.log('---STRICT MODE ERROR---');
-  console.log(s.slice(idx2 - 50, idx2 + 1200));
+/**
+ * SelectPanelistPage — Rebuilt following Omni Shopper's proven DataSelector pattern.
+ * KEY CHANGE: searchIcon clicks are now CONDITIONAL on visibility (isVisible() check)
+ * instead of unconditionally assuming the icon must be clicked.
+ */
+export class SelectPanelistPage {
+  private webActionHandler: WebActions;
+  private resourceManager: ResourceManager;
+
+  constructor(private basePage: BasePage) {
+    this.webActionHandler = basePage.getWebActions();
+    this.resourceManager = new ResourceManager({});
+    this.resourceManager.registerResources(
+      SELECT_PANELIST_PAGE_COMPONENT_NAME,
+      selectPanelistPageResources
+    );
+  }
+
+  /**
+   * Process all dimension selections in sequence.
+   */
+  async setDimensionSelections(selections: DimensionSelection[]): Promise<void> {
+    for (const selection of selections) {
+      await this.setDimensionSelection(
+        selection.dimensionTab,
+        selection.items,
+        selection.parentItems,
+        selection.requiresFilterIconClick,
+        selection.filterIconClickAfterParent,
+        selection.skipParentSearch
+      );
+    }
+  }
+
+  /**
+   * Enter text into search field.
+   * Matches Omni Shopper pattern: waitFor() once (no timeout), clear, type.
+   */
+  private async enterTextInSearchField(inputText: string): Promise<void> {
+    const searchField = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await searchField.waitFor();
+    await searchField.enterText("");
+    await searchField.enterText(inputText);
+  }
+
+  /**
+   * Core dimension selection flow — FULLY REWRITTEN to match Omni Shopper's conditional pattern.
+   * 
+   * Flow:
+   * 1. Click dimension prompt → panel opens
+   * 2. IF requiresFilterIconClick: Check isVisible() BEFORE clicking searchIcon (NEW — conditional!)
+   * 3. Select parent categories (if any)
+   * 4. IF filterIconClickAfterParent: Check isVisible() BEFORE clicking searchIcon
+   * 5. Select child items
+   * 6. Clear search field
+   * 7. Click Done → panel closes
+   */
+  async setDimensionSelection(
+    dimensionPromptResource: string,
+    itemsToSelect: string[],
+    parentItems?: string[],
+    requiresFilterIconClick?: boolean,
+    filterIconClickAfterParent?: boolean,
+    skipParentSearch?: boolean
+  ): Promise<void> {
+    try {
+      // Step 1: Click dimension prompt
+      const dimensionPrompt = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource(dimensionPromptResource, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await dimensionPrompt.waitFor();
+      await dimensionPrompt.click();
+      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+
+      // Step 2: CONDITIONALLY click searchIcon BEFORE parent (Product, Demographic)
+      // ✓ THIS IS THE KEY FIX: Check isVisible() first — matches Omni Shopper's defensive pattern
+      if (requiresFilterIconClick) {
+        const searchIcon = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        const isVisible = await searchIcon.isVisible();
+        if (isVisible) {
+          await searchIcon.click();
+          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+        } else {
+          // Icon not visible = search bar already open on panel load
+          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+        }
+      }
+
+      // Step 3: Select parent categories (hierarchical dimensions: Product, Period)
+      if (parentItems && parentItems.length > 0) {
+        for (const parentItem of parentItems) {
+          // 3a: Search for parent (unless skipParentSearch is true for Period)
+          if (!skipParentSearch) {
+            await this.enterTextInSearchField(parentItem);
+            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+            const viewport = this.webActionHandler.getWebElement(
+              this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+            );
+            await viewport.waitFor();
+            await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+          }
+
+          // 3b: Click parent category item (NOT checkbox)
+          const parentCategory = this.webActionHandler.getWebElement(
+            this.resourceManager.getDynamicResource('categoryItem', parentItem, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+          );
+          await parentCategory.waitFor();
+          await parentCategory.click();
+          await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+        }
+      }
+
+      // Step 4: CONDITIONALLY click searchIcon AFTER parent (Period only)
+      // ✓ Matches Omni Shopper: Check isVisible() before clicking
+      if (filterIconClickAfterParent) {
+        const searchIcon = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('searchIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        const isVisible = await searchIcon.isVisible();
+        if (isVisible) {
+          await searchIcon.click();
+          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+        } else {
+          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+        }
+      }
+
+      // Step 5: Select child items
+      for (const item of itemsToSelect) {
+        await this.enterTextInSearchField(item);
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+        const viewport = this.webActionHandler.getWebElement(
+          this.resourceManager.getResource('dsSelectionsViewPort', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await viewport.waitFor();
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+        const checkbox = this.webActionHandler.getWebElement(
+          this.resourceManager.getDynamicResource('checkboxLabel', item, SELECT_PANELIST_PAGE_COMPONENT_NAME)
+        );
+        await checkbox.waitFor();
+        await checkbox.click();
+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      }
+
+      // Step 6: Clear search field before Done
+      const searchFieldBeforeDone = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('dsSearchBarInput', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await searchFieldBeforeDone.waitFor();
+      await searchFieldBeforeDone.enterText("");
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      // Step 7: Click Done
+      const doneButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('doneIcon', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+      );
+      await doneButton.waitFor();
+      await doneButton.click();
+      await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+
+      console.log(`✓ Dimension '${dimensionPromptResource}' selection completed`);
+    } catch (error) {
+      console.error(
+        `❌ setDimensionSelection failed for '${dimensionPromptResource}':`,
+        error instanceof Error ? error.message : error
+      );
+      throw error;
+    }
+  }
+
+  async clickSelectPanelistsTab(): Promise<void> {
+    const selectPanelistsTab = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('selectPanelistsTab', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await selectPanelistsTab.waitFor();
+    await selectPanelistsTab.click();
+    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+  }
+
+  async clickSearchForPanelists(): Promise<void> {
+    const searchButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('searchForPanelistsButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await searchButton.waitFor();
+    await searchButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async click250Responses(): Promise<void> {
+    const button250 = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('250ResponsesButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await button250.waitFor();
+    await button250.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async clickProceedToSurveyBuilder(): Promise<void> {
+    const proceedButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('proceedToSurveyBuilderButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await proceedButton.waitFor();
+    await proceedButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async clickBuildSurvey(): Promise<void> {
+    const buildSurveyButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('buildSurveyButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await buildSurveyButton.waitFor();
+    await buildSurveyButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async isBuildSurveyPageLoaded(): Promise<boolean> {
+    const pageHeading = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('buildSurveyPageHeading', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+    );
+    await pageHeading.waitFor();
+    return await pageHeading.isVisible();
+  }
 }
+--------------------
+import { BasePage } from '@gfk/gta';
+import { SelectPanelistPage } from './select-panelist.page';
+
+type DimensionSelectionsArg = Parameters<SelectPanelistPage['setDimensionSelections']>[0];
+
+export async function completePanelistSelectionFlow(
+  basePage: BasePage,
+  dimensionSelections: DimensionSelectionsArg
+): Promise<boolean> {
+  const selectPanelistPage = new SelectPanelistPage(basePage);
+  await selectPanelistPage.setDimensionSelections(dimensionSelections);
+  await selectPanelistPage.clickSearchForPanelists();
+  await selectPanelistPage.click250Responses();
+  await selectPanelistPage.clickProceedToSurveyBuilder();
+  return selectPanelistPage.isBuildSurveyPageLoaded();
+}
+---------------------
+import { BasePage } from '@gfk/gta';
+import { CommonPage } from '../common/common-page';
+import { SMALL_TIMEOUT, UI_STATE_UPDATE_DELAY } from '../../constants/timeout-constants';
+import startFromScratchPageResources from '../../locators/survey/start-from-scratch.locator.json';
+
+const START_FROM_SCRATCH_PAGE_COMPONENT_NAME = 'startFromScratchPage';
+
+export class StartFromScratchPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
+      startFromScratchPageResources
+    );
+  }
+
+  async navigateToSurvey(): Promise<void> {
+    const baseURL = process.env.BASE_URL || 'https://si.connect.nielseniq.io/reportexperience-dev';
+    const appBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+    const surveyURL = new URL('survey', appBaseURL).toString();
+    await this.navigateToUrl(surveyURL);
+  }
+
+  async clickStartFromScratch(): Promise<void> {
+    try {
+      const startFromScratch = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await startFromScratch.waitFor(SMALL_TIMEOUT);
+      await startFromScratch.click();
+    } catch (error) {
+      throw new Error(`Failed to click Start from scratch: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /**
+   * Confirms the Product Offering step is shown and proceeds via the Next button.
+   * The `productOffering` parameter is currently unused because this step has no
+   * selectable options in the resource JSON (only a heading + Next button).
+   */
+  async selectProductOffering(_productOffering: string): Promise<void> {
+    try {
+      const productOfferingHeading = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('productOfferingHeading', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await productOfferingHeading.waitFor(SMALL_TIMEOUT);
+
+      const nextButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await nextButton.waitFor(SMALL_TIMEOUT);
+      await nextButton.click();
+    } catch (error) {
+      throw new Error(`Failed to select product offering: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<void> {
+    try {
+      const searchToggle = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('searchToggle', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await searchToggle.waitFor(SMALL_TIMEOUT);
+      await searchToggle.click();
+
+      const searchInput = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('searchInput', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await searchInput.waitFor(SMALL_TIMEOUT);
+      await searchInput.enterText(searchTerm);
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const datasetElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('datasetByLabel', datasetLabel, START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await datasetElement.waitFor(SMALL_TIMEOUT);
+      await datasetElement.click();
+    } catch (error) {
+      throw new Error(`Failed to search and select dataset "${datasetLabel}": ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /**
+   * After a dataset is selected from the search results, the picker surfaces a
+   * "Next" button directly (no intermediate confirmation dialog / entire-dataset
+   * option for this flow) — confirmed via trace analysis where waits for
+   * 'dialogElement' and 'entireDatasetOption' both timed out while the dataset
+   * selection itself succeeded.
+   */
+  async proceedToNextAfterDatasetSelection(): Promise<void> {
+    try {
+      const nextButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await nextButton.waitFor(SMALL_TIMEOUT);
+      await nextButton.click();
+    } catch (error) {
+      throw new Error(`Failed to click Next after dataset selection: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /**
+   * "Entire Dataset" is selected by default in the confirmation dialog that
+   * appears after clicking Next post dataset-selection, so this only waits
+   * for the dialog and clicks Apply.
+   */
+  async applyEntireDataset(): Promise<void> {
+    try {
+      const dialogElement = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('dialogElement', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await dialogElement.waitFor(SMALL_TIMEOUT);
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const applyButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await applyButton.waitFor(SMALL_TIMEOUT);
+      await applyButton.click();
+    } catch (error) {
+      throw new Error(`Failed to apply entire dataset: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  public getBasePage(): BasePage {
+    return this.basePage;
+  }
+}
+------------
+
+  "common": {
+    "navigationURL": "survey"
+  },
+  "datasets": {
+    "Omni Agg SI 3yrs Synd": {
+      "searchTerm": "SI",
+      "datasetIndex": 0,
+      "dimensionSelections": [
+        {
+          "dimensionTab": "productNoDataPrompt",
+          "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"],
+          "items": ["APPLIANCES"],
+          "requiresFilterIconClick": true,
+          "filterIconClickAfterParent": false,
+          "skipParentSearch": false
+        },
+        {
+          "dimensionTab": "retailerNoDataPrompt",
+          "parentItems": ["Channel"],
+          "items": ["Dollar Store"],
+          "requiresFilterIconClick": false,
+          "filterIconClickAfterParent": false,
+          "skipParentSearch": false
+        },
+        {
+          "dimensionTab": "geographyNoDataPrompt",
+          "items": ["Total US"],
+          "requiresFilterIconClick": false,
+          "filterIconClickAfterParent": false,
+          "skipParentSearch": false
+        },
+        {
+          "dimensionTab": "demographicNoDataPrompt",
+          "parentItems": ["Total Panel"],
+          "items": ["Total Panel"],
+          "requiresFilterIconClick": true,
+          "filterIconClickAfterParent": false,
+          "skipParentSearch": false
+        },
+        {
+          "dimensionTab": "periodNoDataPrompt",
+          "parentItems": ["Months"],
+          "items": ["Sep 25 - 5 w/e 09/27/25"],
+          "requiresFilterIconClick": false,
+          "filterIconClickAfterParent": true,
+          "skipParentSearch": true
+        }
+      ]
+    }
+  }
+}
+-----------
+import { test } from '@playwright/test';
+import { BasePageFactory } from '../../utils/base-page-factory';
+import { StartFromScratchPage } from '../../page-objects/survey/start-from-scratch.page';
+import { assertTrue } from '../../page-objects/common/assert-utils';
+import { completePanelistSelectionFlow } from '../../page-objects/common/panelist-flow.helper';
+import testData from '../../test-data/dev-test-data.json';
+
+const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = testData.datasets[DATASET_NAME];
+
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
+
+test.describe('Start from scratch', () => {
+  test('All dimensions selection', { tag: '@StartFromScratch' }, async () => {
+    test.setTimeout(300000);
+    const basePage = await BasePageFactory.createBasePage();
+    const surveyPage = new StartFromScratchPage(basePage);
+
+    try {
+      await surveyPage.navigateToSurvey();
+      await surveyPage.clickStartFromScratch();
+      await surveyPage.selectProductOffering('');
+      await surveyPage.searchAndSelectDataset(
+        datasetConfig.searchTerm,
+        String(DATASET_NAME),
+        datasetConfig.datasetIndex
+      );
+      await surveyPage.proceedToNextAfterDatasetSelection();
+      await surveyPage.applyEntireDataset();
+      const isLoaded = await completePanelistSelectionFlow(basePage, datasetConfig.dimensionSelections);
+      assertTrue(isLoaded, 'Panelist selection flow did not complete successfully');
+    } finally {
+      await basePage.getWebActions().closeBrowser();
+    }
+  });
+});
 
 
