@@ -1,7 +1,7 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
 $ npx playwright test e2e/tests/survey/start-from-scratch.spec.ts
-◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (21) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -15,110 +15,43 @@ Global setup completed. Auth state saved.
 
 Running 10 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-  ✓   1 …Land on page + click Start from Scratch @LandStartFromScratch (26.6s)
+  ✓   1 …Land on page + click Start from Scratch @LandStartFromScratch (50.0s)
+  ✓   2 …Land on page + click Start from Scratch @LandStartFromScratch (45.2s)
 Auth state loaded from storage/auth.json
-  ✓   2 …Land on page + click Start from Scratch @LandStartFromScratch (24.0s)
 Auth state loaded from storage/auth.json
-  ✓   3 … scratch › Select dataset (footer assertion) @DatasetSelection (4.9s)
+  ✓   3 … scratch › Select dataset (footer assertion) @DatasetSelection (6.1s)
 ↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-  ✓   4 … scratch › Select dataset (footer assertion) @DatasetSelection (4.7s)
+  ✓   4 … scratch › Select dataset (footer assertion) @DatasetSelection (8.0s)
+      5 ….ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
 ↷ Dataset "Omni Agg SI 3yrs Synd" already selected as default — skipping search
-  ✘   5 …7 › Start from scratch › Data summary / 5 filters @DataSummary (5.0m)
-  ✘   6 …7 › Start from scratch › Data summary / 5 filters @DataSummary (5.0m)
-❌ setDimensionSelection failed for 'productNoDataPrompt': locator.textContent: Target page, context or browser has been closed
-  -   7 … Start from scratch › Panelist button / response count @ResponseCount
-  -   8 …tart from scratch › Proceed to survey builder @ProceedToSurveyBuilder
-❌ setDimensionSelection failed for 'productNoDataPrompt': locator.textContent: Target page, context or browser has been closed
-  -   9 … Start from scratch › Panelist button / response count @ResponseCount
-  -  10 …tart from scratch › Proceed to survey builder @ProceedToSurveyBuilder
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+      6 ….ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary
+✎ Dimension 'productNoDataPrompt' has a different value ('FLORAL') — removing first
+✓ Dimension 'productNoDataPrompt' selection completed
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+✓ Dimension 'productNoDataPrompt' selection completed
+✓ Dimension 'retailerNoDataPrompt' selection completed
+✎ Dimension 'retailerNoDataPrompt' has a different value ('7-Eleven') — removing first
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✓ Dimension 'retailerNoDataPrompt' selection completed
+↷ Dimension 'geographyNoDataPrompt' already set to 'Total US' — skipping
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   5 … › Start from scratch › Data summary / 5 filters @DataSummary (53.1s)
+  ✓   7 …rom scratch › Panelist button / response count @ResponseCount (18.6s)
+↷ Dimension 'demographicNoDataPrompt' already set to 'Total Panel' — skipping
+✎ Dimension 'periodNoDataPrompt' has a different value ('JFM 25 - w/e 03/29/25') — removing first
+✓ Dimension 'periodNoDataPrompt' selection completed
+  ✓   6 …7 › Start from scratch › Data summary / 5 filters @DataSummary (1.0m)
+  ✓   8 …from scratch › Panelist button / response count @ResponseCount (5.2s)
+  ✓   9 …om scratch › Proceed to survey builder @ProceedToSurveyBuilder (2.6s)
+  ✓  10 …om scratch › Proceed to survey builder @ProceedToSurveyBuilder (2.5s)
 
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary 
-
-    Test timeout of 300000ms exceeded.
-
-    Error: locator.textContent: Target page, context or browser has been closed
-
-       at ..\page-objects\common\select-panelist.page.ts:77
-
-      75 |     );
-      76 |     await dimensionElement.waitFor();
-    > 77 |     const text = await dimensionElement.getText();
-         |                                         ^
-      78 |     return (text ?? '').trim();
-      79 |   }
-      80 |
-        at WebElement.getText (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:307:50)
-        at SelectPanelistPage.getCurrentDimensionValue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:77:41)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:153:28)
-        at SelectPanelistPage.setDimensionSelections (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:43:7)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:56:5
-
-    attachment #1: screenshot (image/png) ────────────────────────────────────
-    test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-chromium\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ───────────────────────────────────
-    test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────────────────
-
-  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary 
-
-    Test timeout of 300000ms exceeded.
-
-    Error: locator.textContent: Target page, context or browser has been closed
-
-       at ..\page-objects\common\select-panelist.page.ts:77
-
-      75 |     );
-      76 |     await dimensionElement.waitFor();
-    > 77 |     const text = await dimensionElement.getText();
-         |                                         ^
-      78 |     return (text ?? '').trim();
-      79 |   }
-      80 |
-        at WebElement.getText (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:307:50)
-        at SelectPanelistPage.getCurrentDimensionValue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:77:41)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:153:28)
-        at SelectPanelistPage.setDimensionSelections (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:43:7)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:56:5
-
-    attachment #1: screenshot (image/png) ────────────────────────────────────
-    test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-Microsoft-Edge\test-failed-1.png
-    ──────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-Microsoft-Edge\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-Microsoft-Edge\error-context.md
-
-    attachment #4: trace (application/zip) ───────────────────────────────────
-    test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--cb610-atch-Data-summary-5-filters-Microsoft-Edge\trace.zip
-
-    ──────────────────────────────────────────────────────────────────────────
-
-  2 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary 
-    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:54:7 › Start from scratch › Data summary / 5 filters @DataSummary 
-  4 did not run
-  4 passed (6.5m)
+  10 passed (3.3m)
 
 To open last HTML report run:
 
   npx playwright show-report
-
-
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ 
