@@ -1,143 +1,209 @@
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ npx playwright test e2e/tests/survey/start-with-prompt.spec.ts
-◇ injected env (20) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = true
+import * as fs from 'fs';
+import * as path from 'path';
 
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1787904986655)
-[LT Session] Warning: testId not available, using fallback sessions.jsonl
-[LT Session] Registered session: Test-1787904986655 (worker: 0)
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+/** Leading parent-directory sequences (`../`, `..\`) that must be stripped before any path sink. */
+const TRAVERSAL_PREFIX_RE = /^(\.\.(\/|\\|$))+/;
 
-Running 5 tests using 1 worker
+/**
+ * Rejects NULL bytes and strips any leading parent-directory (`../`, `..\`)
+ * sequences before a value is handed to any `path.*` / `fs.*` call.
+ */
+const sanitizeDynamicPath = (value: string, label: string): string => {
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`Invalid ${label}: a non-empty path string is required`);
+  }
+  if (value.indexOf('\0') !== -1) {
+    throw new Error(`Null byte detected in ${label}: not allowed`);
+  }
+  return value.replace(TRAVERSAL_PREFIX_RE, '');
+};
 
-[LT Reporter] Initialized - capturing LambdaTest sessions...
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = true
+/**
+ * Safely joins a base directory with dynamic/untrusted path segments, preventing
+ * path traversal and link-following into locations outside the intended base directory.
+ *
+ * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
+ * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
+ * (test IDs, worker indices, on-disk mapping/result filenames).
+ *
+ * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path
+ */
+ * Safely joins a base directory with dynamic/untrusted path segments, preventing
+ * path traversal and link-following into locations outside the intended base directory.
+ *
+ * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
+ * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
+ * (test IDs, worker indices, on-disk mapping/result filenames).
+ *
+ * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
+ * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
+ * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
+ * @returns the safe, joined, canonicalized path
+ */
+export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
+  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
+  const normalizedBaseDir = path.resolve(baseDir);
+  const sanitizedBaseDir = sanitizeDynamicPath(baseDir, 'base directory');
+  // #cycode_sast_ignore_here Safe: sanitizedBaseDir is null-byte-free and traversal-stripped by sanitizeDynamicPath
+  const normalizedBaseDir = path.resolve(sanitizedBaseDir.replace(TRAVERSAL_PREFIX_RE, ''));Expand commentComment on lines R35 to R37Resolved
 
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-     1 …ompt option on the survey home page @StartWithPrompt @StartWithPrompt
-[LT Reporter] Test started: "Start with a Prompt: Should display the Start with a prompt option on the survey home page" (testId: a190e1baf811c479e479-d58
-  ✘  1 …tion on the survey home page @StartWithPrompt @StartWithPrompt (5.0m)
-Auth state loaded from storage/auth.json
-Connecting to LambdaTest cloud...
-Connected to LambdaTest (Session: Test-1787905090973)
-[LT Session] ✓ test-a190e1baf811c479e479-d581ab3665b0de476265.json written
-[LT Session] Registered session: Test-1787905090973 (worker: 0)
-[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page" -> Test-1787905090973
-[LT Reporter] Mapping written to test-a190e1baf811c479e479-d581ab3665b0de476265-27544-1787905392978.json
-     2 …elect the dataset type and dataset @StartWithPrompt @DatasetSelection
-[LT Reporter] Test started: "Dataset Selection: Should select the dataset typ
-  -  2 …elect the dataset type and dataset @StartWithPrompt @DatasetSelection
-[LT Reporter] No session found for "Dataset Selection: Should select the dataset type and dataset" (testId: a190e1baf811c479e479-3e3cf4fc33c5b294334c)
-     3 …ion selections and search for panelists @StartWithPrompt @DataSummary
-[LT Reporter] Test started: "Panelist Filters: Should set dimension selections and search for panelists" (testId: a190e1baf811c479e479-39c3762826d045e48f2
-  -  3 …ion selections and search for panelists @StartWithPrompt @DataSummary
-[LT Reporter] No session found for "Panelist Filters: Should set dimension selections and search for panelists" (testId: a190e1baf811c479e479-39c3762826d045e48f27)
-     4 …Count: Should select a response count @StartWithPrompt @ResponseCount
-[LT Reporter] Test started: "Response Count: Should select a response count" 
-  -  4 …Count: Should select a response count @StartWithPrompt @ResponseCount
-[LT Reporter] No session found for "Response Count: Should select a response count" (testId: a190e1baf811c479e479-52df176eeb5389c8af30)
-     5 …ompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-[LT Reporter] Test started: "Generate Survey: Should fill the prompt and reac
-  -  5 …ompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-[LT Reporter] No session found for "Generate Survey: Should fill the prompt and reach the Build Survey page" (testId: a190e1baf811c479e479-f8c28a486a40dad93ebf)
-[global-teardown] Adding LambdaTest videos to Allure report...
-[global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] Found 1 test-session mapping file(s)
-[global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 7 Allure result files
-[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Response Count: Should select a response count"
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists"
-[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page": Test-1787905090973
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Dataset Selection: Should select the dataset type and dataset"
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Generate Survey: Should fill the prompt and reach the Build Survey page"
-[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
-[global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Found 14 LambdaTest sessions
-[global-teardown] Extracted Build ID: 102780753
-[global-teardown] Step 5: Adding video links to Allure files...
-[global-teardown] Looking for session: Test-1787314940999
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314943546396761WTA
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] No LT_SESSION parameter for test: Response Count: Should select a response count
-[global-teardown] No LT_SESSION parameter for test: Panelist Filters: Should set dimension selections and search for panelists
-[global-teardown] Looking for session: Test-1787905090973
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787905093930504316QFK
-[global-teardown] ✓ Added video link for "Start with a Prompt: Should display the Start with a prompt option on the survey home page"
-[global-teardown] No LT_SESSION parameter for test: Dataset Selection: Should select the dataset type and dataset
-[global-teardown] No LT_SESSION parameter for test: Generate Survey: Should fill the prompt and reach the Build Survey page
-[global-teardown] Looking for session: Test-1787314630614
-[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314633009450316KEO
-[global-teardown] ✓ Added video link for "All dimensions selection"
-[global-teardown] LambdaTest videos added to Allure report successfully.
-[global-teardown] Build URL: https://automation.lambdatest.com/build?build=102780753
+  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
+  // (\\server\share) - checked explicitly and OS-agnostically, since
+  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
+  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
+  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
+  // (\\server\share) - checked explicitly and OS-agnostically, since
+  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
+  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
 
+  for (const segment of untrustedSegments) {
+    if (segment.length === 0) {
+      throw new Error('Empty path segment is not allowed');
+    }
+    if (segment.indexOf('\0') !== -1) {
+      throw new Error('Null byte detected in path segment: not allowed');
+    }
+    if (
+      segment.includes('..') ||
+      segment.includes('~') ||
+      segment.includes('\\') ||
+      path.isAbsolute(segment) ||
+      WINDOWS_ABSOLUTE_RE.test(segment) ||
+      /^\.\/|^\.\.\/|^\//.test(segment)
+    ) {
+      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
+    }
+  }
+  for (const segment of untrustedSegments) {
+    if (segment.length === 0) {
+      throw new Error('Empty path segment is not allowed');
+    }
+    if (segment.indexOf('\0') !== -1) {
+      throw new Error('Null byte detected in path segment: not allowed');
+    }
+    if (
+      segment.includes('..') ||
+      segment.includes('~') ||
+      segment.includes('\\') ||
+      path.isAbsolute(segment) ||
+      WINDOWS_ABSOLUTE_RE.test(segment) ||
+      /^\.\/|^\.\.\/|^\//.test(segment)
+    ) {
+      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
+    }
+  }
 
-  1) [lambdatest-chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
+  const sanitizedSegments = untrustedSegments.map((segment) => {
+    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
+      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
+    }
+    return sanitized;
+  });
+  const sanitizedSegments = untrustedSegments.map((segment) => {
+    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
+      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
+    }
+    return sanitized;
+  });
 
-    Test timeout of 300000ms exceeded.
+  // Resolve symlinks on the base directory itself, if it exists yet.
+  let realBaseDir = normalizedBaseDir;
+  try {
+    realBaseDir = fs.realpathSync(normalizedBaseDir);
+  } catch {
+    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
+       to the resolved-but-not-yet-canonical path; the containment check
+       below still applies once it's created. */
+  }
+  // Resolve symlinks on the base directory itself, if it exists yet.
+  let realBaseDir = normalizedBaseDir;
+  try {
+    realBaseDir = sanitizeDynamicPath(
+      // #cycode_sast_ignore_here Safe: normalizedBaseDir is absolute and derived from the sanitized base directory
+      fs.realpathSync(normalizedBaseDir),
+      'base directory'
+    );
+  } catch {
+    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
+       to the resolved-but-not-yet-canonical path; the containment check
+       below still applies once it's created. */
+  }
 
-    Error: Failed to click Start with a prompt: locator.click: Target page, context or browser has been closed
-    Call log:
-      - waiting for locator('text=Start with a prompt')
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = path.join(realBaseDir, ...sanitizedSegments);
+  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
+  const normalizedPath = path.normalize(path.resolve(pathname));
+  const baseDirWithSeparator = realBaseDir + path.sep;
+  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
+  const pathname = sanitizeDynamicPath(
+    path.join(
+      realBaseDir.replace(TRAVERSAL_PREFIX_RE, ''),
+      ...sanitizedSegments.map((segment) => segment.replace(TRAVERSAL_PREFIX_RE, ''))
+    ),
+    'joined path'
+  );
+  // #cycode_sast_ignore_here Safe: canonicalizes the sanitized joined path so the containment check below cannot be bypassed via ".." or symlinks
+  const normalizedPath = path.normalize(path.resolve(pathname.replace(TRAVERSAL_PREFIX_RE, '')));
+  const baseDirWithSeparator = realBaseDir + path.sep;
 
+  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
+    throw new Error(
+      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
+    );
+  }
+  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
+    throw new Error(
+      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
+    );
+  }
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:33
+  return normalizedPath;
+  return normalizedPath;
+};
 
-      31 |       await startWithPrompt.click();
-      32 |     } catch (error) {
-    > 33 |       throw new Error(`Failed to click Start with a prompt: ${error instanceof Error ? error.message : error}`);
-         |             ^
-      34 |     }
-      35 |   }
-      36 |
-        at StartWithPromptPage.clickStartWithPrompt (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:33:13)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:33:5
+/**
+ * Verifies that `dir` resolves to a location inside (or exactly equal to)
+ * `expectedRoot`, and returns the resolved path. Used to confirm a directory
+ * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
+ * not been redirected outside the intended root before it's used as the base
+ * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
+ *
+ * @throws Error if dir does not resolve within expectedRoot
+ * @returns the resolved, verified directory path
+ */
+ * Verifies that `dir` resolves to a location inside (or exactly equal to)
+ * `expectedRoot`, and returns the resolved path. Used to confirm a directory
+ * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
+ * not been redirected outside the intended root before it's used as the base
+ * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
+ *
+ * @throws Error if dir does not resolve within expectedRoot
+ * @returns the resolved, verified directory path
+ */
+export const assertContainedDir = (expectedRoot: string, dir: string): string => {
+  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
+  const resolvedRoot = path.resolve(expectedRoot);
+  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
+  const resolvedDir = path.resolve(dir);
+  const sanitizedRoot = sanitizeDynamicPath(expectedRoot, 'expected root');
+  const sanitizedDir = sanitizeDynamicPath(dir, 'directory');
+  // #cycode_sast_ignore_here Safe: sanitizedRoot is null-byte-free and traversal-stripped by sanitizeDynamicPath
+  const resolvedRoot = path.resolve(sanitizedRoot.replace(TRAVERSAL_PREFIX_RE, ''));
+  // #cycode_sast_ignore_here Safe: sanitizedDir is sanitized above and verified for containment within resolvedRoot below before being returned
+  const resolvedDir = path.resolve(sanitizedDir.replace(TRAVERSAL_PREFIX_RE, ''));
 
-    attachment #1: screenshot (image/png) ───────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────
+  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
+    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
+  }
+  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
+    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
+  }
 
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\error-context.md
-
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ──────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [lambdatest-chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
-  4 did not run
-[LT Reporter] Saved 1 session mappings.
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
-$ 
+  return resolvedDir;
+  return resolvedDir;
+};
