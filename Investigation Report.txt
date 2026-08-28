@@ -1,6 +1,6 @@
 ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
 $ npx playwright test e2e/tests/survey/start-with-prompt.spec.ts
-◇ injected env (21) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (20) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = true
 
 🌐 LambdaTest Cloud Execution Enabled
@@ -12,62 +12,127 @@ Starting global setup...
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Connecting to LambdaTest cloud...
-Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get localissuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+Connected to LambdaTest (Session: Test-1787904986655)
+[LT Session] Warning: testId not available, using fallback sessions.jsonl
+[LT Session] Registered session: Test-1787904986655 (worker: 0)
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-    at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:95:38)
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:34:38) {
-  log: [
-    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
-    '  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate',
-    '  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate',
-    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
-  ],
-  name: 'Error'
-}
-Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get localissuer certificate
-  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+Running 5 tests using 1 worker
 
+[LT Reporter] Initialized - capturing LambdaTest sessions...
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = true
 
-   at ..\helpers\global-setup.ts:43
-
-  41 |     console.error('Global setup failed:', error);
-  42 |     if (error instanceof Error) {
-> 43 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  44 |     }
-  45 |     throw new Error('Global setup failed with an unknown error');
-  46 |   } finally {
-    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+🌐 LambdaTest Cloud Execution Enabled
+   Credentials: configured
+   Project: OMNI SurveyMod
+   Workers: 1
+     1 …ompt option on the survey home page @StartWithPrompt @StartWithPrompt
+[LT Reporter] Test started: "Start with a Prompt: Should display the Start with a prompt option on the survey home page" (testId: a190e1baf811c479e479-d58
+  ✘  1 …tion on the survey home page @StartWithPrompt @StartWithPrompt (5.0m)
+Auth state loaded from storage/auth.json
+Connecting to LambdaTest cloud...
+Connected to LambdaTest (Session: Test-1787905090973)
+[LT Session] ✓ test-a190e1baf811c479e479-d581ab3665b0de476265.json written
+[LT Session] Registered session: Test-1787905090973 (worker: 0)
+[LT Reporter] Stored: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page" -> Test-1787905090973
+[LT Reporter] Mapping written to test-a190e1baf811c479e479-d581ab3665b0de476265-27544-1787905392978.json
+     2 …elect the dataset type and dataset @StartWithPrompt @DatasetSelection
+[LT Reporter] Test started: "Dataset Selection: Should select the dataset typ
+  -  2 …elect the dataset type and dataset @StartWithPrompt @DatasetSelection
+[LT Reporter] No session found for "Dataset Selection: Should select the dataset type and dataset" (testId: a190e1baf811c479e479-3e3cf4fc33c5b294334c)
+     3 …ion selections and search for panelists @StartWithPrompt @DataSummary
+[LT Reporter] Test started: "Panelist Filters: Should set dimension selections and search for panelists" (testId: a190e1baf811c479e479-39c3762826d045e48f2
+  -  3 …ion selections and search for panelists @StartWithPrompt @DataSummary
+[LT Reporter] No session found for "Panelist Filters: Should set dimension selections and search for panelists" (testId: a190e1baf811c479e479-39c3762826d045e48f27)
+     4 …Count: Should select a response count @StartWithPrompt @ResponseCount
+[LT Reporter] Test started: "Response Count: Should select a response count" 
+  -  4 …Count: Should select a response count @StartWithPrompt @ResponseCount
+[LT Reporter] No session found for "Response Count: Should select a response count" (testId: a190e1baf811c479e479-52df176eeb5389c8af30)
+     5 …ompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+[LT Reporter] Test started: "Generate Survey: Should fill the prompt and reac
+  -  5 …ompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+[LT Reporter] No session found for "Generate Survey: Should fill the prompt and reach the Build Survey page" (testId: a190e1baf811c479e479-f8c28a486a40dad93ebf)
 [global-teardown] Adding LambdaTest videos to Allure report...
 [global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] No LambdaTest session directory found at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\test-results\.lt-sessions
+[global-teardown] Found 1 test-session mapping file(s)
 [global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 2 Allure result files
+[global-teardown] Found 7 Allure result files
 [global-teardown] Step 3: Injecting LT_SESSION into Allure files...
 [global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Response Count: Should select a response count"
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists"
+[global-teardown]  Added LT_SESSION for "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page": Test-1787905090973
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Dataset Selection: Should select the dataset type and dataset"
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Generate Survey: Should fill the prompt and reach the Build Survey page"
 [global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
 [global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: [TypeError: fetch failed] {
-  [cause]: Error: unable to get local issuer certificate
-      at TLSSocket.onConnectSecure (node:internal/tls/wrap:1768:34)
-      at TLSSocket.emit (node:events:509:28)
-      at TLSSocket._finishInit (node:internal/tls/wrap:1203:8)
-      at TLSWrap.ssl.onhandshakedone (node:internal/tls/wrap:984:12) {
-    code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'
-  }
-}
-[LT Reporter] Initialized - capturing LambdaTest sessions...
+[global-teardown] Found 14 LambdaTest sessions
+[global-teardown] Extracted Build ID: 102780753
+[global-teardown] Step 5: Adding video links to Allure files...
+[global-teardown] Looking for session: Test-1787314940999
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314943546396761WTA
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] No LT_SESSION parameter for test: Response Count: Should select a response count
+[global-teardown] No LT_SESSION parameter for test: Panelist Filters: Should set dimension selections and search for panelists
+[global-teardown] Looking for session: Test-1787905090973
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787905093930504316QFK
+[global-teardown] ✓ Added video link for "Start with a Prompt: Should display the Start with a prompt option on the survey home page"
+[global-teardown] No LT_SESSION parameter for test: Dataset Selection: Should select the dataset type and dataset
+[global-teardown] No LT_SESSION parameter for test: Generate Survey: Should fill the prompt and reach the Build Survey page
+[global-teardown] Looking for session: Test-1787314630614
+[global-teardown] ✓ Found session in LT API: DA-WIN-763142-1787314633009450316KEO
+[global-teardown] ✓ Added video link for "All dimensions selection"
+[global-teardown] LambdaTest videos added to Allure report successfully.
+[global-teardown] Build URL: https://automation.lambdatest.com/build?build=102780753
 
-[LT Reporter] No sessions captured.
+
+  1) [lambdatest-chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: Failed to click Start with a prompt: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for locator('text=Start with a prompt')
+
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:33
+
+      31 |       await startWithPrompt.click();
+      32 |     } catch (error) {
+    > 33 |       throw new Error(`Failed to click Start with a prompt: ${error instanceof Error ? error.message : error}`);
+         |             ^
+      34 |     }
+      35 |   }
+      36 |
+        at StartWithPromptPage.clickStartWithPrompt (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:33:13)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:33:5
+
+    attachment #1: screenshot (image/png) ───────────────────────────────────
+    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\error-context.md
+
+    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ──────────────────────────────────
+    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-lambdatest-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [lambdatest-chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
+  4 did not run
+[LT Reporter] Saved 1 session mappings.
 
 To open last HTML report run:
 
