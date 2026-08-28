@@ -1,107 +1,289 @@
-injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+# Investigation: `startWithScratch` not found in `startFromScratchPage` object repository
 
-Running 10 tests using 2 workers
+Investigation only — no files modified, no git commands run. All content below is read directly
+from the current state of the files on disk.
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-  ✘   1 …Start from scratch option on the survey home page @LandStartFromScratch (17.9s)
-  ✘   2 …Start from scratch option on the survey home page @LandStartFromScratch (18.6s)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  -   3 …ld select the dataset and confirm the Choose a dataset screen @DatasetSelection
-  -   4 …rs: Should enable Search for Panelists after all 5 filters are set @DataSummary
-  -   5 …nable Proceed to survey builder after selecting a response count @ResponseCount
-  -   6 …ould navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
-  -   7 …ld select the dataset and confirm the Choose a dataset screen @DatasetSelection
-  -   8 …rs: Should enable Search for Panelists after all 5 filters are set @DataSummary
-  -   9 …nable Proceed to survey builder after selecting a response count @ResponseCount
-  -  10 …ould navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
+## 1. `e2e/locators/survey/start-from-scratch.locator.json` — full current content
 
+```json
+{
+  "name": "Survey Generation Page",
+  "webElements": [
+    { "elementName": "startFromScratch", "selectorType": "text", "selectorValue": "Start from scratch" },
+    { "elementName": "productOfferingHeading", "selectorType": "playwrights", "selectorValue": "role=heading[name=\"Product Offering\"]" },
+    { "elementName": "nextButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
+    { "elementName": "searchToggle", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']" },
+    { "elementName": "searchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
+    { "elementName": "datasetByLabel", "selectorType": "tag", "selectorValue": "[data-test-id^='rv-dataset-id-selector']:has-text('${text}')" },
+    { "elementName": "firstDataset", "selectorType": "css", "selectorValue": "[data-test-id^='rv-dataset-id-selector']" },
+    { "elementName": "entireDatasetOption", "selectorType": "tag", "selectorValue": "[data-test-id='rv-default-dataview']" },
+    { "elementName": "dialogElement", "selectorType": "css", "selectorValue": "[data-test-id='title-second-dialog']" },
+    { "elementName": "applyButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" },
+    { "elementName": "selectPanelistsHeading", "selectorType": "text", "selectorValue": "Select Panelists" },
+    { "elementName": "defaultDataset", "selectorType": "css", "selectorValue": "[data-test-id='rv-default-dataset']" },
+    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-title']" },
+    { "elementName": "chooseDataviewBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='breadcrumb-and-search-container']" }
+  ]
+}
+```
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
+**Does a `startWithScratch` entry exist?** No.
 
-    Error: Web element with name 'startWithScratch' not found in the startFromScratchPage object repository.
+Only a **`startFromScratch`** entry exists (note: `From`, not `With`):
 
-       at ..\utils\resource-manager.ts:97
+```json
+{ "elementName": "startFromScratch", "selectorType": "text", "selectorValue": "Start from scratch" }
+```
 
-       95 |         }
-       96 |
-    >  97 |         throw new Error(
-          |               ^
-       98 |             `Web element with name '${name}' not found in the${componentName ? ` ${componentName}` : ''} object repository.`
-       99 |         );
-      100 |     }
-        at ResourceManager.getResource (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\resource-manager.ts:97:15)
-        at StartFromScratchPage.isStartFromScratchVisible (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-from-scratch.page.ts:32:28)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:34:56
+There is no `startWithScratch` key anywhere in this file.
 
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────
+## 2. `StartFromScratchPage` constructor and `isStartFromScratchVisible()` — current content
 
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
+From `e2e/page-objects/survey/start-from-scratch.page.ts`:
 
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
+```typescript
+const START_FROM_SCRATCH_PAGE_COMPONENT_NAME = 'startFromScratchPage';
 
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
+export class StartFromScratchPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
+      startFromScratchPageResources
+    );
+  }
 
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
+  async clickStartFromScratch(): Promise<void> {
+    try {
+      const startFromScratch = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await startFromScratch.waitFor(SMALL_TIMEOUT);
+      await startFromScratch.click();
+    } catch (error) {
+      throw new Error(`Failed to click Start from scratch: ${error instanceof Error ? error.message : error}`);
+    }
+  }
 
-    ────────────────────────────────────────────────────────────────────────────────────
+  async isStartFromScratchVisible(): Promise<boolean> {
+    const startFromScratch = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+    );
+    await startFromScratch.waitFor(NAVIGATION_TIMEOUT);
+    return await startFromScratch.isVisible();
+  }
+  ...
+```
 
-  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey homepage @LandStartFromScratch 
+**Exact resource-name string passed to `getResource(...)` in `isStartFromScratchVisible()`:**
 
-    Error: Web element with name 'startWithScratch' not found in the startFromScratchPage object repository.
+```
+'startWithScratch'
+```
 
-       at ..\utils\resource-manager.ts:97
+**Does it match the `elementName` from step 1 character-for-character?**
 
-       95 |         }
-       96 |
-    >  97 |         throw new Error(
-          |               ^
-       98 |             `Web element with name '${name}' not found in the${componentName ? ` ${componentName}` : ''} object repository.`
-       99 |         );
-      100 |     }
-        at ResourceManager.getResource (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\resource-manager.ts:97:15)
-        at StartFromScratchPage.isStartFromScratchVisible (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-from-scratch.page.ts:32:28)
-        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:34:56
+**No.** The locator JSON defines `elementName: "startFromScratch"`, but both
+`isStartFromScratchVisible()` and `clickStartFromScratch()` call
+`getResource('startWithScratch', ...)`.
 
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────
+Difference: `startFromScratch` (locator file) vs. `startWithScratch` (page-object calls) —
+`From` vs. `With`. This is a literal string mismatch, not a case or whitespace issue. This is the
+exact cause the reported error message points to: `'startWithScratch' not found in the
+startFromScratchPage object repository`.
 
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
+## 3. `registerResources(...)` call and locator import — confirmation
 
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
+Import statement (top of `start-from-scratch.page.ts`):
 
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-    Usage:
+```typescript
+import startFromScratchPageResources from '../../locators/survey/start-from-scratch.locator.json';
+```
 
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
+Constructor call:
 
-    ────────────────────────────────────────────────────────────────────────────────────
+```typescript
+constructor(basePage: BasePage) {
+  super(basePage);
+  this.resourceManager.registerResources(
+    START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
+    startFromScratchPageResources
+  );
+}
+```
 
-  2 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-  8 did not run
+`registerResources(...)` is still called in the constructor, with the correct locator file
+(`start-from-scratch.locator.json`) imported and registered under component name
+`'startFromScratchPage'`. This part is correct — the registration itself is not the problem; the
+problem is purely the resource-key string used later in `getResource('startWithScratch', ...)`.
 
-To open last HTML report run:
+## 4. `e2e/page-objects/common/dataset-selection.helper.ts` — full current content
 
-  npx playwright show-report
+```typescript
+import { WebActions } from '@gfk/gta';
+import { ResourceManager } from '../../utils/resource-manager';
+import { SMALL_TIMEOUT, UI_STATE_UPDATE_DELAY } from '../../constants/timeout-constants';
 
+/**
+ * Resource key names for the dataset elements referenced by
+ * searchAndSelectDataset(). start-from-scratch.page.ts and
+ * start-with-prompt.page.ts register these under different elementName
+ * values, so the caller supplies its own keys.
+ */
+export interface DatasetSelectionResourceKeys {
+  datasetResourceKey: string;
+  searchToggleResourceKey: string;
+  searchInputResourceKey: string;
+}
+
+/**
+ * Searches for and selects a dataset on the "Choose a dataset" screen.
+ * Extracted from the near-identical searchAndSelectDataset() logic that was
+ * duplicated in start-from-scratch.page.ts and start-with-prompt.page.ts:
+ * check chooseDatasetBreadcrumb visibility -> fallback to
+ * chooseDataviewBreadcrumb -> check default dataset text -> check
+ * already-visible dataset element -> toggle search -> type search term ->
+ * click dataset element.
+ */
+export async function searchAndSelectDataset(
+  webActionHandler: WebActions,
+  resourceManager: ResourceManager,
+  componentName: string,
+  searchTerm: string,
+  datasetLabel: string,
+  resourceKeys: DatasetSelectionResourceKeys
+): Promise<boolean> {
+  const { datasetResourceKey, searchToggleResourceKey, searchInputResourceKey } = resourceKeys;
+
+  const chooseDatasetBreadcrumb = webActionHandler.getWebElement(
+    resourceManager.getResource('chooseDatasetBreadcrumb', componentName)
+  );
+  const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+  if (!isOnDatasetScreen) {
+    const chooseDataviewBreadcrumb = webActionHandler.getWebElement(
+      resourceManager.getResource('chooseDataviewBreadcrumb', componentName)
+    );
+    const hasReachedDataviewScreen = await chooseDataviewBreadcrumb.isVisible().catch(() => false);
+    return hasReachedDataviewScreen;
+  }
+
+  const defaultDatasetElement = webActionHandler.getWebElement(
+    resourceManager.getResource('defaultDataset', componentName)
+  );
+  const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
+  const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
+  if (isDefaultDatasetAlreadySelected) {
+    return true;
+  }
+
+  const existingDatasetElement = webActionHandler.getWebElement(
+    resourceManager.getDynamicResource(datasetResourceKey, datasetLabel, componentName)
+  );
+  const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
+  if (isDatasetAlreadyVisible) {
+    await existingDatasetElement.click();
+    return true;
+  }
+
+  const searchToggle = webActionHandler.getWebElement(
+    resourceManager.getResource(searchToggleResourceKey, componentName)
+  );
+  await searchToggle.waitFor(SMALL_TIMEOUT);
+  await searchToggle.click();
+
+  const searchInput = webActionHandler.getWebElement(
+    resourceManager.getResource(searchInputResourceKey, componentName)
+  );
+  await searchInput.waitFor(SMALL_TIMEOUT);
+  await searchInput.enterText(searchTerm);
+  await webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+  const datasetElement = webActionHandler.getWebElement(
+    resourceManager.getDynamicResource(datasetResourceKey, datasetLabel, componentName)
+  );
+  await datasetElement.waitFor(SMALL_TIMEOUT);
+  await datasetElement.click();
+  return true;
+}
+```
+
+**Does it independently import or register ANY locator resources itself?**
+
+**No.** This helper file has no `import ... from '.../*.locator.json'` and never calls
+`resourceManager.registerResources(...)`. It only calls `resourceManager.getResource(...)` and
+`resourceManager.getDynamicResource(...)` using a `componentName` string and resource key strings
+that are passed in as parameters by the caller (`StartFromScratchPage` passes
+`START_FROM_SCRATCH_PAGE_COMPONENT_NAME` = `'startFromScratchPage'`).
+
+It cannot be shadowing or overwriting the `startFromScratchPage` registration, because it performs
+no registration of its own — it is purely a consumer of whatever was already registered by the
+caller's constructor.
+
+## 5. `e2e/page-objects/common/common-page.ts` — full current content
+
+```typescript
+import { BasePage, WebActions } from '@gfk/gta';
+import { ResourceManager } from '../../utils/resource-manager';
+import { NAVIGATION_TIMEOUT } from '../../constants/timeout-constants';
+import { envConfig } from '../../config/env.config';
+
+export class CommonPage {
+  protected webActionHandler: WebActions;
+  protected resourceManager: ResourceManager;
+
+  constructor(protected basePage: BasePage) {
+    this.webActionHandler = basePage.getWebActions();
+    this.resourceManager = new ResourceManager({});
+  }
+
+  public async navigateToUrl(targetUrl: string, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
+    try {
+      await this.webActionHandler.navigateTo(targetUrl, timeout, 'domcontentloaded');
+    } catch (navigationError) {
+      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
+      throw navigationError;
+    }
+  }
+
+  public buildUrl(baseURL: string, relativePath: string): string {
+    const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+    return new URL(relativePath, normalizedBaseURL).toString();
+  }
+
+  public async navigateToSurvey(): Promise<void> {
+    const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
+    await this.navigateToUrl(surveyURL);
+  }
+
+  public getBasePage(): BasePage {
+    return this.basePage;
+  }
+}
+```
+
+**Constructor / resourceManager setup:** `CommonPage`'s constructor runs first (via `super(basePage)`
+in `StartFromScratchPage`'s constructor) and does exactly one thing to `resourceManager`:
+`this.resourceManager = new ResourceManager({})` — creating a fresh, empty instance.
+
+**Confirmed:** `CommonPage` never touches `resourceManager` again after construction — no
+`registerResources`, no reset/clear method, no reassignment anywhere else in this file. The
+subclass (`StartFromScratchPage`) constructor runs its own `super(basePage)` first (allocating the
+empty `ResourceManager`), and only *afterward* calls
+`this.resourceManager.registerResources(START_FROM_SCRATCH_PAGE_COMPONENT_NAME, startFromScratchPageResources)`.
+That ordering is correct and nothing in `CommonPage` resets it afterward.
+
+## Summary of findings
+
+| # | Question | Finding |
+|---|---|---|
+| 1 | `startWithScratch` entry in locator JSON? | **Missing.** Only `startFromScratch` exists. |
+| 2 | Resource key used by `isStartFromScratchVisible()` | `'startWithScratch'` — does **not** match `elementName: "startFromScratch"` (`From` vs `With`). |
+| 3 | `registerResources(...)` present with correct import? | Yes — correct import and correct call, component name `'startFromScratchPage'`. |
+| 4 | Does `dataset-selection.helper.ts` register its own resources? | No — it registers nothing; it only reads via keys/component name supplied by the caller. |
+| 5 | Does `CommonPage` reset `resourceManager` after subclass registration? | No — it only initializes `resourceManager` once, before the subclass constructor calls `registerResources(...)`. |
+
+The root cause of the reported error is isolated to item **#2**: `clickStartFromScratch()` and
+`isStartFromScratchVisible()` in `start-from-scratch.page.ts` call
+`getResource('startWithScratch', ...)`, a key that was never registered — the locator file only
+defines `startFromScratch`. The "Fix-locator" commit did not change this call site, so the mismatch
+persists. No fix has been applied as part of this investigation, per instructions.
