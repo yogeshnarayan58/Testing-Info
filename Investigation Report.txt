@@ -1,30 +1,70 @@
-Investigation Report — Positive "next screen" signal for searchAndSelectDataset()
-I read the four files as they currently exist (no edits, no git commands run). Here's what's available.
-const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-if (!isOnDatasetScreen) {
-  return true; // assumes "already past this screen" — the flagged risk
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ npx playwright test e2e/tests/survey/start-with-prompt.spec.ts
+◇ injected env (21) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = true
+
+🌐 LambdaTest Cloud Execution Enabled
+   Credentials: configured
+   Project: OMNI SurveyMod
+   Workers: 1
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Connecting to LambdaTest cloud...
+Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+Call log:
+  - <ws connecting> wss://cdp.lambdatest.com/playwright
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
+
+    at BasePageFactory.createBasePage (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:95:38)
+    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:34:38) {
+  log: [
+    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
+    '  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate',
+    '  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate',
+    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
+  ],
+  name: 'Error'
 }
-Current buggy pattern (both page objects)
-What happens right after a dataset is selected
-In both files, the method called immediately after searchAndSelectDataset() (applyEntireDataset() in start-from-scratch.page.ts and applyDataset() in start-with-prompt.page.ts) checks a variable literally named isChooseViewDialogShown, built from the dialogElement resource:
-const dialogElement = this.webActionHandler.getWebElement(
-  this.resourceManager.getResource('dialogElement', ...)
-);
-const isChooseViewDialogShown = await dialogElement.isVisible().catch(() => false);
+Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
+Call log:
+  - <ws connecting> wss://cdp.lambdatest.com/playwright
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
+  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
-That naming is the strongest existing clue in the codebase for what the "next screen" is (a "Choose a view" dialog).
 
-Existing resources found (from the locator JSON files)
-Both start-from-scratch.locator.json and start-with-prompt.locator.json define identical entries for these two candidates:
-elementName	selectorType	selectorValue	Used as
-dialogElement	css	[data-test-id='title-second-dialog']	Checked right after dataset click, variable named isChooseViewDialogShown — the best candidate for a positive "next screen" signal
-applyButton	css	[data-test-id='apply-dataset-btn']	Clicked on that same next screen to confirm/apply the dataset or view
-Additional resources present but not currently wired into this flow:
+   at ..\helpers\global-setup.ts:43
 
-entireDatasetOption (start-from-scratch only): [data-test-id='rv-default-dataview'] — an option that would presumably only exist/be visible on the "choose a view" screen, so it could also corroborate arrival at the next screen.
-selectPanelistsHeading (start-from-scratch only): text=Select Panelists — this looks like a screen further downstream, not the immediate next screen after dataset selection, so it's likely not the right signal here.
-Bottom line
-Best existing candidate: dialogElement ([data-test-id='title-second-dialog']) — already named/used elsewhere in these same files as the "choose view" indicator (isChooseViewDialogShown).
-Secondary corroborating candidate: applyButton ([data-test-id='apply-dataset-btn']) — present on that same next screen.
-Nothing new needs to be invented — both locator files already define these two resources identically, so no live DOM check is required to find a signal; it already exists in the codebase, just not used inside searchAndSelectDataset() itself.
-No files were modified, no git commands were run, and no new locators were guessed or created — this is a plain read of the four existing files.
+  41 |     console.error('Global setup failed:', error);
+  42 |     if (error instanceof Error) {
+> 43 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  44 |     }
+  45 |     throw new Error('Global setup failed with an unknown error');
+  46 |   } finally {
+    at globalSetup (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+[global-teardown] Adding LambdaTest videos to Allure report...
+[global-teardown] Step 1: Reading test-session mappings...
+[global-teardown] No LambdaTest session directory found at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\test-results\.lt-sessions
+[global-teardown] Step 2: Reading Allure result files...
+[global-teardown] Found 2 Allure result files
+[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-with-prompt.spec.ts › Start with a prompt › All dimensions selection"
+[global-teardown]  No session mapping found for: "lambdatest-chromium › survey\start-from-scratch.spec.ts › Start from scratch › All dimensions selection"
+[global-teardown] Step 4: Fetching LambdaTest sessions...
+[global-teardown] Failed to add LambdaTest info: [TypeError: fetch failed] {
+  [cause]: Error: unable to get local issuer certificate
+      at TLSSocket.onConnectSecure (node:internal/tls/wrap:1768:34)
+      at TLSSocket.emit (node:events:509:28)
+      at TLSSocket._finishInit (node:internal/tls/wrap:1203:8)
+      at TLSWrap.ssl.onhandshakedone (node:internal/tls/wrap:984:12) {
+    code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'
+  }
+}
+[LT Reporter] Initialized - capturing LambdaTest sessions...
+[LT Reporter] No sessions captured.
