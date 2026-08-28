@@ -1,209 +1,94 @@
-import * as fs from 'fs';
-import * as path from 'path';
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ npx playwright test
+◇ injected env (20) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-/** Leading parent-directory sequences (`../`, `..\`) that must be stripped before any path sink. */
-const TRAVERSAL_PREFIX_RE = /^(\.\.(\/|\\|$))+/;
+Running 20 tests using 2 workers
 
-/**
- * Rejects NULL bytes and strips any leading parent-directory (`../`, `..\`)
- * sequences before a value is handed to any `path.*` / `fs.*` call.
- */
-const sanitizeDynamicPath = (value: string, label: string): string => {
-  if (typeof value !== 'string' || value.length === 0) {
-    throw new Error(`Invalid ${label}: a non-empty path string is required`);
-  }
-  if (value.indexOf('\0') !== -1) {
-    throw new Error(`Null byte detected in ${label}: not allowed`);
-  }
-  return value.replace(TRAVERSAL_PREFIX_RE, '');
-};
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …scratch option on the survey home page @LandStartFromScratch (28.3s)
+Auth state loaded from storage/auth.json
+  ✓   2 …on on the survey home page @StartWithPrompt @StartWithPrompt (35.7s)
+Auth state loaded from storage/auth.json
+  ✓   3 …set and confirm the Choose a dataset screen @DatasetSelection (3.6s)
+  ✓   4 …earch for Panelists after all 5 filters are set @DataSummary (40.6s)
+  ✓   5 …e dataset type and dataset @StartWithPrompt @DatasetSelection (4.7s)
+  ✓   6 …tions and search for panelists @StartWithPrompt @DataSummary (45.6s)
+  ✓   7 …urvey builder after selecting a response count @ResponseCount (4.4s)
+  ✓   8 …e Build Survey page after proceeding @ProceedToSurveyBuilder (834ms)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   9 …scratch option on the survey home page @LandStartFromScratch (29.7s)
+Auth state loaded from storage/auth.json
+  ✓  10 …hould select a response count @StartWithPrompt @ResponseCount (3.0s)
+  ✓  11 … reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.3s)
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓  12 …on on the survey home page @StartWithPrompt @StartWithPrompt (26.6s)
+Auth state loaded from storage/auth.json
+  ✓  13 …set and confirm the Choose a dataset screen @DatasetSelection (4.0s)
+  ✓  14 …earch for Panelists after all 5 filters are set @DataSummary (22.4s)
+  ✓  15 …e dataset type and dataset @StartWithPrompt @DatasetSelection (5.1s)
+  ✘  16 …ctions and search for panelists @StartWithPrompt @DataSummary (5.0m)
+  ✓  17 …urvey builder after selecting a response count @ResponseCount (3.6s)
+  ✓  18 …e Build Survey page after proceeding @ProceedToSurveyBuilder (760ms)
+setDimensionSelection failed for 'productNoDataPrompt': locator.textContent:Target page, context or browser has been closed
+  -  19 …ount: Should select a response count @StartWithPrompt @ResponseCount
+  -  20 …mpt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
 
-/**
- * Safely joins a base directory with dynamic/untrusted path segments, preventing
- * path traversal and link-following into locations outside the intended base directory.
- *
- * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
- * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
- * (test IDs, worker indices, on-disk mapping/result filenames).
- *
- * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
- * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
- * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
- * @returns the safe, joined, canonicalized path
- */
- * Safely joins a base directory with dynamic/untrusted path segments, preventing
- * path traversal and link-following into locations outside the intended base directory.
- *
- * Used at every fs.* sink across base-page-factory.ts, globalTeardown.ts, and
- * lt-session-reporter.ts that builds a path from a dynamic/untrusted segment
- * (test IDs, worker indices, on-disk mapping/result filenames).
- *
- * @param baseDir - the trusted base directory (must not itself be attacker-controlled)
- * @param untrustedSegments - one or more untrusted path segments (filenames, IDs, etc.)
- * @throws Error if the resulting path would escape baseDir, or if a segment is empty/unsafe
- * @returns the safe, joined, canonicalized path
- */
-export const safeJoin = (baseDir: string, ...untrustedSegments: string[]): string => {
-  // #cycode_sast_ignore_here Safe: baseDir is the caller's trusted base directory by contract, never attacker-controlled
-  const normalizedBaseDir = path.resolve(baseDir);
-  const sanitizedBaseDir = sanitizeDynamicPath(baseDir, 'base directory');
-  // #cycode_sast_ignore_here Safe: sanitizedBaseDir is null-byte-free and traversal-stripped by sanitizeDynamicPath
-  const normalizedBaseDir = path.resolve(sanitizedBaseDir.replace(TRAVERSAL_PREFIX_RE, ''));Expand commentComment on lines R35 to R37Resolved
 
-  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
-  // (\\server\share) - checked explicitly and OS-agnostically, since
-  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
-  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
-  // Windows drive-letter absolute path (C:\... or C:/...) and UNC path
-  // (\\server\share) - checked explicitly and OS-agnostically, since
-  // path.isAbsolute() is only Windows-aware when Node is running on Windows.
-  const WINDOWS_ABSOLUTE_RE = /^[a-zA-Z]:[\\/]|^\\\\/;
+  1) [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:54:7 › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists @StartWithPrompt @DataSummary 
 
-  for (const segment of untrustedSegments) {
-    if (segment.length === 0) {
-      throw new Error('Empty path segment is not allowed');
-    }
-    if (segment.indexOf('\0') !== -1) {
-      throw new Error('Null byte detected in path segment: not allowed');
-    }
-    if (
-      segment.includes('..') ||
-      segment.includes('~') ||
-      segment.includes('\\') ||
-      path.isAbsolute(segment) ||
-      WINDOWS_ABSOLUTE_RE.test(segment) ||
-      /^\.\/|^\.\.\/|^\//.test(segment)
-    ) {
-      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
-    }
-  }
-  for (const segment of untrustedSegments) {
-    if (segment.length === 0) {
-      throw new Error('Empty path segment is not allowed');
-    }
-    if (segment.indexOf('\0') !== -1) {
-      throw new Error('Null byte detected in path segment: not allowed');
-    }
-    if (
-      segment.includes('..') ||
-      segment.includes('~') ||
-      segment.includes('\\') ||
-      path.isAbsolute(segment) ||
-      WINDOWS_ABSOLUTE_RE.test(segment) ||
-      /^\.\/|^\.\.\/|^\//.test(segment)
-    ) {
-      throw new Error(`Path traversal attempt detected: "${segment}" is not allowed`);
-    }
-  }
+    Test timeout of 300000ms exceeded.
 
-  const sanitizedSegments = untrustedSegments.map((segment) => {
-    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
-      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
-    }
-    return sanitized;
-  });
-  const sanitizedSegments = untrustedSegments.map((segment) => {
-    const sanitized = segment.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    if (sanitized.length === 0 || /^_+$/.test(sanitized)) {
-      throw new Error(`Path segment "${segment}" contains no safe characters after sanitization`);
-    }
-    return sanitized;
-  });
+    Error: locator.textContent: Target page, context or browser has been closed
 
-  // Resolve symlinks on the base directory itself, if it exists yet.
-  let realBaseDir = normalizedBaseDir;
-  try {
-    realBaseDir = fs.realpathSync(normalizedBaseDir);
-  } catch {
-    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
-       to the resolved-but-not-yet-canonical path; the containment check
-       below still applies once it's created. */
-  }
-  // Resolve symlinks on the base directory itself, if it exists yet.
-  let realBaseDir = normalizedBaseDir;
-  try {
-    realBaseDir = sanitizeDynamicPath(
-      // #cycode_sast_ignore_here Safe: normalizedBaseDir is absolute and derived from the sanitized base directory
-      fs.realpathSync(normalizedBaseDir),
-      'base directory'
-    );
-  } catch {
-    /* base directory doesn't exist yet (e.g. pending mkdirSync) - fall back
-       to the resolved-but-not-yet-canonical path; the containment check
-       below still applies once it's created. */
-  }
+       at ..\page-objects\common\select-panelist.page.ts:137
 
-  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
-  const pathname = path.join(realBaseDir, ...sanitizedSegments);
-  // #cycode_sast_ignore_here Safe: canonicalizes the joined path so the containment check below cannot be bypassed via ".." or symlinks
-  const normalizedPath = path.normalize(path.resolve(pathname));
-  const baseDirWithSeparator = realBaseDir + path.sep;
-  // #cycode_sast_ignore_here Safe: sanitizedSegments are allowlist-filtered and traversal-checked above; containment verified below before return
-  const pathname = sanitizeDynamicPath(
-    path.join(
-      realBaseDir.replace(TRAVERSAL_PREFIX_RE, ''),
-      ...sanitizedSegments.map((segment) => segment.replace(TRAVERSAL_PREFIX_RE, ''))
-    ),
-    'joined path'
-  );
-  // #cycode_sast_ignore_here Safe: canonicalizes the sanitized joined path so the containment check below cannot be bypassed via ".." or symlinks
-  const normalizedPath = path.normalize(path.resolve(pathname.replace(TRAVERSAL_PREFIX_RE, '')));
-  const baseDirWithSeparator = realBaseDir + path.sep;
+      135 |     );
+      136 |     await filledTile.waitFor();
+    > 137 |     const filledText = await filledTile.getText();
+          |                                         ^
+      138 |     return (filledText ?? '').trim();
+      139 |   }
+      140 |
+        at WebElement.getText (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:307:50)
+        at SelectPanelistPage.getCurrentFilledTileDimensionValue (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:137:41)
+        at SelectPanelistPage.setDimensionSelection (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:232:11)
+        at SelectPanelistPage.setDimensionSelections (C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:43:7)
+        at C:\Users\Yogesh.Upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:56:5
 
-  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
-    throw new Error(
-      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
-    );
-  }
-  if (!normalizedPath.startsWith(baseDirWithSeparator) && normalizedPath !== realBaseDir) {
-    throw new Error(
-      `Path traversal attempt detected: "${untrustedSegments.join('/')}" resolves outside of "${baseDir}"`
-    );
-  }
+    attachment #1: screenshot (image/png) ───────────────────────────────────
+    test-results\survey-start-with-prompt-S-2c7f0-ns-and-search-for-panelists-Microsoft-Edge\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────
 
-  return normalizedPath;
-  return normalizedPath;
-};
+    Error Context: test-results\survey-start-with-prompt-S-2c7f0-ns-and-search-for-panelists-Microsoft-Edge\error-context.md
 
-/**
- * Verifies that `dir` resolves to a location inside (or exactly equal to)
- * `expectedRoot`, and returns the resolved path. Used to confirm a directory
- * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
- * not been redirected outside the intended root before it's used as the base
- * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
- *
- * @throws Error if dir does not resolve within expectedRoot
- * @returns the resolved, verified directory path
- */
- * Verifies that `dir` resolves to a location inside (or exactly equal to)
- * `expectedRoot`, and returns the resolved path. Used to confirm a directory
- * obtained from a config/util function (e.g. getLambdaTestSessionDir()) has
- * not been redirected outside the intended root before it's used as the base
- * for further fs operations (mkdirSync, readdirSync, or as a safeJoin base).
- *
- * @throws Error if dir does not resolve within expectedRoot
- * @returns the resolved, verified directory path
- */
-export const assertContainedDir = (expectedRoot: string, dir: string): string => {
-  // #cycode_sast_ignore_here Safe: expectedRoot is the caller's trusted root boundary, not user input
-  const resolvedRoot = path.resolve(expectedRoot);
-  // #cycode_sast_ignore_here Safe: dir is verified for containment within resolvedRoot immediately below before being returned
-  const resolvedDir = path.resolve(dir);
-  const sanitizedRoot = sanitizeDynamicPath(expectedRoot, 'expected root');
-  const sanitizedDir = sanitizeDynamicPath(dir, 'directory');
-  // #cycode_sast_ignore_here Safe: sanitizedRoot is null-byte-free and traversal-stripped by sanitizeDynamicPath
-  const resolvedRoot = path.resolve(sanitizedRoot.replace(TRAVERSAL_PREFIX_RE, ''));
-  // #cycode_sast_ignore_here Safe: sanitizedDir is sanitized above and verified for containment within resolvedRoot below before being returned
-  const resolvedDir = path.resolve(sanitizedDir.replace(TRAVERSAL_PREFIX_RE, ''));
+    Error Context: test-results\survey-start-with-prompt-S-2c7f0-ns-and-search-for-panelists-Microsoft-Edge\error-context.md
 
-  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
-    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
-  }
-  if (resolvedDir !== resolvedRoot && !resolvedDir.startsWith(resolvedRoot + path.sep)) {
-    throw new Error(`Invalid directory path: "${dir}" is outside of expected root "${expectedRoot}"`);
-  }
+    attachment #4: trace (application/zip) ──────────────────────────────────
+    test-results\survey-start-with-prompt-S-2c7f0-ns-and-search-for-panelists-Microsoft-Edge\trace.zip
+    Usage:
 
-  return resolvedDir;
-  return resolvedDir;
-};
+        npx playwright show-trace test-results\survey-start-with-prompt-S-2c7f0-ns-and-search-for-panelists-Microsoft-Edge\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:54:7 › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists @StartWithPrompt @DataSummary 
+  2 did not run
+  17 passed (8.1m)
