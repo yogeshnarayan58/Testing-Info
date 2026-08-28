@@ -1,36 +1,172 @@
-{
-  "name": "Arthur AI Page",
-  "webElements": [
-    { "elementName": "startWithPrompt", "selectorType": "text", "selectorValue": "Start with a prompt" },
-    { "elementName": "datasetTypeSelector", "selectorType": "css", "selectorValue": "[data-test-id='rv-dataset-type-selector${text}']" },
-    { "elementName": "omnishopperOfferingTile", "selectorType": "css", "selectorValue": "[data-test-id='${text}']" },
-    { "elementName": "nextDatasetButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
-    { "elementName": "datasetSearchToggle", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']" },
-    { "elementName": "datasetSearchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
-    { "elementName": "datasetByText", "selectorType": "text", "selectorValue": "${text}" },
-    { "elementName": "applyButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" },
-    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-title']" },
-    { "elementName": "defaultDataset", "selectorType": "css", "selectorValue": "[data-test-id='rv-default-dataset']" },
-    { "elementName": "promptTextarea", "selectorType": "css", "selectorValue": "textarea.prompt-input" },
-    { "elementName": "generateSurveyButton", "selectorType": "css", "selectorValue": "[data-test-id='proceed-to-survey']" }
-  ]
-}
+Copilot started reviewing on behalf of Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq) 17 hours ago
+cycode-security-eu[bot]
+cycode-security-eu Bot reviewed 17 hours ago
+e2e/allure-report/playwright-trace-viewer/snapshot.v8KI4P3m.js
+@@ -0,0 +1,2 @@
+import{i as c}from"./assets/urlMatch-BYQrIQwR.js";(async()=>{if(!navigator.serviceWorker)throw new Error(`Service workers are not supported.
+Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.`);navigator.serviceWorker.register("sw.bundle.js"),navigator.serviceWorker.controller||await new Promise(t=>navigator.serviceWorker.oncontrollerchange=t);const e=new URL(location.href).searchParams.get("trace"),o=new URLSearchParams;e&&o.set("trace",e),await fetch("contexts?"+o.toString());const r=new URLSearchParams(location.search).get("r");if(!r||!c(r,location.href))return;const a=document.querySelector("iframe");a&&(a.src=r)})();
+@cycode-security-eu
+cycode-security-eu Bot
+17 hours ago
+❗Cycode: SAST violation: 'Unsanitized user input in dynamic HTML insertion (XSS)'.
 
-async applyDataset(): Promise<void> {
-  try {
-    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+Risk Score: 100 (CRITICAL)
+Severity: High
 
-    const applyButton = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('applyDatasetButton', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
-    );
-    await applyButton.waitFor(SMALL_TIMEOUT);
-    await applyButton.click();
-  } catch (error) {
-    throw new Error(`Failed to apply dataset: ${error instanceof Error ? error.message : error}`);
-  }
-}
+Description
+Cycode Remediation Guideline
+Tell us how you wish to proceed using one of the following commands:
 
-Root cause confirmed: it's a naming mismatch, not something accidentally deleted. The JSON registers this element as "applyButton" (line 8), but applyDataset() looks it up by the key 'applyDatasetButton' — no entry with that exact name exists anywhere in start-with-prompt.locator.json. That's why resourceManager.getResource reports it "not found in the startWithPromptPage".
+Tag	Short Description
+#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
+#cycode_ai_remediation	Request remediation guidance using Cycode AI
+⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
 
-This mismatch pre-dates today's session — it's already visible in the Full diff section of START_WITH_PROMPT_IMPLEMENTATION.md:197-198, where the JSON's elementName was applyDatasetButton in the diff context shown, but the file as it stands now has it registered as applyButton. No files were modified in this investigation.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Copilot AI reviewed 17 hours ago
+Copilot AI
+left a comment
+Pull request overview
+This PR updates the e2e/ Playwright suite to improve reusability of the Survey flows (Start with prompt / Start from scratch) by centralizing base URL handling, updating page-object interactions/locators, and restructuring the specs into smaller checks. It also adds additional dataset configuration, but currently includes generated Allure output committed into source control.
 
+Changes:
+
+Centralize base URL access (envConfig) and URL joining (CommonPage.buildUrl) and update E2E config/page objects to use it.
+Refactor Survey E2E specs and page objects (dataset selection + panelist selection flow), plus locator updates.
+Add a second dataset entry in dev-test-data.json, and (currently) commit Allure report/result artifacts.
+Reviewed changes
+Copilot reviewed 69 out of 84 changed files in this pull request and generated 6 comments.
+
+Show a summary per file
+Files not reviewed (1)
+Suppressed comments (2)
+💡 Add a code-review agent skill or configure MCP servers for context-aware, tailored reviews. Learn more in the docs.
+
+e2e/page-objects/survey/start-from-scratch.page.ts
+Comment on lines 132 to 136
+      const nextButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+        this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+      );
+      await nextButton.waitFor(SMALL_TIMEOUT);
+      await nextButton.click();
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Medium
+proceedToNextAfterDatasetSelection() is clicking the locator keyed as "applyButton" (apply-dataset-btn), but this method is supposed to click the "Next" button after choosing a dataset. Using the apply button here will likely fail because that button is only present in the subsequent dialog, not on the picker screen.
+
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/page-objects/survey/start-from-scratch.page.ts
+Comment on lines +71 to +74
+      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+      if (!isOnDatasetScreen) {
+        return true;
+      }
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Medium
+searchAndSelectDataset() currently returns true when the "Choose a dataset" breadcrumb is not visible. That makes the spec think dataset selection succeeded even when the picker screen was never reached (or the breadcrumb simply hasn't rendered yet), masking real failures.
+
+This issue also appears on line 113 of the same file.
+
+Suggested changeset 1 (1)
+e2e/page-objects/survey/start-from-scratch.page.ts
+Original file line number	Diff line number	Diff line change
+       const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+       );
+       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
+       if (!isOnDatasetScreen) {
+         return true;
+         return false;
+       }
+       const defaultDatasetElement = this.webActionHandler.getWebElement(
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/page-objects/survey/start-with-prompt.page.ts
+Comment on lines +77 to +80
+      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+      if (!isOnDatasetScreen) {
+        return true;
+      }
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Medium
+searchAndSelectDataset() currently returns true when the "Choose a dataset" breadcrumb is not visible. That makes the caller think dataset selection succeeded even if the dataset picker screen was never reached (or hasn't rendered yet).
+
+This issue also appears on line 119 of the same file.
+
+Suggested changeset 1 (1)
+e2e/page-objects/survey/start-with-prompt.page.ts
+Original file line number	Diff line number	Diff line change
+       const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
+         this.resourceManager.getResource('chooseDatasetBreadcrumb', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
+       );
+       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
+       if (!isOnDatasetScreen) {
+         return true;
+         return false;
+       }
+       const defaultDatasetElement = this.webActionHandler.getWebElement(
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/tests/survey/start-with-prompt.spec.ts
+Comment on lines +17 to 21
+test.describe.serial('Start with a prompt', { tag: '@StartWithPrompt' }, () => {
+  let basePage: BasePage;
+  let promptPage: StartWithPromptPage;
+  let selectPanelistPage: SelectPanelistPage;
+
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Medium
+These tests are split across multiple serial test cases but share mutable state (basePage/promptPage/selectPanelistPage) initialized in earlier tests. That means the later tests are not standalone (they cannot be run in isolation), which conflicts with the PR description goal of creating standalone test cases.
+
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/tests/survey/start-from-scratch.spec.ts
+Comment on lines +17 to +21
+test.describe.serial('Start from scratch', () => {
+  let basePage: BasePage;
+  let surveyPage: StartFromScratchPage;
+  let selectPanelistPage: SelectPanelistPage;
+
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Medium
+These tests are split across multiple serial test cases but rely on shared state (basePage/surveyPage/selectPanelistPage) created in earlier tests. This makes the later tests non-standalone (they cannot be run by themselves), which conflicts with the PR goal of standalone test cases.
+
+Copilot uses AI. Check for mistakes.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/allure-report/index.html
+Comment on lines +1 to +5
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="allure-report-uuid" content="e6628eaa-04a8-4979-b8e2-99dfe20af72b">
+Copilot commented 17 hours ago
+Copilot
+Copilot
+AI
+17h ago
+Low
+This appears to be a generated Allure report output (includes build UUIDs and analytics script) and should not be committed to the repo. Keeping generated reports under version control will bloat the repository and can accidentally leak run metadata; prefer publishing these as CI artifacts and ignoring the output directories (e.g. allure-report/ and allure-results/).
