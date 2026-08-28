@@ -9,14 +9,13 @@ isLambdaTest = true
    Workers: 1
 ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 Starting global setup...
-Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Connecting to LambdaTest cloud...
 Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get localissuer certificate
   - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
@@ -33,7 +32,7 @@ Call log:
 Error: Global setup failed: browserType.connect: WebSocket error: unable to get local issuer certificate
 Call log:
   - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get local issuer certificate
+  - <ws error> wss://cdp.lambdatest.com/playwright error unable to get localissuer certificate
   - <ws connect error> wss://cdp.lambdatest.com/playwright unable to get local issuer certificate
   - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
 
@@ -67,4 +66,13 @@ Call log:
   }
 }
 [LT Reporter] Initialized - capturing LambdaTest sessions...
+
 [LT Reporter] No sessions captured.
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+ENCORA+Yogesh.Upadhyay@ENCOPDBANLT0828 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-test-cleanup-221959)
+$ 
