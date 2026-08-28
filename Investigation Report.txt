@@ -1,185 +1,297 @@
-# PR #113 Review Status — Investigation Report
+# PR Review Status Check
 
-**Date:** 2026-08-28
-**Scope:** Re-verification of 6 items raised in the PR #113 review, checked against the
-current state of the code. No files were modified as part of this investigation.
+Investigated against the actual current code in `e2e/` on 2026-08-28. No files were modified as part of this check.
 
-## Summary Table
+## Summary
 
-| # | Item | Status | What's needed |
-|---|------|--------|----------------|
-| 1 | `start-from-scratch.page.ts` → `proceedToNextAfterDatasetSelection()` uses `'applyButton'` instead of `'nextButton'` | ✅ ALREADY FIXED (no change needed) | None — confirmed both share the same `data-test-id` (`apply-dataset-btn`) via live DOM inspection earlier this session; current code intentionally still uses `'applyButton'`. |
-| 2 | `start-from-scratch.page.ts` → `searchAndSelectDataset()` returned `true` when `chooseDatasetBreadcrumb` wasn't visible (treated "not on this screen" as guaranteed success) | ✅ ALREADY FIXED | None — code now checks `chooseDataviewBreadcrumb` / `hasReachedDataviewScreen` instead of blindly returning `true` (or the rejected one-line `return false` suggestion). |
-| 3 | Same issue as #2, in `start-with-prompt.page.ts` | ✅ ALREADY FIXED | None — identical `chooseDataviewBreadcrumb` / `hasReachedDataviewScreen` check is in place. |
-| 4 | `start-from-scratch.spec.ts` — shared mutable `let` state (`basePage`/`surveyPage`/`selectPanelistPage`) across serial tests flagged as "not standalone" | ✅ AS INTENDED (no change needed) | None — `test.describe.serial(...)` with shared `let` bindings is intentional; each step depends on prior state. |
-| 5 | Same structure as #4, in `start-with-prompt.spec.ts` | ✅ AS INTENDED (no change needed) | None — same `test.describe.serial(...)` pattern with shared `let` bindings (`basePage`/`promptPage`/`selectPanelistPage`) confirmed in place. |
-| 6 | `e2e/allure-report/` and `e2e/allure-results/` — generated report files committed to the repo | ✅ ALREADY FIXED | None — `git ls-files \| grep -E "allure-report/\|allure-results/\|test-results/\|playwright-report/"` prints nothing (no tracked files match), and all four directories are explicitly listed in `e2e/.gitignore`. |
-
-**Overall: All 6 items are already resolved / already in their intended state. No code changes are required.**
+| # | Description | Status | Evidence (file:line) |
+|---|---|---|---|
+| 1 | Remove hardcoded `test.setTimeout(300000)` | **Done** | [e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) — no `test.setTimeout` call anywhere in the file (only global config timeout remains, see detail) |
+| 2 | Split single large test into multiple `test()` blocks | **Done** | [e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts#L17-L76) — 5 tagged tests inside `test.describe.serial('Start from scratch', ...)` |
+| 3 | Extract `searchAndSelectDataset()` into a reusable file (method returns boolean, spec asserts) | **Partially Done** | [e2e/page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts#L66) and [e2e/page-objects/survey/start-with-prompt.page.ts](page-objects/survey/start-with-prompt.page.ts#L72) — method returns `boolean` and specs do `assertTrue(...)`, but the logic is duplicated in each page object, **not** extracted to a shared file like `panelist-flow.helper.ts` |
+| 4 | Rename generic test names to reflect actual behavior | **Done** | See full detail — all names are specific/descriptive; no "All dimensions selection"-style generic names remain |
+| 5 | Dedupe `navigateToSurvey()`/base URL logic into one shared utility | **Partially Done** | [e2e/page-objects/common/common-page.ts](page-objects/common/common-page.ts#L35) has a shared `buildUrl()`, but `navigateToSurvey()` itself is still duplicated verbatim in [start-from-scratch.page.ts:18-20](page-objects/survey/start-from-scratch.page.ts#L18-L20) and [start-with-prompt.page.ts:20-22](page-objects/survey/start-with-prompt.page.ts#L20-L22) |
+| 6 | Tagging strategy (`@regression`/`@sanity`/`@smoke`/`@production` tiers) | **Not Done** | No matches anywhere in `e2e/` source for those tags; only feature tags exist (`@DatasetSelection`, `@DataSummary`, `@ResponseCount`, `@LandStartFromScratch`, `@ProceedToSurveyBuilder`, `@StartWithPrompt`, `@GenerateSurvey`) |
+| 7 | Fallback/check-before-select for pre-selected filters in `select-panelist.page.ts` | **Done** (progress since earlier investigation) | [e2e/page-objects/common/select-panelist.page.ts](page-objects/common/select-panelist.page.ts#L223-L253) — "Step 0" check-before-click logic, `FILLED_TILE_DIMENSION_LABELS` map, `dimensionAlreadyMatches()`, `replaceFilledTileDimensionSelection()` all implemented |
+| 8 | `navigationURL` trailing slash / dead code | **Not Done** | [e2e/test-data/dev-test-data.json:3](test-data/dev-test-data.json#L3) still has `"common": { "navigationURL": "survey" }`; confirmed zero code references to it anywhere in `e2e/` — still dead |
+| 9 | Add second dataset entry (Homescan) to `dev-test-data.json` | **Done** (present, but unused by specs) | [e2e/test-data/dev-test-data.json:53-84](test-data/dev-test-data.json#L53-L84) — `"US Homescan Panel 2yrs Total"` with 5 real `dimensionSelections` entries, not a placeholder |
+| 10 | General DRY scan of `page-objects/` and `tests/` | **Findings reported** | See "Additional reusability opportunities found" section below |
 
 ---
 
-## Detailed Findings
+## Full Detail
 
-### 1. `proceedToNextAfterDatasetSelection()` — `applyButton` vs `nextButton`
+### 1. Remove hardcoded `test.setTimeout(300000)`
 
-**File:** [e2e/page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts#L133-L142)
+`grep` across `e2e/` for `test.setTimeout` / `300000` finds **no matches in any source file** — all hits are in generated artifacts (`e2e/allure-report/**`, `e2e/allure-results/**`), which are historical/build output, not source.
 
-Current code:
-```typescript
-async proceedToNextAfterDatasetSelection(): Promise<void> {
-  try {
-    const nextButton = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await nextButton.waitFor(SMALL_TIMEOUT);
-    await nextButton.click();
-  } catch (error) {
-    throw new Error(`Failed to click Next after dataset selection: ${error instanceof Error ? error.message : error}`);
+[e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) (full file, 78 lines) contains no `setTimeout` call at all.
+
+**Caveat:** [e2e/playwright.config.ts:53](playwright.config.ts#L53) still sets a global `timeout: 300 * 1000` for all tests project-wide. This is a different thing than a per-test hardcoded override in the spec, and is not what the review item called out — but worth knowing it's still effectively a 300s ceiling for every test.
+
+**Status: Done** (the specific ask — the in-spec `test.setTimeout(300000)` call — is gone).
+
+---
+
+### 2. Split the single large test into multiple standalone `test()` blocks
+
+[e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts#L17-L76):
+
+```ts
+test.describe.serial('Start from scratch', () => {
+  ...
+  test('Start from Scratch: Should display the Start from scratch option on the survey home page', { tag: '@LandStartFromScratch' }, ...)
+  test('Dataset Selection: Should select the dataset and confirm the Choose a dataset screen', { tag: '@DatasetSelection' }, ...)
+  test('Panelist Filters: Should enable Search for Panelists after all 5 filters are set', { tag: '@DataSummary' }, ...)
+  test('Response Count: Should enable Proceed to survey builder after selecting a response count', { tag: '@ResponseCount' }, ...)
+  test('Survey Builder: Should navigate to the Build Survey page after proceeding', { tag: '@ProceedToSurveyBuilder' }, ...)
+});
+```
+
+5 separate `test()` blocks, each with its own unique tag, all wrapped in `test.describe.serial(...)`, sharing `basePage`/`surveyPage`/`selectPanelistPage` state across steps via closure variables, with a single `test.afterAll` to close the browser.
+
+Note: the tag names are not literally `TC_SP_02`–`TC_SP_05`; they're semantic tags (`@LandStartFromScratch`, `@DatasetSelection`, `@DataSummary`, `@ResponseCount`, `@ProceedToSurveyBuilder`). If the manager specifically wants `TC_SP_0x`-style IDs, that naming convention is not present — flag this if it's a hard requirement.
+
+**Status: Done** (structurally matches the ask; naming convention differs from the literal example given).
+
+---
+
+### 3. Extract dataset-selection logic into a reusable file
+
+`searchAndSelectDataset()` exists in **two separate page objects**, each with its own near-identical implementation:
+
+- [e2e/page-objects/survey/start-from-scratch.page.ts:66-105](page-objects/survey/start-from-scratch.page.ts#L66-L105)
+  ```ts
+  async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<boolean> {
+  ```
+- [e2e/page-objects/survey/start-with-prompt.page.ts:72-111](page-objects/survey/start-with-prompt.page.ts#L72-L111)
+  ```ts
+  async searchAndSelectDataset(searchTerm: string, datasetLabel: string): Promise<boolean> {
+  ```
+
+Both:
+- Return `boolean`
+- Are called from the spec files with `assertTrue(...)` doing the actual assertion (e.g. [start-from-scratch.spec.ts:42-49](tests/survey/start-from-scratch.spec.ts#L42-L49), [start-with-prompt.spec.ts:41-48](tests/survey/start-with-prompt.spec.ts#L41-L48))
+- Share the identical control flow: check `chooseDatasetBreadcrumb` visibility → fallback to `chooseDataviewBreadcrumb` → check default dataset text → check already-visible dataset element → toggle search → type search term → click dataset element
+
+The **only** differences are resource-key names (`datasetByLabel` vs `datasetByText`, `searchToggle` vs `datasetSearchToggle`, `searchInput` vs `datasetSearchInput`) and the presence of an unused `_datasetIndex` param on the scratch-page version.
+
+This has **not** been extracted into a standalone reusable file/module analogous to [e2e/page-objects/common/panelist-flow.helper.ts](page-objects/common/panelist-flow.helper.ts), which by contrast is a real extracted helper (a free function `completePanelistSelectionFlow(basePage, dimensionSelections)` that both specs could share, though currently neither spec actually calls it — they inline the equivalent steps).
+
+**Status: Partially Done.** The boolean-return + spec-does-the-assert pattern (the "shape" the reviewer wanted) is already followed. The actual extraction into one shared file has **not** happened — it's still copy-pasted per page object.
+
+---
+
+### 4. Rename test cases to reflect what they actually verify
+
+Current test names, verbatim:
+
+**[e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts):**
+- Line 28: `'Start from Scratch: Should display the Start from scratch option on the survey home page'`
+- Line 40: `'Dataset Selection: Should select the dataset and confirm the Choose a dataset screen'`
+- Line 57: `'Panelist Filters: Should enable Search for Panelists after all 5 filters are set'`
+- Line 65: `'Response Count: Should enable Proceed to survey builder after selecting a response count'`
+- Line 73: `'Survey Builder: Should navigate to the Build Survey page after proceeding'`
+
+**[e2e/tests/survey/start-with-prompt.spec.ts](tests/survey/start-with-prompt.spec.ts):**
+- Line 28: `'Start with a Prompt: Should display the Start with a prompt option on the survey home page'`
+- Line 39: `'Dataset Selection: Should select the dataset type and dataset'`
+- Line 54: `'Panelist Filters: Should set dimension selections and search for panelists'`
+- Line 63: `'Response Count: Should select a response count'`
+- Line 70: `'Generate Survey: Should fill the prompt and reach the Build Survey page'`
+
+None of these are the old generic "All dimensions selection"-style names (that string only appears in stale [e2e/allure-report/](allure-report/) / [e2e/allure-results/](allure-results/) historical artifacts from a prior run, not in current source).
+
+**Status: Done.**
+
+---
+
+### 5. Dedupe `navigateToSurvey()` / base URL logic into one shared utility
+
+Partially deduped. What's shared:
+
+[e2e/page-objects/common/common-page.ts:35-38](page-objects/common/common-page.ts#L35-L38):
+```ts
+public buildUrl(baseURL: string, relativePath: string): string {
+  const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+  return new URL(relativePath, normalizedBaseURL).toString();
+}
+```
+This base-class method is used by all 3 page objects that need it: [login.page.ts:89](page-objects/common/login.page.ts#L89), [start-from-scratch.page.ts:19](page-objects/survey/start-from-scratch.page.ts#L19), [start-with-prompt.page.ts:21](page-objects/survey/start-with-prompt.page.ts#L21) — the endsWith('/') + `new URL()` normalization logic itself is no longer duplicated (a comment in `common-page.ts` explicitly documents this extraction).
+
+What's **still** duplicated — the `navigateToSurvey()` method itself, byte-for-byte identical in both places:
+
+[e2e/page-objects/survey/start-from-scratch.page.ts:18-21](page-objects/survey/start-from-scratch.page.ts#L18-L21):
+```ts
+async navigateToSurvey(): Promise<void> {
+  const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
+  await this.navigateToUrl(surveyURL);
+}
+```
+
+[e2e/page-objects/survey/start-with-prompt.page.ts:20-23](page-objects/survey/start-with-prompt.page.ts#L20-L23):
+```ts
+async navigateToSurvey(): Promise<void> {
+  const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
+  await this.navigateToUrl(surveyURL);
+}
+```
+
+This 3-line method could itself be lifted into `CommonPage` (or a shared survey-navigation mixin) since it's identical in both subclasses, but it hasn't been.
+
+**Status: Partially Done** (URL-building math is centralized; the `navigateToSurvey()` wrapper method is not).
+
+---
+
+### 6. Tagging strategy (tier tags)
+
+`grep -i "@regression|@sanity|@smoke|@production"` across all of `e2e/` (source, not just spec files) returns **zero matches**.
+
+The only tags present anywhere are feature/step-specific ones found in the two spec files: `@LandStartFromScratch`, `@DatasetSelection`, `@DataSummary`, `@ResponseCount`, `@ProceedToSurveyBuilder`, `@StartWithPrompt`, `@GenerateSurvey`.
+
+There is also no `grep`/`grepInvert` tag filtering configured in [e2e/playwright.config.ts](playwright.config.ts) referencing tier tags, and no npm script in [e2e/package.json](package.json) that runs by tier.
+
+**Status: Not Done.** No tier-based tagging strategy has been introduced at all — only feature tags exist.
+
+---
+
+### 7. Fallback strategy for pre-selected filters (check-before-select) in `select-panelist.page.ts`
+
+This **has been built**, contradicting the "confirmed as build-from-scratch, not started" status from the earlier investigation. Current code:
+
+[e2e/page-objects/common/select-panelist.page.ts:106-112](page-objects/common/select-panelist.page.ts#L106-L112) — dimension→label map:
+```ts
+private readonly FILLED_TILE_DIMENSION_LABELS: Record<string, string> = {
+  productNoDataPrompt: 'Product',
+  retailerNoDataPrompt: 'Retailer',
+  geographyNoDataPrompt: 'Geography',
+  demographicNoDataPrompt: 'Demographic',
+  periodNoDataPrompt: 'Period',
+};
+```
+
+[e2e/page-objects/common/select-panelist.page.ts:223-253](page-objects/common/select-panelist.page.ts#L223-L253) — "Step 0" check-before-click logic inside `setDimensionSelection()`:
+```ts
+// Step 0: Check-before-click — skip if already correct, remove first if a
+// different value is selected...
+const filledTileDimensionLabel = this.FILLED_TILE_DIMENSION_LABELS[dimensionPromptResource];
+const currentValue = filledTileDimensionLabel
+  ? await this.getCurrentFilledTileDimensionValue(dimensionPromptResource, filledTileDimensionLabel)
+  : await this.getCurrentDimensionValue(dimensionPromptResource);
+
+if (this.dimensionAlreadyMatches(currentValue, itemsToSelect)) {
+  return;
+}
+
+let skipInitialPromptClick = false;
+if (!this.isPlaceholderValue(currentValue)) {
+  if (filledTileDimensionLabel) {
+    await this.replaceFilledTileDimensionSelection(filledTileDimensionLabel);
+    skipInitialPromptClick = true;
+  } else {
+    await this.removeCurrentDimensionSelection();
   }
 }
 ```
 
-**Status:** ✅ ALREADY FIXED (confirmed correct as-is). Earlier in this session, live DOM
-inspection confirmed `applyButton` and `nextButton` resource entries resolve to the same
-`data-test-id` (`apply-dataset-btn`), so using `'applyButton'` here is functionally correct
-and no reviewer-requested change is needed. Only the local variable name (`nextButton`) is
-misleading, not the resource key — not a functional bug.
+Supporting private helpers all present: `getCurrentDimensionValue()` (L68-77), `isPlaceholderValue()` (L82-84), `dimensionAlreadyMatches()` (L90-96), `getCurrentFilledTileDimensionValue()` (L124-141), `replaceFilledTileDimensionSelection()` (L150-165), `removeCurrentDimensionSelection()` (L170-192).
+
+**Status: Done.** Real progress since the last check — this is a fully-implemented check-before-select/skip/replace fallback, not a stub or placeholder.
 
 ---
 
-### 2. `searchAndSelectDataset()` — false-positive `return true` (start-from-scratch)
+### 8. `navigationURL` trailing slash / dead code
 
-**File:** [e2e/page-objects/survey/start-from-scratch.page.ts](page-objects/survey/start-from-scratch.page.ts#L67-L119)
-
-Current code (relevant excerpt):
-```typescript
-async searchAndSelectDataset(searchTerm: string, datasetLabel: string, _datasetIndex: number): Promise<boolean> {
-  try {
-    const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-    if (!isOnDatasetScreen) {
-      const chooseDataviewBreadcrumb = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('chooseDataviewBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-      );
-      const hasReachedDataviewScreen = await chooseDataviewBreadcrumb.isVisible().catch(() => false);
-      return hasReachedDataviewScreen;
-    }
-    ...
+[e2e/test-data/dev-test-data.json:1-3](test-data/dev-test-data.json#L1-L3):
+```json
+{
+  "common": {
+    "navigationURL": "survey"
+  },
 ```
 
-**Status:** ✅ ALREADY FIXED. The code no longer does a bare `return true` when
-`chooseDatasetBreadcrumb` isn't visible. Instead it now positively verifies progress by
-checking for the `chooseDataviewBreadcrumb` (next screen) and returns that real visibility
-result (`hasReachedDataviewScreen`). This is the "real fix" (checking for the next screen),
-not the rejected one-line `return true` → `return false` swap.
+`grep` for `navigationURL` across all of `e2e/` returns **exactly one match** — this same declaration. No `.ts` file reads `testData.common.navigationURL` or `.common` at all (both spec files only destructure `testData.datasets`).
+
+**Status: Not Done.** Confirmed still dead code, unchanged from the earlier finding. Removing it is a trivial follow-up if desired.
 
 ---
 
-### 3. `searchAndSelectDataset()` — same issue (start-with-prompt)
+### 9. Add second dataset entry (Homescan) to `dev-test-data.json`
 
-**File:** [e2e/page-objects/survey/start-with-prompt.page.ts](page-objects/survey/start-with-prompt.page.ts#L73-L125)
-
-Current code (relevant excerpt):
-```typescript
-async searchAndSelectDataset(searchTerm: string, datasetLabel: string): Promise<boolean> {
-  try {
-    const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('chooseDatasetBreadcrumb', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
-    );
-    const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-    if (!isOnDatasetScreen) {
-      const chooseDataviewBreadcrumb = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('chooseDataviewBreadcrumb', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
-      );
-      const hasReachedDataviewScreen = await chooseDataviewBreadcrumb.isVisible().catch(() => false);
-      return hasReachedDataviewScreen;
-    }
-    ...
+[e2e/test-data/dev-test-data.json:53-84](test-data/dev-test-data.json#L53-L84):
+```json
+"US Homescan Panel 2yrs Total": {
+  "searchTerm": "Homescan",
+  "datasetIndex": 0,
+  "dimensionSelections": [
+    { "dimensionTab": "productNoDataPrompt", "parentItems": ["#US LOC OMNI SUPER CATEGORY MA"], "items": ["GROCERY"], ... },
+    { "dimensionTab": "retailerNoDataPrompt", "parentItems": ["Channel"], "items": ["Grocery"], ... },
+    { "dimensionTab": "geographyNoDataPrompt", "items": ["Total US"], ... },
+    { "dimensionTab": "demographicNoDataPrompt", "parentItems": ["Household Income"], "items": ["Total Panel"], ... },
+    { "dimensionTab": "periodNoDataPrompt", "parentItems": ["Months"], "items": ["Sep 25 - 5 w/e 09/27/25"], ... }
+  ]
+}
 ```
 
-**Status:** ✅ ALREADY FIXED. Identical pattern to item #2, confirmed present in
-`start-with-prompt.page.ts` as well.
+This is a genuine second dataset with all 5 real dimension selections filled in (not `[]`/`"TODO"` placeholders), sibling to the first `"Omni Agg SI 3yrs Synd"` entry.
+
+**Caveat:** Both spec files currently do:
+```ts
+const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+const DATASET_NAME = datasetNames[0];
+```
+— i.e. they only ever pick the **first** key (`"Omni Agg SI 3yrs Synd"`). The Homescan entry is present and real, but **no test currently exercises it** — it's unused data until a test is parametrized/added to loop over both datasets.
+
+**Status: Done** (per the literal ask — real data, not a placeholder), but flagged that it's currently inert/unused by any spec.
 
 ---
 
-### 4. Shared mutable state across serial tests (start-from-scratch.spec.ts)
+### 10. General DRY scan — additional reusability opportunities found
 
-**File:** [e2e/tests/survey/start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts#L17-L20)
+Beyond the dataset-selection duplication (item 3) and navigateToSurvey/base-URL duplication (item 5), the following duplicated logic was found across `e2e/page-objects/` and `e2e/tests/`:
 
-Current code:
-```typescript
-test.describe.serial('Start from scratch', () => {
-  let basePage: BasePage;
-  let surveyPage: StartFromScratchPage;
-  let selectPanelistPage: SelectPanelistPage;
-  ...
-```
+1. **Identical dataset-confirmation boilerplate duplicated in both spec files**
+   - [e2e/tests/survey/start-from-scratch.spec.ts:9-14](tests/survey/start-from-scratch.spec.ts#L9-L14)
+   - [e2e/tests/survey/start-with-prompt.spec.ts:9-14](tests/survey/start-with-prompt.spec.ts#L9-L14)
+   ```ts
+   const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+   const DATASET_NAME = datasetNames[0];
+   const datasetConfig = testData.datasets[DATASET_NAME];
 
-Each subsequent `test(...)` block in the file reads/writes these shared `let` bindings
-(e.g. `surveyPage.selectProductOffering(...)`, `selectPanelistPage.setDimensionSelections(...)`),
-and `test.afterAll` closes the single shared `basePage` browser session.
+   if (!datasetConfig) {
+     throw new Error('No dataset found in dev-test-data.json');
+   }
+   ```
+   Byte-for-byte identical in both files. Could be a single exported helper, e.g. `getDefaultDatasetConfig()` in a shared test-data util.
 
-**Status:** ✅ AS INTENDED. This is the by-design "flow" pattern:
-`test.describe.serial(...)` guarantees ordered, non-parallel execution, and each test step
-intentionally depends on state left behind by the prior step (dataset selection → panelist
-filters → response count → survey builder), all within one browser session. No code change
-needed.
+2. **Identical `test.afterAll` browser-close block duplicated in both spec files**
+   - [e2e/tests/survey/start-from-scratch.spec.ts:22-26](tests/survey/start-from-scratch.spec.ts#L22-L26)
+   - [e2e/tests/survey/start-with-prompt.spec.ts:22-26](tests/survey/start-with-prompt.spec.ts#L22-L26)
+   ```ts
+   test.afterAll(async () => {
+     if (basePage) {
+       await basePage.getWebActions().closeBrowser();
+     }
+   });
+   ```
+   Could be a shared `registerBrowserCleanup(() => basePage)` fixture/helper.
 
----
+3. **`applyEntireDataset()` / `applyDataset()`'s "choose view" dialog handling is near-identical logic**
+   - [e2e/page-objects/survey/start-from-scratch.page.ts:145-166](page-objects/survey/start-from-scratch.page.ts#L145-L166) (`applyEntireDataset`)
+   - [e2e/page-objects/survey/start-with-prompt.page.ts:135-158](page-objects/survey/start-with-prompt.page.ts#L135-L158) (`applyDataset`, second half)
+   Both do: get `dialogElement` → `isVisible().catch(() => false)` → if not shown, return → else `waitFor` + delay + click `applyButton`. Candidate for a shared `applyDatasetIfDialogShown()` helper on `CommonPage` or a new shared dataset-flow file.
 
-### 5. Shared mutable state across serial tests (start-with-prompt.spec.ts)
+4. **`getBasePage()` duplicated verbatim in both page objects**
+   - [e2e/page-objects/survey/start-from-scratch.page.ts:170-172](page-objects/survey/start-from-scratch.page.ts#L170-L172)
+   - [e2e/page-objects/survey/start-with-prompt.page.ts:175-177](page-objects/survey/start-with-prompt.page.ts#L175-L177)
+   ```ts
+   public getBasePage(): BasePage {
+     return this.basePage;
+   }
+   ```
+   `basePage` is already a `protected` constructor param on `CommonPage` (see [common-page.ts:11](page-objects/common/common-page.ts#L11)) — this accessor could simply live on `CommonPage` once instead of being re-declared on every subclass.
 
-**File:** [e2e/tests/survey/start-with-prompt.spec.ts](tests/survey/start-with-prompt.spec.ts#L17-L20)
+5. **`panelist-flow.helper.ts` already exists as a real extracted helper but is unused**
+   - [e2e/page-objects/common/panelist-flow.helper.ts](page-objects/common/panelist-flow.helper.ts) exports `completePanelistSelectionFlow(basePage, dimensionSelections)`, which duplicates (in already-extracted form) the exact sequence both spec files hand-roll inline: `setDimensionSelections()` → `clickSearchForPanelists()` → `click250Responses()` → `clickProceedToSurveyBuilder()` → `isBuildSurveyPageLoaded()`. Neither [start-from-scratch.spec.ts](tests/survey/start-from-scratch.spec.ts) nor [start-with-prompt.spec.ts](tests/survey/start-with-prompt.spec.ts) actually calls it — worth either using it or removing it to avoid two sources of truth for the same flow.
 
-Current code:
-```typescript
-test.describe.serial('Start with a prompt', { tag: '@StartWithPrompt' }, () => {
-  let basePage: BasePage;
-  let promptPage: StartWithPromptPage;
-  let selectPanelistPage: SelectPanelistPage;
-  ...
-```
-
-**Status:** ✅ AS INTENDED. Same `test.describe.serial(...)` + shared `let` pattern as
-item #4, confirmed present and unchanged.
-
----
-
-### 6. Generated Allure/Playwright report artifacts tracked in git
-
-**Command run:**
-```
-git ls-files | grep -E "allure-report/|allure-results/|test-results/|playwright-report/"
-```
-
-**Result:** No output (no tracked files matched).
-
-**Supporting evidence — [e2e/.gitignore](.gitignore):**
-```
-node_modules/
-playwright-report/
-test-results/
-storage/
-.env
-log/
-test-output.txt
-allure-results/
-allure-report/
-.lt-sessions/
-```
-
-**Status:** ✅ ALREADY FIXED. All four directories (`allure-report/`, `allure-results/`,
-`test-results/`, `playwright-report/`) are both absent from `git ls-files` and explicitly
-listed in `e2e/.gitignore`, confirming they are no longer tracked/committed.
-
----
-
-## Conclusion
-
-All 6 PR #113 review items are already resolved in the current codebase (either genuinely
-fixed with the correct approach, or already structured as intended by design). **No further
-code changes are required.** This investigation made no modifications — awaiting explicit
-confirmation before applying any changes.
+6. **The "isOnDatasetScreen → fallback to chooseDataviewBreadcrumb" branch inside `searchAndSelectDataset()`** is part of item 3's duplication but is called out separately here because it's the most complex shared chunk (7 lines of identical branching logic) inside an already-flagged duplicated method — reinforces that item 3's extraction should prioritize this block.
