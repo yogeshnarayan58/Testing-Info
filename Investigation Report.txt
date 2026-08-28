@@ -1,172 +1,30 @@
-Copilot started reviewing on behalf of Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq) 17 hours ago
-cycode-security-eu[bot]
-cycode-security-eu Bot reviewed 17 hours ago
-e2e/allure-report/playwright-trace-viewer/snapshot.v8KI4P3m.js
-@@ -0,0 +1,2 @@
-import{i as c}from"./assets/urlMatch-BYQrIQwR.js";(async()=>{if(!navigator.serviceWorker)throw new Error(`Service workers are not supported.
-Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.`);navigator.serviceWorker.register("sw.bundle.js"),navigator.serviceWorker.controller||await new Promise(t=>navigator.serviceWorker.oncontrollerchange=t);const e=new URL(location.href).searchParams.get("trace"),o=new URLSearchParams;e&&o.set("trace",e),await fetch("contexts?"+o.toString());const r=new URLSearchParams(location.search).get("r");if(!r||!c(r,location.href))return;const a=document.querySelector("iframe");a&&(a.src=r)})();
-@cycode-security-eu
-cycode-security-eu Bot
-17 hours ago
-❗Cycode: SAST violation: 'Unsanitized user input in dynamic HTML insertion (XSS)'.
+Investigation Report — Positive "next screen" signal for searchAndSelectDataset()
+I read the four files as they currently exist (no edits, no git commands run). Here's what's available.
+const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
+if (!isOnDatasetScreen) {
+  return true; // assumes "already past this screen" — the flagged risk
+}
+Current buggy pattern (both page objects)
+What happens right after a dataset is selected
+In both files, the method called immediately after searchAndSelectDataset() (applyEntireDataset() in start-from-scratch.page.ts and applyDataset() in start-with-prompt.page.ts) checks a variable literally named isChooseViewDialogShown, built from the dialogElement resource:
+const dialogElement = this.webActionHandler.getWebElement(
+  this.resourceManager.getResource('dialogElement', ...)
+);
+const isChooseViewDialogShown = await dialogElement.isVisible().catch(() => false);
 
-Risk Score: 100 (CRITICAL)
-Severity: High
+That naming is the strongest existing clue in the codebase for what the "next screen" is (a "Choose a view" dialog).
 
-Description
-Cycode Remediation Guideline
-Tell us how you wish to proceed using one of the following commands:
+Existing resources found (from the locator JSON files)
+Both start-from-scratch.locator.json and start-with-prompt.locator.json define identical entries for these two candidates:
+elementName	selectorType	selectorValue	Used as
+dialogElement	css	[data-test-id='title-second-dialog']	Checked right after dataset click, variable named isChooseViewDialogShown — the best candidate for a positive "next screen" signal
+applyButton	css	[data-test-id='apply-dataset-btn']	Clicked on that same next screen to confirm/apply the dataset or view
+Additional resources present but not currently wired into this flow:
 
-Tag	Short Description
-#cycode_sast_ignore_here <reason>	Ignore this violation — applies to this violation only
-#cycode_ai_remediation	Request remediation guidance using Cycode AI
-⚠️ When commenting on Github, you may need to refresh the page to see the latest updates.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Copilot AI reviewed 17 hours ago
-Copilot AI
-left a comment
-Pull request overview
-This PR updates the e2e/ Playwright suite to improve reusability of the Survey flows (Start with prompt / Start from scratch) by centralizing base URL handling, updating page-object interactions/locators, and restructuring the specs into smaller checks. It also adds additional dataset configuration, but currently includes generated Allure output committed into source control.
-
-Changes:
-
-Centralize base URL access (envConfig) and URL joining (CommonPage.buildUrl) and update E2E config/page objects to use it.
-Refactor Survey E2E specs and page objects (dataset selection + panelist selection flow), plus locator updates.
-Add a second dataset entry in dev-test-data.json, and (currently) commit Allure report/result artifacts.
-Reviewed changes
-Copilot reviewed 69 out of 84 changed files in this pull request and generated 6 comments.
-
-Show a summary per file
-Files not reviewed (1)
-Suppressed comments (2)
-💡 Add a code-review agent skill or configure MCP servers for context-aware, tailored reviews. Learn more in the docs.
-
-e2e/page-objects/survey/start-from-scratch.page.ts
-Comment on lines 132 to 136
-      const nextButton = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('nextButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-        this.resourceManager.getResource('applyButton', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-      );
-      await nextButton.waitFor(SMALL_TIMEOUT);
-      await nextButton.click();
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Medium
-proceedToNextAfterDatasetSelection() is clicking the locator keyed as "applyButton" (apply-dataset-btn), but this method is supposed to click the "Next" button after choosing a dataset. Using the apply button here will likely fail because that button is only present in the subsequent dialog, not on the picker screen.
-
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/survey/start-from-scratch.page.ts
-Comment on lines +71 to +74
-      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-      if (!isOnDatasetScreen) {
-        return true;
-      }
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Medium
-searchAndSelectDataset() currently returns true when the "Choose a dataset" breadcrumb is not visible. That makes the spec think dataset selection succeeded even when the picker screen was never reached (or the breadcrumb simply hasn't rendered yet), masking real failures.
-
-This issue also appears on line 113 of the same file.
-
-Suggested changeset 1 (1)
-e2e/page-objects/survey/start-from-scratch.page.ts
-Original file line number	Diff line number	Diff line change
-       const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('chooseDatasetBreadcrumb', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-       );
-       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
-       if (!isOnDatasetScreen) {
-         return true;
-         return false;
-       }
-       const defaultDatasetElement = this.webActionHandler.getWebElement(
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/survey/start-with-prompt.page.ts
-Comment on lines +77 to +80
-      const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-      if (!isOnDatasetScreen) {
-        return true;
-      }
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Medium
-searchAndSelectDataset() currently returns true when the "Choose a dataset" breadcrumb is not visible. That makes the caller think dataset selection succeeded even if the dataset picker screen was never reached (or hasn't rendered yet).
-
-This issue also appears on line 119 of the same file.
-
-Suggested changeset 1 (1)
-e2e/page-objects/survey/start-with-prompt.page.ts
-Original file line number	Diff line number	Diff line change
-       const chooseDatasetBreadcrumb = this.webActionHandler.getWebElement(
-         this.resourceManager.getResource('chooseDatasetBreadcrumb', START_WITH_PROMPT_PAGE_COMPONENT_NAME)
-       );
-       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-       const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible().catch(() => false);
-       if (!isOnDatasetScreen) {
-         return true;
-         return false;
-       }
-       const defaultDatasetElement = this.webActionHandler.getWebElement(
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/tests/survey/start-with-prompt.spec.ts
-Comment on lines +17 to 21
-test.describe.serial('Start with a prompt', { tag: '@StartWithPrompt' }, () => {
-  let basePage: BasePage;
-  let promptPage: StartWithPromptPage;
-  let selectPanelistPage: SelectPanelistPage;
-
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Medium
-These tests are split across multiple serial test cases but share mutable state (basePage/promptPage/selectPanelistPage) initialized in earlier tests. That means the later tests are not standalone (they cannot be run in isolation), which conflicts with the PR description goal of creating standalone test cases.
-
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/tests/survey/start-from-scratch.spec.ts
-Comment on lines +17 to +21
-test.describe.serial('Start from scratch', () => {
-  let basePage: BasePage;
-  let surveyPage: StartFromScratchPage;
-  let selectPanelistPage: SelectPanelistPage;
-
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Medium
-These tests are split across multiple serial test cases but rely on shared state (basePage/surveyPage/selectPanelistPage) created in earlier tests. This makes the later tests non-standalone (they cannot be run by themselves), which conflicts with the PR goal of standalone test cases.
-
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/allure-report/index.html
-Comment on lines +1 to +5
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="allure-report-uuid" content="e6628eaa-04a8-4979-b8e2-99dfe20af72b">
-Copilot commented 17 hours ago
-Copilot
-Copilot
-AI
-17h ago
-Low
-This appears to be a generated Allure report output (includes build UUIDs and analytics script) and should not be committed to the repo. Keeping generated reports under version control will bloat the repository and can accidentally leak run metadata; prefer publishing these as CI artifacts and ignoring the output directories (e.g. allure-report/ and allure-results/).
+entireDatasetOption (start-from-scratch only): [data-test-id='rv-default-dataview'] — an option that would presumably only exist/be visible on the "choose a view" screen, so it could also corroborate arrival at the next screen.
+selectPanelistsHeading (start-from-scratch only): text=Select Panelists — this looks like a screen further downstream, not the immediate next screen after dataset selection, so it's likely not the right signal here.
+Bottom line
+Best existing candidate: dialogElement ([data-test-id='title-second-dialog']) — already named/used elsewhere in these same files as the "choose view" indicator (isChooseViewDialogShown).
+Secondary corroborating candidate: applyButton ([data-test-id='apply-dataset-btn']) — present on that same next screen.
+Nothing new needs to be invented — both locator files already define these two resources identically, so no live DOM check is required to find a signal; it already exists in the codebase, just not used inside searchAndSelectDataset() itself.
+No files were modified, no git commands were run, and no new locators were guessed or created — this is a plain read of the four existing files.
