@@ -1,289 +1,255 @@
-# Investigation: `startWithScratch` not found in `startFromScratchPage` object repository
+# Grafana Reporter Investigation — disc-fe-omni-survey-mod/e2e
 
-Investigation only — no files modified, no git commands run. All content below is read directly
-from the current state of the files on disk.
+Investigation only. No files were modified as part of this task (this report is the only
+new artifact, created because it was explicitly requested).
 
-## 1. `e2e/locators/survey/start-from-scratch.locator.json` — full current content
+## 1. Does our installed `@gfk/gta` (2.0.67) export `PostgresActions` and `CommonReporterUtils`?
 
-```json
-{
-  "name": "Survey Generation Page",
-  "webElements": [
-    { "elementName": "startFromScratch", "selectorType": "text", "selectorValue": "Start from scratch" },
-    { "elementName": "productOfferingHeading", "selectorType": "playwrights", "selectorValue": "role=heading[name=\"Product Offering\"]" },
-    { "elementName": "nextButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
-    { "elementName": "searchToggle", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']" },
-    { "elementName": "searchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
-    { "elementName": "datasetByLabel", "selectorType": "tag", "selectorValue": "[data-test-id^='rv-dataset-id-selector']:has-text('${text}')" },
-    { "elementName": "firstDataset", "selectorType": "css", "selectorValue": "[data-test-id^='rv-dataset-id-selector']" },
-    { "elementName": "entireDatasetOption", "selectorType": "tag", "selectorValue": "[data-test-id='rv-default-dataview']" },
-    { "elementName": "dialogElement", "selectorType": "css", "selectorValue": "[data-test-id='title-second-dialog']" },
-    { "elementName": "applyButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" },
-    { "elementName": "selectPanelistsHeading", "selectorType": "text", "selectorValue": "Select Panelists" },
-    { "elementName": "defaultDataset", "selectorType": "css", "selectorValue": "[data-test-id='rv-default-dataset']" },
-    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-title']" },
-    { "elementName": "chooseDataviewBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='breadcrumb-and-search-container']" }
-  ]
+**YES — CONFIRMED. Both classes exist and are exported from the package root.**
+
+Installed at: `e2e/node_modules/@gfk/gta` (`package.json` → `"version": "2.0.67"`).
+
+`dist/index.d.ts` re-exports (relevant lines):
+```ts
+export * from "./reporter/commonReporterUtils";
+export * from "./reporter/postgresActions";
+export * from "./reporter/types/CustomReporterOptions";
+```
+
+### `PostgresActions` — `dist/reporter/postgresActions.d.ts`
+```ts
+import { IPostgresActions } from "./interfaces/iPostgresActions";
+import { CustomTestResult } from "./types/CustomTestResult";
+export declare class PostgresActions implements IPostgresActions {
+    private postgresAPIUrl;
+    constructor(postgresAPIUrl: string);
+    getOrCreateArea(areaName: string): Promise<number>;
+    getOrCreateDomain(domainName: string, areaId: number): Promise<number>;
+    getOrCreateTeam(teamName: string, domainId: number): Promise<number>;
+    getOrCreateProject(projectName: string, teamId: number): Promise<number>;
+    createOrUpdateTestResults(result: CustomTestResult, retry?: boolean, resultID?: number): Promise<any>;
+    private normalizeStatus;
+    private validateTestResult;
+}
+```
+Constructor: `new PostgresActions(postgresAPIUrl: string)` — matches how `grafana-reporter.ts` in
+the automation repo calls it.
+
+### `CommonReporterUtils` — `dist/reporter/commonReporterUtils.d.ts`
+```ts
+import { CustomReporterOptions } from "./types/CustomReporterOptions";
+export declare class CommonReporterUtils {
+    private options;
+    private postgresActions;
+    private environmentName;
+    constructor(options: CustomReporterOptions, envName: string, postgresAPIUrl: string);
+    get areaName(): string;
+    get domainName(): string;
+    get teamName(): string;
+    get projectName(): string;
+    getOrCreateIds(): Promise<{
+        areaId: number | undefined;
+        domainId: number | undefined;
+        teamId: number | undefined;
+        projectId: number | undefined;
+    }>;
+}
+```
+Constructor: `new CommonReporterUtils(options: CustomReporterOptions, envName: string, postgresAPIUrl: string)`.
+
+### `CustomReporterOptions` — `dist/reporter/types/CustomReporterOptions.d.ts`
+```ts
+export interface CustomReporterOptions {
+    areaName: string;
+    domainName: string;
+    teamName: string;
+    projectName: string;
 }
 ```
 
-**Does a `startWithScratch` entry exist?** No.
+**Conclusion for item 1:** The Grafana reporter *is* buildable as-is with our currently installed
+`@gfk/gta@2.0.67` — the exact classes and signatures the automation repo's `grafana-reporter.ts`
+relies on are present and match.
 
-Only a **`startFromScratch`** entry exists (note: `From`, not `With`):
+---
 
-```json
-{ "elementName": "startFromScratch", "selectorType": "text", "selectorValue": "Start from scratch" }
-```
+## 2. Complete content of `grafana-reporter.ts` (disc-fe-omnishopper-ui-automation)
 
-There is no `startWithScratch` key anywhere in this file.
+Path: `src/lib/playwright/grafana-reporter.ts` (read fresh from disk):
 
-## 2. `StartFromScratchPage` constructor and `isStartFromScratchVisible()` — current content
+```ts
+import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig } from "@playwright/test";
+import * as path from 'path';
+import { config } from './config';
+import { PostgresActions, CustomReporterOptions, CommonReporterUtils } from "@gfk/gta";
 
-From `e2e/page-objects/survey/start-from-scratch.page.ts`:
 
-```typescript
-const START_FROM_SCRATCH_PAGE_COMPONENT_NAME = 'startFromScratchPage';
+class GrafanaPlaywrightReporter implements Reporter {
 
-export class StartFromScratchPage extends CommonPage {
-  constructor(basePage: BasePage) {
-    super(basePage);
-    this.resourceManager.registerResources(
-      START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
-      startFromScratchPageResources
-    );
-  }
+    private areaId: number | undefined;
+    private domainId: number | undefined;
+    private teamId: number | undefined;
+    private options: CustomReporterOptions;
+    private projectId: number | undefined;
+    private environmentName: string;
+    private commonReporterUtils: CommonReporterUtils | undefined;
+    private postgresActions: PostgresActions;
+    private previousTestCaseId: string | null | undefined;
+    private resultID: number | undefined;
 
-  async clickStartFromScratch(): Promise<void> {
-    try {
-      const startFromScratch = this.webActionHandler.getWebElement(
-        this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-      );
-      await startFromScratch.waitFor(SMALL_TIMEOUT);
-      await startFromScratch.click();
-    } catch (error) {
-      throw new Error(`Failed to click Start from scratch: ${error instanceof Error ? error.message : error}`);
+    constructor(options: CustomReporterOptions) {
+        this.options = options;
+        console.log(`Custom reporter - Custom options received`);
+        this.environmentName = config.ENV;
+        this.postgresActions = new PostgresActions(config.postgresAPIUrl);
     }
-  }
 
-  async isStartFromScratchVisible(): Promise<boolean> {
-    const startFromScratch = this.webActionHandler.getWebElement(
-      this.resourceManager.getResource('startWithScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
-    );
-    await startFromScratch.waitFor(NAVIGATION_TIMEOUT);
-    return await startFromScratch.isVisible();
-  }
-  ...
-```
 
-**Exact resource-name string passed to `getResource(...)` in `isStartFromScratchVisible()`:**
-
-```
-'startWithScratch'
-```
-
-**Does it match the `elementName` from step 1 character-for-character?**
-
-**No.** The locator JSON defines `elementName: "startFromScratch"`, but both
-`isStartFromScratchVisible()` and `clickStartFromScratch()` call
-`getResource('startWithScratch', ...)`.
-
-Difference: `startFromScratch` (locator file) vs. `startWithScratch` (page-object calls) —
-`From` vs. `With`. This is a literal string mismatch, not a case or whitespace issue. This is the
-exact cause the reported error message points to: `'startWithScratch' not found in the
-startFromScratchPage object repository`.
-
-## 3. `registerResources(...)` call and locator import — confirmation
-
-Import statement (top of `start-from-scratch.page.ts`):
-
-```typescript
-import startFromScratchPageResources from '../../locators/survey/start-from-scratch.locator.json';
-```
-
-Constructor call:
-
-```typescript
-constructor(basePage: BasePage) {
-  super(basePage);
-  this.resourceManager.registerResources(
-    START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
-    startFromScratchPageResources
-  );
-}
-```
-
-`registerResources(...)` is still called in the constructor, with the correct locator file
-(`start-from-scratch.locator.json`) imported and registered under component name
-`'startFromScratchPage'`. This part is correct — the registration itself is not the problem; the
-problem is purely the resource-key string used later in `getResource('startWithScratch', ...)`.
-
-## 4. `e2e/page-objects/common/dataset-selection.helper.ts` — full current content
-
-```typescript
-import { WebActions } from '@gfk/gta';
-import { ResourceManager } from '../../utils/resource-manager';
-import { SMALL_TIMEOUT, UI_STATE_UPDATE_DELAY } from '../../constants/timeout-constants';
-
-/**
- * Resource key names for the dataset elements referenced by
- * searchAndSelectDataset(). start-from-scratch.page.ts and
- * start-with-prompt.page.ts register these under different elementName
- * values, so the caller supplies its own keys.
- */
-export interface DatasetSelectionResourceKeys {
-  datasetResourceKey: string;
-  searchToggleResourceKey: string;
-  searchInputResourceKey: string;
-}
-
-/**
- * Searches for and selects a dataset on the "Choose a dataset" screen.
- * Extracted from the near-identical searchAndSelectDataset() logic that was
- * duplicated in start-from-scratch.page.ts and start-with-prompt.page.ts:
- * check chooseDatasetBreadcrumb visibility -> fallback to
- * chooseDataviewBreadcrumb -> check default dataset text -> check
- * already-visible dataset element -> toggle search -> type search term ->
- * click dataset element.
- */
-export async function searchAndSelectDataset(
-  webActionHandler: WebActions,
-  resourceManager: ResourceManager,
-  componentName: string,
-  searchTerm: string,
-  datasetLabel: string,
-  resourceKeys: DatasetSelectionResourceKeys
-): Promise<boolean> {
-  const { datasetResourceKey, searchToggleResourceKey, searchInputResourceKey } = resourceKeys;
-
-  const chooseDatasetBreadcrumb = webActionHandler.getWebElement(
-    resourceManager.getResource('chooseDatasetBreadcrumb', componentName)
-  );
-  const isOnDatasetScreen = await chooseDatasetBreadcrumb.isVisible();
-  if (!isOnDatasetScreen) {
-    const chooseDataviewBreadcrumb = webActionHandler.getWebElement(
-      resourceManager.getResource('chooseDataviewBreadcrumb', componentName)
-    );
-    const hasReachedDataviewScreen = await chooseDataviewBreadcrumb.isVisible().catch(() => false);
-    return hasReachedDataviewScreen;
-  }
-
-  const defaultDatasetElement = webActionHandler.getWebElement(
-    resourceManager.getResource('defaultDataset', componentName)
-  );
-  const defaultDatasetText = await defaultDatasetElement.getText().catch(() => '');
-  const isDefaultDatasetAlreadySelected = defaultDatasetText.trim().toLowerCase().includes(datasetLabel.trim().toLowerCase());
-  if (isDefaultDatasetAlreadySelected) {
-    return true;
-  }
-
-  const existingDatasetElement = webActionHandler.getWebElement(
-    resourceManager.getDynamicResource(datasetResourceKey, datasetLabel, componentName)
-  );
-  const isDatasetAlreadyVisible = await existingDatasetElement.isVisible().catch(() => false);
-  if (isDatasetAlreadyVisible) {
-    await existingDatasetElement.click();
-    return true;
-  }
-
-  const searchToggle = webActionHandler.getWebElement(
-    resourceManager.getResource(searchToggleResourceKey, componentName)
-  );
-  await searchToggle.waitFor(SMALL_TIMEOUT);
-  await searchToggle.click();
-
-  const searchInput = webActionHandler.getWebElement(
-    resourceManager.getResource(searchInputResourceKey, componentName)
-  );
-  await searchInput.waitFor(SMALL_TIMEOUT);
-  await searchInput.enterText(searchTerm);
-  await webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-
-  const datasetElement = webActionHandler.getWebElement(
-    resourceManager.getDynamicResource(datasetResourceKey, datasetLabel, componentName)
-  );
-  await datasetElement.waitFor(SMALL_TIMEOUT);
-  await datasetElement.click();
-  return true;
-}
-```
-
-**Does it independently import or register ANY locator resources itself?**
-
-**No.** This helper file has no `import ... from '.../*.locator.json'` and never calls
-`resourceManager.registerResources(...)`. It only calls `resourceManager.getResource(...)` and
-`resourceManager.getDynamicResource(...)` using a `componentName` string and resource key strings
-that are passed in as parameters by the caller (`StartFromScratchPage` passes
-`START_FROM_SCRATCH_PAGE_COMPONENT_NAME` = `'startFromScratchPage'`).
-
-It cannot be shadowing or overwriting the `startFromScratchPage` registration, because it performs
-no registration of its own — it is purely a consumer of whatever was already registered by the
-caller's constructor.
-
-## 5. `e2e/page-objects/common/common-page.ts` — full current content
-
-```typescript
-import { BasePage, WebActions } from '@gfk/gta';
-import { ResourceManager } from '../../utils/resource-manager';
-import { NAVIGATION_TIMEOUT } from '../../constants/timeout-constants';
-import { envConfig } from '../../config/env.config';
-
-export class CommonPage {
-  protected webActionHandler: WebActions;
-  protected resourceManager: ResourceManager;
-
-  constructor(protected basePage: BasePage) {
-    this.webActionHandler = basePage.getWebActions();
-    this.resourceManager = new ResourceManager({});
-  }
-
-  public async navigateToUrl(targetUrl: string, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-    try {
-      await this.webActionHandler.navigateTo(targetUrl, timeout, 'domcontentloaded');
-    } catch (navigationError) {
-      console.error(`Navigation to URL failed: ${targetUrl}`, navigationError);
-      throw navigationError;
+    async initialize(): Promise<void> {
+        if (!this.commonReporterUtils) {
+            throw new Error('CommonReporterUtils not initialized. Call onBegin first.');
+        }
+        const { areaId, domainId, teamId, projectId } = await this.commonReporterUtils.getOrCreateIds();
+        this.areaId = areaId;
+        this.domainId = domainId;
+        this.teamId = teamId;
+        this.projectId = projectId;
     }
-  }
 
-  public buildUrl(baseURL: string, relativePath: string): string {
-    const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-    return new URL(relativePath, normalizedBaseURL).toString();
-  }
+    async onBegin(fullConfig: FullConfig, suite: Suite) {
+        console.log(`Custom reporter - Starting the run with ${suite.allTests().length} tests`);
+        this.commonReporterUtils = new CommonReporterUtils(this.options, this.environmentName, config.postgresAPIUrl);
+        await this.initialize();
+    }
 
-  public async navigateToSurvey(): Promise<void> {
-    const surveyURL = this.buildUrl(envConfig.BASE_URL, 'survey');
-    await this.navigateToUrl(surveyURL);
-  }
-
-  public getBasePage(): BasePage {
-    return this.basePage;
-  }
+    async onTestEnd(testCase: TestCase, result: TestResult): Promise<void> {
+        try {
+            if (this.projectId) {
+                const isRetry = this.previousTestCaseId === testCase.id;
+                const suiteName = path.basename(testCase.parent?.title, '.ts');
+                // testCaseId: To read from test case tags/annotation
+                // testCycleName: process.env.JIRA_CYCLE_NAME || '',
+                // releaseVersion: process.env.VERSION_NAME || '',
+                this.resultID = await this.postgresActions.createOrUpdateTestResults(
+                    {
+                        suiteName: suiteName,
+                        testcaseName: testCase.title,
+                        status: result.status,
+                        executionTime: result.startTime,
+                        executionDuration: result.duration,
+                        envName: this.environmentName,
+                        projectId: this.projectId,
+                    },
+                    isRetry,
+                    this.resultID
+                );
+                console.log('Custom reporter: - Test result created:', this.resultID);
+                this.previousTestCaseId = testCase.id;
+            } else {
+                console.error('Custom reporter - Project ID is not available');
+            }
+        } catch (error) {
+            console.error('Custom reporter - Error creating test result:', error);
+        }
+    }
 }
+
+export default GrafanaPlaywrightReporter;
 ```
 
-**Constructor / resourceManager setup:** `CommonPage`'s constructor runs first (via `super(basePage)`
-in `StartFromScratchPage`'s constructor) and does exactly one thing to `resourceManager`:
-`this.resourceManager = new ResourceManager({})` — creating a fresh, empty instance.
+---
 
-**Confirmed:** `CommonPage` never touches `resourceManager` again after construction — no
-`registerResources`, no reset/clear method, no reassignment anywhere else in this file. The
-subclass (`StartFromScratchPage`) constructor runs its own `super(basePage)` first (allocating the
-empty `ResourceManager`), and only *afterward* calls
-`this.resourceManager.registerResources(START_FROM_SCRATCH_PAGE_COMPONENT_NAME, startFromScratchPageResources)`.
-That ordering is correct and nothing in `CommonPage` resets it afterward.
+## 3. Reporter array + CI-conditional logic — `playwright.config.ts` (automation repo)
 
-## Summary of findings
+```ts
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['json', { outputFile: 'playwright-report/test-results.json' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : []),
+        [
+          './src/lib/playwright/grafana-reporter.ts',
+          {
+            areaName: process.env.AREA_NAME || 'TestArea',
+            domainName: process.env.DOMAIN_NAME || 'TechTest',
+            teamName: process.env.TEAM_NAME || 'DiscoverOmniTest',
+            projectName: process.env.PROJECT_NAME || 'GTATesting'
+          }
+        ]
+      ]
+    : [
+        ['list'],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : [])
+      ],
+```
 
-| # | Question | Finding |
-|---|---|---|
-| 1 | `startWithScratch` entry in locator JSON? | **Missing.** Only `startFromScratch` exists. |
-| 2 | Resource key used by `isStartFromScratchVisible()` | `'startWithScratch'` — does **not** match `elementName: "startFromScratch"` (`From` vs `With`). |
-| 3 | `registerResources(...)` present with correct import? | Yes — correct import and correct call, component name `'startFromScratchPage'`. |
-| 4 | Does `dataset-selection.helper.ts` register its own resources? | No — it registers nothing; it only reads via keys/component name supplied by the caller. |
-| 5 | Does `CommonPage` reset `resourceManager` after subclass registration? | No — it only initializes `resourceManager` once, before the subclass constructor calls `registerResources(...)`. |
+The Grafana reporter entry (and the `json` reporter) is registered **only when `process.env.CI`
+is truthy**. Locally (no CI), only `list` + `allure-playwright` (+ LambdaTest session reporter if
+applicable) run.
 
-The root cause of the reported error is isolated to item **#2**: `clickStartFromScratch()` and
-`isStartFromScratchVisible()` in `start-from-scratch.page.ts` call
-`getResource('startWithScratch', ...)`, a key that was never registered — the locator file only
-defines `startFromScratch`. The "Fix-locator" commit did not change this call site, so the mismatch
-persists. No fix has been applied as part of this investigation, per instructions.
+---
+
+## 4. Config values — `config.ts` and `.env.example` (automation repo)
+
+### `src/lib/playwright/config.ts` (relevant excerpt)
+```ts
+  // Grafana Playwright Reporter configuration
+  postgresAPIUrl: process.env.POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1',
+```
+Note: `AREA_NAME`, `DOMAIN_NAME`, `TEAM_NAME`, `PROJECT_NAME` are **not** defined in `config.ts` —
+they are read directly from `process.env.*` inline in `playwright.config.ts`'s reporter options
+(see section 3 above), with defaults `'TestArea'`, `'TechTest'`, `'DiscoverOmniTest'`,
+`'GTATesting'` respectively. Only `postgresAPIUrl` is centralized in `config.ts`.
+
+### `.env.example` (relevant excerpt)
+```
+#Grafana Configuration
+POSTGRES_API_URL='https://postgres-api.qa.in.gfk.com/report-postgres/api/v1'
+AREA_NAME='TestArea'
+DOMAIN_NAME='TechTest'
+TEAM_NAME='DiscoverOmniTest'
+PROJECT_NAME='GTATesting'
+```
+
+---
+
+## 5. Our own `e2e/playwright.config.ts` — current CI-conditional reporter state
+
+**No CI-conditional reporter logic currently exists.** `process.env.CI` is used elsewhere (for
+`retries` and `workers`), but the `reporter` array itself is a flat, non-conditional list:
+
+```ts
+  fullyParallel: false,
+  retries: process.env.CI ? 2 : 0,
+  // LambdaTest runs should be minimal workers to avoid session conflicts
+  workers: isLambdaTest ? ltWorkers : process.env.CI ? 1 : 2,
+
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['allure-playwright', { outputFolder: 'allure-results' }],
+    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+  ],
+```
+
+There is no `grafana-reporter.ts` file anywhere under `e2e/` currently, no `PostgresActions`/
+`CommonReporterUtils` usage, and no `postgresAPIUrl`/`AREA_NAME`/`DOMAIN_NAME`/`TEAM_NAME`/
+`PROJECT_NAME` config in `e2e/` at all. Introducing the CI-conditional branch (`process.env.CI ?
+[...] : [...]`) around the reporter array, adding the grafana reporter file, and adding the
+config values would all be **new** additions, not modifications of existing conditional logic.
+
+---
+
+## Summary
+
+| Item | Status |
+|---|---|
+| `PostgresActions` in `@gfk/gta@2.0.67` | ✅ Exists, exported from package root, constructor `(postgresAPIUrl: string)` |
+| `CommonReporterUtils` in `@gfk/gta@2.0.67` | ✅ Exists, exported from package root, constructor `(options, envName, postgresAPIUrl)` |
+| `CustomReporterOptions` type | ✅ Exists (`{ areaName, domainName, teamName, projectName }`) |
+| Feature buildable with current `@gfk/gta` version | ✅ Yes — no version upgrade needed |
+| Our `e2e/playwright.config.ts` CI-conditional reporter logic | ❌ Does not exist yet — would be a new addition |
+| Our `e2e/` grafana-reporter.ts / config values | ❌ Do not exist yet — would need to be created, mirroring the automation repo's pattern |
