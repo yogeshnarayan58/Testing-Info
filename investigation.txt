@@ -1,48 +1,76 @@
-investigation
+Step 2: Generate/Get Your JFrog Read Token
+Obtain a JFrog personal access token/password with read permissions.
+Keep this token private.
+Use it as environment variable JFROG_RO_PASSWORD.
+Step 3: Set Environment Variable
+macOS/Linux (zsh/bash)
 
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e> npm install --legacy-peer-deps
-npm warn EBADENGINE Unsupported engine {
-npm warn EBADENGINE   package: '@gfk/gta@2.0.67',
-npm warn EBADENGINE   required: { node: '24.11.1', npm: '11.6.2' },
-npm warn EBADENGINE   current: { node: 'v26.8.1', npm: '11.19.0' }
-npm warn EBADENGINE }
-npm warn cleanup Failed to remove some directories [
-npm warn cleanup   [
-npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules',
-npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\color-string\node_modules'] {
-npm warn cleanup       errno: -4048,
-npm warn cleanup       code: 'EPERM',
-npm warn cleanup       syscall: 'rmdir',
-npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules\\color-string\\node_modules'
-npm warn cleanup     }
-npm warn cleanup   ],
-npm warn cleanup   [
-npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules\\istanbul-lib-instrument',
-npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\istanbul-lib-instrument'] {
-npm warn cleanup       errno: -4048,
-npm warn cleanup       code: 'EPERM',
-npm warn cleanup       syscall: 'rmdir',
-npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules\\istanbul-lib-instrument'
-npm warn cleanup     }
-npm warn cleanup   ],
-npm warn cleanup   [
-npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules\\@cspotcode',
-npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\@cspotcode\source-map-support\node_modules'] {
-npm warn cleanup       errno: -4048,
-npm warn cleanup       code: 'EPERM',
-npm warn cleanup       syscall: 'rmdir',
-npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod-main\\e2e\\node_modules\\@cspotcode\\source-map-support\\node_modules'
-npm warn cleanup     }
-npm warn cleanup   ]
-npm warn cleanup ]
-npm error code E401
-npm error Incorrect or missing password.
-npm error If you were trying to login, change your password, create an authentication token or enable two-factor authentication then that means you likely typed your password in incorrectly.
-npm error Please try again, or recover your password at:
-npm error   https://www.npmjs.com/forgot
-npm error
-npm error If you were doing some other operation then your saved credentials are probably out of date.
-npm error To correct this please try logging in again with:
-npm error   npm login
-npm error A complete log of this run can be found in: C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_logs\2026-09-05T16_54_55_427Z-debug-0.log
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e> 
+
+export JFROG_RO_PASSWORD="<your_jfrog_token>"
+To persist in zsh:
+
+
+
+echo 'export JFROG_RO_PASSWORD="<your_jfrog_token>"' >> ~/.zshrc
+source ~/.zshrc
+Windows PowerShell
+
+
+setx JFROG_RO_PASSWORD "<your_jfrog_token>"
+Open a new terminal after setx.
+
+Step 4: Update .npmrc in Your Test Project
+At the root of your GTA test project, use:
+
+
+
+@gfk:registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/
+//artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/:_authToken=${JFROG_RO_PASSWORD}
+registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/
+//artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/:_authToken=${JFROG_RO_PASSWORD}
+Step 5: Clean Old Lock/Cache (Recommended)
+From project root:
+
+
+
+rm -rf node_modules
+rm -f package-lock.json
+npm cache verify
+Step 6: Reinstall Dependencies
+
+
+npm install
+Step 7: Validate GTA Resolution from JFrog
+
+
+npm view @gfk/gta version
+npm view @gfk/azure-login version
+Optional validation:
+
+
+
+npm ls @gfk/gta
+Step 8: Run a Smoke Test
+Run one test command from your project, for example:
+
+
+
+npm run playwright:sampleProject:api
+or
+
+
+
+npm run cucumber:sampleProject:api
+Common Issues and Fixes
+403 for @gfk/* packages
+Possible cause: account entitlement issue in JFrog (even when token is valid).
+
+Action:
+
+Verify env var is set and non-empty.
+Verify .npmrc is correct.
+If still failing, request package entitlement for @gfk scope via JFrog/Data Platform support.
+Token not picked up
+Restart terminal/session.
+Re-run echo $JFROG_RO_PASSWORD (macOS/Linux) or check env in PowerShell.
+Re-run npm install.
