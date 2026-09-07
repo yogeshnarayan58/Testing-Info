@@ -1,5 +1,257 @@
-@gfk:registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/
-//artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/:_authToken=${JFROG_RO_PASSWORD}
-registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/
-//artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/:_authToken=${JFROG_RO_PASSWORD}
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e> 
+Created by Ankit Nigam, last updated on Nov 13, 2025  4 minute read
+PostgreSQL API and Grafana Dashboard Documentation
+This documentation provides detailed instructions on how to use the PostgreSQL API for entering test run results and related data into the PostgreSQL database. The data can then be visualized using a QA Grafana instance. The system is divided into two parts:
+
+PostgreSQL API: Used for entering test run results and other data into the PostgreSQL database.
+QA Grafana Instance: Used for visualizing the data stored in the PostgreSQL database.  
+Before starting you can have a look at this page here which describes the boundaries for the QA Grafana so that the expectations are clear 
+QA Grafana:Understanding Its Boundaries for Optimal Use
+Context
+To use the Grafana Dashboard for reporting and visualizing test results for your team or domain, you must use the provided API endpoints. These endpoints allow you to enter data into the database directly, and the provided API endpoints are the easiest way to provide the data.
+
+Providing the data is the first step using the API endpoints, and visualization can be done through the Grafana instance
+
+Grafana:
+
+https://grafana.qa.in.gfk.com/
+
+You can access the Grafana instance by raising a request, and the instructions can be found on the following Confluence page:
+
+How to Access QA Grafana with NIQ Account
+
+Prerequisites
+Before entering the data, you must have a valid project against which you are entering the results. The following steps define the APIs and their descriptions that you can follow to create the project under your area or domain.
+
+Authentication
+All the API endpoints can be accessed without any authentication, and you should be inside the NIQ network or using the VPN only.
+
+Do not want to read text? slightly smiling face Then Jump to the Code example:
+Example In C#+.NetCore for Grafana Qa Dashboard Reporter
+
+Example In Java for Grafana Qa Dashboard Reporter 
+
+1.1.4. How to Update Results From GitHub/Actions
+Currently, the API host mapping needs to be enabled at the node level which you can do by changing in the GitHub Workflow file. We are working on enabling it across the entire GitHub Runner clusters so that no need to update on Projects. For time being please feel feel to contact if you want to enable the host manually and keep posting the Results from your project.
+
+How to Access Endpoints
+You can use the Swagger documentation for hitting the endpoints and do not need any special tool for creating the setup data:
+
+https://postgres-api.qa.in.gfk.com/report-postgres/api/v1/swagger-ui/index.html#
+
+Steps and Flow
+Check or Create an Area
+First, you must have an area. An area can be already defined or not. You can check using the GET endpoint /areas. If you do not find the area you are interested in, you can create it using the POST endpoint /areas/create.
+
+CreateAreaRequest Properties:
+
+areaName (string): Name of the area
+ Check or Create a Domain
+Every area has an ID defined to it, which might contain domains. You can get the list of domains using the GET endpoint /domains. If you cannot find your domain, you can create a domain for your area using the POST endpoint /domains/create.
+
+CreateDomainRequest Properties:
+
+domainName (string): Name of the domain
+areaId (integer, int64): ID of the associated area
+ Check or Create a Team
+Now you can create a team, but first, check if the team is already created using the GET endpoint /feature-teams. If the team name is not found in the corresponding area and domain, you can create a team using the POST endpoint /feature-teams/create.
+
+CreateFeatureTeamRequest Properties:
+
+teamName (string): Name of the feature team
+domainId (integer, int64): ID of the associated domain
+ Check or Create a Project
+Next, look for your project, as the test cases should be part of one of the projects. You can check if the project is already created using the GET endpoint /projects. If you do not find the project name, you can create the project using the POST endpoint /projects/create.
+
+CreateProjectRequest Properties:
+
+projectName (string): Name of the project
+teamId (integer, int64): ID of the associated feature team
+ View the Structure
+You can always make a GET endpoint call to look for the proper structure where your project and teams fit and what is currently present. A normal structure looks like this as a JSON response:
+
+
+
+
+
+GET: https://postgres-api.qa.in.gfk.com/report-postgres/api/v1/feature-teams
+
+Response Body:
+{
+  "teamId": 5,
+  "teamName": "MDM",
+  "domain": {
+    "domainId": 3,
+    "domainName": "C&C",
+    "area": {
+      "areaId": 2,
+      "areaName": "DATA PLATFORM"
+    }
+  }
+}
+Reporting Test Results
+Once you have the project created, you can start reporting on the project level. You have the possibility of posting one result at a time or posting results as a batch. The preferable method is doing a POST request at the end of your test and sending the results.
+
+You can follow the proper description of the each Field and their expected values here Test Result Variables Description - Data Platform Technology & Data - Confluence
+Create Single Result Entry
+Use the endpoint /test-results/create to create a single result entry. Provide the necessary details such as suite name, test case name, status, execution time, execution duration, environment name, project ID, and module name.
+
+
+
+
+Endpoint
+
+POST https://postgres-api.qa.in.gfk.com/report-postgres/api/v1/test-results/create
+
+Body:
+  {
+  "suiteName": "TestSuit",
+  "testcaseName": "PostDeploymentCheckForNewronInterfaceAndSynonymsCreatedFromConfirmLayerApp",
+  "status": "Passed",
+  "executionTime": "2025-03-25T08:57:54.8249216Z",
+  "executionDuration": 22000,
+  "envName": "T5",
+  "projectId": 72,
+  "testCaseId": "597745",
+  "executionContext": "Manual",
+  "testCycleName": "T5-CL_SMOKE-0.17.5-AutoTest",
+  "releaseVersion": "0.17.5",
+  "executedBy": "GTA-JAVA"
+}
+Create Batch Result Entries
+Use the endpoint /test-results/create-batch to create results in a batch. Provide a list of JSON objects with the necessary details for each test result.
+
+
+
+Endpoint
+
+POST https://postgres-api.qa.in.gfk.com/report-postgres/api/v1/test-results/createBatch
+
+Body:
+[
+ {
+  "suiteName": "TestSuit",
+  "testcaseName": "PostDeploymentCheckForNewronInterfaceAndSynonymsCreatedFromConfirmLayerApp",
+  "status": "Passed",
+  "executionTime": "2025-03-25T08:57:54.8249216Z",
+  "executionDuration": 22000,
+  "envName": "T5",
+  "projectId": 72,
+  "testCaseId": "597745",
+  "executionContext": "Manual",
+  "testCycleName": "T5-CL_SMOKE-0.17.5-AutoTest",
+  "releaseVersion": "0.17.5",
+  "executedBy": "Playwright .NetCore 8"
+ }
+]
+-------------------------
+QA Grafana:Understanding Its Boundaries for Optimal Use
+
+Following are some of the points which you should not expect from the QA Grafana Dashboard as the purpose of the tool is not to replace any Test Management Tool.
+
+QA Grafana Dashboard is not a replacement of Test Management Tool like Zephyr or TestRail.
+
+Test Failure Results and Exceptions.
+
+Test Failure Screenshots.
+How much Are Total Tests in Project and then Automation Manual percentage.
+May not capture all necessary details for in-depth analysis.
+Try to provide accurate data and keep reviewing time to time.
+Without additional context, it might be challenging to understand the root cause of test failures.
+This can not be used for performance monitoring we have separate data source which can be used for Performance tests and results monitoring.
+Ensuring that sensitive and security of test data is on the data source.
+Regular maintenance might require time to time.
+----------------------------------------
+
+Created by Ankit Nigam, last updated on Nov 13, 2025  1 minute read
+To push playwright test results in Postgres, kindly make the below changes in your code
+sample project: https://gitlab.in.gfk.com/dp/shared/techtest-qa/sampleprojects/gta_sample_project
+
+ common/utils/customPlaywrightReporter.ts
+
+
+
+
+import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig } from "@playwright/test";
+import * as path from 'path';
+import { config } from "../../sampleproject.config";
+import { PostgresActions, CustomReporterOptions, CommonReporterUtils } from "@gfk/gta";
+
+
+class CustomPlaywrightReporter implements Reporter {
+
+    private areaId: number | undefined;
+    private domainId: number | undefined;
+    private teamId: number | undefined;
+    private options: CustomReporterOptions;
+    private projectId: number | undefined;
+    private environmentName: string;
+    private commonReporterUtils: CommonReporterUtils;
+    private postgresActions: PostgresActions;
+    private previousTestCaseId: string | null;
+    private resultID: number | undefined;
+
+
+    constructor(options: CustomReporterOptions) {
+        this.options = options;
+        this.environmentName = config.ENVIRONMENT;
+        this.postgresActions = new PostgresActions(config.postgresAPIUrl);
+    }
+
+
+    async initialize(): Promise<void> {
+        const { areaId, domainId, teamId, projectId } = await this.commonReporterUtils.getOrCreateIds();
+        this.areaId = areaId;
+        this.domainId = domainId;
+        this.teamId = teamId;
+        this.projectId = projectId;
+    }
+
+    async onBegin(fullConfig: FullConfig, suite: Suite) {
+        console.log(`Starting the run with ${suite.allTests().length} tests`);
+        this.commonReporterUtils = new CommonReporterUtils(this.options, this.environmentName, config.postgresAPIUrl);
+        await this.initialize();
+    }
+
+    async onTestEnd(testCase: TestCase, result: TestResult): Promise<void> {
+        try {
+            if (this.projectId) {
+                const isRetry = this.previousTestCaseId === testCase.id;
+                const suiteName = path.basename(testCase.parent?.title, '.ts');
+                this.resultID = await this.postgresActions.createOrUpdateTestResults({
+                    suiteName: suiteName,
+                    testcaseName: testCase.title, status: result.status, executionTime: result.startTime,
+                    executionDuration: result.duration, envName: this.environmentName, projectId: this.projectId},
+                    isRetry,this.resultID);
+                console.log('Test result created:', this.resultID);
+                this.previousTestCaseId = testCase.id;
+            } else {
+                console.error('Project ID is not available');
+            }
+        } catch (error) {
+            console.error('Error creating test result:', error);
+        }
+    }
+}
+
+export default CustomPlaywrightReporter;
+ playwright.config.ts
+
+
+
+
+reporter: [
+    ['./common/utils/customPlaywrightReporter.ts', {
+      areaName: 'Tech & Data', //your area like "Tech & Data" or "FMCG" etc.
+      domainName: 'Data Platform', //your domain like "Data Platform" or "Client Platform" etc.
+      teamName: 'GTA', //your team like Dragons
+      projectName: 'GTA-Playwright',  // WFM / WEBTASX
+    }]
+  ],
+
+
+
+sampleproject.config.ts
+
+
+postgresAPIUrl: process.env.POSTGRES_API_URL || "https://postgres-api.qa.in.gfk.com/report-postgres/api/v1",
