@@ -1,94 +1,51 @@
-import { test, expect } from '@playwright/test';
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
+$ npm test
 
-test('test', async ({ page }) => {
-  await page.goto('https://niqloginuat.identity.nielseniq.io/as/authorize?response_type=code&scope=openid%20email%20profile%20offline_access%201bd20d33-5a7e-404a-a849-6ab1b3923a24.access&client_id=1bd20d33-5a7e-404a-a849-6ab1b3923a24&state=VeVVTXRMyRyNXyB3oFKM5pn-7LBUsRw5RwhWGFN-4Lg&redirect_uri=https%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=9Iblpr3aY9OP85ONuFZZNM9RJrs1kW_cpHvQyvBemIM&code_challenge=1DNGpbCAeGFMysib6pg6IxAyFS1ggoSeQ4LRVVEzHG4&code_challenge_method=S256');
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('automation1gen@nielseniq.com');
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
-  await page.getByRole('button', { name: 'Verify' }).click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
-  await page.getByText('Start with a prompt').click();
-  await page.locator('[data-test-id="btn-next-dataset"]').click();
-  await page.locator('[data-test-id="apply-dataset-btn"]').click();
-  await page.locator('[data-test-id="apply-dataset-btn"]').click();
-  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
-  await page.locator('[data-test-id="ds-selectionMenuOption_Delete"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
-  await page.locator('niq-checkbox').nth(5).click();
-  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
-  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
-  await page.locator('[data-test-id="ds-selectionMenuOption_Delete"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
-  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
-  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
-  await page.locator('div').filter({ hasText: 'Let\'s get you started with' }).nth(1).click();
-  await page.locator('#report-btn-run').click();
-  await page.locator('[data-test-id="-spinner"]').click();
-  await page.getByRole('button', { name: '250 Responses' }).click();
-  await page.getByRole('textbox', { name: 'E.g. Generate a few questions' }).click();
-  await page.getByRole('textbox', { name: 'E.g. Generate a few questions' }).fill('Testing');
-  await page.locator('[data-test-id="proceed-to-survey"]').click();
-  await page.getByRole('slider', { name: 'Single slider thumb' }).fill('7');
-  await page.getByText('How many questions would you').click();
-  await page.locator('niq-button').filter({ hasText: 'Single Choice' }).click();
-  await page.getByText('Single Choice').click();
-  await page.locator('niq-button').filter({ hasText: 'Multiple Choice' }).click();
-  await page.getByText('Multiple Choice').click();
-  await page.locator('niq-button').filter({ hasText: 'Rating' }).click();
-  await page.getByText('Rating').click();
-  await page.locator('niq-button').filter({ hasText: 'Net Promoter Score' }).click();
-  await page.getByText('Net Promoter Score').click();
-  await page.locator('niq-button').filter({ hasText: 'Point Scale' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Multi Scale' }).click();
-  await page.locator('#text-field-81').click();
-  await page.locator('#text-field-81').fill('');
-  await page.getByText('Please enter a value between 3 and').click();
-  await page.locator('#text-field-81').click();
-  await page.locator('#text-field-81').fill('11');
-  await page.getByText('The input is invalid. Please').click();
-  await page.locator('#text-field-81').click();
-  await page.locator('#text-field-81').fill('10');
-  await page.locator('niq-button').filter({ hasText: 'Generate questions' }).click();
-  await page.locator('.cdk-drag').first().click();
-  await page.getByRole('textbox', { name: 'Question', exact: true }).click();
-  await page.locator('div').filter({ hasText: 'Untitled Survey' }).nth(4).click();
-  await page.locator('.action-link.ng-tns-c972618775-108').click();
-  await page.getByRole('textbox', { name: 'Type your prompt...' }).click();
-  await page.getByRole('textbox', { name: 'Type your prompt...' }).fill('testing Rephrase with AI');
-  await page.locator('#cdk-drop-list-21').getByRole('button').click();
-  await page.locator('.action-link.delete-action.ng-tns-c972618775-85').click();
-  await page.locator('.action-link.ng-tns-c972618775-80').click();
-  await page.locator('niq-button').filter({ hasText: 'Move to trash' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Review Mode' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Collapse All' }).click();
-  await page.locator('niq-checkbox').first().click();
-  await page.locator('niq-checkbox').first().click();
-  await page.locator('niq-checkbox').nth(1).click();
-  await page.locator('niq-checkbox').first().click();
-  await page.locator('niq-button').filter({ hasText: 'Delete' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Exit Review Mode' }).click();
-  await page.getByText('Add new question').click();
-  await page.locator('niq-button').filter({ hasText: 'Rating' }).click();
-  await page.getByRole('textbox', { name: 'Question', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('Testing manuall adding thquestion');
-  await page.locator('niq-button').filter({ hasText: 'Suggest new questions' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Add new question' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Save as draft' }).click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.locator('niq-button').filter({ hasText: 'Publish' }).click();
-  await page.getByText('Confirm publish?').click();
-  await page.locator('niq-button').filter({ hasText: 'Confirm' }).click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
-  await page.getByRole('gridcell', { name: 'Untitled Survey' }).click();
-  await page.getByRole('gridcell', { name: '/09/26, 13:44' }).click();
-});
+> e2e@1.0.0 test
+> playwright test
+
+'playwright' is not recognized as an internal or external command,
+operable program or batch file.
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
+$ npm install
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@gfk/gta@2.0.67',
+npm warn EBADENGINE   required: { node: '24.11.1', npm: '11.6.2' },
+npm warn EBADENGINE   current: { node: 'v26.8.1', npm: '11.19.0' }
+npm warn EBADENGINE }
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities,which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) bycontacting i@izs.me
+npm warn cleanup Failed to remove some directories [
+npm warn cleanup   [
+npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules',
+npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\pixelmatch\node_modules\pngjs'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'rmdir',
+npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\pixelmatch\\node_modules\\pngjs'
+npm warn cleanup     }
+npm warn cleanup   ],
+npm warn cleanup   [
+npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\@cspotcode',
+npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@cspotcode\source-map-support\node_modules\@jridgewell\trace-mapping\dist\types'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'rmdir',
+npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\@cspotcode\\source-map-support\\node_modules\\@jridgewell\\trace-mapping\\dist\\types'
+npm warn cleanup     }
+npm warn cleanup   ]
+npm warn cleanup ]
+npm error code ECONNRESET
+npm error errno ECONNRESET
+npm error network request to https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/write-file-atomic/-/write-file-atomic-4.0.2.tgz failed, reason: Client network socket disconnected before secure TLS connection was established
+npm error network This is a problem related to network connectivity.
+npm error network In most cases you are behind a proxy or have bad network settings.
+npm error network
+npm error network If you are behind a proxy, please make sure that the 'proxy' config is set properly.  See: 'npm help config'
+npm error A complete log of this run can be found in: C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_logs\2026-09-09T14_38_18_646Z-debug-0.log
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
+$ 
+
+
