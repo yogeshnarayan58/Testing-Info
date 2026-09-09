@@ -1,108 +1,94 @@
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e> npm run test:lambdatest
+import { test, expect } from '@playwright/test';
 
-> e2e@1.0.0 test:lambdatest
-> cross-env LAMBDATEST=true npx playwright test
-
-◇ injected env (19) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = true
-
-🌐 LambdaTest Cloud Execution Enabled
-   Credentials: configured
-   Project: OMNI SurveyMod
-   Workers: 1
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Connecting to LambdaTest cloud...
-Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"89d9b08c1c736458bbc59958d77e9529: Unauthorized, either Username or AccessKey is invalid"}}
-
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"89d9b08c1c736458bbc59958d77e9529: Unauthorized, either Username or AccessKey is invalid"}}
-  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
-  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
-
-    at BasePageFactory.createBasePage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\utils\base-page-factory.ts:95:38)
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\helpers\global-setup.ts:34:38) {
-  log: [
-    '  - <ws connecting> wss://cdp.lambdatest.com/playwright',
-    '  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized\n' +
-      '{"status":401,"value":{"message":"89d9b08c1c736458bbc59958d77e9529: Unauthorized, either Username or AccessKey is invalid"}}',
-    '  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established',
-    '  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established',
-    '  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason='
-  ],
-  name: 'Error'
-}
-Error: Global setup failed: browserType.connect: WebSocket error: wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"89d9b08c1c736458bbc59958d77e9529: Unauthorized, either Username or AccessKey is invalid"}}
-
-Call log:
-  - <ws connecting> wss://cdp.lambdatest.com/playwright
-  - <ws unexpected response> wss://cdp.lambdatest.com/playwright 401 Unauthorized
-{"status":401,"value":{"message":"89d9b08c1c736458bbc59958d77e9529: Unauthorized, either Username or AccessKey is invalid"}}
-  - <ws error> wss://cdp.lambdatest.com/playwright error WebSocket was closed before the connection was established
-  - <ws connect error> wss://cdp.lambdatest.com/playwright WebSocket was closed before the connection was established
-  - <ws disconnected> wss://cdp.lambdatest.com/playwright code=1006 reason=
-
-
-   at ..\helpers\global-setup.ts:43
-
-  41 |     console.error('Global setup failed:', error);
-  42 |     if (error instanceof Error) {
-> 43 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  44 |     }
-  45 |     throw new Error('Global setup failed with an unknown error');
-  46 |   } finally {
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\helpers\global-setup.ts:43:13)
-[global-teardown] Adding LambdaTest videos to Allure report...
-[global-teardown] Step 1: Reading test-session mappings...
-[global-teardown] No LambdaTest session directory found at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\test-results\.lt-sessions
-[global-teardown] Step 2: Reading Allure result files...
-[global-teardown] Found 20 Allure result files
-[global-teardown] Step 3: Injecting LT_SESSION into Allure files...
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › Dataset Selection: Should select the dataset type and dataset"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › Generate Survey: Should fill the prompt and reach the Build Survey page"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › Response Count: Should enable Proceed to survey builder after selecting a response count"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › Dataset Selection: Should select the dataset and confirm the Choose a dataset screen"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › Response Count: Should select a response count"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › Response Count: Should enable Proceed to survey builder after selecting a response count"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › Dataset Selection: Should select the dataset and confirm the Choose a dataset screen"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Response Count: Should select a response count"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Generate Survey: Should fill the prompt and reach the Build Survey page"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › Panelist Filters: Should set dimension selections and search for panelists"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › Panelist Filters: Should enable Search for Panelists after all 5 filters are set"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-from-scratch.spec.ts › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › Panelist Filters: Should enable Search for Panelists after all 5 filters are set"
-[global-teardown]  No session mapping found for: "chromium › survey\start-from-scratch.spec.ts › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page"
-[global-teardown]  No session mapping found for: "Microsoft Edge › survey\start-with-prompt.spec.ts › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page"
-[global-teardown]  No session mapping found for: "chromium › survey\start-with-prompt.spec.ts › Start with a prompt › Dataset Selection: Should select the dataset type and dataset"
-[global-teardown] Step 4: Fetching LambdaTest sessions...
-[global-teardown] Failed to add LambdaTest info: Error: [global-teardown] LambdaTest API failed: 401 Unauthorized Body: HTTP Basic: Access denied.
-    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\playwright\setup\globalTeardown.ts:184:13)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6394:7)
-    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6154:11)
-    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6170:5)
-    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6135:28)
-    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6299:18)
-    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\runner\index.js:6956:18)
-    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
-    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod-main\e2e\node_modules\playwright\lib\program.js:55:7)
-[LT Reporter] Initialized - capturing LambdaTest sessions...
-
-[LT Reporter] No sessions captured.
-
-To open last HTML report run:
-
-  npx playwright show-report
+test('test', async ({ page }) => {
+  await page.goto('https://niqloginuat.identity.nielseniq.io/as/authorize?response_type=code&scope=openid%20email%20profile%20offline_access%201bd20d33-5a7e-404a-a849-6ab1b3923a24.access&client_id=1bd20d33-5a7e-404a-a849-6ab1b3923a24&state=VeVVTXRMyRyNXyB3oFKM5pn-7LBUsRw5RwhWGFN-4Lg&redirect_uri=https%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=9Iblpr3aY9OP85ONuFZZNM9RJrs1kW_cpHvQyvBemIM&code_challenge=1DNGpbCAeGFMysib6pg6IxAyFS1ggoSeQ4LRVVEzHG4&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Email' }).click();
+  await page.getByRole('textbox', { name: 'Email' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByText('Start with a prompt').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-selectionMenuOption_Delete"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
+  await page.locator('niq-checkbox').nth(5).click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-selectionMenuOption_Delete"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.locator('div').filter({ hasText: 'Let\'s get you started with' }).nth(1).click();
+  await page.locator('#report-btn-run').click();
+  await page.locator('[data-test-id="-spinner"]').click();
+  await page.getByRole('button', { name: '250 Responses' }).click();
+  await page.getByRole('textbox', { name: 'E.g. Generate a few questions' }).click();
+  await page.getByRole('textbox', { name: 'E.g. Generate a few questions' }).fill('Testing');
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.getByRole('slider', { name: 'Single slider thumb' }).fill('7');
+  await page.getByText('How many questions would you').click();
+  await page.locator('niq-button').filter({ hasText: 'Single Choice' }).click();
+  await page.getByText('Single Choice').click();
+  await page.locator('niq-button').filter({ hasText: 'Multiple Choice' }).click();
+  await page.getByText('Multiple Choice').click();
+  await page.locator('niq-button').filter({ hasText: 'Rating' }).click();
+  await page.getByText('Rating').click();
+  await page.locator('niq-button').filter({ hasText: 'Net Promoter Score' }).click();
+  await page.getByText('Net Promoter Score').click();
+  await page.locator('niq-button').filter({ hasText: 'Point Scale' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Multi Scale' }).click();
+  await page.locator('#text-field-81').click();
+  await page.locator('#text-field-81').fill('');
+  await page.getByText('Please enter a value between 3 and').click();
+  await page.locator('#text-field-81').click();
+  await page.locator('#text-field-81').fill('11');
+  await page.getByText('The input is invalid. Please').click();
+  await page.locator('#text-field-81').click();
+  await page.locator('#text-field-81').fill('10');
+  await page.locator('niq-button').filter({ hasText: 'Generate questions' }).click();
+  await page.locator('.cdk-drag').first().click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).click();
+  await page.locator('div').filter({ hasText: 'Untitled Survey' }).nth(4).click();
+  await page.locator('.action-link.ng-tns-c972618775-108').click();
+  await page.getByRole('textbox', { name: 'Type your prompt...' }).click();
+  await page.getByRole('textbox', { name: 'Type your prompt...' }).fill('testing Rephrase with AI');
+  await page.locator('#cdk-drop-list-21').getByRole('button').click();
+  await page.locator('.action-link.delete-action.ng-tns-c972618775-85').click();
+  await page.locator('.action-link.ng-tns-c972618775-80').click();
+  await page.locator('niq-button').filter({ hasText: 'Move to trash' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Review Mode' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Collapse All' }).click();
+  await page.locator('niq-checkbox').first().click();
+  await page.locator('niq-checkbox').first().click();
+  await page.locator('niq-checkbox').nth(1).click();
+  await page.locator('niq-checkbox').first().click();
+  await page.locator('niq-button').filter({ hasText: 'Delete' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Exit Review Mode' }).click();
+  await page.getByText('Add new question').click();
+  await page.locator('niq-button').filter({ hasText: 'Rating' }).click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('Testing manuall adding thquestion');
+  await page.locator('niq-button').filter({ hasText: 'Suggest new questions' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Add new question' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Save as draft' }).click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.locator('niq-button').filter({ hasText: 'Publish' }).click();
+  await page.getByText('Confirm publish?').click();
+  await page.locator('niq-button').filter({ hasText: 'Confirm' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByRole('gridcell', { name: 'Untitled Survey' }).click();
+  await page.getByRole('gridcell', { name: '/09/26, 13:44' }).click();
+});
