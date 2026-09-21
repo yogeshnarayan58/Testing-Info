@@ -1,69 +1,338 @@
-QA Validation scope
+# Grafana Integration Summary
 
-Save draft flow - save, open from fms, update(deep)(Yogesh)
+## Scope
 
-Save draft and publish survey dev validation and fixes - Save draft flow is validated successfully. Able to save a draft and persist it on reload. Can't validate publsh survey flow as publish api is still failing.
+Grafana reporting was added to the e2e Playwright configuration. The reporter is registered only when `process.env.CI` is set. No external API was called.
+
+## Exact Pre-Change Content
+
+### `e2e/utils/configurationDetails.ts`
+
+```ts
+import * as path from 'path';
+
+/**
+ * Constructs the LambdaTest build name with optional build identifier suffix.
+ * Used consistently across playwright.config.ts, base-page-factory.ts, and globalTeardown.ts.
+ *
+ * @param ltBuild - Base build name (e.g., "Discover build")
+ * @param buildIdentifier - Optional identifier to append (e.g., GitHub run number)
+ * @returns Formatted build name with identifier if provided
+ */
+export const getLambdaTestBuildName = (
+  ltBuild: string,
+  buildIdentifier?: string
+): string => {
+  return buildIdentifier ? `${ltBuild} (${buildIdentifier})` : ltBuild;
+};
+
+export const getLambdaTestSessionDir = (): string =>
+  path.join(process.cwd(), 'test-results', '.lt-sessions');
+```
+
+### `e2e/playwright.config.ts`
+
+```ts
+import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import { envConfig } from './config/env.config';
+import { getLambdaTestBuildName } from './utils/configurationDetails';
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+const baseURL = envConfig.BASE_URL;
+const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+
+const isLambdaTest = process.env.LAMBDATEST === 'true';
+// LambdaTest environment variables (all inert/unused unless LAMBDATEST=true)
+const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
+const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
+const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
+const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
+const ltBuildIdentifier =
+  process.env.SM_LT_BUILD_IDENTIFIER ||
+  process.env.BUILD_NUMBER ||
+  process.env.GITHUB_RUN_NUMBER ||
+  undefined;
+
+const ltVideo = process.env.SM_LT_VIDEO ? process.env.SM_LT_VIDEO === 'true' : true;
+const ltNetwork = process.env.SM_LT_NETWORK ? process.env.SM_LT_NETWORK === 'true' : false;
+const ltConsole = process.env.SM_LT_CONSOLE ? process.env.SM_LT_CONSOLE === 'true' : false;
+
+const ltIdleTimeout = process.env.SM_LT_IDLE_TIMEOUT ? Number(process.env.SM_LT_IDLE_TIMEOUT) : 300;
+
+const ltWorkers = process.env.SM_LT_WORKERS ? Number(process.env.SM_LT_WORKERS) : 1;
+
+console.log('isLambdaTest =', isLambdaTest);
+
+if (isLambdaTest) {
+  console.log('\n🌐 LambdaTest Cloud Execution Enabled');
+  console.log('   Credentials:', ltUser && ltAccessKey ? 'configured' : 'missing');
+  console.log('   Project:', ltProject);
+  console.log('   Workers:', ltWorkers);
+
+  if (!ltUser || !ltAccessKey) {
+    throw new Error(
+      'LambdaTest credentials missing! Please set SM_LAMBDATEST_USERNAME/SM_LT_USERNAME and SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY'
+    );
+  }
+}
+
+export default defineConfig({
+  testDir: './tests',
+  globalSetup: require.resolve('./helpers/global-setup.ts'),
+  globalTeardown: require.resolve('./playwright/setup/globalTeardown.ts'),
+  outputDir: './test-results',
+  timeout: 300 * 1000,
+
+  use: {
+    baseURL: normalizedBaseURL,
+    storageState: 'storage/auth.json',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    headless: process.env.HEADLESS !== 'false',
+  },
+
+  fullyParallel: false,
+  retries: process.env.CI ? 2 : 0,
+  // LambdaTest runs should be minimal workers to avoid session conflicts
+  workers: isLambdaTest ? ltWorkers : process.env.CI ? 1 : 2,
+
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['allure-playwright', { outputFolder: 'allure-results' }],
+    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+  ],
+
+  projects: isLambdaTest
+    ? [
+        {
+          name: 'lambdatest-chromium',
+          use: {
+            browserName: 'chromium' as const,
+            headless: true,
+            viewport: { width: 1920, height: 1080 },
+            baseURL: normalizedBaseURL,
+
+            connectOptions: {
+              wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+                JSON.stringify({
+                  browserName: 'pw-chromium',
+                  browserVersion: 'latest',
+
+                  'LT:Options': {
+                    platform: 'Windows 11',
+
+                    // Build name should include identifier so you can track correctly
+                    build: getLambdaTestBuildName(ltBuild, ltBuildIdentifier),
+
+                    name: 'Playwright Automation',
+
+                    user: ltUser,
+                    accessKey: ltAccessKey,
+
+                    project: ltProject,
+
+                    network: ltNetwork,
+                    video: ltVideo,
+                    console: ltConsole,
+
+                    plugin: 'playwright-test',
+                    w3c: true,
+                    idleTimeout: ltIdleTimeout,
+                  },
+                })
+              )}`,
+            },
+          },
+        },
+      ]
+    : [
+        {
+          name: 'chromium',
+          use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+        },
+        {
+          name: 'Microsoft Edge',
+          use: { ...devices['Desktop Edge'], channel: 'msedge' },
+        },
+      ],
+});
+```
+
+## Complete Before/After Diffs
+
+### `e2e/utils/configurationDetails.ts`
+
+```diff
+ import * as path from 'path';
+@@
+ export const getLambdaTestSessionDir = (): string =>
+   path.join(process.cwd(), 'test-results', '.lt-sessions');
++
++export const postgresAPIUrl =
++  process.env.SM_POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1';
++
++export const config = {
++  ENV: process.env.ENV || 'DEV',
++  postgresAPIUrl,
++};
+```
+
+### `e2e/playwright.config.ts`
+
+```diff
+-  reporter: [
+-    ['list'],
+-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+-    ['allure-playwright', { outputFolder: 'allure-results' }],
+-    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+-  ],
++  reporter: process.env.CI
++    ? [
++        ['list'],
++        ['html', { outputFolder: 'playwright-report', open: 'never' }],
++        ['allure-playwright', { outputFolder: 'allure-results' }],
++        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
++        [
++          './playwright/reporters/grafana-reporter.ts',
++          {
++            areaName: process.env.SM_AREA_NAME || 'FMCG',
++            domainName: process.env.SM_DOMAIN_NAME || 'DISCOVER',
++            teamName: process.env.SM_TEAM_NAME || 'SURVEY MOD',
++            projectName: process.env.SM_PROJECT_NAME || 'SURVEY-MOD-AUTOMATION',
++          },
++        ],
++      ]
++    : [
++        ['list'],
++        ['html', { outputFolder: 'playwright-report', open: 'never' }],
++        ['allure-playwright', { outputFolder: 'allure-results' }],
++        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
++      ],
+```
+
+### `e2e/.env.example`
+
+```diff
+ NODE_EXTRA_CA_CERTS=
++
++SM_POSTGRES_API_URL=https://postgres-api.qa.in.gfk.com/report-postgres/api/v1
++SM_AREA_NAME=FMCG
++SM_DOMAIN_NAME=DISCOVER
++SM_TEAM_NAME=SURVEY MOD
++SM_PROJECT_NAME=SURVEY-MOD-AUTOMATION
+```
+
+### `e2e/playwright/reporters/grafana-reporter.ts`
+
+This file did not exist before the change. The complete created file is:
+
+```ts
+import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig } from "@playwright/test";
+import * as path from 'path';
+import { config } from '../../utils/configurationDetails';
+import { PostgresActions, CustomReporterOptions, CommonReporterUtils } from "@gfk/gta";
 
 
-Clicking the asset name in survey list page grid is not opening the correct url.(deep)(Yogesh) 
+class GrafanaPlaywrightReporter implements Reporter {
 
-Validated that clicking the asset name in survey list page grid is opening the correct url. Previously it was opening an invalid url and navigating back to the home page. In the screenshot, the url contains reportexperience-dev but previously it was trying to open the url without reportexperience-dev due to which loading issue was happening.
+    private areaId: number | undefined;
+    private domainId: number | undefined;
+    private teamId: number | undefined;
+    private options: CustomReporterOptions;
+    private projectId: number | undefined;
+    private environmentName: string;
+    private commonReporterUtils: CommonReporterUtils | undefined;
+    private postgresActions: PostgresActions;
+    private previousTestCaseId: string | null | undefined;
+    private resultID: number | undefined;
+
+    constructor(options: CustomReporterOptions) {
+        this.options = options;
+        console.log(`Custom reporter - Custom options received`);
+        this.environmentName = config.ENV;
+        this.postgresActions = new PostgresActions(config.postgresAPIUrl);
+    }
 
 
-Folder creation in FMS page - user can create folder and it should be visible in FMS page (report FMS report)-https://adlm.nielseniq.com/jira/browse/RBOC-203548(Yogesh)
------------------------------
-Code Cleanup and Refactoring
-Remove unused, redundant, and obsolete code from the affected components/services.
-Add meaningful comments/documentation where required to explain non-obvious component logic and business rules.
-Refactor large or complex methods into smaller, focused methods with clear responsibilities.
-Ensure the refactoring does not change the existing application behavior.
-Existing unit tests should continue to pass, with tests updated/added where required.
-Resolve PR Review Comments
-Address all applicable review comments from PR feature/RBOC-207142.
-Ensure the requested changes are implemented.
-No actionable review comments should remain unresolved.
-Save Draft and Publish Survey – Dev Validation
-Validate the Save Draft functionality in the development environment.
-Validate the Publish Survey functionality in the development environment.
-Fix all issues identified during the validation of these flows.
-Verify that saving a draft and publishing a survey work successfully after the fixes.
-Suggest More Questions – questionType
-Ensure the Suggest More Questions request payload contains the required questionType field.
-Verify that the correct questionType is passed based on the selected question/context.
-Verify that the Suggest More Questions flow completes successfully without payload-related failures.
-Add/update unit tests to prevent regression of the missing questionType issue.
-Select Panelist – Preserve Updated Selection
-When the user updates the selection, the updated values should be persisted correctly.
-On navigating/reloading the relevant flow, the persisted selection should be restored correctly.
-Verify that the user's selected values are used consistently in subsequent API requests and UI state.
-Survey List – Correct Asset URL
-Clicking an asset name from the Survey List/Grid should navigate to the correct survey URL.
-The URL should correspond to the correct survey and its associated flow.
-Verify navigation for the applicable survey flows, including Build with AI and Build from Scratch.
-The selected survey should load successfully after navigation without redirecting to an incorrect route.
-Select Panelist – householdCount Display
-When a valid householdCount is returned for the selected panelist criteria, the value should be displayed correctly in the Select Panelist UI.
-The UI should not incorrectly display the "Your current criteria returns too few eligible participants" unhappy-path message when a valid householdCount is available.
-Verify the behavior for both valid household counts and genuinely insufficient participant criteria.
-Ensure the fix does not impact the existing unhappy-path behavior when the participant count is actually below the required threshold.
-Regression Validation
-Verify that the above fixes do not introduce regressions in the existing survey creation, draft, publish, Select Panelist, and Suggest More Questions flows.
-All applicable unit tests and quality checks should pass successfully.
-The complete flow should be validated in the development environment before the ticket is considered complete.
+    async initialize(): Promise<void> {
+        if (!this.commonReporterUtils) {
+            throw new Error('CommonReporterUtils not initialized. Call onBegin first.');
+        }
+        const { areaId, domainId, teamId, projectId } = await this.commonReporterUtils.getOrCreateIds();
+        this.areaId = areaId;
+        this.domainId = domainId;
+        this.teamId = teamId;
+        this.projectId = projectId;
+    }
 
-Description
-a) remove unwanted / unused code b) add proper comments in every component c) refactor huge methods to little chunks / no. of methods
+    async onBegin(fullConfig: FullConfig, suite: Suite) {
+        console.log(`Custom reporter - Starting the run with ${suite.allTests().length} tests`);
+        this.commonReporterUtils = new CommonReporterUtils(this.options, this.environmentName, config.postgresAPIUrl);
+        await this.initialize();
+    }
 
-b) Resolve PR comments in below PR
-feature/RBOC-207142
+    async onTestEnd(testCase: TestCase, result: TestResult): Promise<void> {
+        try {
+            if (this.projectId) {
+                const isRetry = this.previousTestCaseId === testCase.id;
+                const suiteName = path.basename(testCase.parent?.title, '.ts');
+                // testCaseId: To read from test case tags/annotation
+                // testCycleName: process.env.JIRA_CYCLE_NAME || '',
+                // releaseVersion: process.env.VERSION_NAME || '',
+                this.resultID = await this.postgresActions.createOrUpdateTestResults(
+                    {
+                        suiteName: suiteName,
+                        testcaseName: testCase.title,
+                        status: result.status,
+                        executionTime: result.startTime,
+                        executionDuration: result.duration,
+                        envName: this.environmentName,
+                        projectId: this.projectId,
+                    },
+                    isRetry,
+                    this.resultID
+                );
+                console.log('Custom reporter: - Test result created:', this.resultID);
+                this.previousTestCaseId = testCase.id;
+            } else {
+                console.error('Custom reporter - Project ID is not available');
+            }
+        } catch (error) {
+            console.error('Custom reporter - Error creating test result:', error);
+        }
+    }
+}
 
-c) Save draft and publish survey dev validation and fixes
+export default GrafanaPlaywrightReporter;
+```
 
-d) Suggest more question - questionType missing from payload - failed
+### `e2e/GRAFANA_INTEGRATION_SUMMARY.md`
 
-e) Fix issues mentioned below:
+This is the new documentation file itself. Its complete content is this document; there was no prior file content.
 
-Avoid default selection in select panelist data selector and persist the updated values.
-Clicking the asset name in survey list page grid is not opening the correct url.
-Sometimes, select panelist is not showing up the householdCount value and instead show unhappy path message "Your current criteria returns too few eligible participants".
+## TypeScript Validation
 
+Command run from the e2e project directory:
+
+```text
+PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod> Set-Location e2e;
+npx tsc --noEmit
+```
+
+Output:
+
+```text
+(no output)
+```
+
+The command completed successfully with no TypeScript diagnostics. An earlier invocation from the repository root was not a valid e2e validation: it attempted to install the unrelated deprecated `tsc@2.0.4` package and exited with code 1. No test command was run.
+
+## Assumption
+
+The source reporter expects an environment name through `config.ENV`, but this e2e project had no existing equivalent config object or documented `ENV` default. I added `config.ENV` with the source pattern's `process.env.ENV || 'DEV'` fallback alongside the requested `postgresAPIUrl` value. The requested Grafana metadata defaults are supplied directly in the CI reporter options, and `e2e/.env` was not modified.
