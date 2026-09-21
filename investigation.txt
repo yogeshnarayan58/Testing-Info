@@ -1,51 +1,69 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ npm test
+QA Validation scope
 
-> e2e@1.0.0 test
-> playwright test
+Save draft flow - save, open from fms, update(deep)(Yogesh)
 
-'playwright' is not recognized as an internal or external command,
-operable program or batch file.
+Save draft and publish survey dev validation and fixes - Save draft flow is validated successfully. Able to save a draft and persist it on reload. Can't validate publsh survey flow as publish api is still failing.
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ npm install
-npm warn EBADENGINE Unsupported engine {
-npm warn EBADENGINE   package: '@gfk/gta@2.0.67',
-npm warn EBADENGINE   required: { node: '24.11.1', npm: '11.6.2' },
-npm warn EBADENGINE   current: { node: 'v26.8.1', npm: '11.19.0' }
-npm warn EBADENGINE }
-npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities,which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) bycontacting i@izs.me
-npm warn cleanup Failed to remove some directories [
-npm warn cleanup   [
-npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules',
-npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\pixelmatch\node_modules\pngjs'] {
-npm warn cleanup       errno: -4048,
-npm warn cleanup       code: 'EPERM',
-npm warn cleanup       syscall: 'rmdir',
-npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\pixelmatch\\node_modules\\pngjs'
-npm warn cleanup     }
-npm warn cleanup   ],
-npm warn cleanup   [
-npm warn cleanup     '\\\\?\\C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\@cspotcode',
-npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@cspotcode\source-map-support\node_modules\@jridgewell\trace-mapping\dist\types'] {
-npm warn cleanup       errno: -4048,
-npm warn cleanup       code: 'EPERM',
-npm warn cleanup       syscall: 'rmdir',
-npm warn cleanup       path: 'C:\\Users\\yogesh.upadhyay\\projects\\disc-fe-omni-survey-mod\\e2e\\node_modules\\@cspotcode\\source-map-support\\node_modules\\@jridgewell\\trace-mapping\\dist\\types'
-npm warn cleanup     }
-npm warn cleanup   ]
-npm warn cleanup ]
-npm error code ECONNRESET
-npm error errno ECONNRESET
-npm error network request to https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/write-file-atomic/-/write-file-atomic-4.0.2.tgz failed, reason: Client network socket disconnected before secure TLS connection was established
-npm error network This is a problem related to network connectivity.
-npm error network In most cases you are behind a proxy or have bad network settings.
-npm error network
-npm error network If you are behind a proxy, please make sure that the 'proxy' config is set properly.  See: 'npm help config'
-npm error A complete log of this run can be found in: C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_logs\2026-09-09T14_38_18_646Z-debug-0.log
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ 
+Clicking the asset name in survey list page grid is not opening the correct url.(deep)(Yogesh) 
 
+Validated that clicking the asset name in survey list page grid is opening the correct url. Previously it was opening an invalid url and navigating back to the home page. In the screenshot, the url contains reportexperience-dev but previously it was trying to open the url without reportexperience-dev due to which loading issue was happening.
+
+
+Folder creation in FMS page - user can create folder and it should be visible in FMS page (report FMS report)-https://adlm.nielseniq.com/jira/browse/RBOC-203548(Yogesh)
+-----------------------------
+Code Cleanup and Refactoring
+Remove unused, redundant, and obsolete code from the affected components/services.
+Add meaningful comments/documentation where required to explain non-obvious component logic and business rules.
+Refactor large or complex methods into smaller, focused methods with clear responsibilities.
+Ensure the refactoring does not change the existing application behavior.
+Existing unit tests should continue to pass, with tests updated/added where required.
+Resolve PR Review Comments
+Address all applicable review comments from PR feature/RBOC-207142.
+Ensure the requested changes are implemented.
+No actionable review comments should remain unresolved.
+Save Draft and Publish Survey – Dev Validation
+Validate the Save Draft functionality in the development environment.
+Validate the Publish Survey functionality in the development environment.
+Fix all issues identified during the validation of these flows.
+Verify that saving a draft and publishing a survey work successfully after the fixes.
+Suggest More Questions – questionType
+Ensure the Suggest More Questions request payload contains the required questionType field.
+Verify that the correct questionType is passed based on the selected question/context.
+Verify that the Suggest More Questions flow completes successfully without payload-related failures.
+Add/update unit tests to prevent regression of the missing questionType issue.
+Select Panelist – Preserve Updated Selection
+When the user updates the selection, the updated values should be persisted correctly.
+On navigating/reloading the relevant flow, the persisted selection should be restored correctly.
+Verify that the user's selected values are used consistently in subsequent API requests and UI state.
+Survey List – Correct Asset URL
+Clicking an asset name from the Survey List/Grid should navigate to the correct survey URL.
+The URL should correspond to the correct survey and its associated flow.
+Verify navigation for the applicable survey flows, including Build with AI and Build from Scratch.
+The selected survey should load successfully after navigation without redirecting to an incorrect route.
+Select Panelist – householdCount Display
+When a valid householdCount is returned for the selected panelist criteria, the value should be displayed correctly in the Select Panelist UI.
+The UI should not incorrectly display the "Your current criteria returns too few eligible participants" unhappy-path message when a valid householdCount is available.
+Verify the behavior for both valid household counts and genuinely insufficient participant criteria.
+Ensure the fix does not impact the existing unhappy-path behavior when the participant count is actually below the required threshold.
+Regression Validation
+Verify that the above fixes do not introduce regressions in the existing survey creation, draft, publish, Select Panelist, and Suggest More Questions flows.
+All applicable unit tests and quality checks should pass successfully.
+The complete flow should be validated in the development environment before the ticket is considered complete.
+
+Description
+a) remove unwanted / unused code b) add proper comments in every component c) refactor huge methods to little chunks / no. of methods
+
+b) Resolve PR comments in below PR
+feature/RBOC-207142
+
+c) Save draft and publish survey dev validation and fixes
+
+d) Suggest more question - questionType missing from payload - failed
+
+e) Fix issues mentioned below:
+
+Avoid default selection in select panelist data selector and persist the updated values.
+Clicking the asset name in survey list page grid is not opening the correct url.
+Sometimes, select panelist is not showing up the householdCount value and instead show unhappy path message "Your current criteria returns too few eligible participants".
 
