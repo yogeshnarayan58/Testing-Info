@@ -1,235 +1,10 @@
-# Grafana Integration Summary
+# Reporter Comparison
 
-## Scope
+This document contains the standalone comparison of the survey-mod Grafana reporter against `disc-fe-omnishopper-ui-automation`'s Grafana reporter. Both reporter files and configuration files were read fresh from disk. No external API was called.
 
-Grafana reporting was added to the e2e Playwright configuration. The reporter is registered only when `process.env.CI` is set. No external API was called.
+## Our Reporter
 
-## Exact Pre-Change Content
-
-### `e2e/utils/configurationDetails.ts`
-
-```ts
-import * as path from 'path';
-
-/**
- * Constructs the LambdaTest build name with optional build identifier suffix.
- * Used consistently across playwright.config.ts, base-page-factory.ts, and globalTeardown.ts.
- *
- * @param ltBuild - Base build name (e.g., "Discover build")
- * @param buildIdentifier - Optional identifier to append (e.g., GitHub run number)
- * @returns Formatted build name with identifier if provided
- */
-export const getLambdaTestBuildName = (
-  ltBuild: string,
-  buildIdentifier?: string
-): string => {
-  return buildIdentifier ? `${ltBuild} (${buildIdentifier})` : ltBuild;
-};
-
-export const getLambdaTestSessionDir = (): string =>
-  path.join(process.cwd(), 'test-results', '.lt-sessions');
-```
-
-### `e2e/playwright.config.ts`
-
-```ts
-import { defineConfig, devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { envConfig } from './config/env.config';
-import { getLambdaTestBuildName } from './utils/configurationDetails';
-
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-const baseURL = envConfig.BASE_URL;
-const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-
-const isLambdaTest = process.env.LAMBDATEST === 'true';
-// LambdaTest environment variables (all inert/unused unless LAMBDATEST=true)
-const ltUser = process.env.SM_LAMBDATEST_USERNAME || process.env.SM_LT_USERNAME;
-const ltAccessKey = process.env.SM_LAMBDATEST_ACCESS_KEY || process.env.SM_LT_ACCESS_KEY;
-const ltProject = process.env.SM_LT_PROJECT || 'OMNI Discover';
-const ltBuild = process.env.SM_LT_BUILD || 'Discover build';
-const ltBuildIdentifier =
-  process.env.SM_LT_BUILD_IDENTIFIER ||
-  process.env.BUILD_NUMBER ||
-  process.env.GITHUB_RUN_NUMBER ||
-  undefined;
-
-const ltVideo = process.env.SM_LT_VIDEO ? process.env.SM_LT_VIDEO === 'true' : true;
-const ltNetwork = process.env.SM_LT_NETWORK ? process.env.SM_LT_NETWORK === 'true' : false;
-const ltConsole = process.env.SM_LT_CONSOLE ? process.env.SM_LT_CONSOLE === 'true' : false;
-
-const ltIdleTimeout = process.env.SM_LT_IDLE_TIMEOUT ? Number(process.env.SM_LT_IDLE_TIMEOUT) : 300;
-
-const ltWorkers = process.env.SM_LT_WORKERS ? Number(process.env.SM_LT_WORKERS) : 1;
-
-console.log('isLambdaTest =', isLambdaTest);
-
-if (isLambdaTest) {
-  console.log('\n🌐 LambdaTest Cloud Execution Enabled');
-  console.log('   Credentials:', ltUser && ltAccessKey ? 'configured' : 'missing');
-  console.log('   Project:', ltProject);
-  console.log('   Workers:', ltWorkers);
-
-  if (!ltUser || !ltAccessKey) {
-    throw new Error(
-      'LambdaTest credentials missing! Please set SM_LAMBDATEST_USERNAME/SM_LT_USERNAME and SM_LAMBDATEST_ACCESS_KEY/SM_LT_ACCESS_KEY'
-    );
-  }
-}
-
-export default defineConfig({
-  testDir: './tests',
-  globalSetup: require.resolve('./helpers/global-setup.ts'),
-  globalTeardown: require.resolve('./playwright/setup/globalTeardown.ts'),
-  outputDir: './test-results',
-  timeout: 300 * 1000,
-
-  use: {
-    baseURL: normalizedBaseURL,
-    storageState: 'storage/auth.json',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    headless: process.env.HEADLESS !== 'false',
-  },
-
-  fullyParallel: false,
-  retries: process.env.CI ? 2 : 0,
-  // LambdaTest runs should be minimal workers to avoid session conflicts
-  workers: isLambdaTest ? ltWorkers : process.env.CI ? 1 : 2,
-
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['allure-playwright', { outputFolder: 'allure-results' }],
-    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
-  ],
-
-  projects: isLambdaTest
-    ? [
-        {
-          name: 'lambdatest-chromium',
-          use: {
-            browserName: 'chromium' as const,
-            headless: true,
-            viewport: { width: 1920, height: 1080 },
-            baseURL: normalizedBaseURL,
-
-            connectOptions: {
-              wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
-                JSON.stringify({
-                  browserName: 'pw-chromium',
-                  browserVersion: 'latest',
-
-                  'LT:Options': {
-                    platform: 'Windows 11',
-
-                    // Build name should include identifier so you can track correctly
-                    build: getLambdaTestBuildName(ltBuild, ltBuildIdentifier),
-
-                    name: 'Playwright Automation',
-
-                    user: ltUser,
-                    accessKey: ltAccessKey,
-
-                    project: ltProject,
-
-                    network: ltNetwork,
-                    video: ltVideo,
-                    console: ltConsole,
-
-                    plugin: 'playwright-test',
-                    w3c: true,
-                    idleTimeout: ltIdleTimeout,
-                  },
-                })
-              )}`,
-            },
-          },
-        },
-      ]
-    : [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        },
-        {
-          name: 'Microsoft Edge',
-          use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        },
-      ],
-});
-```
-
-## Complete Before/After Diffs
-
-### `e2e/utils/configurationDetails.ts`
-
-```diff
- import * as path from 'path';
-@@
- export const getLambdaTestSessionDir = (): string =>
-   path.join(process.cwd(), 'test-results', '.lt-sessions');
-+
-+export const postgresAPIUrl =
-+  process.env.SM_POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1';
-+
-+export const config = {
-+  ENV: process.env.ENV || 'DEV',
-+  postgresAPIUrl,
-+};
-```
-
-### `e2e/playwright.config.ts`
-
-```diff
--  reporter: [
--    ['list'],
--    ['html', { outputFolder: 'playwright-report', open: 'never' }],
--    ['allure-playwright', { outputFolder: 'allure-results' }],
--    ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
--  ],
-+  reporter: process.env.CI
-+    ? [
-+        ['list'],
-+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
-+        ['allure-playwright', { outputFolder: 'allure-results' }],
-+        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
-+        [
-+          './playwright/reporters/grafana-reporter.ts',
-+          {
-+            areaName: process.env.SM_AREA_NAME || 'FMCG',
-+            domainName: process.env.SM_DOMAIN_NAME || 'DISCOVER',
-+            teamName: process.env.SM_TEAM_NAME || 'SURVEY MOD',
-+            projectName: process.env.SM_PROJECT_NAME || 'SURVEY-MOD-AUTOMATION',
-+          },
-+        ],
-+      ]
-+    : [
-+        ['list'],
-+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
-+        ['allure-playwright', { outputFolder: 'allure-results' }],
-+        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
-+      ],
-```
-
-### `e2e/.env.example`
-
-```diff
- NODE_EXTRA_CA_CERTS=
-+
-+SM_POSTGRES_API_URL=https://postgres-api.qa.in.gfk.com/report-postgres/api/v1
-+SM_AREA_NAME=FMCG
-+SM_DOMAIN_NAME=DISCOVER
-+SM_TEAM_NAME=SURVEY MOD
-+SM_PROJECT_NAME=SURVEY-MOD-AUTOMATION
-```
-
-### `e2e/playwright/reporters/grafana-reporter.ts`
-
-This file did not exist before the change. The complete created file is:
+File: `e2e/playwright/reporters/grafana-reporter.ts`
 
 ```ts
 import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
@@ -312,27 +87,283 @@ class GrafanaPlaywrightReporter implements Reporter {
 export default GrafanaPlaywrightReporter;
 ```
 
-### `e2e/GRAFANA_INTEGRATION_SUMMARY.md`
+## Automation Reporter
 
-This is the new documentation file itself. Its complete content is this document; there was no prior file content.
+File: `disc-fe-omnishopper-ui-automation/src/lib/playwright/grafana-reporter.ts`
 
-## TypeScript Validation
+```ts
+import { Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig } from "@playwright/test";
+import * as path from 'path';
+import { config } from './config';
+import { PostgresActions, CustomReporterOptions, CommonReporterUtils } from "@gfk/gta";
 
-Command run from the e2e project directory:
 
-```text
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod> Set-Location e2e;
-npx tsc --noEmit
+class GrafanaPlaywrightReporter implements Reporter {
+
+    private areaId: number | undefined;
+    private domainId: number | undefined;
+    private teamId: number | undefined;
+    private options: CustomReporterOptions;
+    private projectId: number | undefined;
+    private environmentName: string;
+    private commonReporterUtils: CommonReporterUtils | undefined;
+    private postgresActions: PostgresActions;
+    private previousTestCaseId: string | null | undefined;
+    private resultID: number | undefined;
+
+    constructor(options: CustomReporterOptions) {
+        this.options = options;
+        console.log(`Custom reporter - Custom options received`);
+        this.environmentName = config.ENV;
+        this.postgresActions = new PostgresActions(config.postgresAPIUrl);
+    }
+
+
+    async initialize(): Promise<void> {
+        if (!this.commonReporterUtils) {
+            throw new Error('CommonReporterUtils not initialized. Call onBegin first.');
+        }
+        const { areaId, domainId, teamId, projectId } = await this.commonReporterUtils.getOrCreateIds();
+        this.areaId = areaId;
+        this.domainId = domainId;
+        this.teamId = teamId;
+        this.projectId = projectId;
+    }
+
+    async onBegin(fullConfig: FullConfig, suite: Suite) {
+        console.log(`Custom reporter - Starting the run with ${suite.allTests().length} tests`);
+        this.commonReporterUtils = new CommonReporterUtils(this.options, this.environmentName, config.postgresAPIUrl);
+        await this.initialize();
+    }
+
+    async onTestEnd(testCase: TestCase, result: TestResult): Promise<void> {
+        try {
+            if (this.projectId) {
+                const isRetry = this.previousTestCaseId === testCase.id;
+                const suiteName = path.basename(testCase.parent?.title, '.ts');
+                // testCaseId: To read from test case tags/annotation
+                // testCycleName: process.env.JIRA_CYCLE_NAME || '',
+                // releaseVersion: process.env.VERSION_NAME || '',
+                this.resultID = await this.postgresActions.createOrUpdateTestResults(
+                    {
+                        suiteName: suiteName,
+                        testcaseName: testCase.title,
+                        status: result.status,
+                        executionTime: result.startTime,
+                        executionDuration: result.duration,
+                        envName: this.environmentName,
+                        projectId: this.projectId,
+                    },
+                    isRetry,
+                    this.resultID
+                );
+                console.log('Custom reporter: - Test result created:', this.resultID);
+                this.previousTestCaseId = testCase.id;
+            } else {
+                console.error('Custom reporter - Project ID is not available');
+            }
+        } catch (error) {
+            console.error('Custom reporter - Error creating test result:', error);
+        }
+    }
+}
+
+export default GrafanaPlaywrightReporter;
 ```
 
-Output:
+## Exhaustive Reporter Differences
 
-```text
-(no output)
+There is exactly one difference:
+
+```diff
+- import { config } from './config';
++ import { config } from '../../utils/configurationDetails';
 ```
 
-The command completed successfully with no TypeScript diagnostics. An earlier invocation from the repository root was not a valid e2e validation: it attempted to install the unrelated deprecated `tsc@2.0.4` package and exited with code 1. No test command was run.
+This is an intentional and necessary import-path adaptation for the survey-mod e2e folder structure.
 
-## Assumption
+No other differences were found in:
 
-The source reporter expects an environment name through `config.ENV`, but this e2e project had no existing equivalent config object or documented `ENV` default. I added `config.ENV` with the source pattern's `process.env.ENV || 'DEV'` fallback alongside the requested `postgresAPIUrl` value. The requested Grafana metadata defaults are supplied directly in the CI reporter options, and `e2e/.env` was not modified.
+- Whitespace or blank lines
+- Comments
+- Variable names
+- Property declarations
+- Class name
+- Method names
+- Method order
+- Logic order
+- Error messages
+- Logging
+- Promise handling
+- Retry handling
+- Postgres calls
+- Export behavior
+
+## Method Verification
+
+The following methods are behaviorally and line-by-line identical:
+
+### Constructor
+
+Both versions:
+
+1. Store `options` in `this.options`.
+2. Log `Custom reporter - Custom options received`.
+3. Read `config.ENV` into `this.environmentName`.
+4. Create `PostgresActions` with `config.postgresAPIUrl`.
+
+### `initialize()`
+
+Both versions:
+
+1. Check whether `commonReporterUtils` is initialized.
+2. Throw `CommonReporterUtils not initialized. Call onBegin first.` when it is not initialized.
+3. Call `getOrCreateIds()`.
+4. Assign `areaId`, `domainId`, `teamId`, and `projectId` in the same order.
+
+### `onBegin()`
+
+Both versions:
+
+1. Log the number of tests from `suite.allTests().length`.
+2. Create `CommonReporterUtils` with `this.options`, `this.environmentName`, and `config.postgresAPIUrl`.
+3. Await `this.initialize()`.
+
+### `onTestEnd()`
+
+Both versions:
+
+1. Enter the same `try/catch` block.
+2. Check `this.projectId`.
+3. Determine retries using `this.previousTestCaseId === testCase.id`.
+4. Derive the suite name with `path.basename(testCase.parent?.title, '.ts')`.
+5. Build the same result payload.
+6. Call `createOrUpdateTestResults()` with the same arguments.
+7. Log the created result ID.
+8. Store `testCase.id` as `previousTestCaseId`.
+9. Log the same missing-project message when no project ID exists.
+10. Log the same error message if result creation throws.
+
+The unused `fullConfig` parameter is also identical in both implementations.
+
+## Automation `config.ts` Review
+
+The complete automation config was reviewed. The Grafana-relevant values are:
+
+```ts
+ENV: process.env.ENV || 'DEV',
+
+// Grafana Playwright Reporter configuration
+postgresAPIUrl: process.env.POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1',
+```
+
+The rest of the automation `config.ts` defines:
+
+- Project metadata
+- Test timeout and assertion timeout
+- Parallel execution settings
+- Browser and viewport settings
+- Browser launch options
+- Locale and dataset values
+- Storage state and logging
+- Environment base URLs
+- Share-mail configuration
+- Jira configuration
+- Report paths
+
+None of those additional values are read by `grafana-reporter.ts`.
+
+Our equivalent values are:
+
+```ts
+export const postgresAPIUrl =
+  process.env.SM_POSTGRES_API_URL || 'https://postgres-api.qa.in.gfk.com/report-postgres/api/v1';
+
+export const config = {
+  ENV: process.env.ENV || 'DEV',
+  postgresAPIUrl,
+};
+```
+
+The `ENV` fallback is equivalent. The API variable name differs intentionally because the requested integration specifies `SM_POSTGRES_API_URL`; the fallback URL is identical.
+
+## Playwright Reporter Logic Comparison
+
+### Automation `playwright.config.ts`
+
+```ts
+reporter: process.env.CI
+  ? [
+        ['list'],
+        ['json', { outputFile: 'playwright-report/test-results.json' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : []),
+        [
+          './src/lib/playwright/grafana-reporter.ts',
+          {
+            areaName: process.env.AREA_NAME || 'TestArea',
+            domainName: process.env.DOMAIN_NAME || 'TechTest',
+            teamName: process.env.TEAM_NAME || 'DiscoverOmniTest',
+            projectName: process.env.PROJECT_NAME || 'GTATesting'
+          }
+        ]
+      ]
+  : [
+        ['list'],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./src/lib/playwright/reporters/lt-session-reporter.ts'] as const] : [])
+      ],
+```
+
+### Our `e2e/playwright.config.ts`
+
+```ts
+reporter: process.env.CI
+  ? [
+        ['list'],
+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+        [
+          './playwright/reporters/grafana-reporter.ts',
+          {
+            areaName: process.env.SM_AREA_NAME || 'FMCG',
+            domainName: process.env.SM_DOMAIN_NAME || 'DISCOVER',
+            teamName: process.env.SM_TEAM_NAME || 'SURVEY MOD',
+            projectName: process.env.SM_PROJECT_NAME || 'SURVEY-MOD-AUTOMATION',
+          },
+        ],
+      ]
+  : [
+        ['list'],
+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
+        ['allure-playwright', { outputFolder: 'allure-results' }],
+        ...(isLambdaTest ? [['./playwright/reporters/lt-session-reporter.ts'] as const] : []),
+      ],
+```
+
+### Line-by-Line Structural Findings
+
+The conditional structure genuinely matches:
+
+1. Both use `process.env.CI ? CI reporters : non-CI reporters`.
+2. Both put `list` first in the CI branch.
+3. Both include the Allure reporter after the existing general reporter.
+4. Both conditionally add the LambdaTest reporter using the same `isLambdaTest` expression.
+5. Both add Grafana only to the CI branch.
+6. Both place Grafana after the LambdaTest reporter.
+7. Both pass `areaName`, `domainName`, `teamName`, and `projectName`.
+
+Differences between the configurations are intentional or formatting-only:
+
+1. The automation CI branch uses JSON output; ours uses the existing HTML reporter. Preserving HTML was explicitly required.
+2. The automation non-CI branch omits HTML; ours retains HTML because it was already present and was required to remain unchanged.
+3. Reporter paths differ because the repositories have different folder structures.
+4. The automation uses `AREA_NAME`, `DOMAIN_NAME`, `TEAM_NAME`, and `PROJECT_NAME`; ours uses the explicitly requested `SM_AREA_NAME`, `SM_DOMAIN_NAME`, `SM_TEAM_NAME`, and `SM_PROJECT_NAME`.
+5. The fallback values differ intentionally. Ours uses `FMCG`, `DISCOVER`, `SURVEY MOD`, and `SURVEY-MOD-AUTOMATION`.
+6. Our options include trailing commas; the source does not. This is formatting only.
+
+## Final Conclusion
+
+The reporter implementation is a faithful behavioral and line-by-line match to the automation repository. The only reporter-file discrepancy is the required config import path. The surrounding Playwright configuration intentionally differs to preserve this project’s existing HTML reporter behavior and to use the requested `SM_*` environment variables and fallback values.
