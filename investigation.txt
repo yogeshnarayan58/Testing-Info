@@ -1,45 +1,77 @@
-Investigation Findings
-No files were modified. Root cause identified below.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/grafana-reporting-setup)
+$ npx cross-env CI=true npm test
 
-1. What npm test actually runs
-package.json's script is:
-"test": "playwright test"
+> e2e@1.0.0 test
+> playwright test
 
-It's a direct pass-through with no wrapper, no cross-env, and no stripping of env vars. Any VAR=value set before npm test on the same command line is inherited by the playwright test child process normally (on POSIX-style shells). This script itself does not touch CI.
+◇ injected env (20) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+Custom reporter - Custom options received
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-2. Exact current gating line in playwright.config.ts
-Re-read fresh from disk — the reporter array is gated exactly like this in playwright.config.ts:
-reporter: process.env.CI
-    ? [ ... , ['./playwright/reporters/grafana-reporter.ts', { ... }] ]
-    : [ ... ],
-This is unchanged from what was implemented — confirmed correct.
+Running 20 tests using 1 worker
 
-3. Anything that could reset/override process.env.CI before reporters are evaluated
-Checked playwright.config.ts and every file it imports (config/env.config.ts, utils/configurationDetails.ts, helpers/global-setup.ts):
+Custom reporter - Starting the run with 20 tests
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 … from scratch option on the survey home page @LandStartFromScratch (16.9s)
+Auth state loaded from storage/auth.json
+      2 …lect the dataset and confirm the Choose a dataset screen @DatasetSelection
+  ✓   2 …e dataset and confirm the Choose a dataset screen @DatasetSelection (2.6s)
+      3 …hould enable Search for Panelists after all 5 filters are set @DataSummary
+  ✓   3 …able Search for Panelists after all 5 filters are set @DataSummary (41.3s)
+      4 … Proceed to survey builder after selecting a response count @ResponseCount
+  ✓   4 …d to survey builder after selecting a response count @ResponseCount (4.8s)
+      5 …navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
+  ✓   5 … to the Build Survey page after proceeding @ProceedToSurveyBuilder (577ms)
+      6 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt
+  ✓   6 …t option on the survey home page @StartWithPrompt @StartWithPrompt (23.3s)
+Custom reporter: - Test result created: 11264306
+      7 …uld select the dataset type and dataset @StartWithPrompt @DatasetSelection
+  ✓   7 …ect the dataset type and dataset @StartWithPrompt @DatasetSelection (5.8s)
+      8 …imension selections and search for panelists @StartWithPrompt @DataSummary
+  ✓   8 … selections and search for panelists @StartWithPrompt @DataSummary (18.9s)
+      9 …onse Count: Should select a response count @StartWithPrompt @ResponseCount
+  ✓   9 …unt: Should select a response count @StartWithPrompt @ResponseCount (2.6s)
+     10 …he prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+  ✓  10 …pt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.4s)
+Custom reporter: - Test result created: 11264313
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+  ✓  11 … from scratch option on the survey home page @LandStartFromScratch (19.4s)
+Auth state loaded from storage/auth.json
+     12 …lect the dataset and confirm the Choose a dataset screen @DatasetSelection
+  ✓  12 …e dataset and confirm the Choose a dataset screen @DatasetSelection (4.6s)
+     13 …hould enable Search for Panelists after all 5 filters are set @DataSummary
+  ✓  13 …able Search for Panelists after all 5 filters are set @DataSummary (17.6s)
+     14 … Proceed to survey builder after selecting a response count @ResponseCount
+  ✓  14 …d to survey builder after selecting a response count @ResponseCount (5.6s)
+     15 …navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
+  ✓  15 …e to the Build Survey page after proceeding @ProceedToSurveyBuilder (1.2s)
+     16 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt
+  ✓  16 …t option on the survey home page @StartWithPrompt @StartWithPrompt (17.7s)
+Custom reporter: - Test result created: 11264318
+     17 …uld select the dataset type and dataset @StartWithPrompt @DatasetSelection
+  ✓  17 …ect the dataset type and dataset @StartWithPrompt @DatasetSelection (2.6s)
+     18 …imension selections and search for panelists @StartWithPrompt @DataSummary
+  ✓  18 … selections and search for panelists @StartWithPrompt @DataSummary (17.7s)
+     19 …onse Count: Should select a response count @StartWithPrompt @ResponseCount
+  ✓  19 …unt: Should select a response count @StartWithPrompt @ResponseCount (3.6s)
+     20 …he prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+  ✓  20 …pt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.1s)
+Custom reporter: - Test result created: 11264323
 
-dotenv.config({ path: path.resolve(__dirname, '.env') }) runs at the top of playwright.config.ts. By default, dotenv does not override variables already present in process.env.
-More importantly, .env contains no CI key at all — so even if dotenv did override, there's nothing in .env that touches CI.
-A workspace-wide search for process.env.CI = (assignment) returned no matches anywhere in e2e.
-Conclusion: nothing in the config or its imports resets CI.
+  20 passed (4.5m)
 
-4. Early-exit conditions in grafana-reporter.ts
-Re-read fresh from disk — grafana-reporter.ts:
-
-The constructor has no guard at all — if the class is instantiated, "Custom reporter - Custom options received" always logs unconditionally.
-onBegin() also has no guard — "Custom reporter - Starting the run with X tests" always logs unconditionally if onBegin is invoked by  Playwright.
-The only conditional branch is inside onTestEnd(), gated on this.projectId (set by initialize() → commonReporterUtils.getOrCreateIds()). If projectId were falsy, you'd still see the first two logs, plus "Custom reporter - Project ID is not available" per test — none of which appeared either.
-Since none of the three logs appeared (not even the constructor log, which has zero conditions), the reporter class was never instantiated at all. That rules out #4 as the cause and points squarely at registration/config evaluation.
-
-5. Playwright config evaluation timing
-Playwright loads playwright.config.ts once, synchronously, at process startup, before running any tests — the reporter array is a plain JS expression evaluated then. process.env.CI must already be set in the environment of the Node process running npx playwright test at that moment. Setting CI inline before the command on the same shell line (CI=true npm test) is timed correctly in bash — npm inherits and passes environment down to the playwright test child process, and that happens before playwright.config.ts is loaded. So timing itself is not the problem, provided the variable is actually named CI and actually reaches that process.
-
-6. The real root cause
-Your terminal history for the run in question shows:
-Terminal: bash
-Last Command: Cl=true npm test
-That is not CI=true npm test — it's Cl=true npm test (a variable named Cl, not CI). This is an extremely easy typo/visual mix-up (capital "I" vs. lowercase "l"). In bash this is syntactically valid, so it ran silently: it exported an unused variable Cl=true to the npm test process while process.env.CI remained unset (falsy) for that run. With process.env.CI falsy, playwright.config.ts's reporter array took the non-CI branch, grafana-reporter.ts was never referenced or instantiated by Playwright, and none of its logs — including the unconditional constructor log — could ever fire. This fully explains the symptom.
-
-Guaranteed command
-cross-env is already a devDependency here, so use it to remove any shell-specific ambiguity (works identically in bash, PowerShell, and cmd) and to make the variable name unmistakable:
-npx cross-env CI=true npm test
-Run from inside e2e. As a quick sanity check beforehand, you can also run node -e "console.log(process.env.CI)" immediately after setting it the same way, to confirm the shell actually set CI (not a typo'd variable) before invoking Playwright.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/grafana-reporting-setup)
+$ 
