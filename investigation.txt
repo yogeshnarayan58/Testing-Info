@@ -1,77 +1,122 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/grafana-reporting-setup)
-$ npx cross-env CI=true npm test
+Link of the document- https://adlm.nielseniq.com/confluence/spaces/RBOC/pages/977297771/Survey+Modernization+onboarding+process
+ 
+Link for the form from where you can get the access for environment-https://adlm.nielseniq.com/jira/servicedesk/customer/portal/41/create/986
+ 
+get the access for Grafana and follow the step How to Access QA Grafana with NIQ Account. - Data Platform Technology & Data - Confluence
+ 
+Also I have added you the lambda Test group please ask for the access from Jeevamurugan S
+ 
+please fill this form for Cycode Access-https://adlm.nielsenconnect.com/jiraservicedesk/servicedesk/customer/portal/8/create/403?q=Please%20provide%20the%20access%20for%20Discover%20frontend&q_time=1788604636127
+ 
+Once you get the access for Cycode then please follow these step mentioned in the confluence page and get the cycode set up done -https://adlm.nielseniq.com/confluence/spaces/CSDE/pages/604580440/Cycode+-+VSCode+JetBrains+Plugin
+ 
+Jfrog Access confluence page -https://adlm.nielseniq.com/confluence/pages/viewpage.action?pageId=977291353&spaceKey=DPTD&title=GTA%2BMigration%2BGuide%2Bfor%2BExisting%2BUsers%2BGitLab%2Bto%2BJFrog
+ 
+--------------------------------
 
-> e2e@1.0.0 test
-> playwright test
+GTA Migration Guide for Existing Users: GitLab to JFrog
+This guide is for teams already using GTA from the old GitLab package flow and migrating to JFrog Artifactory.
 
-◇ injected env (20) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-Custom reporter - Custom options received
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+Who Should Use This Guide
+Use this if your existing project already consumes @gfk/gta and you need to switch package access to JFrog.
 
-Running 20 tests using 1 worker
+Migration Summary
+Old source: GitLab package publishing/consumption flow
+New source: JFrog Artifactory registries
+Required action: update local environment + .npmrc + reinstall dependencies
+Step 1: Request JFrog Access
+Ensure you have a JFrog account: - https://artifactory.adlm.nielseniq.com/ui/packages
+Log into jfrog application and check if you view the @gfk/gta library in it: https://artifactory.adlm.nielseniq.com/ui/repos/tree/General/dp-npm-prod-dp-local/@gfk/gta like given below:
 
-Custom reporter - Starting the run with 20 tests
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 … from scratch option on the survey home page @LandStartFromScratch (16.9s)
-Auth state loaded from storage/auth.json
-      2 …lect the dataset and confirm the Choose a dataset screen @DatasetSelection
-  ✓   2 …e dataset and confirm the Choose a dataset screen @DatasetSelection (2.6s)
-      3 …hould enable Search for Panelists after all 5 filters are set @DataSummary
-  ✓   3 …able Search for Panelists after all 5 filters are set @DataSummary (41.3s)
-      4 … Proceed to survey builder after selecting a response count @ResponseCount
-  ✓   4 …d to survey builder after selecting a response count @ResponseCount (4.8s)
-      5 …navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
-  ✓   5 … to the Build Survey page after proceeding @ProceedToSurveyBuilder (577ms)
-      6 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt
-  ✓   6 …t option on the survey home page @StartWithPrompt @StartWithPrompt (23.3s)
-Custom reporter: - Test result created: 11264306
-      7 …uld select the dataset type and dataset @StartWithPrompt @DatasetSelection
-  ✓   7 …ect the dataset type and dataset @StartWithPrompt @DatasetSelection (5.8s)
-      8 …imension selections and search for panelists @StartWithPrompt @DataSummary
-  ✓   8 … selections and search for panelists @StartWithPrompt @DataSummary (18.9s)
-      9 …onse Count: Should select a response count @StartWithPrompt @ResponseCount
-  ✓   9 …unt: Should select a response count @StartWithPrompt @ResponseCount (2.6s)
-     10 …he prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-  ✓  10 …pt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.4s)
-Custom reporter: - Test result created: 11264313
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-  ✓  11 … from scratch option on the survey home page @LandStartFromScratch (19.4s)
-Auth state loaded from storage/auth.json
-     12 …lect the dataset and confirm the Choose a dataset screen @DatasetSelection
-  ✓  12 …e dataset and confirm the Choose a dataset screen @DatasetSelection (4.6s)
-     13 …hould enable Search for Panelists after all 5 filters are set @DataSummary
-  ✓  13 …able Search for Panelists after all 5 filters are set @DataSummary (17.6s)
-     14 … Proceed to survey builder after selecting a response count @ResponseCount
-  ✓  14 …d to survey builder after selecting a response count @ResponseCount (5.6s)
-     15 …navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
-  ✓  15 …e to the Build Survey page after proceeding @ProceedToSurveyBuilder (1.2s)
-     16 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt
-  ✓  16 …t option on the survey home page @StartWithPrompt @StartWithPrompt (17.7s)
-Custom reporter: - Test result created: 11264318
-     17 …uld select the dataset type and dataset @StartWithPrompt @DatasetSelection
-  ✓  17 …ect the dataset type and dataset @StartWithPrompt @DatasetSelection (2.6s)
-     18 …imension selections and search for panelists @StartWithPrompt @DataSummary
-  ✓  18 … selections and search for panelists @StartWithPrompt @DataSummary (17.7s)
-     19 …onse Count: Should select a response count @StartWithPrompt @ResponseCount
-  ✓  19 …unt: Should select a response count @StartWithPrompt @ResponseCount (3.6s)
-     20 …he prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-  ✓  20 …pt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.1s)
-Custom reporter: - Test result created: 11264323
+If you are not able to view gta library like given above then raise access request to Data Platform: - https://adlm.nielsenconnect.com/jiraservicedesk/servicedesk/customer/portal/2/create/313 . 
+In this form, enter the list of developer lan ids and set the team already have permission target to "Yes" and search and add "T-CONNECT_DataPlatform-dataplatform" from the dropdown box:
 
-  20 passed (4.5m)
+Confirm your account has entitlement to @gfk scoped packages, especially: - @gfk/gta - @gfk/azure-login
+Step 2: Generate/Get Your JFrog Read Token
+Obtain a JFrog personal access token/password with read permissions.
+Keep this token private.
+Use it as environment variable JFROG_RO_PASSWORD.
+Step 3: Set Environment Variable
+macOS/Linux (zsh/bash)
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/grafana-reporting-setup)
-$ 
+
+export JFROG_RO_PASSWORD="<your_jfrog_token>"
+To persist in zsh:
+
+
+
+echo 'export JFROG_RO_PASSWORD="<your_jfrog_token>"' >> ~/.zshrc
+source ~/.zshrc
+Windows PowerShell
+
+
+setx JFROG_RO_PASSWORD "<your_jfrog_token>"
+Open a new terminal after setx.
+
+Step 4: Update .npmrc in Your Test Project
+At the root of your GTA test project, use:
+
+
+
+@gfk:registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/
+//artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/:_authToken=${JFROG_RO_PASSWORD}
+registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/
+//artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/:_authToken=${JFROG_RO_PASSWORD}
+Step 5: Clean Old Lock/Cache (Recommended)
+From project root:
+
+
+
+rm -rf node_modules
+rm -f package-lock.json
+npm cache verify
+Step 6: Reinstall Dependencies
+
+
+npm install
+Step 7: Validate GTA Resolution from JFrog
+
+
+npm view @gfk/gta version
+npm view @gfk/azure-login version
+Optional validation:
+
+
+
+npm ls @gfk/gta
+Step 8: Run a Smoke Test
+Run one test command from your project, for example:
+
+
+
+npm run playwright:sampleProject:api
+or
+
+
+
+npm run cucumber:sampleProject:api
+Common Issues and Fixes
+403 for @gfk/* packages
+Possible cause: account entitlement issue in JFrog (even when token is valid).
+
+Action:
+
+Verify env var is set and non-empty.
+Verify .npmrc is correct.
+If still failing, request package entitlement for @gfk scope via JFrog/Data Platform support.
+Token not picked up
+Restart terminal/session.
+Re-run echo $JFROG_RO_PASSWORD (macOS/Linux) or check env in PowerShell.
+Re-run npm install.
+Checklist for Existing GTA Projects
+[ ] JFrog account available
+[ ] Access request approved (if required)
+[ ] JFROG_RO_PASSWORD configured
+[ ] .npmrc updated to JFrog registries
+[ ] Dependencies reinstalled
+[ ] @gfk/gta resolves successfully
+[ ] Smoke tests pass
+Notes for Team Maintainers
+Keep .npmrc in repo root so new joiners use a consistent registry setup.
+Never commit real tokens in code, docs, or CI logs.
+Share this page with teams migrating from older GitLab-based GTA setup.
