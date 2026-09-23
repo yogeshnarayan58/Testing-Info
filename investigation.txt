@@ -1,98 +1,36 @@
-# Data-Test-ID Work Log
+# Wider Search: `btn-next-dataset` / `apply-dataset-btn` in App Source
 
-This file is a running log for the **"add data-test-id for automation"** task.
+Scope of this search (exact-string, case-sensitive):
+- `libs/**/*.html`, `libs/**/*.ts` (all sub-libs under `libs/`, not just `survey-mod-lib`)
+- `apps/**/*.html`, `apps/**/*.ts` (if the folder exists)
+- `src/**/*.html`, `src/**/*.ts` (repo-root `src/`, i.e. the `survey-mod-app` dev-preview harness)
 
-Every phase of this task (investigation findings, decisions, and eventual template
-code changes) is appended to this single file as new sections below — separate
-markdown files are **not** created for later phases.
+Explicitly excluded: `node_modules/`, `dist/`, `.angular/`, `coverage/`, any other
+build-output folder, and the `e2e/` folder itself.
 
----
+## Folder inventory checked
 
-## Phase 1: Investigation
+- `libs/` contains a single sub-library: `libs/survey-mod-lib/` — no other libs exist.
+- `apps/` — **does not exist** in this repo (confirmed via directory listing of repo root).
+- `src/` — exists at repo root (`survey-mod-app`, the local `ng serve` dev-preview harness).
 
-Scope: search Angular component templates (`*.html` under `src/`, which for this
-repo means `libs/survey-mod-lib/src/**/*.html`) for three `data-test-id` values
-already expected by e2e locator files:
-- `proceed-to-survey`
-- `btn-next-dataset`
-- `apply-dataset-btn`
+## Results
 
-### 1. `proceed-to-survey` — FOUND
+### `btn-next-dataset`
 
-**File:** [libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html#L69)
+**Zero results.** No file under `libs/**/*.html`, `libs/**/*.ts`, or
+`src/**/*.html`, `src/**/*.ts` contains the exact string `btn-next-dataset`.
 
-**Element:** native `<button>` (nested inside the `<panelist-dataselector>` custom component's content, inside a `div.footer`).
+### `apply-dataset-btn`
 
-**Context (exact, 10 lines):**
-```html
-        @if(surveyCommonService.flowType().aiflow && !isUnhappyPath && !surveyCommonService.dataSelectorLoading()){
-        <div class="d-flex flex-column prompt-container">
-          ...
-        </div>
-        }
+**Zero results.** No file under `libs/**/*.html`, `libs/**/*.ts`, or
+`src/**/*.html`, `src/**/*.ts` contains the exact string `apply-dataset-btn`.
 
-        <div class="footer">
-          <button class="cancel">Cancel</button>
-          <button class="next" data-test-id="proceed-to-survey"
-            [disabled]="!selectedResponses || (surveyCommonService.flowType().aiflow && (!userPrompt.trim() || isPromptSettling())) || surveyCommonService.dataSelectorLoading()"
-            (click)="proceedToSurveyBuilder()">{{surveyCommonService.flowType().aiflow ? 'Generate Survey' : 'Proceed to
-            survey builder'}}</button>
-        </div>
-```
+## Conclusion
 
-**Naming convention observed:** kebab-case, verb-object phrasing describing the
-action the element performs (`proceed-to-survey`) — no component/element-type
-prefix or suffix (e.g. no `btn-` prefix or `-button` suffix) is used here.
-
----
-
-### 2. `btn-next-dataset` — NOT FOUND
-
-No `*.html` file under `src/` (i.e. under `libs/survey-mod-lib/src/`) currently
-contains `data-test-id="btn-next-dataset"`. This value is only referenced as an
-**expected/target selector** in the e2e locator files:
-
-- [e2e/locators/survey/start-from-scratch.locator.json](../locators/survey/start-from-scratch.locator.json#L6) — `elementName: "nextButton"`
-- [e2e/locators/survey/start-with-prompt.locator.json](../locators/survey/start-with-prompt.locator.json#L7) — `elementName: "nextDatasetButton"`
-
-Both locators resolve to CSS selector `[data-test-id='btn-next-dataset']`, meaning
-the attribute needs to be added to the corresponding template element in a later
-phase (dataset selection / "next" flow, likely in the panelist-dataselector
-feature) — not yet located/confirmed in this phase.
-
-**Naming convention implied by the locator value:** kebab-case, `btn-` prefix
-followed by an action/context phrase (`btn-next-dataset`) — differs from
-`proceed-to-survey`'s no-prefix style, so both conventions currently coexist
-across the codebase/locators.
-
----
-
-### 3. `apply-dataset-btn` — NOT FOUND
-
-No `*.html` file under `src/` (i.e. under `libs/survey-mod-lib/src/`) currently
-contains `data-test-id="apply-dataset-btn"`. This value is only referenced as an
-**expected/target selector** in the e2e locator files:
-
-- [e2e/locators/survey/start-from-scratch.locator.json](../locators/survey/start-from-scratch.locator.json#L13) — `elementName: "applyButton"`
-- [e2e/locators/survey/start-with-prompt.locator.json](../locators/survey/start-with-prompt.locator.json#L12) — `elementName: "applyButton"`
-
-Both locators resolve to CSS selector `[data-test-id='apply-dataset-btn']`,
-meaning the attribute needs to be added to the corresponding template element in
-a later phase — not yet located/confirmed in this phase.
-
-**Naming convention implied by the locator value:** kebab-case, `-btn` suffix
-following an action/context phrase (`apply-dataset-btn`) — a third distinct style
-(suffix instead of prefix), differing from both `proceed-to-survey` (no prefix/suffix)
-and `btn-next-dataset` (`btn-` prefix).
-
----
-
-### Phase 1 Summary
-
-| data-test-id | Status | File |
-|---|---|---|
-| `proceed-to-survey` | Found | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html` |
-| `btn-next-dataset` | Not found in templates (locator-only reference) | n/a |
-| `apply-dataset-btn` | Not found in templates (locator-only reference) | n/a |
-
-No template files were modified in this phase — investigation only.
+Across all in-scope app source locations (`libs/`, `apps/` [absent], and root
+`src/`), neither string appears anywhere. This confirms the earlier Phase 1
+finding was not an artifact of a narrow search path — the two `data-test-id`
+values are not present in any first-party template or TypeScript source file in
+this repository, in any lib or app. (No node_modules/dist/build-output search
+was performed or reported here, per scope.)
