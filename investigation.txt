@@ -1,79 +1,122 @@
-# Phase 2 (Response Count Controls) — Investigation
+# Phase 3 (Filter Side Panel) — Investigation
 
-File searched: [libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html)
+Scope: the filter side panel that opens when selecting **Product / Retailer /
+Geography / Demographic / Period** on the Select Panelists screen.
 
-## 1. Location
+## Where it actually lives
 
-Both the response-count buttons (100/150/200/250/300/400/500, plus the
-dynamically-appended 600/700/800/900/1000 when "More options" is expanded) and
-the "+ More options" toggle button are defined **directly in this same file**
-— they are not in a child/sibling component template. They live inside the
-`<panelist-dataselector>` element's projected content, in the
-`div.responses-frame > div.responses` block.
+The panel is **not** implemented in this repo's own templates. It is the
+external `<crf-data-selector-panel-v2>` component, imported from the
+`@nielsen/crf-rv-common` package (see [package.json](../../package.json)
+dependency `@nielsen/crf-rv-common`), and is only *hosted* by:
 
-The count values themselves (`100, 150, 200, 250, 300, 400, 500` plus the extra
-`600, 700, 800, 900, 1000`) come from `responseCounts` / `additionalResponseCounts`
-in [select-panelist.component.ts](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.ts#L62-L63),
-exposed to the template via the `filteredResponseCounts` getter (line 226).
+[libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html)
 
-## 2. Exact HTML (10 lines of context)
-
-### Response count buttons (repeated via `@for`)
-
+**Context (10 lines) — the host usage of the external component:**
 ```html
-        @if(!isUnhappyPath && !surveyCommonService.dataSelectorLoading()){
-        <div class="responses-frame">
-          <div class="question">
-            How many responses are you looking for?
-            <span class="hint">(More responses takes longer and also affects metering. 100 responses = 1 credit).</span>
-          </div>
-
-          <div class="responses">
-            @for (count of filteredResponseCounts; track count) {
-            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
-              Responses</button>
-            }
+          <div #dsContent cdkScrollable class="right-panel" [ngClass]="isShowDsPanel ? '' : 'd-none'">
+            <crf-data-selector-panel-v2
+              #dsPanelRef
+              [datasetId]="dataSetInfo?.id ?? ''"
+              [datasetLocale]="dataSetInfo?.datasetDefaultLocale ?? ''"
+              [dataViewId]="dataSetInfo?.dataView?.dataViewId ?? ''"
+              [datasetStackId]="dataSetInfo?.stackId ?? ''"
+              [applicationId]="applicationId"
+              [componentId]="componentId"
+              [dataPrompts]="panelDataPrompts"
+              [selections]="selections"
 ```
 
-### "+ More options" button
+Everything inside the filter panel (dimension tabs, checkbox list, Done
+button, All/All Except toggle) is rendered **internally** by
+`crf-data-selector-panel-v2`'s own compiled template, which is not present as
+source in this repo (compiled npm dependency — same situation documented for
+`re-dataset-picker` in
+[data-test-id-work-log.md](data-test-id-work-log.md)). This was confirmed by
+searching `libs/**` for the CSS classes / structural hooks these elements
+would need (`item-container`, `navigationItemLabel`, `breadcrumbDoneButton`,
+`virtualScrollViewport`) — **zero matches** anywhere in this repo's source.
 
-```html
-            @for (count of filteredResponseCounts; track count) {
-            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
-              Responses</button>
-            }
-            @if (surveyCommonService.flowType().scratch) {
-            <button class="more-options" type="button" (click)="toggleMoreResponseOptions()">
-              <span aria-hidden="true">{{ showMoreResponseOptions ? '−' : '+' }}</span>
-              {{ showMoreResponseOptions ? 'Fewer options' : 'More options' }}
-            </button>
-            }
+Corroborating evidence from the existing e2e locator file
+[e2e/locators/survey/select-panelist.locator.json](../locators/survey/select-panelist.locator.json)
+— note the `ds-` prefix convention used throughout, distinct from this repo's
+own `data-test-id` values (e.g. `proceed-to-survey`), further indicating these
+belong to the external "data selector" (`ds`) widget, not to `survey-mod-lib`:
+
+```json
+{ "elementName": "categoryItem", "selectorType": "tag", "selectorValue": "[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0" },
+{ "elementName": "doneIcon", "selectorType": "tag", "selectorValue": "[data-test-id='ds-breadcrumbDoneButton']" },
+{ "elementName": "checkboxLabel", "selectorType": "playwrights", "selectorValue": "div.item-container:has-text('${text}') niq-checkbox >> nth=0" }
 ```
 
-## 3. `data-test-id` status and proposals
+## Findings per element
 
-Neither button currently has a `data-test-id`.
+### 1. Checkbox items inside the filter list
 
-Existing style reference in this file: `data-test-id="proceed-to-survey"` —
-kebab-case, verb/noun phrase, no `btn-`/`-button` prefix or suffix.
+- **File:** not in this repo — rendered inside `crf-data-selector-panel-v2`'s
+  internal template (external `@nielsen/crf-rv-common` package).
+- **Current matching:** today's e2e locator (`checkboxLabel`) matches by a
+  *positional/structural* selector — `div.item-container:has-text('${text}')
+  niq-checkbox >> nth=0` — i.e. text content + DOM structure, not a
+  `data-test-id`. The task description's "nth(5)" / class-chain matching is
+  consistent with this.
+- **`data-test-id` exists?** No (not on this element from our side).
+- **Proposed change:** **Not possible from this repo.** These
+  `<niq-checkbox>` elements are generated by the external component's own
+  template; we cannot add a `data-test-id` attribute to markup we don't own
+  or compile. Any fix would have to come from the `@nielsen/crf-rv-common`
+  package itself, or the host would need to pass a plugin/render hook if one
+  is exposed (no such input is currently used on `<crf-data-selector-panel-v2>`
+  in this repo).
 
-### Response count button — proposed change
+### 2. "Done" button on the filter panel
 
-Since these buttons are generated dynamically per `count` value, the id must be
-interpolated per-instance (each count needs a distinct, stable id for
-automation to target a specific response count):
+- **File:** same as above — external, rendered inside
+  `crf-data-selector-panel-v2`.
+- **Current matching:** `[data-test-id='ds-breadcrumbDoneButton']` (already
+  has a `data-test-id`, just one owned by the external package, not by this
+  repo).
+- **`data-test-id` exists?** Yes — `ds-breadcrumbDoneButton` — but it is
+  supplied by the external library, not something this repo's templates
+  define or can change.
+- **Proposed change:** None needed/possible here — already has a stable id
+  from the external component; no edit available in this repo's source.
 
-```html
-            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)" [attr.data-test-id]="'select-response-count-' + count">{{ count }}
-```
+### 3. Characteristics / Personal / Saved tabs
 
-Resulting ids: `select-response-count-100`, `select-response-count-150`,
-`select-response-count-200`, ... `select-response-count-1000`.
+- **File:** external, rendered inside `crf-data-selector-panel-v2`
+  (`categoryItem` locator: `[data-test-id='ds-navigationItemLabel_${text}']`).
+- **`data-test-id` exists?** Yes, dynamically per tab (`ds-navigationItemLabel_Characteristics`,
+  `ds-navigationItemLabel_Personal`, `ds-navigationItemLabel_Saved`, inferred
+  from the `${text}` placeholder), supplied by the external package.
+- **Proposed change:** None possible from this repo's source — same as above.
 
-### "+ More options" button — proposed change
+### 4. "All" vs "All Except" toggle
 
-```html
-            <button class="more-options" type="button" data-test-id="toggle-more-response-options" (click)="toggleMoreResponseOptions()">
-```
+- **File:** external, rendered inside `crf-data-selector-panel-v2`.
+- **Current matching:** No locator for this toggle exists yet anywhere in
+  `e2e/locators/survey/select-panelist.locator.json`, and no reference to
+  "All Except" was found anywhere in this repo (`libs/**` or `e2e/**`).
+- **`data-test-id` exists?** Unknown / unverified — no locator or source
+  reference to confirm either way from this repo alone.
+- **Proposed change:** None possible from this repo's source. If automation
+  needs this toggle, the id (if any) would need to be inspected live in the
+  rendered DOM (via browser dev tools) since it isn't discoverable via static
+  source search — it's entirely owned by the external `@nielsen/crf-rv-common`
+  package.
+
+## Summary
+
+| Element | Owned by this repo? | `data-test-id` today | Proposal |
+|---|---|---|---|
+| Checkbox items | No — external `crf-data-selector-panel-v2` | None (structural/text match) | Not applicable here — would require a change in `@nielsen/crf-rv-common` |
+| "Done" button | No — external | `ds-breadcrumbDoneButton` | None needed |
+| Characteristics/Personal/Saved tabs | No — external | `ds-navigationItemLabel_${text}` | None needed |
+| "All" / "All Except" toggle | No — external | Unverified | Not applicable here — inspect live DOM if needed |
 
 No changes have been applied — this file is investigation/proposal only.
+Unlike Phase 1/2 (`proceed-to-survey`, response-count buttons, "More options"),
+which are elements this repo's own `select-panelist.component.html` owns and
+can be edited directly, all four elements in this phase belong to a
+third-party compiled component and are out of scope for a template edit in
+this repository.
