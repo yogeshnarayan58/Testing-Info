@@ -1,108 +1,104 @@
-# Phase 6 (NPS / Scale Editor Question Text Fields) — Investigation
+# Implementation Log 1 — Select Panelist Response Count / More Options
 
-Sibling components of
-[choice-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html)
-in the same `question-editor/` folder:
+Branch: `investigation/data-test-id-locators`
+File changed: [libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html)
 
-- [nps-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html)
-- [scale-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html)
+Applied exactly the two changes proposed in
+[data-test-id-phase2-response-count.md](data-test-id-phase2-response-count.md).
+No other attribute, binding, class, or logic was touched.
 
----
+## 1. Before/after diff
 
-### 1. `nps-editor.component.html`
-
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html#L8)
-
-**Current HTML (10 lines):**
-```html
-    <div class="container" [class.preview-container]="isPreview()" [class.inline-add]="isInlineAdd()">
-        <div class="add-question" [class.preview-container]="isPreview()">
-            <div class="d-flex g-8">
-                <div class="questionNumber">{{ questionNumber() }}.</div>
-                <niq-text-field class="w-100 text-field question-field" (valueChange)="onInputChange($any($event))"
-                    [value]="question()" [autofocus]="true" size="medium" placeholder="Question"
-                    [enhancedComponent]="true" [textOverflow]="'ellipsis'">
-                </niq-text-field>
-            </div>
-            <div class="rating-wrapper">
+```diff
+diff --git a/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html b/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
+index 8a5184f..84afa2b 100644
+--- a/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
++++ b/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
+@@ -33,11 +33,11 @@
+ 
+           <div class="responses">
+             @for (count of filteredResponseCounts; track count) {
+-            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
++            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)" [attr.data-test-id]="'select-response-count-' + count">{{ count }}
+               Responses</button>
+             }
+             @if (surveyCommonService.flowType().scratch) {
+-            <button class="more-options" type="button" (click)="toggleMoreResponseOptions()">
++            <button class="more-options" type="button" data-test-id="toggle-more-response-options" (click)="toggleMoreResponseOptions()">
+               <span aria-hidden="true">{{ showMoreResponseOptions ? '−' : '+' }}</span>
+               {{ showMoreResponseOptions ? 'Fewer options' : 'More options' }}
+             </button>
 ```
 
-**`data-test-id` exists?** No — identical `class="... question-field"`
-pattern as `choice-editor.component.html`, same `placeholder="Question"`,
-same `questionNumber()` signal input available.
+### Change 1 — response count button
 
-**Proposed change (see collision note below for the recommended id shape):**
+**Before:**
 ```html
-                <niq-text-field class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()" (valueChange)="onInputChange($any($event))"
+            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
+              Responses</button>
 ```
 
----
-
-### 2. `scale-editor.component.html`
-
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html#L7)
-
-**Current HTML (10 lines):**
+**After:**
 ```html
-    <div class="container" [class.preview-container]="isPreview()" [class.inline-add]="isInlineAdd()">
-        <div class="add-question" [class.preview-container]="isPreview()">
-            <div class="d-flex g-8">
-                <div class="questionNumber">{{ questionNumber() }}.</div>
-                <niq-text-field (valueChange)="onInputChange($event)" class="w-100 text-field question-field"
-                    [value]="question()" [autofocus]="true" size="medium" placeholder="Question"
-                    [enhancedComponent]="true" [textOverflow]="'ellipsis'">
-                </niq-text-field>
-            </div>
-
+            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)" [attr.data-test-id]="'select-response-count-' + count">{{ count }}
+              Responses</button>
 ```
 
-**`data-test-id` exists?** No — same pattern again (`question-field` class,
-`placeholder="Question"`, `questionNumber()` available).
+### Change 2 — "+ More options" button
 
-**Proposed change:**
+**Before:**
 ```html
-                <niq-text-field (valueChange)="onInputChange($event)" class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()"
+            <button class="more-options" type="button" (click)="toggleMoreResponseOptions()">
 ```
 
----
+**After:**
+```html
+            <button class="more-options" type="button" data-test-id="toggle-more-response-options" (click)="toggleMoreResponseOptions()">
+```
 
-## Collision analysis: static id vs. per-type vs. per-question id
+## 2. Local run / compile confirmation
 
-The Phase 5 proposal for `choice-editor.component.html` used a **static**
-id: `data-test-id="question-text-input"`.
+**Not possible to fully confirm in this environment** — reporting honestly
+rather than assuming success:
 
-**That static id would collide, and a per-type suffix (`-nps`, `-scale`)
-would not fully fix it either.** Reason: `<survey-question-editor>` (which
-wraps `choice-editor` / `nps-editor` / `scale-editor` / etc.) is instantiated
-**once per question**, inside the `@for (q of questions(); ...)` loop in
-[preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L11).
-Multiple question cards render simultaneously on the Build Survey screen, and
-a real survey commonly has **more than one question of the same type** (e.g.
-two Single Choice questions, or two NPS questions) all mounted at once. So:
+- Root `node_modules` was not installed in this workspace. Attempting
+  `npm ci` failed with an `ERESOLVE` peer-dependency conflict
+  (`@ngneat/helipopper` vs `@ngneat/overview`, pre-existing and unrelated to
+  this change).
+- Retrying with `npm install --legacy-peer-deps` got further, but failed
+  partway through with `npm error code E401 Incorrect or missing password`
+  while fetching private `@nielsen/*`-scoped packages from the internal
+  Artifactory registry — this environment has no valid registry credentials
+  configured, so a full dependency install cannot complete here.
+- As a result, `@angular/cli` (`ng`) and `@angular/core` were never
+  installed, and `npm run build:lib` / `ng serve` could not be executed
+  (`'ng' is not recognized as an internal or external command`).
 
-- A single static id per editor type (`question-text-input`,
-  `question-text-input-nps`, `question-text-input-scale`) would still
-  collide as soon as **two questions of the same type** are both on screen —
-  which is the common case, not an edge case.
-- The correct fix is a **dynamic, per-question** id, not a per-type static
-  one. Each of the three editors already receives `questionNumber()` as an
-  input signal (visible in all three templates above as
-  `{{ questionNumber() }}.`), which is unique per question and is the
-  natural key to use.
+**What was verified instead:**
+- The file's error/diagnostics check (via the editor's language
+  diagnostics) reports **no errors** for
+  `select-panelist.component.html` or its companion
+  `select-panelist.component.ts` after the edit.
+- The two added bindings use syntax already established elsewhere in this
+  same file/codebase: `[attr.data-test-id]="'...' + expr"` for a
+  dynamically-repeated element, and a plain static `data-test-id="..."`
+  attribute (matching the existing `data-test-id="proceed-to-survey"` on the
+  "next" button a few lines below in this same file) — no new binding
+  pattern was introduced.
+- No other attribute, class, or `(click)` binding on either button was
+  changed; the diff above is the complete set of changes.
 
-**Recommendation:** use `[attr.data-test-id]="'question-text-input-' + questionNumber()"`
-in all three editors (`choice-editor`, `nps-editor`, `scale-editor` — this
-also revises the Phase 5 static proposal for `choice-editor`, which should be
-updated to match this dynamic pattern rather than staying static). This keeps
-one consistent, collision-free naming convention across all question-type
-editors regardless of how many questions of a given type are present.
+**Action needed from the user/CI:** an actual `ng serve` / `npm run
+build:lib` run against a machine with valid Artifactory credentials is
+still required to get a real runtime confirmation that the Select Panelists
+screen renders and the response buttons / "More options" toggle still work.
+That could not be performed from this sandboxed session.
 
-## Summary
+## 3. Branch and file summary
 
-| File | Has `data-test-id`? | Static proposal (collides) | Recommended dynamic proposal |
-|---|---|---|---|
-| choice-editor.component.html (Phase 5) | No | `question-text-input` | `question-text-input-${questionNumber()}` |
-| nps-editor.component.html | No | `question-text-input-nps` | `question-text-input-${questionNumber()}` |
-| scale-editor.component.html | No | `question-text-input-scale` | `question-text-input-${questionNumber()}` |
-
-No changes have been applied — this file is investigation/proposal only.
+| Item | Value |
+|---|---|
+| Branch | `investigation/data-test-id-locators` |
+| File changed | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html` |
+| Elements changed | Response count button (dynamic `data-test-id`), "+ More options" button (static `data-test-id`) |
+| Other files modified | This log file only |
