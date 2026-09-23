@@ -1,203 +1,105 @@
-# Implementation Log 2 & 3 — Customize/Build Survey Buttons + Review Mode
+# Implementation Log 4 — Question Editor Text Input (Choice / NPS / Scale)
 
 Branch: `investigation/data-test-id-locators`
 
-Two batches of `data-test-id` additions, both scoped to Build Survey feature
-templates. No attribute, class, binding, or logic other than the specified
-`data-test-id` / `[attr.data-test-id]` was changed in any file.
-
----
-
-## Batch 1 — Customize Questions / Build Survey action buttons
-
-Proposals originated from
-[data-test-id-phase4-customize-buildsurvey.md](data-test-id-phase4-customize-buildsurvey.md).
-
 Files changed:
-1. [libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html)
-2. [libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html)
-3. [libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html)
-4. [libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html)
-5. [libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html)
+1. [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html)
+2. [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html)
+3. [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html)
 
-### 1. question-generator.html
+No attribute, class, binding, or logic other than the specified
+`[attr.data-test-id]` was changed in any file.
+
+## Diffs
+
+### 1. choice-editor.component.html
 ```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+--- a/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
++++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
 @@ -7,7 +7,7 @@
-     <div class="generator-form">
-       <div class="form-section">
-         <div class="question-count-row">
--          <niq-slider [minValue]="minQuestionCount" [maxValue]="maxQuestionCount" [value]="questionCount"
-+          <niq-slider data-test-id="question-count-slider" [minValue]="minQuestionCount" [maxValue]="maxQuestionCount" [value]="questionCount"
-             [tickStepSize]="1" [stepSize]="1" [showTicks]="true" [variant]="'single'"
-             [ariaLabel]="'Single slider thumb'" [topLabel]="'How many questions would you like?'"
-             (valueChangeEvent)="onQuestionCountChange($event)">
-@@ -38,7 +38,7 @@
-       } -->
  
-       <div class="generate-action-row">
--        <niq-button class="generate-button" variant="primary" size="medium" colorTheme="light"
-+        <niq-button class="generate-button" data-test-id="generate-questions" variant="primary" size="medium" colorTheme="light"
-           [state]="isGenerating() ? 'loading' : isQuestionCountOutOfRange() ? 'disabled' : 'default'"
-           (click)="onGenerateQuestions()">
-           Generate questions
-```
-
-### 2. question-type-list.component.html
-```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html
-@@ -1,6 +1,6 @@
- <div class="d-flex align-items-center options">
-     @for (option of questionTypeOptions(); track option.label) {
--    <niq-button class="question-types list-type-icon" [iconName]="option.iconName" [useSprite]="true"
-+    <niq-button class="question-types list-type-icon" [attr.data-test-id]="'question-type-' + option.value" [iconName]="option.iconName" [useSprite]="true"
-         [iconPosition]="'left'" [variant]="'secondary'"
-         [state]="hoveredType === option.label ? 'active' : isSelected(option.value) ? 'active' : 'default'"
-         (click)="selectQuestionType(option.value)" size="medium" colorTheme="light">
-```
-
-### 3. preview-mode.component.html
-```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
-@@ -89,7 +89,7 @@
-             }
+                 <div class="w-100" [class.preview-content-width]="isPreview()">
  
-             <div class="add-actions-row">
--                <niq-button [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
-+                <niq-button data-test-id="add-question" [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
-                     [state]="isAtMaxQuestions() ? 'disabled' : 'default'" [variant]="'secondary'" colorTheme="light" 
-                     [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'" 
-                     [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
-@@ -102,7 +102,7 @@
-                     Add question
-                 </niq-button>
-                 @if(surveyCommonService.flowType().aiflow) {
--                <niq-button size="small" 
-+                <niq-button data-test-id="suggest-new-questions" size="small" 
-                     [state]="isAtMaxQuestions() ? 'disabled' : (suggestNewQuestionsLoading() ? 'loading' : 'default')" [variant]="'secondaryAI'" 
-                     [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'"
-                     [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
-@@ -114,7 +114,7 @@
-                     colorTheme="light" (click)="!suggestNewQuestionsLoading() && !isAtMaxQuestions() && suggestNewQuestions($event)">
-                     Generate more questions
-                 </niq-button>
--                <niq-button size="small" 
-+                <niq-button data-test-id="reprompt-new-questions" size="small" 
-                     [state]="isAtMaxQuestions() ? 'disabled' : 'default'" [variant]="'secondaryAI'" 
-                     [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'"
-                     [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
+-                    <niq-text-field class="text-field question-field" [value]="question()" [autofocus]="true"
++                    <niq-text-field class="text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()" [value]="question()" [autofocus]="true"
+                         (valueChange)="onQuestionChange($any($event))" placeholder="Question" size="medium"
+                         [enhancedComponent]="true" [textOverflow]="'ellipsis'">
+                     </niq-text-field>
 ```
 
-### 4. survey-header.component.html
+### 2. nps-editor.component.html
 ```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
-@@ -45,14 +45,14 @@
-         </niq-button>
-         } @else {
- 
--        <niq-button [iconName]="'save'" [variant]="'secondary'" size="medium" colorTheme="light"
-+        <niq-button [iconName]="'save'" data-test-id="save-draft" [variant]="'secondary'" size="medium" colorTheme="light"
-             [state]="isSavingDraft() || (isDraftAction() && isLoadingFolders()) ? 'loading' : 'default'" (click)="openSaveDraftDialog()">
-             Save draft
-         </niq-button>
--        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
-+        <niq-button class="review-mode" data-test-id="review-survey" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
-             Review Survey
-         </niq-button>
--        <niq-button [iconName]="'trash'" size="medium" variant="danger">
-+        <niq-button [iconName]="'trash'" data-test-id="delete-survey" size="medium" variant="danger">
-             Delete survey
-         </niq-button>
-         }
+--- a/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
++++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
+@@ -5,7 +5,7 @@
+         <div class="add-question" [class.preview-container]="isPreview()">
+             <div class="d-flex g-8">
+                 <div class="questionNumber">{{ questionNumber() }}.</div>
+-                <niq-text-field class="w-100 text-field question-field" (valueChange)="onInputChange($any($event))"
++                <niq-text-field class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()" (valueChange)="onInputChange($any($event))"
+                     [value]="question()" [autofocus]="true" size="medium" placeholder="Question"
+                     [enhancedComponent]="true" [textOverflow]="'ellipsis'">
+                 </niq-text-field>
 ```
 
-### 5. footer.component.html
+### 3. scale-editor.component.html
 ```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
-@@ -1,7 +1,7 @@
- <div class="footer">
-     <niq-button class="back" (click)="goBack.emit()" variant="secondary" size="small" colorTheme="light">
-         Back </niq-button>
--    <niq-button class="publish" [state]="isPublishDisable() ? 'disabled' : 'active'" (click)="publish.emit()"
-+    <niq-button class="publish" data-test-id="publish-survey" [state]="isPublishDisable() ? 'disabled' : 'active'" (click)="publish.emit()"
-         [iconName]="'send'" [iconPosition]="'right'" variant="primary" size="small" colorTheme="light">
-         Publish </niq-button>
- </div>
+--- a/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
++++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
+@@ -4,7 +4,7 @@
+         <div class="add-question" [class.preview-container]="isPreview()">
+             <div class="d-flex g-8">
+                 <div class="questionNumber">{{ questionNumber() }}.</div>
+-                <niq-text-field (valueChange)="onInputChange($event)" class="w-100 text-field question-field"
++                <niq-text-field (valueChange)="onInputChange($event)" class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()"
+                     [value]="question()" [autofocus]="true" size="medium" placeholder="Question"
+                     [enhancedComponent]="true" [textOverflow]="'ellipsis'">
+                 </niq-text-field>
 ```
 
-### Batch 1 — Local run / compile confirmation
+## Why `questionNumber()` instead of a static id
 
-- `npm run build:lib` (`ng build survey-mod-lib --configuration=production`)
-  ran successfully against these 5 changed files: Angular compiled all
-  sources in partial compilation mode, generated FESM/DTS bundles, and
-  produced `@nielsen/crf-survey-mod` in `dist/survey-mod-lib` with **no
-  compile errors**.
-- Editor diagnostics (`get_errors`) reported no issues on any of the 5 files
-  after editing.
-- **DOM/UI visual check in a running browser was NOT performed** for this
-  batch — `ng serve`/`npm start` was not run to interactively verify the
-  Customize Questions screen or Build Survey action buttons in-browser. This
-  remains pending and would additionally require live backend/API access
-  (dataset, survey generation services) that this session does not have.
+[Phase 6 investigation](data-test-id-phase6-nps-scale-fields.md) found that
+`<survey-question-editor>` (and, in turn, `choice-editor` /
+`nps-editor` / `scale-editor`) is instantiated **once per question**, inside
+the `@for (q of questions(); ...)` loop in `preview-mode.component.html`.
+Multiple question cards render simultaneously on the Build Survey screen, and
+it's the common case (not an edge case) to have **more than one question of
+the same type** on screen at once (e.g. two Single Choice questions). A
+static id — whether shared across all three editors or suffixed per type
+(`-nps`, `-scale`) — would still produce duplicate `data-test-id`s as soon as
+two questions of the same type are both mounted.
 
----
+`questionNumber()` is already available as an input signal on all three
+editors (used in each template for the visible `{{ questionNumber() }}.`
+label), is unique per question, and requires no new plumbing — so
+`[attr.data-test-id]="'question-text-input-' + questionNumber()"` was used in
+all three files instead of a static `data-test-id`.
 
-## Batch 2 — Review Mode (per-question checkbox + drag/reorder row)
+## Local run / compile confirmation
 
-Proposal originated from
-[data-test-id-phase5-review-mode.md](data-test-id-phase5-review-mode.md).
+- Editor diagnostics (`get_errors`) reported **no errors** on any of the 3
+  changed files after editing.
+- An actual `npm run build:lib` re-run for this specific batch was **not
+  executed** (skipped in this session) — so there is no fresh compile log
+  for these exact 3 files. However, a `npm run build:lib`
+  (`ng build survey-mod-lib --configuration=production`) run earlier in this
+  same branch/session — covering the rest of the `build-survey` feature
+  templates in the same library — completed with no compile errors, and
+  these 3 files use the identical `[attr.data-test-id]` binding syntax
+  already proven to compile cleanly in that run (same pattern as
+  `question-type-list.component.html`'s `[attr.data-test-id]="'question-type-' + option.value"`).
+- **DOM/UI visual check in a running browser was NOT performed** — still
+  pending, same as prior batches. No `ng serve` session was run to
+  interactively confirm the question text input renders/behaves correctly
+  for Choice, NPS, and Scale question types.
 
-File changed:
-1. [libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html)
+## Summary table
 
-### 1. review-mode.component.html
-```diff
---- a/libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
-@@ -3,9 +3,9 @@
-         <div class="card-wrapper" cdkDropList [cdkDropListData]="questions()" [cdkDropListAutoScrollDisabled]="false"
-             (cdkDropListDropped)="drop($event)">
-             @for (question of questions(); track question.questionNumber ?? $index) {
--            <div class="d-flex align-items-center g-24" cdkDrag cdkDragPreviewContainer="parent"
-+            <div class="d-flex align-items-center g-24" [attr.data-test-id]="'reorder-question-' + $index" cdkDrag cdkDragPreviewContainer="parent"
-                 (cdkDragStarted)="onDragStart($event, $index)">
--                <niq-checkbox size="large" [checked]="reviewModeService.isChecked($index)" [error]="false"
-+                <niq-checkbox [attr.data-test-id]="'select-question-' + $index" size="large" [checked]="reviewModeService.isChecked($index)" [error]="false"
-                     (click)="reviewModeService.toggleChecked($index)"></niq-checkbox>
-                 <div class="question-number">{{ question.questionNumber }}.</div>
-                 <niq-accordion size="large" border="none" cdkDragHandle [primaryText]="question.question"
-```
+| File changed | Elements changed | Other files modified |
+|---|---|---|
+| [choice-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html) | Question text input (`question-text-input-${questionNumber()}`) | None |
+| [nps-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html) | Question text input (`question-text-input-${questionNumber()}`) | None |
+| [scale-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html) | Question text input (`question-text-input-${questionNumber()}`) | None |
 
-### Batch 2 — Local run / compile confirmation
-
-- Same `npm run build:lib` run covered this file too (it was compiled in the
-  same production build pass as Batch 1) — **no compile errors**, package
-  built successfully.
-- Editor diagnostics (`get_errors`) reported no issues on
-  `review-mode.component.html` after editing.
-- **DOM/UI visual check in a running browser was NOT performed** — same
-  caveat as Batch 1: Review Mode (drag-to-reorder, per-question checkbox
-  selection) was not interactively exercised in a live `ng serve` session in
-  this environment.
-
----
-
-## Summary table (all files, both batches)
-
-| File changed | Batch | Elements changed | Other files modified |
-|---|---|---|---|
-| [question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html) | 1 | `<niq-slider>` host (`question-count-slider`), Generate questions button (`generate-questions`) | None |
-| [question-type-list.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html) | 1 | Question type button, dynamic per `option.value` | None |
-| [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html) | 1 | Add question, Generate more questions ("suggest-new-questions"), Describe questions to add ("reprompt-new-questions") | None |
-| [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html) | 1 | Save draft, Review Survey, Delete survey | None |
-| [footer.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html) | 1 | Publish button | None |
-| [review-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html) | 2 | Per-question checkbox (`select-question-${$index}`), `cdkDrag` row (`reorder-question-${$index}`) | None |
-
-Only the files listed above were modified for these two batches, plus this
-log file itself. No attribute, class, binding, or logic other than the
-specified `data-test-id` / `[attr.data-test-id]` additions was changed.
+Only the 3 files listed above were modified, plus this log file itself.
