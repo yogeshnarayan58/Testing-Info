@@ -1,103 +1,42 @@
-# Phase 4 (Customize Questions / Build Survey Actions) — Investigation
+# Phase 5 (Review Mode / Question Cards) — Investigation
 
-Per Vaibhav: the "Customize Questions" screen and the related Build Survey
-action buttons live in the **question-generator** component and are wired
-through the **select-panelist**/build-survey feature tree. The screen with
-the heading "Please select the options below to help customise your
-selections" is:
+Component located: [libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html)
+(same `build-survey/components/` folder as the Phase 4 components). The
+Review Mode *action buttons* (Select All / Expand All / Collapse All /
+Delete / Exit Review Mode) actually live in
+[survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html)
+(shown conditionally via `@if(isReviewMode())`), while the per-question card
+list (checkbox, drag handle) lives in `review-mode.component.html` itself.
+The individual question actions (refresh-with-AI, per-question delete, and
+the question text input) live in
+[preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html)
+and
+[question-editor/choice-editor/choice-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html)
+respectively.
 
-[libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html)
-
-Only the 10 requested elements are covered below — nothing else in these
-files is reported per the task scope.
+Only the 10 requested elements are covered below.
 
 ---
 
-### 1. Question count field/slider (`id="text-field-81"`)
+### 1. "Select All" button (inside Review Mode)
 
-**File:** [question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html#L10)
+**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L31)
+
+Rendered as a toggle labeled "Select All" / "Unselect All".
 
 **Current HTML (10 lines):**
 ```html
-    <div class="generator-form">
-      <div class="form-section">
-        <div class="question-count-row">
-          <niq-slider [minValue]="minQuestionCount" [maxValue]="maxQuestionCount" [value]="questionCount"
-            [tickStepSize]="1" [stepSize]="1" [showTicks]="true" [variant]="'single'"
-            [ariaLabel]="'Single slider thumb'" [topLabel]="'How many questions would you like?'"
-            (valueChangeEvent)="onQuestionCountChange($event)">
-          </niq-slider>
-        </div>
-        @if (isQuestionCountOutOfRange()) {
-          <div class="question-count-error" role="alert">
-```
+        <niq-button class="delete" [iconName]="'trash'" size="medium"  variant="danger" 
+        (click)="reviewModeService.deleteCheckedQuestions()">
+            Delete
+        </niq-button>
 
-**`data-test-id` exists?** No. Note: `id="text-field-81"` is not present in
-this template's source — it is an auto-generated internal id rendered inside
-the `<niq-slider>` design-system component at runtime (an internal text-input
-counter within that component), not something this file sets. The `<niq-slider>`
-host tag itself, however, is owned by this template and can carry a static
-`data-test-id`.
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.toggleAllChecked()">
+            {{ allSelected() ? 'Unselect All' : 'Select All' }}
+        </niq-button>
 
-**Proposed change (on the host tag, since the internal `text-field-81` id is
-not owned by this template):**
-```html
-          <niq-slider data-test-id="question-count-slider" [minValue]="minQuestionCount" [maxValue]="maxQuestionCount" [value]="questionCount"
-```
-
----
-
-### 2. The 6 question type buttons (Single Choice, Multiple Choice, Rating, Net Promoter Score, Point Scale, Multi Scale)
-
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html#L3)
-
-**Current HTML (10 lines / full file):**
-```html
-<div class="d-flex align-items-center options">
-    @for (option of questionTypeOptions(); track option.label) {
-    <niq-button class="question-types list-type-icon" [iconName]="option.iconName" [useSprite]="true"
-        [iconPosition]="'left'" [variant]="'secondary'"
-        [state]="hoveredType === option.label ? 'active' : isSelected(option.value) ? 'active' : 'default'"
-        (click)="selectQuestionType(option.value)" size="medium" colorTheme="light">
-        {{ option.label }}
-    </niq-button>
-    }
-</div>
-```
-
-The 6 labels/values are defined in
-[build-survey.ts](../../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts#L33-L40)
-(`Single Choice`, `Multiple Choice`, `Rating`, `Net Promoter Score`,
-`Point Scale`, `Multi Scale`).
-
-**`data-test-id` exists?** No.
-
-**Proposed change:** since the button is repeated via `@for`, use a dynamic
-id derived from `option.value` (each type's enum value is unique and stable):
-```html
-    <niq-button class="question-types list-type-icon" [attr.data-test-id]="'question-type-' + option.value" [iconName]="option.iconName" [useSprite]="true"
-```
-
----
-
-### 3. "Generate questions" button
-
-**File:** [question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html#L43)
-
-**Current HTML (10 lines):**
-```html
-<!-- 
-       @if (generationError()) {
-      <div class="error-message">
-        {{ generationError() }}
-      </div>
-      } -->
-
-      <div class="generate-action-row">
-        <niq-button class="generate-button" variant="primary" size="medium" colorTheme="light"
-          [state]="isGenerating() ? 'loading' : isQuestionCountOutOfRange() ? 'disabled' : 'default'"
-          (click)="onGenerateQuestions()">
-          Generate questions
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(false)">
+            Expand All
         </niq-button>
 ```
 
@@ -105,213 +44,284 @@ id derived from `option.value` (each type's enum value is unique and stable):
 
 **Proposed change:**
 ```html
-        <niq-button class="generate-button" data-test-id="generate-questions" variant="primary" size="medium" colorTheme="light"
+        <niq-button class="review-mode" data-test-id="select-all-questions" [variant]="'ghost'" size="medium" (click)="reviewModeService.toggleAllChecked()">
 ```
 
 ---
 
-### 4. "Add new question" link (Build Survey, AI-filled)
+### 2. "Expand All" button (inside Review Mode)
 
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L92)
-
-**Current HTML (10 lines):**
-```html
-            <div class="add-actions-row">
-                <niq-button [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
-                    [state]="isAtMaxQuestions() ? 'disabled' : 'default'" [variant]="'secondary'" colorTheme="light" 
-                    [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'" 
-                    [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
-                    [style.cursor]="isAtMaxQuestions() ? 'not-allowed' : 'pointer'"
-                    [niqTooltip]="'You have already reached the maximum number of questions.'"
-                    [showTooltip]="isAtMaxQuestions()"
-                    niqTooltipPosition="top"
-                    iconPosition="left"
-                    (click)="!isAtMaxQuestions() && (showQuestionTypeList = !showQuestionTypeList)">
-                    Add question
-                </niq-button>
-```
-
-**`data-test-id` exists?** No.
-
-**Proposed change:**
-```html
-                <niq-button data-test-id="add-question" [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
-```
-
----
-
-### 5. "Suggest new questions" button (Build Survey, AI-filled)
-
-**File:** [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L105)
-
-Matches the button labeled **"Generate more questions"** (the AI "suggest more
-questions" action, `(click)="suggestNewQuestions($event)"`).
+**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L35)
 
 **Current HTML (10 lines):**
 ```html
-                @if(surveyCommonService.flowType().aiflow) {
-                <niq-button size="small" 
-                    [state]="isAtMaxQuestions() ? 'disabled' : (suggestNewQuestionsLoading() ? 'loading' : 'default')" [variant]="'secondaryAI'" 
-                    [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'"
-                    [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
-                    [niqTooltip]="'You have already reached the maximum number of questions.'"
-                    [showTooltip]="isAtMaxQuestions()"
-                    iconName="ai-sparkle"
-                    iconPosition="left"
-                    niqTooltipPosition="top"
-                    colorTheme="light" (click)="!suggestNewQuestionsLoading() && !isAtMaxQuestions() && suggestNewQuestions($event)">
-                    Generate more questions
-                </niq-button>
-```
-
-**`data-test-id` exists?** No.
-
-**Proposed change:**
-```html
-                <niq-button data-test-id="suggest-new-questions" size="small" 
-```
-
----
-
-### 6. "Re prompt for new questions" button (Build Survey, AI-filled — separate from "Suggest new questions")
-
-**File:** [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L117)
-
-Matches the button labeled **"Describe questions to add"**
-(`(click)="toggleRepromptPanel()"`), immediately following the "Generate more
-questions" button and confirmed as a distinct element.
-
-**Current HTML (10 lines):**
-```html
-                <niq-button size="small" 
-                    [state]="isAtMaxQuestions() ? 'disabled' : 'default'" [variant]="'secondaryAI'" 
-                    [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'"
-                    [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
-                    [niqTooltip]="'You have already reached the maximum number of questions.'"
-                    [showTooltip]="isAtMaxQuestions()"
-                    niqTooltipPosition="top"
-                    iconName="ai-sparkle"
-                    iconPosition="left"
-                    colorTheme="light" (click)="!isAtMaxQuestions() && toggleRepromptPanel()">
-                    Describe questions to add
-                </niq-button>
-```
-
-**`data-test-id` exists?** No.
-
-**Proposed change:**
-```html
-                <niq-button data-test-id="reprompt-new-questions" size="small" 
-```
-
----
-
-### 7. "Review Survey" button
-
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L52)
-
-**Current HTML (10 lines):**
-```html
-        <niq-button [iconName]="'save'" [variant]="'secondary'" size="medium" colorTheme="light"
-            [state]="isSavingDraft() || (isDraftAction() && isLoadingFolders()) ? 'loading' : 'default'" (click)="openSaveDraftDialog()">
-            Save draft
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.toggleAllChecked()">
+            {{ allSelected() ? 'Unselect All' : 'Select All' }}
         </niq-button>
-        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
-            Review Survey
+
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(false)">
+            Expand All
         </niq-button>
-        <niq-button [iconName]="'trash'" size="medium" variant="danger">
-            Delete survey
+
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(true)">
+            Collapse All
         </niq-button>
-        }
-    </div>
 ```
 
 **`data-test-id` exists?** No.
 
 **Proposed change:**
 ```html
-        <niq-button class="review-mode" data-test-id="review-survey" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
+        <niq-button class="review-mode" data-test-id="expand-all-questions" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(false)">
 ```
 
 ---
 
-### 8. "Save as draft" button
+### 3. "Collapse All" button (inside Review Mode)
 
-**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L48)
-
-Matches the button labeled **"Save draft"**.
+**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L39)
 
 **Current HTML (10 lines):**
 ```html
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(false)">
+            Expand All
+        </niq-button>
+
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(true)">
+            Collapse All
+        </niq-button>
+
+        <niq-button [variant]="'secondary'" size="medium" (click)="reviewModeService.exitReviewMode()">
+            Exit Review Mode
+        </niq-button>
+```
+
+**`data-test-id` exists?** No.
+
+**Proposed change:**
+```html
+        <niq-button class="review-mode" data-test-id="collapse-all-questions" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(true)">
+```
+
+---
+
+### 4. Per-question checkbox (inside Review Mode)
+
+**File:** [review-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html#L8)
+
+**Current HTML (10 lines):**
+```html
+            @for (question of questions(); track question.questionNumber ?? $index) {
+            <div class="d-flex align-items-center g-24" cdkDrag cdkDragPreviewContainer="parent"
+                (cdkDragStarted)="onDragStart($event, $index)">
+                <niq-checkbox size="large" [checked]="reviewModeService.isChecked($index)" [error]="false"
+                    (click)="reviewModeService.toggleChecked($index)"></niq-checkbox>
+                <div class="question-number">{{ question.questionNumber }}.</div>
+                <niq-accordion size="large" border="none" cdkDragHandle [primaryText]="question.question"
+                    class="accordions" (toggle)="reviewModeService.toggleCardCollapsed($index)" expandIcon="collapse"
+                    collapseIcon="expand" [class.collapsedState]="reviewModeService.isCardCollapsed($index)"
+                    [prefixIcon]="reviewModeService.isCardCollapsed($index) ? 'drag-drop-circle' : ''"
+                    [isExpanded]="!reviewModeService.isCardCollapsed($index)" [useSprite]="true">
+```
+
+**`data-test-id` exists?** No.
+
+**Proposed change:** repeated via `@for`, so use a dynamic id keyed on the
+question's index/number:
+```html
+                <niq-checkbox [attr.data-test-id]="'select-question-' + $index" size="large" [checked]="reviewModeService.isChecked($index)" [error]="false"
+```
+
+---
+
+### 5. "Delete" button (inside Review Mode, for selected questions)
+
+**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L26)
+
+**Current HTML (10 lines):**
+```html
+    @if(showActionButtons()){
+    <div class="action-group">
+        @if(isReviewMode()){
+        <niq-button class="delete" [iconName]="'trash'" size="medium"  variant="danger" 
+        (click)="reviewModeService.deleteCheckedQuestions()">
+            Delete
+        </niq-button>
+
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.toggleAllChecked()">
+            {{ allSelected() ? 'Unselect All' : 'Select All' }}
+        </niq-button>
+```
+
+**`data-test-id` exists?** No.
+
+**Proposed change:**
+```html
+        <niq-button class="delete" data-test-id="delete-selected-questions" [iconName]="'trash'" size="medium"  variant="danger" 
+```
+
+---
+
+### 6. "Exit Review Mode" button
+
+**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L43)
+
+**Current HTML (10 lines):**
+```html
+        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.setAllCardsCollapsed(true)">
+            Collapse All
+        </niq-button>
+
+        <niq-button [variant]="'secondary'" size="medium" (click)="reviewModeService.exitReviewMode()">
+            Exit Review Mode
+        </niq-button>
         } @else {
 
         <niq-button [iconName]="'save'" [variant]="'secondary'" size="medium" colorTheme="light"
             [state]="isSavingDraft() || (isDraftAction() && isLoadingFolders()) ? 'loading' : 'default'" (click)="openSaveDraftDialog()">
-            Save draft
-        </niq-button>
-        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
-            Review Survey
-        </niq-button>
-        <niq-button [iconName]="'trash'" size="medium" variant="danger">
 ```
 
 **`data-test-id` exists?** No.
 
 **Proposed change:**
 ```html
-        <niq-button [iconName]="'save'" data-test-id="save-draft" [variant]="'secondary'" size="medium" colorTheme="light"
+        <niq-button data-test-id="exit-review-mode" [variant]="'secondary'" size="medium" (click)="reviewModeService.exitReviewMode()">
 ```
 
 ---
 
-### 9. "Delete survey" button
+### 7. Drag handle used to reorder a question (currently `.cdk-drag`)
 
-**File:** [survey-header.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L55)
+**File:** [review-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html#L6)
+
+The `cdkDrag` directive (source of the auto-added `.cdk-drag` class) sits on
+the whole question row `<div>`; the actual visual "drag handle" icon is
+inside the accordion via a `.drag-handle` wrapper further down, but the CDK
+`cdkDragHandle` directive itself is placed on the `<niq-accordion>` tag, not
+on that visual wrapper.
 
 **Current HTML (10 lines):**
 ```html
-        <niq-button class="review-mode" [variant]="'ghost'" size="medium" (click)="reviewModeService.enterReviewMode()">
-            Review Survey
-        </niq-button>
-        <niq-button [iconName]="'trash'" size="medium" variant="danger">
-            Delete survey
-        </niq-button>
-        }
-    </div>
-    }
-
-</div>
+        <div class="card-wrapper" cdkDropList [cdkDropListData]="questions()" [cdkDropListAutoScrollDisabled]="false"
+            (cdkDropListDropped)="drop($event)">
+            @for (question of questions(); track question.questionNumber ?? $index) {
+            <div class="d-flex align-items-center g-24" cdkDrag cdkDragPreviewContainer="parent"
+                (cdkDragStarted)="onDragStart($event, $index)">
+                <niq-checkbox size="large" [checked]="reviewModeService.isChecked($index)" [error]="false"
+                    (click)="reviewModeService.toggleChecked($index)"></niq-checkbox>
+                <div class="question-number">{{ question.questionNumber }}.</div>
+                <niq-accordion size="large" border="none" cdkDragHandle [primaryText]="question.question"
+                    class="accordions" (toggle)="reviewModeService.toggleCardCollapsed($index)" expandIcon="collapse"
+                    collapseIcon="expand" [class.collapsedState]="reviewModeService.isCardCollapsed($index)"
 ```
 
 **`data-test-id` exists?** No.
 
-**Proposed change:**
+**Proposed change:** since this row repeats via `@for`, use a dynamic id on
+the `cdkDrag` row (the element matched by `.cdk-drag` today):
 ```html
-        <niq-button [iconName]="'trash'" data-test-id="delete-survey" size="medium" variant="danger">
+            <div class="d-flex align-items-center g-24" [attr.data-test-id]="'reorder-question-' + $index" cdkDrag cdkDragPreviewContainer="parent"
 ```
 
 ---
 
-### 10. "Publish" button
+### 8. Question text input field (Build Survey screen)
 
-**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html#L4)
+**File:** [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html#L10)
 
-**Current HTML (full file, 8 lines):**
+This is the "Question" text field rendered inside `<survey-question-editor>`
+(used by `preview-mode.component.html` per question row) for Single/Multiple
+Choice questions. The identical `class="... question-field"` pattern also
+repeats in the sibling `nps-editor.component.html` and
+`scale-editor.component.html` for their respective question types (not
+otherwise detailed here, per scope).
+
+**Current HTML (10 lines):**
 ```html
-<div class="footer">
-    <niq-button class="back" (click)="goBack.emit()" variant="secondary" size="small" colorTheme="light">
-        Back </niq-button>
-    <niq-button class="publish" [state]="isPublishDisable() ? 'disabled' : 'active'" (click)="publish.emit()"
-        [iconName]="'send'" [iconPosition]="'right'" variant="primary" size="small" colorTheme="light">
-        Publish </niq-button>
-</div>
+    <div>
+        <div class="add-question" [class.preview-container]="isPreview()">
+            <div class="question-row-content">
+                <div class="questionNumber">{{ questionNumber() }}.</div>
+                <div class="question-input-wrap">
+                    <niq-text-field class="text-field question-field" [value]="question()" [autofocus]="true"
+                        (valueChange)="onQuestionChange($any($event))" placeholder="Question" size="medium"
+                        [enhancedComponent]="true" [textOverflow]="'ellipsis'">
+                    </niq-text-field>
+                </div>
 ```
 
 **`data-test-id` exists?** No.
 
 **Proposed change:**
 ```html
-    <niq-button class="publish" data-test-id="publish-survey" [state]="isPublishDisable() ? 'disabled' : 'active'" (click)="publish.emit()"
+                    <niq-text-field class="text-field question-field" data-test-id="question-text-input" [value]="question()" [autofocus]="true"
+```
+
+---
+
+### 9. Per-question "refresh with AI" icon
+
+**File:** [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L33)
+
+Closest match found is the **"Rephrase with AI"** button (`ai-sparkle` icon,
+toggles a per-question AI rephrase panel) — no separate icon literally
+labeled/named "refresh" exists in this file.
+
+**Current HTML (10 lines):**
+```html
+                        <div class="rephrase-wrap">
+                            @if(surveyCommonService.flowType().aiflow) {
+                            <niq-button class="rephrase-action"
+                                [iconName]="rephraseOpenIndex === i ? 'chevron-down' : 'ai-sparkle'" size="small"
+                                iconPosition="right" textColor="AI" (click)="toggleRephrase(i, $event)" variant="ghostAI">
+                                Rephrase with AI
+                            </niq-button>
+                            }
+                            @if (surveyCommonService.flowType().aiflow && rephraseOpenIndex === i) {
+                            <div class="rephrase-panel" (click)="$event.stopPropagation()">
+                                <textarea class="rephrase-input" rows="4" placeholder="Type your prompt..."
+```
+
+**`data-test-id` exists?** No.
+
+**Proposed change:** repeated per question index `i`:
+```html
+                            <niq-button class="rephrase-action" [attr.data-test-id]="'rephrase-question-' + i"
+```
+
+---
+
+### 10. Per-question delete icon (individual question, not the Review Mode bulk delete)
+
+**File:** [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L72)
+
+**Current HTML (10 lines):**
+```html
+                        <niq-icon-button class="question-action-button" (click)="!isAtMaxQuestions() && copyQuestion(i); $event.stopPropagation()"
+                            iconName="duplicate" size="small" mode="light" type="primary"
+                            [state]="isAtMaxQuestions() ? 'disabled' : 'default'"
+                            [style.opacity]="isAtMaxQuestions() ? '0.5' : '1'"
+                            [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
+                            [style.cursor]="isAtMaxQuestions() ? 'not-allowed' : 'pointer'"
+                            [niqTooltip]="isAtMaxQuestions() ? 'You have already reached the maximum number of questions.' : 'Duplicate'"
+                            [showTooltip]="true"
+                            niqTooltipPosition="top">
+                        </niq-icon-button>
+
+                        <niq-icon-button class="question-action-button delete-action"
+                            (click)="deleteQuestion(i); $event.stopPropagation()" iconName="trash" size="small"
+                            mode="light" type="primary" state="default" niqTooltip="Delete" [showTooltip]="true"
+                            niqTooltipPosition="top">
+                        </niq-icon-button>
+```
+
+**`data-test-id` exists?** No.
+
+**Proposed change:** repeated per question index `i`; use a distinct name
+from the Phase-4 bulk `delete-survey`/Review-Mode `delete-selected-questions`
+ids to avoid collision:
+```html
+                        <niq-icon-button class="question-action-button delete-action" [attr.data-test-id]="'delete-question-' + i"
 ```
 
 ---
@@ -320,16 +330,16 @@ Matches the button labeled **"Save draft"**.
 
 | # | Element | File | Has `data-test-id`? | Proposed value |
 |---|---|---|---|---|
-| 1 | Question count slider | question-generator.html | No (`text-field-81` is internal to `niq-slider`, not ours) | `question-count-slider` (on host tag) |
-| 2 | 6 question type buttons | question-type-list.component.html | No | `question-type-${option.value}` (dynamic) |
-| 3 | Generate questions | question-generator.html | No | `generate-questions` |
-| 4 | Add new question | preview-mode.component.html | No | `add-question` |
-| 5 | Suggest new questions ("Generate more questions") | preview-mode.component.html | No | `suggest-new-questions` |
-| 6 | Re prompt for new questions ("Describe questions to add") | preview-mode.component.html | No | `reprompt-new-questions` |
-| 7 | Review Survey | survey-header.component.html | No | `review-survey` |
-| 8 | Save as draft ("Save draft") | survey-header.component.html | No | `save-draft` |
-| 9 | Delete survey | survey-header.component.html | No | `delete-survey` |
-| 10 | Publish | footer.component.html | No | `publish-survey` |
+| 1 | Select All | survey-header.component.html | No | `select-all-questions` |
+| 2 | Expand All | survey-header.component.html | No | `expand-all-questions` |
+| 3 | Collapse All | survey-header.component.html | No | `collapse-all-questions` |
+| 4 | Per-question checkbox | review-mode.component.html | No | `select-question-${$index}` (dynamic) |
+| 5 | Delete (selected, Review Mode) | survey-header.component.html | No | `delete-selected-questions` |
+| 6 | Exit Review Mode | survey-header.component.html | No | `exit-review-mode` |
+| 7 | Drag handle (`.cdk-drag` row) | review-mode.component.html | No | `reorder-question-${$index}` (dynamic) |
+| 8 | Question text input | choice-editor.component.html | No | `question-text-input` |
+| 9 | Per-question "refresh with AI" ("Rephrase with AI") | preview-mode.component.html | No | `rephrase-question-${i}` (dynamic) |
+| 10 | Per-question delete icon | preview-mode.component.html | No | `delete-question-${i}` (dynamic) |
 
 No changes have been applied — this file is investigation/proposal only. No
 other elements found in these files were investigated or reported per scope.
