@@ -1,98 +1,123 @@
-# Implementation Log 5 — Survey Home Page Tiles (`niq-report-card`)
+# Investigation: `niq-report-card` Click Handling (Start from scratch tile)
 
-Branch: `investigation/data-test-id-locators`
+Investigation only — **no code was changed** for this task.
 
-File changed:
-1. [libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html)
+## 1. Full HTML for the "Start from scratch" `<niq-report-card>`
 
-## What was found
-
-The 4 home page tiles (Start from scratch / Start with a template / Start
-with a prompt / Import survey) all live in this single file, each as a
-top-level `<niq-report-card>`.
-
-**The premise that `data-test-id` was on the outer `<niq-report-card>` while
-the `(click)` handler lived on some different inner element does not hold
-for this file** — investigation found the opposite: for the two tiles that
-are actually wired up, `(click)` and `data-test-id` are **already on the same
-element** (the `<niq-report-card>` host itself), with no separate inner
-clickable element to move anything to:
+File: [libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html#L6)
 
 ```html
 <niq-report-card variant="one-third" size="small" (click)="navigateToSelectPanelist()" data-test-id="start-from-scratch">
-...
-<niq-report-card size="small" (click)="navigateToAiflow()" data-test-id="start-with-prompt">
+    <div card-body>
+        <div class="icon-circle">
+            <niq-icon iconName="edit" size="regular"></niq-icon>
+        </div>
+        <div class="card-text">
+            <p class="card-title">Start from scratch</p>
+            <p class="card-subtitle">Blank survey, add what you want</p>
+        </div>
+    </div>
+</niq-report-card>
 ```
 
-`navigateToSelectPanelist()` and `navigateToAiflow()` are defined directly on
-[my-assets-page.component.ts](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts#L32-L37)
-and bound straight to the `<niq-report-card>` host's native `click` event
-(which bubbles up from anything rendered inside it) — there is no nested
-`<button>`/`<a>`/wrapper element in this template carrying its own separate
-click binding. So **no removal/move was performed** for `start-from-scratch`
-or `start-with-prompt` — doing so would have meant deleting the id from the
-only element that has it, with nowhere correct to relocate it to, and no
-duplication existed to begin with.
+## 2. `navigateToSelectPanelist()` method
 
-**What was actually missing:** the other two tiles — "Start with a template"
-and "Import survey" — have **neither** a `(click)` handler **nor** a
-`data-test-id` today; they are not yet wired for navigation (likely
-unimplemented features). Per the instruction not to change any binding or
-logic, no `(click)` was added. `data-test-id="start-with-template"` and
-`data-test-id="import-survey"` were added to their respective
-`<niq-report-card>` elements — the same (only) element used consistently by
-the other two tiles — so all 4 tiles now carry the requested ids in a
-consistent, non-duplicated location.
+File: [libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts#L32)
 
-## Before/after diff
-
-```diff
---- a/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html
-+++ b/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html
-@@ -15,7 +15,7 @@
-                 </div>
-             </niq-report-card>
- 
--            <niq-report-card size="small">
-+            <niq-report-card size="small" data-test-id="start-with-template">
-                 <div card-body>
-                       <div class="icon-circle ai-gradient">
-                         <niq-icon iconName="clipboard-copy" [useSprite]="true" size="regular"></niq-icon>
-@@ -39,7 +39,7 @@
-                 </div>
-             </niq-report-card>
- 
--             <niq-report-card size="small">
-+             <niq-report-card size="small" data-test-id="import-survey">
-                 <div card-body>
-                     <div class="icon-circle ai-gradient">
-                         <niq-icon iconName="import" size="regular"></niq-icon>
+```typescript
+navigateToSelectPanelist(): void {
+    this.surveyCommonService.resetState();
+    this.router.navigate(['/survey/select-panelist']);
+}
 ```
 
-`start-from-scratch` and `start-with-prompt` tiles: **no diff** — already
-correct, left untouched.
+`(click)` is bound directly on the `<niq-report-card>` tag; this method just
+resets some shared state and navigates — nothing about the click itself is
+handled here.
 
-## Local run / compile confirmation
+## 3. Is `niq-report-card` a design-system component? What does it do internally?
 
-- Editor diagnostics (`get_errors`) reported **no errors** on
-  `my-assets-page.component.html` after editing.
-- An `npm run build:lib` re-run for this specific change was **not executed**
-  in this session (skipped) — there is no fresh compile log for this exact
-  file. The change is a plain static `data-test-id` attribute addition on an
-  existing custom element tag, identical in form to attributes already
-  proven to compile cleanly in this library in earlier batches (e.g.
-  `data-test-id="publish-survey"` on `<niq-button>` in
-  [implementation-log-2-3-customize-and-review-mode.md](implementation-log-2-3-customize-and-review-mode.md)),
-  but this specific file has not itself been through a real `ng build` in
-  this session.
-- **DOM/UI visual check in a running browser was NOT performed** — still
-  pending. The Survey home page tiles were not interactively verified in a
-  live `ng serve` session.
+Yes. It's imported via `CardModule` from `@nielseniq/athena-core` (see
+`my-assets-page.component.ts` imports: `CardModule, IconModule, ButtonModule, ... from '@nielseniq/athena-core'`).
+Its compiled source was located in
+`node_modules/@nielseniq/athena-core/fesm2022/nielseniq-athena-core.mjs`
+(class `ReportCardComponent`, `selector: 'niq-report-card'`).
+
+**Its own template root** (simplified from the compiled bundle):
+```html
+<div class="card-container"
+     [class.one-third-width]="variant() === 'one-third'"
+     [class.half-width]="variant() === 'half'"
+     [class.full-width]="variant() === 'full'"
+     ... (more size/variant classes) ...>
+  <div class="tick" *ngIf="selected()"> ... </div>
+  <div class="card-header">
+    <ng-content select="[card-header]"></ng-content>
+    <niq-icon *ngIf="variant() === 'multi'" (click)="collapsed = !collapsed" ...></niq-icon>
+    <div class="card-title" (dblclick)="onHeaderDoubleClick()"> ... </div>
+  </div>
+  <!-- body/content area where our [card-body] projected content lands -->
+  ...
+</div>
+```
+
+**Host bindings / listeners on the component itself:**
+```
+host: { listeners: { "input": "onInputChange($event)" } }
+```
+That's the **only** native event the component itself listens for on its
+host — and it's for the inline header-rename textfield feature, unrelated to
+whole-card clicks. There is **no** `(click)` host listener, no
+`stopPropagation()`/`preventDefault()` anywhere in `ReportCardComponent`'s own
+code, and **no dedicated `@Output()` for "card clicked"** (its only output is
+`headerChangeEvent` aliased `headerChange`, for the rename feature).
+
+**Conclusion — does it intercept or block the click?** No. Because the
+component doesn't attach its own click listener or call
+`stopPropagation()`/`preventDefault()` anywhere in its template or class, a
+native `click` fired anywhere inside the projected `[card-body]` content (the
+icon, the title text, etc.) bubbles normally, through `card-container`, up to
+the host custom element `<niq-report-card>` — which is exactly where our own
+`(click)="navigateToSelectPanelist()"` binding lives. Angular attaches that
+listener directly to the host DOM node, so it fires correctly on a real click
+anywhere in the card. **This is not the cause of any bug** — the click
+mechanism itself works as intended.
+
+## 4. Does it render as a real clickable/native element, or just CSS styling?
+
+**Just CSS styling on a plain `<div>` — no built-in clickable semantics.**
+
+- The component's real DOM root is `<div class="card-container" ...>` — not
+  a `<button>`, not an `<a>`, and it has no `role="button"`, no `tabindex`,
+  and no keyboard handling (Enter/Space) for the whole-card click. The only
+  keyboard handling in this component (`onElementKeydown`) is attached to the
+  small chevron `<niq-icon>` used for the "multi" collapse/expand variant —
+  unrelated to whole-card activation.
+- Checked the component's own compiled styles for `cursor:pointer`: it is
+  applied **only** to `.card-header>niq-icon` (i.e. that same
+  collapse/expand chevron), **not** to `.card-container` as a whole. So
+  hovering over most of the card (the icon/title/subtitle area used by
+  "Start from scratch", etc.) does **not** show a pointer cursor by default —
+  there's no visual affordance from the design system that the card is
+  clickable; that relies entirely on whoever consumes it (this repo) adding
+  `(click)` and any desired styling themselves.
+- Net effect in plain terms: `niq-report-card` is a purely presentational
+  container. It happens to work as a click target because native DOM click
+  events always bubble regardless of the tag being a `<div>` vs a `<button>`,
+  and Angular's `(click)` binding on the host catches that bubbled event —
+  but it provides none of the accessibility/semantic guarantees a real
+  `<button>` would (keyboard activation, `role`, focus styling, pointer
+  cursor). That's a UX/accessibility gap in the design-system component
+  itself, not something wrong in this repo's usage, and not something that
+  would break a Playwright `.click()` on the `data-test-id` locator.
 
 ## Summary
 
-| File changed | Elements changed | Other files modified |
-|---|---|---|
-| [my-assets-page.component.html](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html) | Added `data-test-id="start-with-template"` and `data-test-id="import-survey"` to their `<niq-report-card>` tiles; `start-from-scratch` and `start-with-prompt` tiles left unchanged (already correctly placed, no duplication found) | None |
+| Question | Finding |
+|---|---|
+| Where does `(click)` live? | Directly on the `<niq-report-card>` host tag in `my-assets-page.component.html` — same element as `data-test-id`. |
+| Does `niq-report-card` intercept/stop the click? | No — no host click listener, no `stopPropagation`/`preventDefault` anywhere in the component; native click bubbles through normally. |
+| Is it a real interactive element (button-like)? | No — root DOM node is a plain `<div class="card-container">`, no `role`, no `tabindex`, no keyboard activation for the whole card. |
+| Does it apply `cursor:pointer` to the whole card? | No — only to the small chevron icon used in the "multi" variant, not to the card body/container. |
 
-Only this file was modified, plus this log file itself.
+No template or TypeScript files were modified for this investigation.
