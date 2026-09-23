@@ -1,122 +1,98 @@
-Link of the document- https://adlm.nielseniq.com/confluence/spaces/RBOC/pages/977297771/Survey+Modernization+onboarding+process
- 
-Link for the form from where you can get the access for environment-https://adlm.nielseniq.com/jira/servicedesk/customer/portal/41/create/986
- 
-get the access for Grafana and follow the step How to Access QA Grafana with NIQ Account. - Data Platform Technology & Data - Confluence
- 
-Also I have added you the lambda Test group please ask for the access from Jeevamurugan S
- 
-please fill this form for Cycode Access-https://adlm.nielsenconnect.com/jiraservicedesk/servicedesk/customer/portal/8/create/403?q=Please%20provide%20the%20access%20for%20Discover%20frontend&q_time=1788604636127
- 
-Once you get the access for Cycode then please follow these step mentioned in the confluence page and get the cycode set up done -https://adlm.nielseniq.com/confluence/spaces/CSDE/pages/604580440/Cycode+-+VSCode+JetBrains+Plugin
- 
-Jfrog Access confluence page -https://adlm.nielseniq.com/confluence/pages/viewpage.action?pageId=977291353&spaceKey=DPTD&title=GTA%2BMigration%2BGuide%2Bfor%2BExisting%2BUsers%2BGitLab%2Bto%2BJFrog
- 
---------------------------------
+# Data-Test-ID Work Log
 
-GTA Migration Guide for Existing Users: GitLab to JFrog
-This guide is for teams already using GTA from the old GitLab package flow and migrating to JFrog Artifactory.
+This file is a running log for the **"add data-test-id for automation"** task.
 
-Who Should Use This Guide
-Use this if your existing project already consumes @gfk/gta and you need to switch package access to JFrog.
+Every phase of this task (investigation findings, decisions, and eventual template
+code changes) is appended to this single file as new sections below — separate
+markdown files are **not** created for later phases.
 
-Migration Summary
-Old source: GitLab package publishing/consumption flow
-New source: JFrog Artifactory registries
-Required action: update local environment + .npmrc + reinstall dependencies
-Step 1: Request JFrog Access
-Ensure you have a JFrog account: - https://artifactory.adlm.nielseniq.com/ui/packages
-Log into jfrog application and check if you view the @gfk/gta library in it: https://artifactory.adlm.nielseniq.com/ui/repos/tree/General/dp-npm-prod-dp-local/@gfk/gta like given below:
+---
 
-If you are not able to view gta library like given above then raise access request to Data Platform: - https://adlm.nielsenconnect.com/jiraservicedesk/servicedesk/customer/portal/2/create/313 . 
-In this form, enter the list of developer lan ids and set the team already have permission target to "Yes" and search and add "T-CONNECT_DataPlatform-dataplatform" from the dropdown box:
+## Phase 1: Investigation
 
-Confirm your account has entitlement to @gfk scoped packages, especially: - @gfk/gta - @gfk/azure-login
-Step 2: Generate/Get Your JFrog Read Token
-Obtain a JFrog personal access token/password with read permissions.
-Keep this token private.
-Use it as environment variable JFROG_RO_PASSWORD.
-Step 3: Set Environment Variable
-macOS/Linux (zsh/bash)
+Scope: search Angular component templates (`*.html` under `src/`, which for this
+repo means `libs/survey-mod-lib/src/**/*.html`) for three `data-test-id` values
+already expected by e2e locator files:
+- `proceed-to-survey`
+- `btn-next-dataset`
+- `apply-dataset-btn`
 
+### 1. `proceed-to-survey` — FOUND
 
-export JFROG_RO_PASSWORD="<your_jfrog_token>"
-To persist in zsh:
+**File:** [libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html#L69)
 
+**Element:** native `<button>` (nested inside the `<panelist-dataselector>` custom component's content, inside a `div.footer`).
 
+**Context (exact, 10 lines):**
+```html
+        @if(surveyCommonService.flowType().aiflow && !isUnhappyPath && !surveyCommonService.dataSelectorLoading()){
+        <div class="d-flex flex-column prompt-container">
+          ...
+        </div>
+        }
 
-echo 'export JFROG_RO_PASSWORD="<your_jfrog_token>"' >> ~/.zshrc
-source ~/.zshrc
-Windows PowerShell
+        <div class="footer">
+          <button class="cancel">Cancel</button>
+          <button class="next" data-test-id="proceed-to-survey"
+            [disabled]="!selectedResponses || (surveyCommonService.flowType().aiflow && (!userPrompt.trim() || isPromptSettling())) || surveyCommonService.dataSelectorLoading()"
+            (click)="proceedToSurveyBuilder()">{{surveyCommonService.flowType().aiflow ? 'Generate Survey' : 'Proceed to
+            survey builder'}}</button>
+        </div>
+```
 
+**Naming convention observed:** kebab-case, verb-object phrasing describing the
+action the element performs (`proceed-to-survey`) — no component/element-type
+prefix or suffix (e.g. no `btn-` prefix or `-button` suffix) is used here.
 
-setx JFROG_RO_PASSWORD "<your_jfrog_token>"
-Open a new terminal after setx.
+---
 
-Step 4: Update .npmrc in Your Test Project
-At the root of your GTA test project, use:
+### 2. `btn-next-dataset` — NOT FOUND
 
+No `*.html` file under `src/` (i.e. under `libs/survey-mod-lib/src/`) currently
+contains `data-test-id="btn-next-dataset"`. This value is only referenced as an
+**expected/target selector** in the e2e locator files:
 
+- [e2e/locators/survey/start-from-scratch.locator.json](../locators/survey/start-from-scratch.locator.json#L6) — `elementName: "nextButton"`
+- [e2e/locators/survey/start-with-prompt.locator.json](../locators/survey/start-with-prompt.locator.json#L7) — `elementName: "nextDatasetButton"`
 
-@gfk:registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/
-//artifactory.adlm.nielseniq.com/artifactory/api/npm/dp-npm-prod-dp-local/:_authToken=${JFROG_RO_PASSWORD}
-registry=https://artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/
-//artifactory.adlm.nielseniq.com/artifactory/api/npm/npmjs-org-remote/:_authToken=${JFROG_RO_PASSWORD}
-Step 5: Clean Old Lock/Cache (Recommended)
-From project root:
+Both locators resolve to CSS selector `[data-test-id='btn-next-dataset']`, meaning
+the attribute needs to be added to the corresponding template element in a later
+phase (dataset selection / "next" flow, likely in the panelist-dataselector
+feature) — not yet located/confirmed in this phase.
 
+**Naming convention implied by the locator value:** kebab-case, `btn-` prefix
+followed by an action/context phrase (`btn-next-dataset`) — differs from
+`proceed-to-survey`'s no-prefix style, so both conventions currently coexist
+across the codebase/locators.
 
+---
 
-rm -rf node_modules
-rm -f package-lock.json
-npm cache verify
-Step 6: Reinstall Dependencies
+### 3. `apply-dataset-btn` — NOT FOUND
 
+No `*.html` file under `src/` (i.e. under `libs/survey-mod-lib/src/`) currently
+contains `data-test-id="apply-dataset-btn"`. This value is only referenced as an
+**expected/target selector** in the e2e locator files:
 
-npm install
-Step 7: Validate GTA Resolution from JFrog
+- [e2e/locators/survey/start-from-scratch.locator.json](../locators/survey/start-from-scratch.locator.json#L13) — `elementName: "applyButton"`
+- [e2e/locators/survey/start-with-prompt.locator.json](../locators/survey/start-with-prompt.locator.json#L12) — `elementName: "applyButton"`
 
+Both locators resolve to CSS selector `[data-test-id='apply-dataset-btn']`,
+meaning the attribute needs to be added to the corresponding template element in
+a later phase — not yet located/confirmed in this phase.
 
-npm view @gfk/gta version
-npm view @gfk/azure-login version
-Optional validation:
+**Naming convention implied by the locator value:** kebab-case, `-btn` suffix
+following an action/context phrase (`apply-dataset-btn`) — a third distinct style
+(suffix instead of prefix), differing from both `proceed-to-survey` (no prefix/suffix)
+and `btn-next-dataset` (`btn-` prefix).
 
+---
 
+### Phase 1 Summary
 
-npm ls @gfk/gta
-Step 8: Run a Smoke Test
-Run one test command from your project, for example:
+| data-test-id | Status | File |
+|---|---|---|
+| `proceed-to-survey` | Found | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html` |
+| `btn-next-dataset` | Not found in templates (locator-only reference) | n/a |
+| `apply-dataset-btn` | Not found in templates (locator-only reference) | n/a |
 
-
-
-npm run playwright:sampleProject:api
-or
-
-
-
-npm run cucumber:sampleProject:api
-Common Issues and Fixes
-403 for @gfk/* packages
-Possible cause: account entitlement issue in JFrog (even when token is valid).
-
-Action:
-
-Verify env var is set and non-empty.
-Verify .npmrc is correct.
-If still failing, request package entitlement for @gfk scope via JFrog/Data Platform support.
-Token not picked up
-Restart terminal/session.
-Re-run echo $JFROG_RO_PASSWORD (macOS/Linux) or check env in PowerShell.
-Re-run npm install.
-Checklist for Existing GTA Projects
-[ ] JFrog account available
-[ ] Access request approved (if required)
-[ ] JFROG_RO_PASSWORD configured
-[ ] .npmrc updated to JFrog registries
-[ ] Dependencies reinstalled
-[ ] @gfk/gta resolves successfully
-[ ] Smoke tests pass
-Notes for Team Maintainers
-Keep .npmrc in repo root so new joiners use a consistent registry setup.
-Never commit real tokens in code, docs, or CI logs.
-Share this page with teams migrating from older GitLab-based GTA setup.
+No template files were modified in this phase — investigation only.
