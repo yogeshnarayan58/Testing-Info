@@ -1,36 +1,79 @@
-# Wider Search: `btn-next-dataset` / `apply-dataset-btn` in App Source
+# Phase 2 (Response Count Controls) — Investigation
 
-Scope of this search (exact-string, case-sensitive):
-- `libs/**/*.html`, `libs/**/*.ts` (all sub-libs under `libs/`, not just `survey-mod-lib`)
-- `apps/**/*.html`, `apps/**/*.ts` (if the folder exists)
-- `src/**/*.html`, `src/**/*.ts` (repo-root `src/`, i.e. the `survey-mod-app` dev-preview harness)
+File searched: [libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html)
 
-Explicitly excluded: `node_modules/`, `dist/`, `.angular/`, `coverage/`, any other
-build-output folder, and the `e2e/` folder itself.
+## 1. Location
 
-## Folder inventory checked
+Both the response-count buttons (100/150/200/250/300/400/500, plus the
+dynamically-appended 600/700/800/900/1000 when "More options" is expanded) and
+the "+ More options" toggle button are defined **directly in this same file**
+— they are not in a child/sibling component template. They live inside the
+`<panelist-dataselector>` element's projected content, in the
+`div.responses-frame > div.responses` block.
 
-- `libs/` contains a single sub-library: `libs/survey-mod-lib/` — no other libs exist.
-- `apps/` — **does not exist** in this repo (confirmed via directory listing of repo root).
-- `src/` — exists at repo root (`survey-mod-app`, the local `ng serve` dev-preview harness).
+The count values themselves (`100, 150, 200, 250, 300, 400, 500` plus the extra
+`600, 700, 800, 900, 1000`) come from `responseCounts` / `additionalResponseCounts`
+in [select-panelist.component.ts](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.ts#L62-L63),
+exposed to the template via the `filteredResponseCounts` getter (line 226).
 
-## Results
+## 2. Exact HTML (10 lines of context)
 
-### `btn-next-dataset`
+### Response count buttons (repeated via `@for`)
 
-**Zero results.** No file under `libs/**/*.html`, `libs/**/*.ts`, or
-`src/**/*.html`, `src/**/*.ts` contains the exact string `btn-next-dataset`.
+```html
+        @if(!isUnhappyPath && !surveyCommonService.dataSelectorLoading()){
+        <div class="responses-frame">
+          <div class="question">
+            How many responses are you looking for?
+            <span class="hint">(More responses takes longer and also affects metering. 100 responses = 1 credit).</span>
+          </div>
 
-### `apply-dataset-btn`
+          <div class="responses">
+            @for (count of filteredResponseCounts; track count) {
+            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
+              Responses</button>
+            }
+```
 
-**Zero results.** No file under `libs/**/*.html`, `libs/**/*.ts`, or
-`src/**/*.html`, `src/**/*.ts` contains the exact string `apply-dataset-btn`.
+### "+ More options" button
 
-## Conclusion
+```html
+            @for (count of filteredResponseCounts; track count) {
+            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)">{{ count }}
+              Responses</button>
+            }
+            @if (surveyCommonService.flowType().scratch) {
+            <button class="more-options" type="button" (click)="toggleMoreResponseOptions()">
+              <span aria-hidden="true">{{ showMoreResponseOptions ? '−' : '+' }}</span>
+              {{ showMoreResponseOptions ? 'Fewer options' : 'More options' }}
+            </button>
+            }
+```
 
-Across all in-scope app source locations (`libs/`, `apps/` [absent], and root
-`src/`), neither string appears anywhere. This confirms the earlier Phase 1
-finding was not an artifact of a narrow search path — the two `data-test-id`
-values are not present in any first-party template or TypeScript source file in
-this repository, in any lib or app. (No node_modules/dist/build-output search
-was performed or reported here, per scope.)
+## 3. `data-test-id` status and proposals
+
+Neither button currently has a `data-test-id`.
+
+Existing style reference in this file: `data-test-id="proceed-to-survey"` —
+kebab-case, verb/noun phrase, no `btn-`/`-button` prefix or suffix.
+
+### Response count button — proposed change
+
+Since these buttons are generated dynamically per `count` value, the id must be
+interpolated per-instance (each count needs a distinct, stable id for
+automation to target a specific response count):
+
+```html
+            <button [class.selected]="selectedResponses === count" (click)="selectResponse(count)" [attr.data-test-id]="'select-response-count-' + count">{{ count }}
+```
+
+Resulting ids: `select-response-count-100`, `select-response-count-150`,
+`select-response-count-200`, ... `select-response-count-1000`.
+
+### "+ More options" button — proposed change
+
+```html
+            <button class="more-options" type="button" data-test-id="toggle-more-response-options" (click)="toggleMoreResponseOptions()">
+```
+
+No changes have been applied — this file is investigation/proposal only.
