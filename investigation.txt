@@ -1,123 +1,207 @@
-# Investigation: `niq-report-card` Click Handling (Start from scratch tile)
+# Pull/Merge Audit — investigation/data-test-id-locators
 
-Investigation only — **no code was changed** for this task.
+Investigation only. No commits, pushes, or state changes were made while producing this report.
+Repo was in `MERGING` state (all conflicts resolved, merge not yet committed) at the time of this audit.
 
-## 1. Full HTML for the "Start from scratch" `<niq-report-card>`
+## 1. Commit graph (`git log --oneline --all --graph -20`)
 
-File: [libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html#L6)
-
-```html
-<niq-report-card variant="one-third" size="small" (click)="navigateToSelectPanelist()" data-test-id="start-from-scratch">
-    <div card-body>
-        <div class="icon-circle">
-            <niq-icon iconName="edit" size="regular"></niq-icon>
-        </div>
-        <div class="card-text">
-            <p class="card-title">Start from scratch</p>
-            <p class="card-subtitle">Blank survey, add what you want</p>
-        </div>
-    </div>
-</niq-report-card>
+```
+* b519e79 (HEAD -> investigation/data-test-id-locators) Remove the my asset button locators
+| * b286744 (origin/investigation/data-test-id-locators) Merge branch 'main' into investigation/data-test-id-locators
+|/|
+| *   ab36f57 (origin/main, origin/HEAD, main) Merge pull request #142 from niq-enterprise/feature/RBOC-222559
+| |\
+| | *   816514b Merge branch 'main' into feature/RBOC-222559
+| | |\
+| | |/
+| |/|
+| | * ef5eb1a Cleaned up my assets page
+| | * 8d3897d (origin/feature/RBOC-222559) Fixed test case issue
+| | *   56ab0d3 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222559
+| | |\
+| | * | 1485f6a Surveyhome page navigation
+* | | | 9c3c4e4 Add the data-test-id locator access Survey Mod Components for automation locators
+| |_|/
+|/| |
+| | | * 404532a (refs/stash) On investigation/data-test-id-locators: jfrog registry fix
+| |_|/|
+|/| | |
+| | | * 4f3cacf index on investigation/data-test-id-locators: 64e19b4 RE repo updated successfully with Survey Mod lib version 26.20.3-dev
+| |_|/
+|/| |
+| | | * 7f72bb2 (origin/feature/RBOC-220759-create-results-dashboard-shell) RBOC-220759: address PR review feedback ...
+| | | * 9c90b3f RBOC-220759: removed unused import
+| | | * 9f00c5a RBOC-220759: add data-test-id selectors to survey results flow components
+| | | * 472941f RBOC-220759: update the css of summary card
+| | | * 7a23a9b RBOC-220759: shorten CSS class prefixes
+...
 ```
 
-## 2. `navigateToSelectPanelist()` method
+**Key nodes:**
+- `HEAD` (local) = `b519e79` "Remove the my asset button locators" — your own local commit, made **2026-09-25T13:25:36+05:30**, authored as `Yogesh Upadhyay <yogesh.upadhyay@coforge.com>`.
+- `origin/investigation/data-test-id-locators` = `b286744` "Merge branch 'main' into investigation/data-test-id-locators" — committed **2026-09-24T19:01:50+05:30**, authored as `Yogesh Upadhyay <Yogesh.Upadhyay.consultant@nielseniq.com>` (i.e. also you, under a different git identity).
+- Common ancestor of both = `9c3c4e4` "Add the data-test-id locator access Survey Mod Components for automation locators" — committed **2026-09-24T18:30:45+05:30**.
+- `b286744` is a merge of `origin/main` (`ab36f57`, PR #142, itself merging `feature/RBOC-222559`) into `origin/investigation/data-test-id-locators`.
 
-File: [libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts](../../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts#L32)
+## 2 & 3. Per-file commit history, author, and date
 
-```typescript
-navigateToSelectPanelist(): void {
-    this.surveyCommonService.resetState();
-    this.router.navigate(['/survey/select-panelist']);
-}
+### `e2e/.env.example`
+| Commit | Date | Author |
+|---|---|---|
+| bf7c4ea | 2026-08-17T00:56:27+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| b59af9c | 2026-08-14T15:27:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 68aa3c3 | 2026-07-27T12:31:34+05:30 | Yogesh Upadhyay <Yogesh.Upadhyay.consultant@nielseniq.com> |
+| 2cfb0ec | 2026-07-24T14:57:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+
+**Author:** You (all commits, under older `@encora.com` / `@nielseniq.com` identities you've used previously — not `@coforge.com`).
+
+### `e2e/package-lock.json`
+| Commit | Date | Author |
+|---|---|---|
+| b59af9c | 2026-08-14T15:27:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| fba7862 | 2026-08-13T15:20:02+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| eaaf034 | 2026-08-07T17:57:20+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| a8d31b6 | 2026-08-06T18:14:26+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 6acca2c | 2026-08-06T16:51:34+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| f31bd11 | 2026-08-04T16:45:19+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 2cfb0ec | 2026-07-24T14:57:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+
+**Author:** You (all commits, `@encora.com` identity).
+
+### `e2e/playwright.config.ts`
+| Commit | Date | Author |
+|---|---|---|
+| 795a387 | 2026-08-27T16:05:16+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 01eff84 | 2026-08-27T15:26:29+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 8965fca | 2026-08-18T06:24:01Z | copilot-swe-agent[bot] |
+| b59af9c | 2026-08-14T15:27:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| fba7862 | 2026-08-13T15:20:02+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| c0ac347 | 2026-08-12T17:49:38+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 2011b9d | 2026-08-07T00:06:45+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 6e30fe1 | 2026-08-06T15:36:58+05:30 | Yogesh Upadhyay <Yogesh.Upadhyay.consultant@nielseniq.com> |
+| 24d3a12 / 6858d95 | 2026-08-06 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 0a94317 | 2026-08-05T18:06:41+05:30 | Pragadeshwari M <Pragadeshwari.Mahalingam@nielseniq.com> |
+| f31bd11 | 2026-08-04T16:45:19+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+| 33828e0 | 2026-07-24T15:11:02Z | copilot-swe-agent[bot] |
+| 2cfb0ec | 2026-07-24T14:57:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+
+**Author:** Predominantly you (multiple prior git identities). One line touched by `copilot-swe-agent[bot]` (automated PR-suggestion bot) and one by Pragadeshwari M (code-review suggestion commit).
+
+### `e2e/playwright/reporters/grafana-reporter.ts` (new file — not yet on local HEAD, found via `--all`)
+| Commit | Date | Author |
+|---|---|---|
+| fc3c8a8 | 2026-09-23T11:16:17+05:30 | Yogesh Upadhyay <Yogesh.Upadhyay.consultant@nielseniq.com> |
+| 8bcc569 | 2026-09-22T17:52:19+05:30 | Yogesh Upadhyay <Yogesh.upadhyay@coforge.com> |
+
+**Author:** You — created 2026-09-22 on `feature/grafana-reporting-setup` under your current `@coforge.com` identity, fixed 2026-09-23.
+
+### `e2e/utils/configurationDetails.ts`
+| Commit | Date | Author |
+|---|---|---|
+| 8965fca | 2026-08-18T06:24:01Z | copilot-swe-agent[bot] |
+| b59af9c | 2026-08-14T15:27:04+05:30 | Yogesh Upadhyay <yogesh.upadhyay@encora.com> |
+
+**Author:** You (b59af9c), plus one automated fix commit from `copilot-swe-agent[bot]`.
+
+### `libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.scss`
+| Commit | Date | Author |
+|---|---|---|
+| 1678eb6 | 2026-09-19T08:17:58+05:30 | Mahendra <Mahendra.Y.consultant+niq@nielseniq.com> |
+| aafc434 | 2026-09-18T14:30:56+05:30 | Mahendra |
+| 4d7a1fb | 2026-09-18T14:19:00+05:30 | Mahendra |
+| 0677a51 | 2026-08-12T16:43:06+05:30 | Deep Chander Bhatt |
+| 506d97b | 2026-08-11T13:02:03Z | copilot-swe-agent[bot] |
+| 0163f1d | 2026-08-11T18:18:30+05:30 | Deep Chander Bhatt |
+| 1d35ea4 | 2026-08-07T19:43:46+05:30 | Deep Chander Bhatt |
+| d73ac5f | 2026-08-07T13:15:19+05:30 | Deep Chander Bhatt |
+| bef961b | 2026-08-07T10:49:31+05:30 | Deep Chander Bhatt |
+| 8fa14d3 | 2026-07-21T15:07:31+05:30 | Mahendra |
+| caa38c4 | 2026-07-16T18:19:24+05:30 | Vaibhav Ashokrao Dhole |
+
+**Author:** **Not you.** Most recent, incoming change is Mahendra Y (2026-09-19), "Replaced button with niq link" — part of the `feature/RBOC-222559` "Create folder Dialogbox" work merged into `main` via PR #142.
+
+### `libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/*` (4 new files: `.html`, `.scss`, `.spec.ts`, `.ts`)
+| Commit | Date | Author | Files |
+|---|---|---|---|
+| 8d3897d | 2026-09-23T14:16:24+05:30 | Mahendra | `.spec.ts` |
+| 1485f6a | 2026-09-23T13:41:35+05:30 | Mahendra | `.html`, `.scss`, `.spec.ts`, `.ts` (creation) |
+
+**Author:** **Not you.** All 4 files were created/introduced by Mahendra Y on 2026-09-23 ("Surveyhome page navigation" / "Fixed test case issue"), part of `feature/RBOC-222559`.
+
+### `libs/survey-mod-lib/src/lib/survey-mod.routes.ts`
+| Commit | Date | Author |
+|---|---|---|
+| e01e4cd | 2026-09-18T20:56:33+05:30 | Jamaltheen S |
+| 87b7067 | 2026-09-11T12:00:48+05:30 | Panchi Verma |
+| e25b436 | 2026-08-31T20:35:07+05:30 | Deep Chander Bhatt |
+| caa38c4 | 2026-07-16T18:19:24+05:30 | Vaibhav Ashokrao Dhole |
+| ...(older history)... | | Lokkeshwar Y, Panchi Verma |
+
+**Author:** **Not you.** Most recent, incoming change is Jamaltheen S (2026-09-18) "Arthur rename and lazy loading added".
+
+### `libs/survey-mod-lib/src/public-api.ts`
+(Note: actual path is `libs/survey-mod-lib/src/public-api.ts`, not `.../src/lib/public-api.ts`.)
+| Commit | Date | Author |
+|---|---|---|
+| 76584ce | 2026-08-25T12:57:00+05:30 | Jamaltheen S |
+| 1d35ea4 | 2026-08-07T19:43:46+05:30 | Deep Chander Bhatt |
+| 8fa14d3 | 2026-07-21T15:07:31+05:30 | Mahendra |
+| ...(older history)... | | Vaibhav Ashokrao Dhole, Jamaltheen S |
+
+**Author:** **Not you.** Most recent, incoming change is Jamaltheen S (2026-08-25) "Urls updated in environment and refactored".
+
+## Summary — mine vs. others
+
+| File | Incoming change authored by | Mine? |
+|---|---|---|
+| e2e/.env.example | You (@encora.com) | Yes |
+| e2e/package-lock.json | You (@encora.com) | Yes |
+| e2e/playwright.config.ts | You (@encora.com), +1 bot, +1 reviewer suggestion | Yes (mostly) |
+| e2e/playwright/reporters/grafana-reporter.ts | You (@coforge.com / @nielseniq.com) | Yes |
+| e2e/utils/configurationDetails.ts | You (@encora.com), +1 bot fix | Yes (mostly) |
+| my-assets-page.component.scss | Mahendra | No |
+| survey-homepage/* (4 files) | Mahendra | No |
+| survey-mod.routes.ts | Jamaltheen S (+ others historically) | No |
+| public-api.ts | Jamaltheen S (+ others historically) | No |
+
+Note: several of "your" commits were made under three different git identities over time —
+`yogesh.upadhyay@encora.com`, `Yogesh.Upadhyay.consultant@nielseniq.com`, and your current
+`Yogesh.upadhyay@coforge.com` — all the same person, just different configured emails per machine/period.
+
+## 4. Were these commits already on `origin/investigation/data-test-id-locators` before today's pull?
+
+**Yes — they were already on origin.** Evidence:
+
+- `origin/investigation/data-test-id-locators` currently points at `b286744`, a merge commit
+  ("Merge branch 'main' into investigation/data-test-id-locators") that was **committed on
+  2026-09-24T19:01:50+05:30** (yesterday evening), authored by you
+  (`Yogesh.Upadhyay.consultant@nielseniq.com`).
+- That merge commit brings in `origin/main` at `ab36f57` (PR #142, merged `feature/RBOC-222559`),
+  which is where all the Mahendra/Jamaltheen/Panchi/Deep changes above originate.
+- Your local branch tip today is `b519e79` ("Remove the my asset button locators"), committed
+  **2026-09-25T13:25:36+05:30** (today), on top of the older common ancestor `9c3c4e4`
+  (2026-09-24T18:30:45+05:30) — i.e. your local branch had **not yet incorporated** `b286744`
+  before you ran `git pull origin investigation/data-test-id-locators` today.
+- Conclusion: `b286744` (and everything it carries — the `main`/`feature/RBOC-222559` changes to
+  `my-assets-page.component.scss`, the new `survey-homepage` files, `survey-mod.routes.ts`,
+  `public-api.ts`) was pushed to origin **yesterday (2026-09-24)**, before your own commit
+  `b519e79` today. Today's `git pull` simply **fetched a merge commit that already existed on the
+  remote**; nothing "just arrived" from someone else's fresh push during/after your pull — it was
+  waiting on origin and is now being merged into your local branch (current `MERGING` state).
+
+## Reflog excerpt (for reference)
+
+```
+b519e79 HEAD@{2026-09-25T13:25:36+05:30}: commit: Remove the my asset button locators
+9c3c4e4 HEAD@{2026-09-24T18:30:45+05:30}: commit: Add the data-test-id locator access Survey Mod Components for automation locators
+64e19b4 HEAD@{2026-09-24T17:46:30+05:30}: checkout: moving from feature/generate-survey-ai-automation to investigation/data-test-id-locators
+3796011 HEAD@{2026-09-24T00:39:50+05:30}: checkout: moving from main to feature/generate-survey-ai-automation
+ab36f57 HEAD@{2026-09-24T00:38:44+05:30}: pull: Fast-forward
+64e19b4 HEAD@{2026-09-24T00:38:32+05:30}: checkout: moving from investigation/data-test-id-locators to main
 ```
 
-`(click)` is bound directly on the `<niq-report-card>` tag; this method just
-resets some shared state and navigates — nothing about the click itself is
-handled here.
+## No state was changed
 
-## 3. Is `niq-report-card` a design-system component? What does it do internally?
-
-Yes. It's imported via `CardModule` from `@nielseniq/athena-core` (see
-`my-assets-page.component.ts` imports: `CardModule, IconModule, ButtonModule, ... from '@nielseniq/athena-core'`).
-Its compiled source was located in
-`node_modules/@nielseniq/athena-core/fesm2022/nielseniq-athena-core.mjs`
-(class `ReportCardComponent`, `selector: 'niq-report-card'`).
-
-**Its own template root** (simplified from the compiled bundle):
-```html
-<div class="card-container"
-     [class.one-third-width]="variant() === 'one-third'"
-     [class.half-width]="variant() === 'half'"
-     [class.full-width]="variant() === 'full'"
-     ... (more size/variant classes) ...>
-  <div class="tick" *ngIf="selected()"> ... </div>
-  <div class="card-header">
-    <ng-content select="[card-header]"></ng-content>
-    <niq-icon *ngIf="variant() === 'multi'" (click)="collapsed = !collapsed" ...></niq-icon>
-    <div class="card-title" (dblclick)="onHeaderDoubleClick()"> ... </div>
-  </div>
-  <!-- body/content area where our [card-body] projected content lands -->
-  ...
-</div>
-```
-
-**Host bindings / listeners on the component itself:**
-```
-host: { listeners: { "input": "onInputChange($event)" } }
-```
-That's the **only** native event the component itself listens for on its
-host — and it's for the inline header-rename textfield feature, unrelated to
-whole-card clicks. There is **no** `(click)` host listener, no
-`stopPropagation()`/`preventDefault()` anywhere in `ReportCardComponent`'s own
-code, and **no dedicated `@Output()` for "card clicked"** (its only output is
-`headerChangeEvent` aliased `headerChange`, for the rename feature).
-
-**Conclusion — does it intercept or block the click?** No. Because the
-component doesn't attach its own click listener or call
-`stopPropagation()`/`preventDefault()` anywhere in its template or class, a
-native `click` fired anywhere inside the projected `[card-body]` content (the
-icon, the title text, etc.) bubbles normally, through `card-container`, up to
-the host custom element `<niq-report-card>` — which is exactly where our own
-`(click)="navigateToSelectPanelist()"` binding lives. Angular attaches that
-listener directly to the host DOM node, so it fires correctly on a real click
-anywhere in the card. **This is not the cause of any bug** — the click
-mechanism itself works as intended.
-
-## 4. Does it render as a real clickable/native element, or just CSS styling?
-
-**Just CSS styling on a plain `<div>` — no built-in clickable semantics.**
-
-- The component's real DOM root is `<div class="card-container" ...>` — not
-  a `<button>`, not an `<a>`, and it has no `role="button"`, no `tabindex`,
-  and no keyboard handling (Enter/Space) for the whole-card click. The only
-  keyboard handling in this component (`onElementKeydown`) is attached to the
-  small chevron `<niq-icon>` used for the "multi" collapse/expand variant —
-  unrelated to whole-card activation.
-- Checked the component's own compiled styles for `cursor:pointer`: it is
-  applied **only** to `.card-header>niq-icon` (i.e. that same
-  collapse/expand chevron), **not** to `.card-container` as a whole. So
-  hovering over most of the card (the icon/title/subtitle area used by
-  "Start from scratch", etc.) does **not** show a pointer cursor by default —
-  there's no visual affordance from the design system that the card is
-  clickable; that relies entirely on whoever consumes it (this repo) adding
-  `(click)` and any desired styling themselves.
-- Net effect in plain terms: `niq-report-card` is a purely presentational
-  container. It happens to work as a click target because native DOM click
-  events always bubble regardless of the tag being a `<div>` vs a `<button>`,
-  and Angular's `(click)` binding on the host catches that bubbled event —
-  but it provides none of the accessibility/semantic guarantees a real
-  `<button>` would (keyboard activation, `role`, focus styling, pointer
-  cursor). That's a UX/accessibility gap in the design-system component
-  itself, not something wrong in this repo's usage, and not something that
-  would break a Playwright `.click()` on the `data-test-id` locator.
-
-## Summary
-
-| Question | Finding |
-|---|---|
-| Where does `(click)` live? | Directly on the `<niq-report-card>` host tag in `my-assets-page.component.html` — same element as `data-test-id`. |
-| Does `niq-report-card` intercept/stop the click? | No — no host click listener, no `stopPropagation`/`preventDefault` anywhere in the component; native click bubbles through normally. |
-| Is it a real interactive element (button-like)? | No — root DOM node is a plain `<div class="card-container">`, no `role`, no `tabindex`, no keyboard activation for the whole card. |
-| Does it apply `cursor:pointer` to the whole card? | No — only to the small chevron icon used in the "multi" variant, not to the card body/container. |
-
-No template or TypeScript files were modified for this investigation.
+This investigation ran only read-only commands: `git log`, `git status`, `git reflog show`.
+No `git commit`, `git push`, `git merge --abort`, or similar was executed. The repo remains in the
+same `MERGING` (conflicts resolved, merge not committed) state it was in before this audit.
