@@ -1,207 +1,134 @@
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> npx playwright test
-◇ injected env (20) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms accepted successfully.
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+import { test, expect } from '@playwright/test';
 
-Running 20 tests using 2 workers
-
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-  ✘   1 … the Start from scratch option on the survey home page @LandStartFromScratch (1.2m)
-  ✘   2 …th a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (5.0m)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  -   3 …Should select the dataset and confirm the Choose a dataset screen @DatasetSelection
-  -   4 …ilters: Should enable Search for Panelists after all 5 filters are set @DataSummary
-  -   5 …ld enable Proceed to survey builder after selecting a response count @ResponseCount
-  -   6 …: Should navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-  ✘   7 … the Start from scratch option on the survey home page @LandStartFromScratch (1.1m)
-Auth state loaded from storage/auth.json
-  -   8 …Should select the dataset and confirm the Choose a dataset screen @DatasetSelection
-  -   9 …ilters: Should enable Search for Panelists after all 5 filters are set @DataSummary
-  -  10 …ld enable Proceed to survey builder after selecting a response count @ResponseCount
-  -  11 …: Should navigate to the Build Survey page after proceeding @ProceedToSurveyBuilder
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-  ✘  12 …th a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (5.0m)
-Auth state loaded from storage/auth.json
-  -  13 …tion: Should select the dataset type and dataset @StartWithPrompt @DatasetSelection
-  -  14 …uld set dimension selections and search for panelists @StartWithPrompt @DataSummary
-  -  15 …pt › Response Count: Should select a response count @StartWithPrompt @ResponseCount
-  -  16 …ld fill the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-  -  17 …tion: Should select the dataset type and dataset @StartWithPrompt @DatasetSelection
-  -  18 …uld set dimension selections and search for panelists @StartWithPrompt @DataSummary
-  -  19 …pt › Response Count: Should select a response count @StartWithPrompt @ResponseCount
-  -  20 …ld fill the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
-
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Startfrom Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-
-    Error: expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-  2) [chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Startwith a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
-
-    Test timeout of 300000ms exceeded.
-
-    Error: Failed to click Start with a prompt: locator.click: Target page, context or browser has been closed
-    Call log:
-      - waiting for locator('text=Start with a prompt')
-
-
-       at ..\page-objects\survey\start-with-prompt.page.ts:28
-
-      26 |       await startWithPrompt.click();
-      27 |     } catch (error) {
-    > 28 |       throw new Error(`Failed to click Start with a prompt: ${error instanceof Error ? error.message : error}`);
-         |             ^
-      29 |     }
-      30 |   }
-      31 |
-        at StartWithPromptPage.clickStartWithPrompt (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:28:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:33:5
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-chromium\error-context.md
-
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-  3) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch ›Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-
-    Error: expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-  4) [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt ›Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
-
-    Test timeout of 300000ms exceeded.
-
-    Error: Failed to click Start with a prompt: locator.click: Target page, context or browser has been closed
-    Call log:
-      - waiting for locator('text=Start with a prompt')
-
-
-       at ..\page-objects\survey\start-with-prompt.page.ts:28
-
-      26 |       await startWithPrompt.click();
-      27 |     } catch (error) {
-    > 28 |       throw new Error(`Failed to click Start with a prompt: ${error instanceof Error ? error.message : error}`);
-         |             ^
-      29 |     }
-      30 |   }
-      31 |
-        at StartWithPromptPage.clickStartWithPrompt (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:28:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:33:5
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-Microsoft-Edge\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    Error Context: test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-94325-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────
-
-  4 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-    [chromium] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
-    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-    [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:28:7 › Start with a prompt › Start with a Prompt: Should display the Start with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt 
-  16 did not run
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> 
+test('test', async ({ page }) => {
+  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=1E6GnEomZ4axpBKx1xnGP96s8k8CcaF2XzYjN1taU_c&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=Iv7G05T0iXwGIUwWUFfJRDU5hJLJT-i_iFj89qltu3c&code_challenge=RfCTPtmOqXCwG7F8F7WwgBBloTr_SCc2DsYS5_NzCxA&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username' }).click({
+    modifiers: ['ControlOrMeta']
+  });
+  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/select-panelist');
+  await page.getByText('Next').click();
+  await page.getByText('Next').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
+  await page.locator('niq-checkbox').nth(5).click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.locator('#report-btn-run').click();
+  await page.locator('[data-test-id="select-response-count-250"]').click();
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.locator('[data-test-id="question-type-SINGLE_CHOICE"]').click();
+  await page.locator('[data-test-id="question-text-input-1-input"]').click();
+  await page.locator('[data-test-id="question-text-input-1-input"]').fill('sdsdfsdff');
+  await page.getByRole('textbox', { name: 'Option 1' }).click();
+  await page.getByRole('textbox', { name: 'Option 1' }).fill('sdfsdf');
+  await page.getByRole('textbox', { name: 'Option 2' }).click();
+  await page.getByRole('textbox', { name: 'Option 2' }).fill('s');
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('[data-test-id="question-type-MULTIPLE_CHOICE"]').click();
+  await page.locator('[data-test-id="question-text-input-2-input"]').fill('dsfdsfds');
+  await page.getByRole('textbox', { name: 'Option 1' }).click();
+  await page.getByRole('textbox', { name: 'Option 1' }).fill('dsfsdf');
+  await page.getByRole('textbox', { name: 'Option 2' }).click();
+  await page.getByRole('textbox', { name: 'Option 2' }).fill('sdfdsf');
+  await page.locator('[data-test-id="-input-checkbox"]').check();
+  await page.locator('niq-button').filter({ hasText: 'Add option' }).click();
+  await page.getByRole('textbox', { name: 'Option 3' }).click();
+  await page.getByRole('textbox', { name: 'Option 3' }).fill('dsfdsfdsf');
+  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
+  await page.locator('div').filter({ hasText: '1. sdsdfsdff sdfsdfs Add' }).nth(2).click();
+  await page.locator('[data-test-id="question-type-NET_PROMOTER_SCORE"]').click();
+  await page.locator('[data-test-id="question-text-input-3-input"]').fill('sdfdsfdsfds');
+  await page.locator('[data-test-id="question-text-input-3-input"]').click();
+  await page.locator('[data-test-id="-input-checkbox"]').check();
+  await page.getByText('sdsdfsdff sdfsdfs2.dsfdsfds * Add question Single Choice Multiple Choice Rating').click();
+  await page.locator('[data-test-id="question-type-SINGLE_POINT_SCALE"]').click();
+  await page.locator('[data-test-id="question-type-SINGLE_POINT_SCALE"]').click();
+  await page.locator('[data-test-id="question-text-input-4-input"]').click();
+  await page.locator('[data-test-id="question-text-input-4-input"]').fill('sdfdsfds');
+  await page.getByRole('textbox', { name: 'Row 1' }).click();
+  await page.getByRole('textbox', { name: 'Row 1' }).fill('fdsfds');
+  await page.getByRole('textbox', { name: 'Row 2' }).click();
+  await page.getByRole('textbox', { name: 'Row 2' }).fill('dsfsdf');
+  await page.getByRole('textbox', { name: 'Column 1' }).click();
+  await page.getByRole('textbox', { name: 'Column 1' }).fill('dsfdsf');
+  await page.getByRole('textbox', { name: 'Column 2' }).click();
+  await page.getByRole('textbox', { name: 'Column 2' }).fill('dsfdsf');
+  await page.getByRole('button').nth(4).click();
+  await page.locator('niq-button').filter({ hasText: 'Row' }).click();
+  await page.getByRole('textbox', { name: 'Row 3' }).click();
+  await page.getByRole('textbox', { name: 'Row 3' }).fill('fsdfds');
+  await page.locator('niq-button').filter({ hasText: 'Column' }).click();
+  await page.getByRole('textbox', { name: 'Column 3' }).click();
+  await page.getByRole('textbox', { name: 'Column 3' }).fill('sdfdsf');
+  await page.locator('#cdk-drop-list-14').click();
+  await page.getByText('Multi Scale').click();
+  await page.locator('[data-test-id="question-type-MULTIPLE_POINT_SCALE"]').click();
+  await page.locator('[data-test-id="question-text-input-5-input"]').click();
+  await page.locator('[data-test-id="question-text-input-5-input"]').fill('sdfdsfsd');
+  await page.getByRole('textbox', { name: 'Row 1' }).click();
+  await page.getByRole('textbox', { name: 'Row 1' }).fill('sdfsddsf');
+  await page.getByRole('textbox', { name: 'Row 2' }).click();
+  await page.getByRole('textbox', { name: 'Row 2' }).fill('dsfsdf');
+  await page.getByRole('textbox', { name: 'Column 1' }).click();
+  await page.getByRole('textbox', { name: 'Column 1' }).fill('sdfsdf');
+  await page.getByRole('textbox', { name: 'Column 2' }).click();
+  await page.getByRole('textbox', { name: 'Column 2' }).fill('fdsdf');
+  await page.locator('[data-test-id="-input-checkbox"]').check();
+  await page.getByText('Save changes').click();
+  await page.getByText('Multiple Choice').click();
+  await page.locator('[data-test-id="question-text-input-6-input"]').click();
+  await page.locator('[data-test-id="question-text-input-6-input"]').fill('dsfdsf');
+  await page.getByRole('textbox', { name: 'Option 1' }).click();
+  await page.getByRole('textbox', { name: 'Option 1' }).fill('dsfds');
+  await page.getByRole('textbox', { name: 'Option 2' }).click();
+  await page.getByRole('textbox', { name: 'Option 2' }).fill('fsdfds');
+  await page.locator('#cdk-drop-list-14').click();
+  await page.locator('[data-test-id="review-survey"]').click();
+  await page.locator('[data-test-id="select-question-0"]').click();
+  await page.locator('[data-test-id="select-question-1"]').click();
+  await page.locator('[data-test-id="select-question-2"]').click();
+  await page.locator('[data-test-id="select-question-3"]').click();
+  await page.locator('[data-test-id="select-question-4"]').click();
+  await page.locator('[data-test-id="reorder-question-5"]').click();
+  await page.locator('[data-test-id="select-question-5-icon"]').click();
+  await page.locator('[data-test-id="select-question-0"]').click();
+  await page.locator('[data-test-id="select-question-1-icon"]').click();
+  await page.locator('[data-test-id="select-question-2-icon"]').click();
+  await page.locator('[data-test-id="select-question-3"]').click();
+  await page.locator('[data-test-id="reorder-question-4"]').click();
+  await page.locator('[data-test-id="select-question-4-icon"]').click();
+  await page.locator('[data-test-id="select-question-5"]').click();
+  await page.locator('[data-test-id="select-question-0"]').click();
+  await page.locator('niq-button').filter({ hasText: 'Delete' }).click();
+  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
+  await page.getByText('Unselect All').click();
+  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
+  await page.getByText('Expand All').click();
+  await page.locator('niq-button').filter({ hasText: 'Collapse All' }).click();
+  await page.getByText('Exit Review Mode').click();
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('.edit-icon').click();
+  await page.getByRole('textbox', { name: 'Survey Title' }).fill('Test Record');
+  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
+  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
+  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
+  await page.locator('[data-test-id="save-draft"]').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').click();
+  await page.getByRole('treeitem', { name: '  My Assets' }).click();
+  await page.locator('[data-test-id="save-pending-changes-button"]').click();
+  await page.locator('[data-test-id="publish-survey"]').click();
+  await page.locator('niq-button').filter({ hasText: 'Confirm' }).click();
+  await page.locator('[data-test-id="-description"]').click();
+});
