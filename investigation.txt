@@ -1,134 +1,311 @@
-import { test, expect } from '@playwright/test';
+# Survey Builder vs. Start-from-Scratch — Pattern Consistency Investigation
 
-test('test', async ({ page }) => {
-  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=1E6GnEomZ4axpBKx1xnGP96s8k8CcaF2XzYjN1taU_c&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=Iv7G05T0iXwGIUwWUFfJRDU5hJLJT-i_iFj89qltu3c&code_challenge=RfCTPtmOqXCwG7F8F7WwgBBloTr_SCc2DsYS5_NzCxA&code_challenge_method=S256');
-  await page.getByRole('textbox', { name: 'Username' }).click({
-    modifiers: ['ControlOrMeta']
+Investigation only — no code changes made. Actual on-disk file names differ
+slightly from the names given in the request; noted where relevant:
+
+- `e2e/page-objects/survey/survey-builder.page.ts` → actual file is
+  `e2e/page-objects/survey/surveyBuilder.page.ts`
+- `e2e/locators/survey/survey-builder.locator.json` → actual file is
+  `e2e/locators/survey/surveyBuilder.json`
+
+---
+
+## ⚠️ Critical defect found (outside the 4 requested checks)
+
+While reading `survey-builder.spec.ts` to answer Check 1, a broken test
+block was found. `TC_BS_05` is never closed before `TC_BS_06`'s
+`test.fixme(...)` begins, and the `addRatingQuestion()` call is missing
+entirely:
+
+```ts
+  test('TC_BS_05: Add a Rating question', { tag: '@RatingQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+  test.fixme(
+    'TC_BS_06: Add a Text question',
+    { tag: '@TextQuestion' },
+    async () => {
+      // BLOCKED: no confirmed locator for the "Text" question type exists yet
+      ...
+    }
+  );
+
+  test('TC_BS_07: Add an NPS question', { tag: '@NPSQuestion' }, async () => {
+    ...
+```
+
+There is no `});` closing `TC_BS_05` before `test.fixme('TC_BS_06'...)` and
+every test after it (`TC_BS_07`, `TC_BS_08`, `TC_BS_09`, `TC_BS_14`,
+`TC_BS_16`, and the describe block's own closing `});`) are all nested
+**inside** `TC_BS_05`'s async callback. `test(...)`/`test.fixme(...)` calls
+are plain function calls, so this is not a TypeScript type error (`npx tsc
+--noEmit` will not catch it) — it is a structural/runtime defect. Playwright
+requires `test()` to be registered during the synchronous top-level
+execution of the file/describe block, not from inside another test's async
+body, so at runtime this will either throw ("Test can only be defined in a
+test.describe or a test file") or silently fail to register `TC_BS_06`
+through `TC_BS_16` as their own tests.
+
+This is a regression, not a pattern difference from `start-from-scratch.spec.ts`
+(which has no such issue). Flagged here because it directly affects Check 1's
+file and must be fixed before the file is usable, but per your instructions
+no fix has been applied.
+
+---
+
+## Check 1 — Browser bootstrap (`basePage` via `BasePageFactory`)
+
+**Result: PASS** (structurally matches the reference pattern)
+
+`survey-builder.spec.ts` (current):
+```ts
+test.describe.serial('Survey Builder', () => {
+  let basePage: BasePage;
+
+  test.afterAll(async () => {
+    if (basePage) {
+      await basePage.getWebActions().closeBrowser();
+    }
   });
-  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
-  await page.getByRole('button', { name: 'Verify' }).click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/select-panelist');
-  await page.getByText('Next').click();
-  await page.getByText('Next').click();
-  await page.locator('[data-test-id="apply-dataset-btn"]').click();
-  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
-  await page.locator('[data-test-id="ds-closeButton"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
-  await page.locator('niq-checkbox').nth(5).click();
-  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
-  await page.locator('[data-test-id="ds-closeButton"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
-  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
-  await page.locator('#report-btn-run').click();
-  await page.locator('[data-test-id="select-response-count-250"]').click();
-  await page.locator('[data-test-id="proceed-to-survey"]').click();
-  await page.locator('[data-test-id="question-type-SINGLE_CHOICE"]').click();
-  await page.locator('[data-test-id="question-text-input-1-input"]').click();
-  await page.locator('[data-test-id="question-text-input-1-input"]').fill('sdsdfsdff');
-  await page.getByRole('textbox', { name: 'Option 1' }).click();
-  await page.getByRole('textbox', { name: 'Option 1' }).fill('sdfsdf');
-  await page.getByRole('textbox', { name: 'Option 2' }).click();
-  await page.getByRole('textbox', { name: 'Option 2' }).fill('s');
-  await page.locator('[data-test-id="add-question"]').click();
-  await page.locator('[data-test-id="question-type-MULTIPLE_CHOICE"]').click();
-  await page.locator('[data-test-id="question-text-input-2-input"]').fill('dsfdsfds');
-  await page.getByRole('textbox', { name: 'Option 1' }).click();
-  await page.getByRole('textbox', { name: 'Option 1' }).fill('dsfsdf');
-  await page.getByRole('textbox', { name: 'Option 2' }).click();
-  await page.getByRole('textbox', { name: 'Option 2' }).fill('sdfdsf');
-  await page.locator('[data-test-id="-input-checkbox"]').check();
-  await page.locator('niq-button').filter({ hasText: 'Add option' }).click();
-  await page.getByRole('textbox', { name: 'Option 3' }).click();
-  await page.getByRole('textbox', { name: 'Option 3' }).fill('dsfdsfdsf');
-  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
-  await page.locator('div').filter({ hasText: '1. sdsdfsdff sdfsdfs Add' }).nth(2).click();
-  await page.locator('[data-test-id="question-type-NET_PROMOTER_SCORE"]').click();
-  await page.locator('[data-test-id="question-text-input-3-input"]').fill('sdfdsfdsfds');
-  await page.locator('[data-test-id="question-text-input-3-input"]').click();
-  await page.locator('[data-test-id="-input-checkbox"]').check();
-  await page.getByText('sdsdfsdff sdfsdfs2.dsfdsfds * Add question Single Choice Multiple Choice Rating').click();
-  await page.locator('[data-test-id="question-type-SINGLE_POINT_SCALE"]').click();
-  await page.locator('[data-test-id="question-type-SINGLE_POINT_SCALE"]').click();
-  await page.locator('[data-test-id="question-text-input-4-input"]').click();
-  await page.locator('[data-test-id="question-text-input-4-input"]').fill('sdfdsfds');
-  await page.getByRole('textbox', { name: 'Row 1' }).click();
-  await page.getByRole('textbox', { name: 'Row 1' }).fill('fdsfds');
-  await page.getByRole('textbox', { name: 'Row 2' }).click();
-  await page.getByRole('textbox', { name: 'Row 2' }).fill('dsfsdf');
-  await page.getByRole('textbox', { name: 'Column 1' }).click();
-  await page.getByRole('textbox', { name: 'Column 1' }).fill('dsfdsf');
-  await page.getByRole('textbox', { name: 'Column 2' }).click();
-  await page.getByRole('textbox', { name: 'Column 2' }).fill('dsfdsf');
-  await page.getByRole('button').nth(4).click();
-  await page.locator('niq-button').filter({ hasText: 'Row' }).click();
-  await page.getByRole('textbox', { name: 'Row 3' }).click();
-  await page.getByRole('textbox', { name: 'Row 3' }).fill('fsdfds');
-  await page.locator('niq-button').filter({ hasText: 'Column' }).click();
-  await page.getByRole('textbox', { name: 'Column 3' }).click();
-  await page.getByRole('textbox', { name: 'Column 3' }).fill('sdfdsf');
-  await page.locator('#cdk-drop-list-14').click();
-  await page.getByText('Multi Scale').click();
-  await page.locator('[data-test-id="question-type-MULTIPLE_POINT_SCALE"]').click();
-  await page.locator('[data-test-id="question-text-input-5-input"]').click();
-  await page.locator('[data-test-id="question-text-input-5-input"]').fill('sdfdsfsd');
-  await page.getByRole('textbox', { name: 'Row 1' }).click();
-  await page.getByRole('textbox', { name: 'Row 1' }).fill('sdfsddsf');
-  await page.getByRole('textbox', { name: 'Row 2' }).click();
-  await page.getByRole('textbox', { name: 'Row 2' }).fill('dsfsdf');
-  await page.getByRole('textbox', { name: 'Column 1' }).click();
-  await page.getByRole('textbox', { name: 'Column 1' }).fill('sdfsdf');
-  await page.getByRole('textbox', { name: 'Column 2' }).click();
-  await page.getByRole('textbox', { name: 'Column 2' }).fill('fdsdf');
-  await page.locator('[data-test-id="-input-checkbox"]').check();
-  await page.getByText('Save changes').click();
-  await page.getByText('Multiple Choice').click();
-  await page.locator('[data-test-id="question-text-input-6-input"]').click();
-  await page.locator('[data-test-id="question-text-input-6-input"]').fill('dsfdsf');
-  await page.getByRole('textbox', { name: 'Option 1' }).click();
-  await page.getByRole('textbox', { name: 'Option 1' }).fill('dsfds');
-  await page.getByRole('textbox', { name: 'Option 2' }).click();
-  await page.getByRole('textbox', { name: 'Option 2' }).fill('fsdfds');
-  await page.locator('#cdk-drop-list-14').click();
-  await page.locator('[data-test-id="review-survey"]').click();
-  await page.locator('[data-test-id="select-question-0"]').click();
-  await page.locator('[data-test-id="select-question-1"]').click();
-  await page.locator('[data-test-id="select-question-2"]').click();
-  await page.locator('[data-test-id="select-question-3"]').click();
-  await page.locator('[data-test-id="select-question-4"]').click();
-  await page.locator('[data-test-id="reorder-question-5"]').click();
-  await page.locator('[data-test-id="select-question-5-icon"]').click();
-  await page.locator('[data-test-id="select-question-0"]').click();
-  await page.locator('[data-test-id="select-question-1-icon"]').click();
-  await page.locator('[data-test-id="select-question-2-icon"]').click();
-  await page.locator('[data-test-id="select-question-3"]').click();
-  await page.locator('[data-test-id="reorder-question-4"]').click();
-  await page.locator('[data-test-id="select-question-4-icon"]').click();
-  await page.locator('[data-test-id="select-question-5"]').click();
-  await page.locator('[data-test-id="select-question-0"]').click();
-  await page.locator('niq-button').filter({ hasText: 'Delete' }).click();
-  await page.locator('niq-button').filter({ hasText: 'Select All' }).click();
-  await page.getByText('Unselect All').click();
-  await page.locator('niq-button').filter({ hasText: 'Expand All' }).click();
-  await page.getByText('Expand All').click();
-  await page.locator('niq-button').filter({ hasText: 'Collapse All' }).click();
-  await page.getByText('Exit Review Mode').click();
-  await page.locator('[data-test-id="add-question"]').click();
-  await page.locator('.edit-icon').click();
-  await page.getByRole('textbox', { name: 'Survey Title' }).fill('Test Record');
-  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
-  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
-  await page.locator('div').filter({ hasText: '1.dsfdsfds *2.sdfdsfdsfds * 1' }).nth(2).click();
-  await page.locator('[data-test-id="save-draft"]').click();
-  await page.locator('[data-test-id="save-a-copy-title-input"]').click();
-  await page.getByRole('treeitem', { name: '  My Assets' }).click();
-  await page.locator('[data-test-id="save-pending-changes-button"]').click();
-  await page.locator('[data-test-id="publish-survey"]').click();
-  await page.locator('niq-button').filter({ hasText: 'Confirm' }).click();
-  await page.locator('[data-test-id="-description"]').click();
-});
+
+  test('Setup: reach Build Survey page via Start from Scratch', { tag: '@SurveyBuilderSetup' }, async () => {
+    basePage = await BasePageFactory.createBasePage();
+    const startFromScratchPage = new StartFromScratchPage(basePage);
+    ...
+  });
+
+  test('TC_BS_02: Edit survey title', { tag: '@EditSurveyTitle' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    ...
+  });
+```
+
+`start-from-scratch.spec.ts` (reference):
+```ts
+test.describe.serial('Start from scratch', () => {
+  let basePage: BasePage;
+  let surveyPage: StartFromScratchPage;
+  let selectPanelistPage: SelectPanelistPage;
+
+  test.afterAll(async () => {
+    if (basePage) {
+      await basePage.getWebActions().closeBrowser();
+    }
+  });
+
+  test('Start from Scratch: ...', { tag: '@LandStartFromScratch' }, async () => {
+    basePage = await BasePageFactory.createBasePage();
+    surveyPage = new StartFromScratchPage(basePage);
+    ...
+  });
+
+  test('Dataset Selection: ...', { tag: '@DatasetSelection' }, async () => {
+    await surveyPage.selectProductOffering('');
+    ...
+  });
+```
+
+No test in `survey-builder.spec.ts` takes an `async ({ page }) =>` fixture
+argument anymore; every test either creates `basePage` once (first test) or
+reuses the describe-scoped variable. `afterAll` closes via
+`basePage.getWebActions().closeBrowser()`, guarded by the same `if (basePage)`
+check as the reference. No differences found for this check.
+
+---
+
+## Check 2 — Dataset lookup (no hardcoded key)
+
+**Result: PASS**
+
+`survey-builder.spec.ts` (current):
+```ts
+import devTestData from '../../test-data/dev-test-data.json';
+
+const datasetNames = Object.keys(devTestData.datasets) as Array<keyof typeof devTestData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = devTestData.datasets[DATASET_NAME];
+
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
+```
+
+`start-from-scratch.spec.ts` (reference):
+```ts
+import testData from '../../test-data/dev-test-data.json';
+
+const datasetNames = Object.keys(testData.datasets) as Array<keyof typeof testData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = testData.datasets[DATASET_NAME];
+
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
+```
+
+Identical pattern (only the imported variable name differs: `devTestData`
+vs `testData` — cosmetic, not a deviation from the pattern). No hardcoded
+dataset string literal remains in `survey-builder.spec.ts`.
+
+---
+
+## Check 3 — Page object structure (`surveyBuilder.page.ts`)
+
+**Result: PARTIAL PASS** — class shape matches, but most methods skip the
+try/catch error-wrapping convention used throughout `start-from-scratch.page.ts`.
+
+Matches the reference:
+```ts
+// surveyBuilder.page.ts
+export class SurveyBuilderPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      SURVEY_BUILDER_PAGE_COMPONENT_NAME,
+      surveyBuilderPageResources
+    );
+  }
+```
+```ts
+// start-from-scratch.page.ts
+export class StartFromScratchPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      START_FROM_SCRATCH_PAGE_COMPONENT_NAME,
+      startFromScratchPageResources
+    );
+  }
+```
+Both extend `CommonPage`, take `BasePage` in the constructor, call
+`super(basePage)`, and register resources the same way. Both use
+`this.webActionHandler.getWebElement(this.resourceManager.getResource(...))`
+consistently for every element lookup.
+
+Reference convention — every action method wraps its body in try/catch with
+the standard message format:
+```ts
+// start-from-scratch.page.ts
+async clickStartFromScratch(): Promise<void> {
+  try {
+    const startFromScratch = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('startFromScratch', START_FROM_SCRATCH_PAGE_COMPONENT_NAME)
+    );
+    await startFromScratch.waitFor(SMALL_TIMEOUT);
+    await startFromScratch.click();
+  } catch (error) {
+    throw new Error(`Failed to click Start from scratch: ${error instanceof Error ? error.message : error}`);
+  }
+}
+```
+
+Methods in `surveyBuilder.page.ts` that do **not** follow this — no
+try/catch at all, so a failed `waitFor`/`click` throws a raw Playwright
+error instead of a `Failed to ...` message:
+
+- `clickQuestionTypeResource` (private helper)
+- `fillQuestionText` (private helper)
+- `fillLabeledField` (private helper)
+- `addOptionToQuestion`
+- `addRowToQuestion`
+- `addColumnToQuestion`
+- `toggleRequired`
+- `clickAddQuestion`
+- `openReviewMode`
+- `selectQuestionForReview`
+- `deleteSelectedQuestions`
+- `exitReviewMode`
+- `saveDraft`
+- `publishSurvey`
+
+Example (no try/catch):
+```ts
+async clickAddQuestion(): Promise<void> {
+  const addQuestion = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('addQuestionLink', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+  );
+  await addQuestion.waitFor();
+  await addQuestion.click();
+  await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+}
+```
+
+Methods that **do** follow the convention correctly: `addSingleChoiceQuestion`,
+`addMultipleChoiceQuestion`, `addRatingQuestion`, `addNPSQuestion`,
+`addPointScaleQuestion`, `addMultiScaleQuestion`, `setSurveyTitle` — all
+wrap their bodies in try/catch with the
+`Failed to ...: ${error instanceof Error ? error.message : error}` format,
+matching the reference exactly.
+
+---
+
+## Check 4 — Locator JSON shape and naming convention
+
+**Result: PARTIAL PASS** — JSON shape matches; file/element naming
+convention does not.
+
+Shape comparison — both use the same top-level shape:
+```json
+// surveyBuilder.json
+{
+ "name": "Survey Builder Page",
+ "webElements": [
+ { "elementName": "questionTypeSingleChoice", "selectorType": "css", "selectorValue": "[data-test-id='question-type-SINGLE_CHOICE']" },
+ ...
+ ]
+}
+```
+```json
+// start-from-scratch.locator.json
+{
+  "name": "Survey Generation Page",
+  "webElements": [
+    { "elementName": "startFromScratch", "selectorType": "text", "selectorValue": "Start from scratch" },
+    ...
+  ]
+}
+```
+Both have `"name"` + `"webElements"` array of `{ elementName, selectorType,
+selectorValue }` objects. No structural/shape deviation.
+
+Deviations found:
+1. **File name convention** — every other locator file in
+   `e2e/locators/survey/` uses kebab-case with a `.locator.json` suffix:
+   `start-from-scratch.locator.json`, `start-with-prompt.locator.json`,
+   `select-panelist.locator.json`, `login.locator.json`. The survey builder
+   file is named `surveyBuilder.json` — camelCase, and missing the
+   `.locator` suffix. Same inconsistency on the page-object side:
+   `surveyBuilder.page.ts` vs. the kebab-case `start-from-scratch.page.ts` /
+   `start-with-prompt.page.ts`.
+2. Indentation in `surveyBuilder.json` uses 1-space nesting for the
+   `webElements` array entries instead of the 2-space/4-space indentation
+   used in `start-from-scratch.locator.json` (cosmetic only, not a
+   functional issue).
+
+---
+
+## Action Items (priority order)
+
+1. **[Critical — blocks any test run]** Fix the broken `TC_BS_05` block in
+   `survey-builder.spec.ts`: restore the missing `await
+   surveyBuilderPage.addRatingQuestion();` call and the test's closing
+   `});` so `TC_BS_06`–`TC_BS_16` are no longer nested inside `TC_BS_05`'s
+   callback.
+2. **[Consistency]** Wrap the 14 methods listed in Check 3 (
+   `clickQuestionTypeResource`, `fillQuestionText`, `fillLabeledField`,
+   `addOptionToQuestion`, `addRowToQuestion`, `addColumnToQuestion`,
+   `toggleRequired`, `clickAddQuestion`, `openReviewMode`,
+   `selectQuestionForReview`, `deleteSelectedQuestions`,
+   `exitReviewMode`, `saveDraft`, `publishSurvey`) in try/catch using the
+   same `Failed to ...: ${error instanceof Error ? error.message : error}`
+   format as the reference page object.
+3. **[Cosmetic/optional]** Rename `surveyBuilder.page.ts` →
+   `survey-builder.page.ts` and `surveyBuilder.json` →
+   `survey-builder.locator.json` (updating the two import paths) to match
+   the kebab-case + `.locator.json` naming convention used everywhere else
+   in `e2e/locators/survey/` and `e2e/page-objects/survey/`.
+4. **[Cosmetic/optional]** Normalize indentation in `surveyBuilder.json` to
+   match the 2-space style used in `start-from-scratch.locator.json`.
+
+No changes have been made to any file as part of this investigation.
