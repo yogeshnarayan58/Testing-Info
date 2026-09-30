@@ -1,7 +1,8 @@
-npx playwright test e2e/tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@RatingQuestion"
-◇ injected env (20) from .env // tip: ⌘ suppress logs { quiet: true }
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ npx playwright test tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@RatingQuestion|@MultipleChoiceQuestion"
+◇ injected env (20) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -13,97 +14,106 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 8 tests using 2 workers
+Running 10 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
 isLambdaTest = false
-  ✓  1 …rvey page via Start from Scratch @SurveyBuilderSetup (1.7m)
-  ✓  2 …rvey page via Start from Scratch @SurveyBuilderSetup (1.4m)
+  ✓   1 …vey page via Start from Scratch @SurveyBuilderSetup (1.2m)
 Auth state loaded from storage/auth.json
+  ✘   2 …vey page via Start from Scratch @SurveyBuilderSetup (5.0m)
 Auth state loaded from storage/auth.json
-  ✓  3 …lder › TC_BS_02: Edit survey title @EditSurveyTitle (864ms)
-  ✓  4 …: Add a Single Choice question @SingleChoiceQuestion (2.2s)
-  ✘  5 …er › TC_BS_05: Add a Rating question @RatingQuestion (2.6s)
-  ✓  6 …ilder › TC_BS_02: Edit survey title @EditSurveyTitle (1.0s)
-  ✓  7 …: Add a Single Choice question @SingleChoiceQuestion (2.3s)
-  ✘  8 …er › TC_BS_05: Add a Rating question @RatingQuestion (1.9s)
+  ✓   3 …lder › TC_BS_02: Edit survey title @EditSurveyTitle (1.0s)
+  ✓   4 … Add a Single Choice question @SingleChoiceQuestion (2.6s)
+  ✘   5 … a Multiple Choice question @MultipleChoiceQuestion (1.0m)
+  -   6 … Builder › TC_BS_05: Add a Rating question @RatingQuestion
+setDimensionSelection failed for 'productNoDataPrompt': locator.textContent: Target page, context or browser has been closed
+  -   7 …vey Builder › TC_BS_02: Edit survey title @EditSurveyTitle
+  -   8 …_BS_03: Add a Single Choice question @SingleChoiceQuestion
+  -   9 …04: Add a Multiple Choice question @MultipleChoiceQuestion
+  -  10 … Builder › TC_BS_05: Add a Rating question @RatingQuestion
 
 
-  1) [chromium] › tests\survey\survey-builder.spec.ts:69:7 › Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
+  1) [chromium] › tests\survey\survey-builder.spec.ts:27:7 › Survey Builder › Setup: reach Build Survey page via Start from Scratch @SurveyBuilderSetup 
 
-    Error: Failed to add Rating question: locator.fill: value: expected string, got undefined
+    Test timeout of 300000ms exceeded.
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:210
+    Error: locator.textContent: Target page, context or browser has been closed
 
-      208 |       await this.fillRatingQuestionText(questionText);// questionIndex kept for signature consistency, see class-level comment #7
-      209 |     } catch (error) {
-    > 210 |       throw new Error(`Failed to add Rating question: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      211 |     }
-      212 |   }
-      213 |
-        at SurveyBuilderPage.addRatingQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:210:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:73:5
+       at ..\page-objects\common\select-panelist.page.ts:137
+
+      135 |     );
+      136 |     await filledTile.waitFor();
+    > 137 |     const filledText = await filledTile.getText();
+          |                                         ^
+      138 |     return (filledText ?? '').trim();
+      139 |   }
+      140 |
+        at WebElement.getText (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:307:50)
+        at SelectPanelistPage.getCurrentFilledTileDimensionValue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:137:41)
+        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:232:11)
+        at SelectPanelistPage.setDimensionSelections (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:43:7)
+        at completePanelistSelectionFlow (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\panelist-flow.helper.ts:11:3)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:42:32
 
     attachment #1: screenshot (image/png) ─────────────────────────
-    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\test-failed-1.png
+    test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\test-failed-1.png
     ───────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\error-context.md
 
-    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\error-context.md
 
     attachment #4: trace (application/zip) ────────────────────────
-    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\trace.zip
+    test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\trace.zip
+        npx playwright show-trace test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\trace.zip
 
     ───────────────────────────────────────────────────────────────
 
-  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:69:7 ›Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
+  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:60:7 ›Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
 
-    Error: Failed to add Rating question: locator.fill: value: expected string, got undefined
+    Error: Failed to add Multiple Choice question: locator.click: Error: strict mode violation: locator('text= Add option') resolved to 2 elements:
+        1) <span _ngcontent-ng-c972618775="" class="button-content-wrapper ng-tns-c972618775-91 ng-star-inserted">…</span> aka getByText('Add option').first()
+        2) <span _ngcontent-ng-c972618775="" class="button-content-wrapper ng-tns-c972618775-88 ng-star-inserted">…</span> aka getByText('Add option').nth(1)
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:210
+    Call log:
+      - waiting for locator('text= Add option')
 
-      208 |       await this.fillRatingQuestionText(questionText);// questionIndex kept for signature consistency, see class-level comment #7
-      209 |     } catch (error) {
-    > 210 |       throw new Error(`Failed to add Rating question: ${error instanceof Error ? error.message : error}`);
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:200
+
+      198 |       }
+      199 |     } catch (error) {
+    > 200 |       throw new Error(`Failed to add Multiple Choice question: ${error instanceof Error ? error.message : error}`);
           |             ^
-      211 |     }
-      212 |   }
-      213 |
-        at SurveyBuilderPage.addRatingQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:210:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:73:5
+      201 |     }
+      202 |   }
+      203 |
+        at SurveyBuilderPage.addMultipleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:200:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:66:5
 
     attachment #1: screenshot (image/png) ─────────────────────────
-    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\test-failed-1.png
+    test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\test-failed-1.png
     ───────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\error-context.md
 
-    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\error-context.md
 
     attachment #4: trace (application/zip) ────────────────────────
-    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\trace.zip
+    test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\trace.zip
+        npx playwright show-trace test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\trace.zip
 
     ───────────────────────────────────────────────────────────────
 
   2 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:69:7 › SurveyBuilder › TC_BS_05: Add a Rating question @RatingQuestion 
-    [Microsoft Edge] › tests\survey\survey-builder.spec.ts:69:7 › Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
-  6 passed (2.8m)
+    [chromium] › tests\survey\survey-builder.spec.ts:27:7 › SurveyBuilder › Setup: reach Build Survey page via Start from Scratch @SurveyBuilderSetup 
+    [Microsoft Edge] › tests\survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
+  5 did not run
+  3 passed (5.9m)
 
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ 
