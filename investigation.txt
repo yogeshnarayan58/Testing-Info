@@ -1,6 +1,6 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ npx playwright test tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@RatingQuestion|@MultipleChoiceQuestion"
-◇ injected env (20) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ npx playwright test tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@MultipleChoiceQuestion|@RatingQuestion"
+◇ injected env (20) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
@@ -16,104 +16,110 @@ Global setup completed. Auth state saved.
 
 Running 10 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path:'/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 …vey page via Start from Scratch @SurveyBuilderSetup (1.2m)
+  ✓   1 …page via Start from Scratch @SurveyBuilderSetup (1.4m)
+  ✓   2 …page via Start from Scratch @SurveyBuilderSetup (1.3m)
 Auth state loaded from storage/auth.json
-  ✘   2 …vey page via Start from Scratch @SurveyBuilderSetup (5.0m)
 Auth state loaded from storage/auth.json
-  ✓   3 …lder › TC_BS_02: Edit survey title @EditSurveyTitle (1.0s)
-  ✓   4 … Add a Single Choice question @SingleChoiceQuestion (2.6s)
-  ✘   5 … a Multiple Choice question @MultipleChoiceQuestion (1.0m)
-  -   6 … Builder › TC_BS_05: Add a Rating question @RatingQuestion
-setDimensionSelection failed for 'productNoDataPrompt': locator.textContent: Target page, context or browser has been closed
-  -   7 …vey Builder › TC_BS_02: Edit survey title @EditSurveyTitle
-  -   8 …_BS_03: Add a Single Choice question @SingleChoiceQuestion
-  -   9 …04: Add a Multiple Choice question @MultipleChoiceQuestion
-  -  10 … Builder › TC_BS_05: Add a Rating question @RatingQuestion
+  ✓   3 … › TC_BS_02: Edit survey title @EditSurveyTitle (1.1s)
+  ✓   4 … a Single Choice question @SingleChoiceQuestion (2.4s)
+  ✘   5 …ltiple Choice question @MultipleChoiceQuestion (13.8s)
+  ✓   6 … › TC_BS_02: Edit survey title @EditSurveyTitle (1.4s)
+  ✓   7 … a Single Choice question @SingleChoiceQuestion (3.3s)
+  ✘   8 …ultiple Choice question @MultipleChoiceQuestion (1.1m)
+  -   9 …lder › TC_BS_05: Add a Rating question @RatingQuestion
+  -  10 …lder › TC_BS_05: Add a Rating question @RatingQuestion
 
 
-  1) [chromium] › tests\survey\survey-builder.spec.ts:27:7 › Survey Builder › Setup: reach Build Survey page via Start from Scratch @SurveyBuilderSetup 
+  1) [chromium] › tests\survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
 
-    Test timeout of 300000ms exceeded.
-
-    Error: locator.textContent: Target page, context or browser has been closed
-
-       at ..\page-objects\common\select-panelist.page.ts:137
-
-      135 |     );
-      136 |     await filledTile.waitFor();
-    > 137 |     const filledText = await filledTile.getText();
-          |                                         ^
-      138 |     return (filledText ?? '').trim();
-      139 |   }
-      140 |
-        at WebElement.getText (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:307:50)
-        at SelectPanelistPage.getCurrentFilledTileDimensionValue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:137:41)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:232:11)
-        at SelectPanelistPage.setDimensionSelections (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:43:7)
-        at completePanelistSelectionFlow (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\panelist-flow.helper.ts:11:3)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:42:32
-
-    attachment #1: screenshot (image/png) ─────────────────────────
-    test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\error-context.md
-
-    Error Context: test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ────────────────────────
-    test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-survey-builder-Surv-b7c07-page-via-Start-from-Scratch-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────────
-
-  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:60:7 ›Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
-
-    Error: Failed to add Multiple Choice question: locator.click: Error: strict mode violation: locator('text= Add option') resolved to 2 elements:
-        1) <span _ngcontent-ng-c972618775="" class="button-content-wrapper ng-tns-c972618775-91 ng-star-inserted">…</span> aka getByText('Add option').first()
-        2) <span _ngcontent-ng-c972618775="" class="button-content-wrapper ng-tns-c972618775-88 ng-star-inserted">…</span> aka getByText('Add option').nth(1)
+    Error: Failed to add Multiple Choice question: locator.click: Error: strict mode violation: locator('[niqtooltip=\'Edit\']') resolved to 2 elements:
+        1) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c1568225382="" _ngcontent-ng-c1213028333="" class="question-action-button light primary small default">…</niq-icon-button> aka locator('niq-icon-button').first()
+        2) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c1568225382="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('niq-icon-button').nth(3)
 
     Call log:
-      - waiting for locator('text= Add option')
+      - waiting for locator('[niqtooltip=\'Edit\']')
 
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:200
+       at ..\page-objects\survey\surveyBuilder.page.ts:219
 
-      198 |       }
-      199 |     } catch (error) {
-    > 200 |       throw new Error(`Failed to add Multiple Choice question: ${error instanceof Error ? error.message : error}`);
+      217 |       }
+      218 |     } catch (error) {
+    > 219 |       throw new Error(`Failed to add Multiple Choice question: ${error instanceof Error ? error.message : error}`);
           |             ^
-      201 |     }
-      202 |   }
-      203 |
-        at SurveyBuilderPage.addMultipleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:200:13)
+      220 |     }
+      221 |   }
+      222 |
+        at SurveyBuilderPage.addMultipleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:219:13)
         at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:66:5
 
-    attachment #1: screenshot (image/png) ─────────────────────────
+    attachment #1: screenshot (image/png) ─────────────────────
+    test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-chromium\error-context.md
+
+    Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ────────────────────
+    test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────
+
+  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
+
+    Error: Failed to add Multiple Choice question: locator.click: Error: strict mode violation: locator('[niqtooltip=\'Edit\']') resolved to 2 elements:
+        1) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c1568225382="" _ngcontent-ng-c1213028333="" class="question-action-button light primary small default">…</niq-icon-button> aka locator('niq-icon-button').first()
+        2) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c1568225382="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('niq-icon-button').nth(3)
+
+    Call log:
+      - waiting for locator('[niqtooltip=\'Edit\']')
+
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:219
+
+      217 |       }
+      218 |     } catch (error) {
+    > 219 |       throw new Error(`Failed to add Multiple Choice question: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      220 |     }
+      221 |   }
+      222 |
+        at SurveyBuilderPage.addMultipleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:219:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:66:5
+
+    attachment #1: screenshot (image/png) ─────────────────────
     test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\test-failed-1.png
-    ───────────────────────────────────────────────────────────────
+    ───────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\error-context.md
 
     Error Context: test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\error-context.md
 
-    attachment #4: trace (application/zip) ────────────────────────
+    attachment #4: trace (application/zip) ────────────────────
     test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\trace.zip
     Usage:
 
         npx playwright show-trace test-results\survey-survey-builder-Surv-0d6c1--a-Multiple-Choice-question-Microsoft-Edge\trace.zip
 
-    ───────────────────────────────────────────────────────────────
+    ───────────────────────────────────────────────────────────
 
   2 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:27:7 › SurveyBuilder › Setup: reach Build Survey page via Start from Scratch @SurveyBuilderSetup 
+    [chromium] › tests\survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
     [Microsoft Edge] › tests\survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion 
-  5 did not run
-  3 passed (5.9m)
+  2 did not run
+  6 passed (3.5m)
 
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ 
