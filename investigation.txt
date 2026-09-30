@@ -1,44 +1,109 @@
-serial
-Copy prompt
-Test timeout of 300000ms exceeded.
-Error: Failed to add Single Choice question: locator.click: Target page, context or browser has been closed
+npx playwright test e2e/tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@RatingQuestion"
+◇ injected env (20) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-   at ..\page-objects\survey\surveyBuilder.page.ts:162
+Running 8 tests using 2 workers
 
-  160 |       }
-  161 |     } catch (error) {
-> 162 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  163 |     }
-  164 |   }
-  165 |
-    at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:162:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:57:5
-Filter steps
-Before Hooks
-25ms
-Wait for selector locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-86ms
-Click locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-179ms
-Wait for selector locator('[data-test-id=\'question-text-input-1-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-634ms
-Fill "How satisfied are you with this product?" locator('[data-test-id=\'question-text-input-1-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-51ms
-Wait for selector locator('role=textbox[name="Option 1"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-39ms
-Fill "Very satisfied" locator('role=textbox[name="Option 1"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-168ms
-Click locator('text=Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-191ms
-Wait for selector locator('role=textbox[name="Option 2"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-41ms
-Fill "Satisfied" locator('role=textbox[name="Option 2"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-150ms
-Click locator('text=Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-113ms
-Wait for selector locator('niq-button:has-text(\'Add option\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-5.0m
-After Hooks
-1.8s
-Worker Cleanup
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
+isLambdaTest = false
+  ✓  1 …rvey page via Start from Scratch @SurveyBuilderSetup (1.7m)
+  ✓  2 …rvey page via Start from Scratch @SurveyBuilderSetup (1.4m)
+Auth state loaded from storage/auth.json
+Auth state loaded from storage/auth.json
+  ✓  3 …lder › TC_BS_02: Edit survey title @EditSurveyTitle (864ms)
+  ✓  4 …: Add a Single Choice question @SingleChoiceQuestion (2.2s)
+  ✘  5 …er › TC_BS_05: Add a Rating question @RatingQuestion (2.6s)
+  ✓  6 …ilder › TC_BS_02: Edit survey title @EditSurveyTitle (1.0s)
+  ✓  7 …: Add a Single Choice question @SingleChoiceQuestion (2.3s)
+  ✘  8 …er › TC_BS_05: Add a Rating question @RatingQuestion (1.9s)
+
+
+  1) [chromium] › tests\survey\survey-builder.spec.ts:69:7 › Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
+
+    Error: Failed to add Rating question: locator.fill: value: expected string, got undefined
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:210
+
+      208 |       await this.fillRatingQuestionText(questionText);// questionIndex kept for signature consistency, see class-level comment #7
+      209 |     } catch (error) {
+    > 210 |       throw new Error(`Failed to add Rating question: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      211 |     }
+      212 |   }
+      213 |
+        at SurveyBuilderPage.addRatingQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:210:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:73:5
+
+    attachment #1: screenshot (image/png) ─────────────────────────
+    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\error-context.md
+
+    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ────────────────────────
+    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────
+
+  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:69:7 ›Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
+
+    Error: Failed to add Rating question: locator.fill: value: expected string, got undefined
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:210
+
+      208 |       await this.fillRatingQuestionText(questionText);// questionIndex kept for signature consistency, see class-level comment #7
+      209 |     } catch (error) {
+    > 210 |       throw new Error(`Failed to add Rating question: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      211 |     }
+      212 |   }
+      213 |
+        at SurveyBuilderPage.addRatingQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:210:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:73:5
+
+    attachment #1: screenshot (image/png) ─────────────────────────
+    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\test-failed-1.png
+    ───────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\error-context.md
+
+    Error Context: test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\error-context.md
+
+    attachment #4: trace (application/zip) ────────────────────────
+    test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-survey-builder-Surv-aaaf4-BS-05-Add-a-Rating-question-Microsoft-Edge\trace.zip
+
+    ───────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\survey-builder.spec.ts:69:7 › SurveyBuilder › TC_BS_05: Add a Rating question @RatingQuestion 
+    [Microsoft Edge] › tests\survey\survey-builder.spec.ts:69:7 › Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion 
+  6 passed (2.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ 
