@@ -1,115 +1,234 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ npx playwright test e2e/tests/survey/survey-builder.spec.ts --grep "@SurveyBuilderSetup|@EditSurveyTitle|@SingleChoiceQuestion|@RatingQuestion"
-◇ injected env (20) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+# `addSingleChoiceQuestion()` — Step-by-Step Flow
 
-Running 8 tests using 2 workers
+Read-only analysis. No files were modified as part of this investigation.
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-  ✓  1 …urvey page via Start from Scratch @SurveyBuilderSetup (2.6m)
-  ✓  2 …urvey page via Start from Scratch @SurveyBuilderSetup (1.9m)
-Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  ✓  3 …uilder › TC_BS_02: Edit survey title @EditSurveyTitle (1.7s)
-  ✘  4 …3: Add a Single Choice question @SingleChoiceQuestion (5.0m)
-  ✓  5 …ilder › TC_BS_02: Edit survey title @EditSurveyTitle (914ms)
-  ✘  6 …3: Add a Single Choice question @SingleChoiceQuestion (5.0m)
-  -  7 …ey Builder › TC_BS_05: Add a Rating question @RatingQuestion
-  -  8 …ey Builder › TC_BS_05: Add a Rating question @RatingQuestion
+Source files read:
+- [e2e/page-objects/survey/surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts)
+- [e2e/locators/survey/surveyBuilder.json](locators/survey/surveyBuilder.json)
+- [e2e/utils/resource-manager.ts](utils/resource-manager.ts)
 
+## The method itself (quoted exactly)
 
-  1) [chromium] › tests\survey\survey-builder.spec.ts:53:7 › SurveyBuilder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
+```ts
+/** TC_BS_03 */
+async addSingleChoiceQuestion(questionIndex: number, questionText: string, options: string[]): Promise<void> {
+  try {
+    await this.clickQuestionTypeResource('questionTypeSingleChoice');
+    await this.fillQuestionText(questionIndex, questionText);
+    for (let i = 0; i < options.length; i++) {
+      if (i >= 2) {
+        await this.addOptionToQuestion();
+      }
+      await this.fillLabeledField(`Option ${i + 1}`, options[i]);
+    }
+  } catch (error) {
+    throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
+  }
+}
+```
 
-    Test timeout of 300000ms exceeded.
+---
 
-    Error: Failed to add Single Choice question: locator.click: Target page, context or browser has been closed
+## 1. First click — the question-type button
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:146
+```ts
+private async clickQuestionTypeResource(resourceName: string): Promise<void> {
+  const typeButton = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource(resourceName, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+  );
+  await typeButton.waitFor();
+  await typeButton.click();
+  await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+}
+```
 
-      144 |       }
-      145 |     } catch (error) {
-    > 146 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      147 |     }
-      148 |   }
-      149 |
-        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:146:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:57:5
+`addSingleChoiceQuestion()` calls this with `'questionTypeSingleChoice'`. The resource is looked
+up via `getResource` (static, no placeholder substitution) in `surveyBuilder.json`:
 
-    attachment #1: screenshot (image/png) ──────────────────────────
-    test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────
+```json
+{ "elementName": "questionTypeSingleChoice", "selectorType": "css", "selectorValue": "[data-test-id='question-type-SINGLE_CHOICE']" }
+```
 
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\error-context.md
+So the very first action is: **wait for, then click**, the CSS selector:
 
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\error-context.md
+```
+[data-test-id='question-type-SINGLE_CHOICE']
+```
 
-    attachment #4: trace (application/zip) ─────────────────────────
-    test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\trace.zip
-    Usage:
+After the click, it waits `UI_STATE_UPDATE_DELAY` (a fixed pause constant imported from
+`../../constants/timeout-constants`) before returning, to let the UI settle (e.g. the question
+card expanding) before the next step runs.
 
-        npx playwright show-trace test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\trace.zip
+---
 
-    ────────────────────────────────────────────────────────────────
+## 2. `fillQuestionText()` — the question-text input
 
-  2) [Microsoft Edge] › tests\survey\survey-builder.spec.ts:53:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
+```ts
+private async fillQuestionText(questionIndex: number, text: string): Promise<void> {
+  const questionText = this.webActionHandler.getWebElement(
+    this.resourceManager.getDynamicResource('questionTextInput', String(questionIndex), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+  );
+  await questionText.waitFor();
+  await questionText.enterText(text);
+}
+```
 
-    Test timeout of 300000ms exceeded.
+`addSingleChoiceQuestion()` calls this as `fillQuestionText(questionIndex, questionText)` — i.e.
+the *index number* is used to resolve the locator, and the *questionText string* is the value
+typed into it.
 
-    Error: Failed to add Single Choice question: locator.click: Target page, context or browser has been closed
+The locator template in `surveyBuilder.json`:
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:146
+```json
+{ "elementName": "questionTextInput", "selectorType": "css", "selectorValue": "[data-test-id='question-text-input-${text}-input']" }
+```
 
-      144 |       }
-      145 |     } catch (error) {
-    > 146 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      147 |     }
-      148 |   }
-      149 |
-        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:146:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:57:5
+**What makes it dynamic:** `getDynamicResource(name, text, componentName)` (in
+[resource-manager.ts](utils/resource-manager.ts)) takes the raw `selectorValue`, verifies it
+contains the literal placeholder `${text}`, and does a plain string `.replace('${text}', text)`.
+Here the `text` argument passed in is `String(questionIndex)` (the question's numeric index,
+stringified) — **not** the question wording itself. So for `questionIndex = 1`, the resolved CSS
+selector becomes:
 
-    attachment #1: screenshot (image/png) ──────────────────────────
-    test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-Microsoft-Edge\test-failed-1.png
-    ────────────────────────────────────────────────────────────────
+```
+[data-test-id='question-text-input-1-input']
+```
 
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-Microsoft-Edge\error-context.md
+Once resolved, the method waits for that element and calls `.enterText(text)` — here `text` is
+the actual `questionText` string argument (the real content typed into the box), which is a
+different parameter from the `text` placeholder value used to build the selector. In short:
+- the *index* picks **which** question's text box to target,
+- the *questionText string* is **what** gets typed into it.
 
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-Microsoft-Edge\error-context.md
+---
 
-    attachment #4: trace (application/zip) ─────────────────────────
-    test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-Microsoft-Edge\trace.zip
-    Usage:
+## 3. The options loop — when "Add option" is clicked vs. just filling a field
 
-        npx playwright show-trace test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-Microsoft-Edge\trace.zip
+```ts
+for (let i = 0; i < options.length; i++) {
+  if (i >= 2) {
+    await this.addOptionToQuestion();
+  }
+  await this.fillLabeledField(`Option ${i + 1}`, options[i]);
+}
+```
 
-    ────────────────────────────────────────────────────────────────
+Walking through it iteration by iteration (`i` is 0-based, `Option N` label is `i + 1`):
 
-  2 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:53:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-    [Microsoft Edge] › tests\survey\survey-builder.spec.ts:53:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-  2 did not run
-  4 passed (8.5m)
+| `i` | Option label | `i >= 2`? | Calls `addOptionToQuestion()`? | Then calls `fillLabeledField()` |
+|---|---|---|---|---|
+| 0 | Option 1 | false | No | `fillLabeledField('Option 1', options[0])` |
+| 1 | Option 2 | false | No | `fillLabeledField('Option 2', options[1])` |
+| 2 | Option 3 | true | **Yes** | `fillLabeledField('Option 3', options[2])` |
+| 3 | Option 4 | true | **Yes** | `fillLabeledField('Option 4', options[3])` |
+| ... | ... | true | **Yes** | ... |
 
-To open last HTML report run:
+**Why option 1 and 2 skip the click, but option 3+ don't:** the Single Choice (and Multiple
+Choice) question type evidently renders **two option input fields by default** as soon as the
+question type is selected — so slots for "Option 1" and "Option 2" already exist in the DOM with
+nothing extra needed. Every option **beyond** the default two (i.e. index `2`, `3`, ...) requires
+first clicking the "Add option" button to make a new input field appear in the DOM, *before* that
+field can be filled. The exact condition guarding this is:
 
-  npx playwright show-report
+```ts
+if (i >= 2) {
+  await this.addOptionToQuestion();
+}
+```
 
+This means for `options.length <= 2`, `addOptionToQuestion()` is never called; it's only invoked
+starting at the 3rd option and once per option after that (one click adds exactly one new option
+field).
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ 
+---
+
+## 4. `addOptionToQuestion()` — exact locator
+
+```ts
+async addOptionToQuestion(): Promise<void> {
+  const addOption = this.webActionHandler.getWebElement(
+    this.resourceManager.getResource('addOptionButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+  );
+  await addOption.waitFor();
+  await addOption.click();
+  await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+}
+```
+
+Resource entry (static, `selectorType: "playwrights"` — a raw Playwright selector string, not
+CSS/XPath):
+
+```json
+{ "elementName": "addOptionButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Add option')" }
+```
+
+So each qualifying loop iteration: **wait for, then click**, the Playwright selector:
+
+```
+niq-button:has-text('Add option')
+```
+
+— i.e. it finds a `<niq-button>` custom element whose visible text contains "Add option", clicks
+it, then pauses `UI_STATE_UPDATE_DELAY` before the next step (giving the new option field time to
+render before `fillLabeledField()` tries to locate it).
+
+---
+
+## 5. `fillLabeledField()` — exact locator and the `>> nth=0` part
+
+```ts
+private async fillLabeledField(label: string, value: string): Promise<void> {
+  const field = this.webActionHandler.getWebElement(
+    this.resourceManager.getDynamicResource('optionInputByLabel', label, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+  );
+  await field.waitFor();
+  await field.enterText(value);
+}
+```
+
+Resource template:
+
+```json
+{ "elementName": "optionInputByLabel", "selectorType": "playwrights", "selectorValue": "role=textbox[name=\"${text}\"] >> nth=0" }
+```
+
+`getDynamicResource('optionInputByLabel', label, ...)` replaces `${text}` with the `label` string
+passed in (e.g. `"Option 1"`, `"Option 3"`). So for the first iteration the resolved selector is:
+
+```
+role=textbox[name="Option 1"] >> nth=0
+```
+
+Breaking this Playwright selector down in plain terms:
+- `role=textbox[name="Option 1"]` — find an element with the accessible **role** `textbox` whose
+  accessible **name** (label) is exactly `"Option 1"`. This targets the input by its visible
+  label/placeholder text rather than a CSS class or `data-test-id`.
+- `>> nth=0` — Playwright's selector-chaining syntax for "of all elements matching the selector
+  so far, take the **first one** (index 0)". It's a safety net in case more than one element on
+  the page happens to expose the same accessible name `"Option 1"` — instead of the click/fill
+  failing with a strict-mode "multiple elements matched" error, it deterministically picks the
+  first match.
+
+  This is exactly the risk flagged in the class-level doc comment on
+  [surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts): because the locator is not
+  scoped to a specific question card, `nth=0` only reliably hits the *currently expanded* question
+  being built — if an earlier, already-collapsed question also still renders an "Option 1" field
+  in the DOM, `nth=0` could resolve to the wrong one. Hence the class comment's warning to only
+  call these methods "for one question at a time, right after adding it, before adding the next".
+
+Once resolved, `fillLabeledField()` waits for that field and calls `.enterText(value)`, where
+`value` is the actual option string from the `options` array (e.g. `options[i]`).
+
+---
+
+## Full call sequence for `addSingleChoiceQuestion(1, "Pick one", ["A", "B", "C", "D"])`
+
+1. Click `[data-test-id='question-type-SINGLE_CHOICE']` (question type button) → delay.
+2. Wait for `[data-test-id='question-text-input-1-input']` → type `"Pick one"`.
+3. `i=0` (Option 1): no add-option click → wait for `role=textbox[name="Option 1"] >> nth=0` → type `"A"`.
+4. `i=1` (Option 2): no add-option click → wait for `role=textbox[name="Option 2"] >> nth=0` → type `"B"`.
+5. `i=2` (Option 3): click `niq-button:has-text('Add option')` → delay → wait for `role=textbox[name="Option 3"] >> nth=0` → type `"C"`.
+6. `i=3` (Option 4): click `niq-button:has-text('Add option')` → delay → wait for `role=textbox[name="Option 4"] >> nth=0` → type `"D"`.
+
+If anything throws along the way, it's caught and re-thrown as:
+`Failed to add Single Choice question: <original error message>`.
