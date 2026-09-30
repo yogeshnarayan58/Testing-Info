@@ -1,234 +1,54 @@
-# `addSingleChoiceQuestion()` — Step-by-Step Flow
+import { test, expect } from '@playwright/test';
 
-Read-only analysis. No files were modified as part of this investigation.
-
-Source files read:
-- [e2e/page-objects/survey/surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts)
-- [e2e/locators/survey/surveyBuilder.json](locators/survey/surveyBuilder.json)
-- [e2e/utils/resource-manager.ts](utils/resource-manager.ts)
-
-## The method itself (quoted exactly)
-
-```ts
-/** TC_BS_03 */
-async addSingleChoiceQuestion(questionIndex: number, questionText: string, options: string[]): Promise<void> {
-  try {
-    await this.clickQuestionTypeResource('questionTypeSingleChoice');
-    await this.fillQuestionText(questionIndex, questionText);
-    for (let i = 0; i < options.length; i++) {
-      if (i >= 2) {
-        await this.addOptionToQuestion();
-      }
-      await this.fillLabeledField(`Option ${i + 1}`, options[i]);
-    }
-  } catch (error) {
-    throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-  }
-}
-```
-
----
-
-## 1. First click — the question-type button
-
-```ts
-private async clickQuestionTypeResource(resourceName: string): Promise<void> {
-  const typeButton = this.webActionHandler.getWebElement(
-    this.resourceManager.getResource(resourceName, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
-  );
-  await typeButton.waitFor();
-  await typeButton.click();
-  await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-}
-```
-
-`addSingleChoiceQuestion()` calls this with `'questionTypeSingleChoice'`. The resource is looked
-up via `getResource` (static, no placeholder substitution) in `surveyBuilder.json`:
-
-```json
-{ "elementName": "questionTypeSingleChoice", "selectorType": "css", "selectorValue": "[data-test-id='question-type-SINGLE_CHOICE']" }
-```
-
-So the very first action is: **wait for, then click**, the CSS selector:
-
-```
-[data-test-id='question-type-SINGLE_CHOICE']
-```
-
-After the click, it waits `UI_STATE_UPDATE_DELAY` (a fixed pause constant imported from
-`../../constants/timeout-constants`) before returning, to let the UI settle (e.g. the question
-card expanding) before the next step runs.
-
----
-
-## 2. `fillQuestionText()` — the question-text input
-
-```ts
-private async fillQuestionText(questionIndex: number, text: string): Promise<void> {
-  const questionText = this.webActionHandler.getWebElement(
-    this.resourceManager.getDynamicResource('questionTextInput', String(questionIndex), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
-  );
-  await questionText.waitFor();
-  await questionText.enterText(text);
-}
-```
-
-`addSingleChoiceQuestion()` calls this as `fillQuestionText(questionIndex, questionText)` — i.e.
-the *index number* is used to resolve the locator, and the *questionText string* is the value
-typed into it.
-
-The locator template in `surveyBuilder.json`:
-
-```json
-{ "elementName": "questionTextInput", "selectorType": "css", "selectorValue": "[data-test-id='question-text-input-${text}-input']" }
-```
-
-**What makes it dynamic:** `getDynamicResource(name, text, componentName)` (in
-[resource-manager.ts](utils/resource-manager.ts)) takes the raw `selectorValue`, verifies it
-contains the literal placeholder `${text}`, and does a plain string `.replace('${text}', text)`.
-Here the `text` argument passed in is `String(questionIndex)` (the question's numeric index,
-stringified) — **not** the question wording itself. So for `questionIndex = 1`, the resolved CSS
-selector becomes:
-
-```
-[data-test-id='question-text-input-1-input']
-```
-
-Once resolved, the method waits for that element and calls `.enterText(text)` — here `text` is
-the actual `questionText` string argument (the real content typed into the box), which is a
-different parameter from the `text` placeholder value used to build the selector. In short:
-- the *index* picks **which** question's text box to target,
-- the *questionText string* is **what** gets typed into it.
-
----
-
-## 3. The options loop — when "Add option" is clicked vs. just filling a field
-
-```ts
-for (let i = 0; i < options.length; i++) {
-  if (i >= 2) {
-    await this.addOptionToQuestion();
-  }
-  await this.fillLabeledField(`Option ${i + 1}`, options[i]);
-}
-```
-
-Walking through it iteration by iteration (`i` is 0-based, `Option N` label is `i + 1`):
-
-| `i` | Option label | `i >= 2`? | Calls `addOptionToQuestion()`? | Then calls `fillLabeledField()` |
-|---|---|---|---|---|
-| 0 | Option 1 | false | No | `fillLabeledField('Option 1', options[0])` |
-| 1 | Option 2 | false | No | `fillLabeledField('Option 2', options[1])` |
-| 2 | Option 3 | true | **Yes** | `fillLabeledField('Option 3', options[2])` |
-| 3 | Option 4 | true | **Yes** | `fillLabeledField('Option 4', options[3])` |
-| ... | ... | true | **Yes** | ... |
-
-**Why option 1 and 2 skip the click, but option 3+ don't:** the Single Choice (and Multiple
-Choice) question type evidently renders **two option input fields by default** as soon as the
-question type is selected — so slots for "Option 1" and "Option 2" already exist in the DOM with
-nothing extra needed. Every option **beyond** the default two (i.e. index `2`, `3`, ...) requires
-first clicking the "Add option" button to make a new input field appear in the DOM, *before* that
-field can be filled. The exact condition guarding this is:
-
-```ts
-if (i >= 2) {
-  await this.addOptionToQuestion();
-}
-```
-
-This means for `options.length <= 2`, `addOptionToQuestion()` is never called; it's only invoked
-starting at the 3rd option and once per option after that (one click adds exactly one new option
-field).
-
----
-
-## 4. `addOptionToQuestion()` — exact locator
-
-```ts
-async addOptionToQuestion(): Promise<void> {
-  const addOption = this.webActionHandler.getWebElement(
-    this.resourceManager.getResource('addOptionButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
-  );
-  await addOption.waitFor();
-  await addOption.click();
-  await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-}
-```
-
-Resource entry (static, `selectorType: "playwrights"` — a raw Playwright selector string, not
-CSS/XPath):
-
-```json
-{ "elementName": "addOptionButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Add option')" }
-```
-
-So each qualifying loop iteration: **wait for, then click**, the Playwright selector:
-
-```
-niq-button:has-text('Add option')
-```
-
-— i.e. it finds a `<niq-button>` custom element whose visible text contains "Add option", clicks
-it, then pauses `UI_STATE_UPDATE_DELAY` before the next step (giving the new option field time to
-render before `fillLabeledField()` tries to locate it).
-
----
-
-## 5. `fillLabeledField()` — exact locator and the `>> nth=0` part
-
-```ts
-private async fillLabeledField(label: string, value: string): Promise<void> {
-  const field = this.webActionHandler.getWebElement(
-    this.resourceManager.getDynamicResource('optionInputByLabel', label, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
-  );
-  await field.waitFor();
-  await field.enterText(value);
-}
-```
-
-Resource template:
-
-```json
-{ "elementName": "optionInputByLabel", "selectorType": "playwrights", "selectorValue": "role=textbox[name=\"${text}\"] >> nth=0" }
-```
-
-`getDynamicResource('optionInputByLabel', label, ...)` replaces `${text}` with the `label` string
-passed in (e.g. `"Option 1"`, `"Option 3"`). So for the first iteration the resolved selector is:
-
-```
-role=textbox[name="Option 1"] >> nth=0
-```
-
-Breaking this Playwright selector down in plain terms:
-- `role=textbox[name="Option 1"]` — find an element with the accessible **role** `textbox` whose
-  accessible **name** (label) is exactly `"Option 1"`. This targets the input by its visible
-  label/placeholder text rather than a CSS class or `data-test-id`.
-- `>> nth=0` — Playwright's selector-chaining syntax for "of all elements matching the selector
-  so far, take the **first one** (index 0)". It's a safety net in case more than one element on
-  the page happens to expose the same accessible name `"Option 1"` — instead of the click/fill
-  failing with a strict-mode "multiple elements matched" error, it deterministically picks the
-  first match.
-
-  This is exactly the risk flagged in the class-level doc comment on
-  [surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts): because the locator is not
-  scoped to a specific question card, `nth=0` only reliably hits the *currently expanded* question
-  being built — if an earlier, already-collapsed question also still renders an "Option 1" field
-  in the DOM, `nth=0` could resolve to the wrong one. Hence the class comment's warning to only
-  call these methods "for one question at a time, right after adding it, before adding the next".
-
-Once resolved, `fillLabeledField()` waits for that field and calls `.enterText(value)`, where
-`value` is the actual option string from the `options` array (e.g. `options[i]`).
-
----
-
-## Full call sequence for `addSingleChoiceQuestion(1, "Pick one", ["A", "B", "C", "D"])`
-
-1. Click `[data-test-id='question-type-SINGLE_CHOICE']` (question type button) → delay.
-2. Wait for `[data-test-id='question-text-input-1-input']` → type `"Pick one"`.
-3. `i=0` (Option 1): no add-option click → wait for `role=textbox[name="Option 1"] >> nth=0` → type `"A"`.
-4. `i=1` (Option 2): no add-option click → wait for `role=textbox[name="Option 2"] >> nth=0` → type `"B"`.
-5. `i=2` (Option 3): click `niq-button:has-text('Add option')` → delay → wait for `role=textbox[name="Option 3"] >> nth=0` → type `"C"`.
-6. `i=3` (Option 4): click `niq-button:has-text('Add option')` → delay → wait for `role=textbox[name="Option 4"] >> nth=0` → type `"D"`.
-
-If anything throws along the way, it's caught and re-thrown as:
-`Failed to add Single Choice question: <original error message>`.
+test('test', async ({ page }) => {
+  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=83qM9pXdNubDoeRs9zcZPr97oBAmxpqbcC7ZQJvT1bo&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=2WuR-UpG85hK_-MvDdVEPyP3btO4kQLue8a7r3FVO_M&code_challenge=ywokfBSyBIWQLPRa_sk0pywsJ9GABDU0Wn0Jbn3zmGA&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username' }).click();
+  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/select-panelist');
+  await page.getByRole('heading', { name: 'Panel On Demand Omnishopper' }).click();
+  await page.getByText('Panel On Demand Omnishopper Broad, trended analytics of household purchasing').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-selectedOption"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
+  await page.getByText('APPLIANCES').click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.locator('[data-test-id="ds-Demographic_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-filterIcon"]').click();
+  await page.locator('[data-test-id="ds-searchBar-input"]').fill('tota');
+  await page.locator('#INP_TOTDEM').click();
+  await page.locator('[data-test-id="ds-virtualScrollViewport"] niq-checkbox').click();
+  await page.locator('#report-btn-run').click();
+  await page.locator('[data-test-id="select-response-count-250"]').click();
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.getByText('Single Choice').click();
+  await page.locator('[data-test-id="question-text-input-1-input"]').click();
+  await page.locator('[data-test-id="question-text-input-1-input"]').fill('dfdsfdsfdsfds');
+  await page.getByRole('textbox', { name: 'Option 1' }).click();
+  await page.getByRole('textbox', { name: 'Option 1' }).fill('dsfsdf');
+  await page.getByRole('textbox', { name: 'Option 2' }).click();
+  await page.getByRole('textbox', { name: 'Option 2' }).fill('s');
+  await page.locator('div').filter({ hasText: /^s$/ }).click();
+  await page.locator('niq-button').filter({ hasText: 'Add option' }).click();
+  await page.getByRole('textbox', { name: 'Option 3' }).click();
+  await page.getByRole('textbox', { name: 'Option 3' }).fill('dsdsfdsf');
+  await page.locator('[data-test-id="-input-checkbox"]').check();
+  await page.locator('div').filter({ hasText: '1. Add option Required' }).nth(2).click();
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('div').filter({ hasText: '1. dfdsfdsfdsfds *' }).nth(2).click();
+});
