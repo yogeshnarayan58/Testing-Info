@@ -1,145 +1,207 @@
-# Point Scale (TC_BS_08) & Multi Scale (TC_BS_09) — Current State Report
+# Survey Builder — Row/Column "+" Button Hover/Click Investigation
 
-Read-only report. No files were modified.
+Investigation only. No test code (`surveyBuilder.page.ts`, `surveyBuilder.locator.json`,
+`survey-builder.spec.ts`) was changed as part of this file.
 
-## 1. `addPointScaleQuestion()` and `addMultiScaleQuestion()` — full current code
+## Source found and confirmed reachable
 
-From [page-objects/survey/surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts):
+The Angular component rendering Multi Scale / Point Scale's matrix editor — including the "+"
+Add Row/Column button — **is present in this very repo** and was located and read directly:
 
+- [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html)
+- [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.ts)
+- [libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.scss](../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.scss)
+
+This is **CONFIRMED** (not inferred) to be the right component — it's the only one in the repo
+with `addRow()`/`addColumn()` methods, an `iconName="add-large"` icon-button, and row/column option
+editing matching the live DOM attributes already captured earlier in this investigation
+(`niq-icon-button iconname="add-large" ... state="default" mode="light" type="primary" size="small"`,
+wrapping a `niq-icon`).
+
+**Caveat on reachability:** the live app under test (`si.connect.nielseniq.io/reportexperience-dev`)
+is a separately deployed/built host, so this source code being "reachable in the repo" does not
+by itself guarantee it's byte-for-byte what's currently deployed there — but it's the actual
+source for this library per this repo's own build, and matches the live DOM evidence already
+gathered, so it's treated as CONFIRMED rather than merely plausible.
+
+## 1. Actual hover/click handling logic (CONFIRMED, read directly from source)
+
+Relevant template (`scale-editor.component.html`):
+```html
+<div class="matrix-actions">
+
+    <!-- Add button -->
+    <div class="matrix-action-area" (mouseenter)="showAddMenu = true" (mouseleave)="showAddMenu = false">
+
+        <niq-icon-button state="default" class="action-trigger" mode="light" type="primary" size="small"
+            iconName="add-large"></niq-icon-button>
+
+        @if(showAddMenu) {
+        <div class="action-hover-menu">
+            <niq-button variant="ghostAI" class="action-hover-item" (click)="addRow()" colorTheme="light">
+                Row
+            </niq-button>
+            <niq-button variant="ghostAI" class="action-hover-item" (click)="addColumn()"
+                colorTheme="light"> Column
+            </niq-button>
+        </div>
+        }
+
+    </div>
+
+    <!-- Delete button -->
+    <div class="matrix-action-area" (mouseenter)="showDeleteMenu = true"
+        (mouseleave)="showDeleteMenu = false">
+
+        <niq-icon-button state="default" class="action-trigger" mode="light" type="primary" size="small"
+            iconName="minus"></niq-icon-button>
+
+        @if(showDeleteMenu) {
+        <div class="action-hover-menu">
+            <niq-button variant="ghostAI" class="action-hover-item" (click)="deleteRow()" colorTheme="light"> Row
+            </niq-button>
+            <niq-button variant="ghostAI" class="action-hover-item" (click)="deleteColumn()" colorTheme="light">
+                Column </niq-button>
+        </div>
+        }
+
+    </div>
+
+</div>
+```
+
+Relevant component class (`scale-editor.component.ts`):
 ```ts
-  /**
-   * TC_BS_08 — Point Scale. Row/column add buttons are UNCONFIRMED (see
-   * class-level comment #3); only pass extraRows/extraColumns if you have
-   * verified "+ Row"/"+ Column" exist for this question type.
-   */
-  async addPointScaleQuestion(
-    questionIndex: number,
-    questionText: string,
-    rows: string[],
-    columns: string[]
-  ): Promise<void> {
-    try {
-      await this.clickQuestionTypeResource('questionTypePointScale');
-      await this.fillQuestionText(questionIndex, questionText);
-      for (let i = 0; i < rows.length; i++) {
-        if (i >= 2) {
-          await this.addRowToQuestion(); // UNCONFIRMED for Point Scale
-        }
-        await this.fillLabeledField(`Row ${i + 1}`, rows[i]);
-      }
-      for (let i = 0; i < columns.length; i++) {
-        if (i >= 2) {
-          await this.addColumnToQuestion(); // UNCONFIRMED for Point Scale
-        }
-        await this.fillLabeledField(`Column ${i + 1}`, columns[i]);
-      }
-    } catch (error) {
-      throw new Error(`Failed to add Point Scale question: ${error instanceof Error ? error.message : error}`);
-    }
-  }
+showAddMenu: boolean = false;
+showDeleteMenu: boolean = false;
 
-  /** TC_BS_09 — Multi Scale, including add-row/add-column (confirmed real per Codegen + TC_BS_09). */
-  async addMultiScaleQuestion(
-    questionIndex: number,
-    questionText: string,
-    rows: string[],
-    columns: string[]
-  ): Promise<void> {
-    try {
-      await this.clickQuestionTypeResource('questionTypeMultiScale');
-      await this.fillQuestionText(questionIndex, questionText);
-      for (let i = 0; i < rows.length; i++) {
-        if (i >= 2) {
-          await this.addRowToQuestion();
-        }
-        await this.fillLabeledField(`Row ${i + 1}`, rows[i]);
-      }
-      for (let i = 0; i < columns.length; i++) {
-        if (i >= 2) {
-          await this.addColumnToQuestion();
-        }
-        await this.fillLabeledField(`Column ${i + 1}`, columns[i]);
-      }
-    } catch (error) {
-      throw new Error(`Failed to add Multi Scale question: ${error instanceof Error ? error.message : error}`);
-    }
-  }
+addRow(): void {
+  this.rowOptions.set([...this.rowOptions(), '']);
+  this.formChange.emit();
+}
+
+addColumn(): void {
+  this.columnOptions.set([...this.columnOptions(), '']);
+  this.formChange.emit();
+}
 ```
 
-Both methods exist and are implemented. Neither currently has a finalize/"Add question" click at
-the end (unlike `addMultipleChoiceQuestion()`, `addRatingQuestion()`, and `addNPSQuestion()`, which
-all had that click added in earlier fixes this session).
+**CONFIRMED answers to the investigation questions:**
 
-## 2. `TC_BS_08`/`TC_BS_09` test blocks — current state
+- **Does it use `(mouseenter)`/`(mouseleave)` to toggle a CSS class?** No — it uses
+  `(mouseenter)`/`(mouseleave)` to toggle a **component boolean property** (`showAddMenu`), not a
+  CSS class.
+- **Does it use `*ngIf`/`@if` to add/remove the button from the DOM?** Yes — `@if(showAddMenu)`
+  (Angular's modern control-flow syntax, equivalent to `*ngIf`) controls whether the
+  `.action-hover-menu` div (containing the real "Row"/"Column" buttons) exists in the DOM **at
+  all**. When `showAddMenu` is `false`, those buttons are not just hidden — they are not rendered.
+- **Is there a real `(click)` handler on the `<niq-icon-button iconName="add-large">` itself?**
+  **No.** The icon-button has **no `(click)` binding whatsoever** in the template. It is purely a
+  visual trigger/indicator.
+- **Does clicking depend on a parent element's state?** **Yes, entirely.** The actual clickable
+  elements that call `addRow()`/`addColumn()` are the `<niq-button ... (click)="addRow()">Row</niq-button>`
+  and `(click)="addColumn()"` buttons, which **only exist in the DOM when the wrapping
+  `.matrix-action-area` div's `(mouseenter)` has fired** (setting `showAddMenu = true`). The icon-
+  button that our locators (`addRowButton`/`addColumnButton`, both currently
+  `niq-button:has-text('Row'|'Column')`) actually target IS the real click target once revealed —
+  but hovering/clicking that SAME element to try to reveal itself is a chicken-and-egg problem:
+  the element our code calls `.hover()` on does not exist until something else (the parent
+  wrapper) is hovered first.
 
-From [tests/survey/survey-builder.spec.ts](tests/survey/survey-builder.spec.ts):
+## 2. Is there a more stable locator we're missing?
 
-```ts
-  test.fixme(
-    'TC_BS_08: Add a Point Scale question',
-    { tag: '@PointScaleQuestion' },
-    async () => {
-      // BLOCKED: "+ Row"/"+ Column" add buttons for Point Scale are
-      // UNCONFIRMED — the manual test case itself flags this as unverified.
-      // Unblock once confirmed against live DOM; addPointScaleQuestion()
-      // is implemented and ready to use once that's done.
-    }
-  );
+**Checked. CONFIRMED: no `data-test-id` exists anywhere in this component's template** — not on
+`.matrix-action-area`, not on the `niq-icon-button` trigger, not on the "Row"/"Column"
+`niq-button`s. The only attributes available are CSS classes and the `iconName` input on the
+icon-button component (`iconName="add-large"` vs `iconName="minus"`).
 
-  test('TC_BS_09: Add a Multi Scale question', { tag: '@MultiScaleQuestion' }, async () => {
-    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+**Also confirmed: `.matrix-action-area` is NOT unique by itself.** The exact same class name is
+used for BOTH the Add wrapper and the Delete wrapper within a single `scale-editor` instance — a
+bare `.matrix-action-area` selector would match 2 elements per question, and more once multiple
+Point Scale/Multi Scale questions exist on the same page (consistent with the general "unscoped
+locator" problem already flagged repeatedly elsewhere in this investigation).
 
-    await surveyBuilderPage.clickAddQuestion();
-    const { questionText, rows, columns } = devTestData.surveyQuestions.multiScale;
+**The real, necessary hover target is the wrapping `.matrix-action-area` div — not the icon-button
+and not the "Row"/"Column" buttons directly** — since that div is the only element with the actual
+`(mouseenter)` binding. To make this unambiguous for the "Add" one specifically (vs "Delete"),
+the wrapper would need to be distinguished by the icon it contains, e.g. a Playwright `:has()`
+filter such as `.matrix-action-area:has(niq-icon-button[iconname='add-large'])` — this is a
+**proposal only** (see below), not confirmed against the live DOM, and does not account for
+multiple scale-editor instances existing on the same page simultaneously.
 
-    await surveyBuilderPage.addMultiScaleQuestion(4, questionText, rows, columns);
-  });
+## 3. Event listeners (from source, not live DevTools)
+
+I don't have a live DevTools "Event Listeners" panel capture to read from directly in this
+session — what's documented below is reconstructed from the Angular template bindings in source,
+which is a reliable equivalent for Angular's event binding system (Angular compiles
+`(mouseenter)="..."` into a real native `mouseenter` DOM listener on that exact element at
+runtime), but it is **not** a literal DevTools screenshot/listener-panel confirmation:
+
+| Element | Listener | Handler |
+|---|---|---|
+| `.matrix-action-area` (Add wrapper) | `mouseenter` | `showAddMenu = true` |
+| `.matrix-action-area` (Add wrapper) | `mouseleave` | `showAddMenu = false` |
+| `.matrix-action-area` (Delete wrapper) | `mouseenter` | `showDeleteMenu = true` |
+| `.matrix-action-area` (Delete wrapper) | `mouseleave` | `showDeleteMenu = false` |
+| `niq-icon-button[iconName='add-large']` | — | **none** |
+| `niq-icon-button[iconName='minus']` | — | **none** |
+| `niq-button` "Row" (inside add menu) | `click` | `addRow()` |
+| `niq-button` "Column" (inside add menu) | `click` | `addColumn()` |
+
+## Assessment: why hover+click, and hover+delay+click, aren't reliable
+
+**CONFIRMED (from source):**
+1. Our current code (`addRowToQuestion()`/`addColumnToQuestion()`) resolves `addRowButton`/
+   `addColumnButton` directly to the "Row"/"Column" `niq-button`s and calls `.hover()` /
+   `.click()` on **that same locator**. Those buttons do not exist in the DOM until `showAddMenu`/
+   `showDeleteMenu` is `true`, which only happens via a `mouseenter` event on a **different**,
+   wrapping element (`.matrix-action-area`). Hovering a locator in order to make that same locator
+   exist is not something Playwright's auto-waiting can resolve — the element the code is hovering
+   has no code path that reveals itself via its own hover.
+2. There is **no CSS transition, animation, `opacity`, or `visibility` delay** anywhere in
+   `scale-editor.component.scss` for `.matrix-action-area`, `.action-trigger`, or
+   `.action-hover-menu`. The reveal is a synchronous Angular `@if` re-render triggered
+   synchronously by the `mouseenter` handler — there is no genuine multi-second CSS-driven
+   transition to "wait out." This means the earlier fix's working theory (a slow hover-reveal CSS
+   transition, mitigated by adding a fixed delay after hover) was based on a reasonable guess that
+   **source evidence now contradicts** — there's nothing timer-based in this component to wait
+   for.
+3. Given (1) and (2), the earlier delay-based fix "sometimes" appearing to work is most plausibly
+   explained by incidental mouse-path side effects (e.g. Playwright's synthetic mouse movement to
+   reach the "Row"/"Column" button's last-known or eventually-resolved position momentarily
+   passing over/near the parent wrapper, or residual state from a prior interaction) rather than
+   the delay itself doing anything meaningful — consistent with the reported "inconsistent, delay
+   alone didn't fix it reliably."
+
+**UNCERTAIN / not independently confirmed:**
+- Exactly how Playwright's locator auto-waiting behaves when asked to `.hover()`/`.click()` a
+  locator with zero current matches that can never be satisfied by that same action — this is
+  standard documented Playwright behavior (it polls until its action timeout, then throws), but
+  the *exact* timing/retry characteristics observed live (e.g. why ~3-4 seconds specifically) were
+  not independently reproduced or measured in this investigation.
+- Whether the deployed live app's compiled output matches this exact source 1:1 (see reachability
+  caveat above).
+
+## Proposed fix (NOT applied — investigation only, per instructions)
+
+Hover the wrapping `.matrix-action-area` div (the element with the real `mouseenter` binding)
+instead of the "Row"/"Column" button directly, then click the revealed button. To disambiguate
+Add vs Delete (both share the `.matrix-action-area` class), scope by the icon the wrapper contains,
+e.g. (illustrative only, not confirmed against the live DOM):
+
+```
+.matrix-action-area:has(niq-icon-button[iconname='add-large'])
 ```
 
-- **`TC_BS_08` (Point Scale) is `test.fixme()`** — skipped, body empty (just a comment explaining
-  why it's blocked). It does NOT call `addPointScaleQuestion()` at all.
-- **`TC_BS_09` (Multi Scale) is a real `test()`** — calls `clickAddQuestion()` then
-  `addMultiScaleQuestion(4, questionText, rows, columns)`, sourcing `questionText`/`rows`/`columns`
-  from `devTestData.surveyQuestions.multiScale`.
+**Explicitly NOT confirmed and NOT invented as a final answer:**
+- Whether `:has()` resolves correctly against this exact live DOM (Playwright supports `:has()`
+  as a real, documented CSS extension — this is not a guess about Playwright itself — but it has
+  not been tried against this specific page).
+- How to additionally scope this per-question once multiple Point Scale/Multi Scale questions
+  exist simultaneously on the page (same unresolved class of problem flagged for
+  `editQuestionButton` and others earlier in this investigation) — a live DOM check with 2+ scale
+  questions present would be needed before trusting this beyond a single matrix question on the
+  page.
 
-**Note:** `TC_BS_09` passes `questionIndex=4` — the same index `TC_BS_07` (NPS) was just corrected
-to use (confirmed via DevTools in an earlier fix this session). This is a real index collision
-between NPS and Multi Scale that was already flagged as a known, unresolved issue in
-`SURVEY_BUILDER_INVESTIGATION.md`'s "TC_BS_05 Rating Test-Data Fix" section — not something newly
-discovered here, just re-confirmed still present.
-
-## 3. Point Scale / Multi Scale locator entries
-
-From [locators/survey/surveyBuilder.locator.json](locators/survey/surveyBuilder.locator.json):
-
-```json
- { "elementName": "questionTypePointScale", "selectorType": "css", "selectorValue": "[data-test-id='question-type-SINGLE_POINT_SCALE']" },
- { "elementName": "questionTypeMultiScale", "selectorType": "css", "selectorValue": "[data-test-id='question-type-MULTIPLE_POINT_SCALE']" },
-```
-and (shared by both question types, via `addRowToQuestion()`/`addColumnToQuestion()`):
-```json
- { "elementName": "addRowButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Row')" },
- { "elementName": "addColumnButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Column')" },
-```
-
-There are no Point-Scale-specific or Multi-Scale-specific row/column locators beyond these shared
-`addRowButton`/`addColumnButton` entries. No "finalize"/save-type locator distinct from
-`addQuestionLink` exists for either type.
-
-## 4. `dev-test-data.json` — `surveyQuestions.multiScale` / `pointScale`
-
-From [test-data/dev-test-data.json](test-data/dev-test-data.json):
-
-```json
-    "multiScale": {
-      "questionText": "Rate the following aspects of the product",
-      "rows": ["Ease of use", "Performance", "Support"],
-      "columns": ["Poor", "Average", "Excellent"]
-    }
-```
-
-Confirmed exact shape: `questionText` (string), `rows` (string array, 3 entries), `columns`
-(string array, 3 entries) — matches `addMultiScaleQuestion()`'s parameter shape exactly.
-
-**There is no `pointScale` key** anywhere in `surveyQuestions` — only `surveyTitle`,
-`singleChoice`, `multipleChoice`, `rating`, `nps`, and `multiScale` exist.
+No code changes were made. This fix should only be implemented after confirming the above against
+the live app.
