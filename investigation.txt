@@ -1,155 +1,168 @@
-# TC_BS_08 (Point Scale) — Silent Hang Investigation
+# TC_BS_08 (Point Scale) — Index & Component Investigation (Round 2)
 
-Read-only report. No fixes applied — findings only, per request.
+Read-only report. No code changes made.
 
-## 1. `addPointScaleQuestion()` — exact current code
+## 1. Does Point Scale's question-text input use the same `question-text-input-${index}-input` pattern?
 
-From [page-objects/survey/surveyBuilder.page.ts](page-objects/survey/surveyBuilder.page.ts):
+**Confirmed via source — yes, identical binding pattern to Single Choice and NPS.**
 
+`libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html`
+(used by both Point Scale and Multi Scale):
+```html
+<niq-text-field (valueChange)="onInputChange($event)" class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()"
+    [value]="question()" [autofocus]="true" size="medium" placeholder="Question"
+    [enhancedComponent]="true" [textOverflow]="'ellipsis'">
+</niq-text-field>
+```
+
+Compared directly against the other question-type editors in the same directory:
+
+`choice-editor/choice-editor.component.html` (Single/Multiple Choice):
+```html
+<niq-text-field class="text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()" [value]="question()" [autofocus]="true" ...>
+```
+
+`nps-editor/nps-editor.component.html` (NPS):
+```html
+<niq-text-field class="w-100 text-field question-field" [attr.data-test-id]="'question-text-input-' + questionNumber()" (valueChange)="onInputChange($any($event))" ...>
+```
+
+**All three use the exact same binding expression: `'question-text-input-' + questionNumber()`.**
+Since NPS's rendered attribute was already confirmed via DevTools to be
+`question-text-input-4-input` (the `niq-text-field` Athena-core component itself appends the
+trailing `-input`), the same must hold for Point Scale/Multi Scale given the identical binding —
+this part of our locator (`questionTextInput`) is correctly shaped for Point Scale.
+
+## Critical finding: what `questionNumber()` actually resolves to for a NEW question
+
+`question-editor.component.ts` (the parent wrapping all type-specific editors):
 ```ts
-  /**
-   * TC_BS_08 — Point Scale. Shares the exact same `survey-scale-editor` Angular
-   * component (and matrix-actions hover mechanism) as Multi Scale — confirmed
-   * via source, see class-level comment #11.
-   */
-  async addPointScaleQuestion(
-    questionIndex: number,
-    questionText: string,
-    rows: string[],
-    columns: string[]
-  ): Promise<void> {
-    try {
-      await this.clickQuestionTypeResource('questionTypePointScale');
-      await this.fillQuestionText(questionIndex, questionText);
-      for (let i = 0; i < rows.length; i++) {
-        if (i >= 2) {
-          await this.addRowToQuestion();
-        }
-        await this.fillLabeledField(`Row ${i + 1}`, rows[i]);
-      }
-      for (let i = 0; i < columns.length; i++) {
-        if (i >= 2) {
-          await this.addColumnToQuestion();
-        }
-        await this.fillLabeledField(`Column ${i + 1}`, columns[i]);
-      }
-      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
-    } catch (error) {
-      throw new Error(`Failed to add Point Scale question: ${error instanceof Error ? error.message : error}`);
-    }
-  }
+displayQuestionNumber = computed(() =>
+  this.questionNumber() ?? this.upcomingQuestionNumber
+);
+
+get upcomingQuestionNumber(): number {
+  return this.surveyService.getQuestions().length + 1;
+}
 ```
 
-## 2. `TC_BS_08` test block — exact current state
-
-From [tests/survey/survey-builder.spec.ts](tests/survey/survey-builder.spec.ts):
-
-```ts
-  test('TC_BS_08: Add a Point Scale question', { tag: '@PointScaleQuestion' }, async () => {
-    const surveyBuilderPage = new SurveyBuilderPage(basePage);
-
-    await surveyBuilderPage.clickAddQuestion();
-    const { questionText, rows, columns } = devTestData.surveyQuestions.pointScale;
-
-    await surveyBuilderPage.addPointScaleQuestion(6, questionText, rows, columns);
-  });
+`question-type-selector.component.html` (the component used while a NEW question is being
+actively created, before it's saved — this is what our `clickQuestionTypeResource()` interacts
+with):
+```html
+<survey-question-editor #questionEditor [selectedType]="selectedType()" [isPreview]="true"
+    ...
+    (discardChangesRequested)="discardQuestion()"></survey-question-editor>
 ```
+**No `[questionNumber]` input is bound here.** This means, for the question currently being
+created (not yet saved), `questionNumber()` is `undefined`, so `displayQuestionNumber()` falls
+back to `upcomingQuestionNumber` — **`this.surveyService.getQuestions().length + 1`**, i.e. **the
+live count of already-saved questions on the persisted survey, plus one, evaluated at the moment
+the new question type is selected.**
 
-Confirmed: **no longer `test.fixme()`** — it's a real `test()`, calling `clickAddQuestion()` then
-`addPointScaleQuestion()` with real arguments sourced from test data.
+**This means the correct `questionIndex` to pass is NOT a fixed sequence number derivable purely
+from test file order — it is whatever `(current saved question count) + 1` is on the live,
+persisted survey at the moment each test runs.** If the persisted survey ever has extra/missing
+questions relative to what the test suite assumes (manual test runs, partial failures leaving
+stray questions, etc.), this number shifts and any hardcoded value can silently become wrong.
 
-## 3. `questionIndex` passed — collision check
+## 2 & 3. Live question count and correct index — could not get a fresh live browser session, but found a very recent authenticated trace instead
 
-**`6`** is passed. Per the stated/expected sequence (Single Choice=1, Multiple Choice=2, Rating=3,
-NPS=4, Multi Scale=5, Point Scale=6), `6` is the next unused index — **no collision with the
-previous NPS/Multi Scale index-4 collision already fixed**. This part looks correct in isolation.
+**Attempted direct live access:** tried navigating to the live app via browser automation
+(`https://si.connect.nielseniq.io/reportexperience-dev/survey/select-panelist`) to count questions
+directly. This redirected to an Okta OAuth login page — this automation tool's browser session
+does not carry the Playwright test suite's own stored authentication (`storage/auth.json`), and no
+credentials are available/appropriate to use to log in interactively. **Could not get a fresh,
+independently-verified live count this way** — flagging this rather than guessing or attempting to
+log in.
 
-**However** — see the page-snapshot evidence in section 5 below — the actual live page did NOT
-have a "real" Multi Scale question at position 5 at the time of this failure; it had a
-**pre-existing, non-test-data question** at position "5." (see below). Whether `6` is the correct
-live DOM index **depends entirely on whether that pre-existing question counts in the page's own
-numbering**, which has not been independently re-verified here.
+**Fallback: found a much more recent, real authenticated trace** at
+`test-results/survey-survey-builder-Surv-48bec--Add-a-Point-Scale-question-chromium/error-context.md`,
+regenerated since the last investigation (overwrites the same output folder Playwright reuses per
+test name). Its content is materially different from the previous investigation's trace:
 
-## 4. `dev-test-data.json` — `surveyQuestions.pointScale`
-
-From [test-data/dev-test-data.json](test-data/dev-test-data.json):
-
-```json
-    "pointScale": {
-      "questionText": "Rate the following aspects of the product",
-      "rows": ["Ease of use", "Performance", "Support"],
-      "columns": ["Poor", "Average", "Excellent"]
-    },
-```
-
-**Exists, and its shape matches exactly** what `addPointScaleQuestion()` destructures
-(`questionText`, `rows`, `columns`) in the `TC_BS_08` test block.
-
-## 5. Last run's actual error / trace
-
-Found an existing result folder for this exact test:
-`test-results/survey-survey-builder-Surv-48bec--Add-a-Point-Scale-question-chromium/`
-(`error-context.md`, `test-failed-1.png`, `trace.zip`).
-
-### Exact error
+### New error (different from last time)
 
 ```
-Test timeout of 300000ms exceeded.
+Error: Failed to add Point Scale question: locator.fill: Target page, context or browser has been closed
 ```
 
-**No other thrown error or exception message is present.** This is Playwright's global per-test
-timeout (confirmed in `playwright.config.ts`: `timeout: 300 * 1000`), not a specific
-"element not found" / "locator resolved to N elements" error. The `use:` block in
-`playwright.config.ts` sets no explicit `actionTimeout`, so individual actions (e.g. `.fill()`)
-have no per-action timeout ceiling of their own and will keep auto-retrying until the whole test
-is killed at 300s — consistent with "the test completes a long run with no specific error, rather
-than failing fast," matching the reported symptom of nothing getting filled.
+This is **not** the previous "Test timeout of 300000ms exceeded" — "Target page, context or
+browser has been closed" indicates the browser/test was **externally terminated mid-run** (the
+terminal history shows an `Exit Code 130` entry, i.e. `Ctrl+C`/SIGINT, consistent with the test run
+being manually cancelled rather than failing organically this time). This trace should be read
+with that caveat — it's a snapshot of an interrupted run, not a clean pass/fail.
 
-### Page snapshot / screenshot at time of failure — important, unexpected finding
+### Page snapshot at the moment of interruption — the key finding
 
-The accessibility snapshot and the attached `test-failed-1.png` screenshot (viewed directly) show
-**only 5 questions on the page** at the moment of timeout:
+```yaml
+- generic [ref=e104]:
+  - generic [ref=e105]: "1."
+  - ...How satisfied are you with this product?... (Single Choice)
+- generic [ref=e124]:
+  - generic [ref=e125]: "2."
+  - ...Which features do you use regularly?... (Multiple Choice)
+- generic [ref=e147]:
+  - generic [ref=e148]: "3."
+  - ...Rate your experience... (Rating)
+- generic [ref=e169]:
+  - generic [ref=e170]: "4."
+  - ...How likely are you to recommend this product to a colleague?... (NPS)
+- generic [ref=e200]: Add question
+- generic [ref=e205]: [Single Choice] [Multiple Choice] [Rating] [Net Promoter Score] [Point Scale] [Multi Scale]
+- generic [ref=e239]:
+  - generic [ref=e244]:
+    - generic [ref=e245]: "5."
+    - textbox "Question" [active] [ref=e249]     <-- empty, actively focused, NOT filled
+  - textbox "Column 1" [ref=e256]   <-- empty
+  - textbox "Column 2" [ref=e261]   <-- empty
+  - textbox "Row 1" [ref=e267]      <-- empty
+  - textbox "Row 2" [ref=e273]      <-- empty
+```
 
-1. "How satisfied are you with this product?" (Single Choice) — correct, matches test data.
-2. "Which features do you use regularly?" (Multiple Choice) — correct, matches test data.
-3. "Rate your experience" (Rating, star icons) — correct, matches test data.
-4. "How likely are you to recommend this product to a colleague?" (NPS, 1-10 scale) — correct,
-   matches test data.
-5. **"cvbvcb"** — a Point-Scale-style radio-button matrix question, already collapsed/saved, with
-   row labels "bbmnbn", ".mn,n", "kj,j,kjkl" and column labels "mnmn,mn,", "mn,mn,m".
+**Only 4 pre-existing real questions exist** (Single Choice, Multiple Choice, Rating, NPS) — **the
+"cvbvcb" leftover question found in the previous investigation is NO LONGER PRESENT.** It appears
+to have been removed/cleaned up (by whom/when is not known from this evidence) between the last
+investigation and now. The new Point Scale question is being actively created and is labeled
+**"5."** on the page — with its Question/Column 1/Column 2/Row 1/Row 2 fields all visible but not
+yet filled, matching the reported symptom ("Point Scale selected... nothing gets filled").
 
-**This 5th question does not match any test data configured in `dev-test-data.json`** (neither
-`multiScale`'s "Rate the following aspects of the product" / "Ease of use" etc., nor
-`pointScale`'s same values). The text content ("cvbvcb", "mnmn,mn,", "bbmnbn", etc.) looks like
-manual/ad-hoc typed input rather than automation-generated content — **this looks like a
-pre-existing, already-saved question left over from a previous manual testing session against the
-same persisted "Automation Test Survey"**, not something created by this test run. There is no
-"Multi Scale" question visible anywhere in this snapshot, despite `TC_BS_09` (Multi Scale) being a
-real, implemented test today.
+**Given 4 pre-existing questions, `upcomingQuestionNumber = 4 + 1 = 5` — matching the "5." shown
+live.** This contradicts BOTH previously-tried values: the original `6` and the just-applied `7`.
+Neither matches what this trace shows as the real, live-assigned number right now.
 
-**Not independently confirmed:**
-- Whether this leftover "cvbvcb" question was already present *before* `TC_BS_08` started (most
-  likely, given the questions before it are all correct and it's already collapsed/saved by the
-  time of the snapshot), or whether something in this test run itself somehow produced it. Given
-  its content doesn't match any configured test data, it was almost certainly pre-existing from
-  an earlier, separate (likely manual) session, not generated by this run.
-- Whether `.matrix-action-area`-based Point Scale source confirmed earlier (shares component with
-  Multi Scale, including the `data-test-id="question-text-input-" + questionNumber()` binding) is
-  actually what's deployed on the live host right now — not re-verified in this investigation.
-- Exactly which single action is the one stuck in a retry loop for the full 300s (most likely
-  candidate, based on the method's first fillable step, is `fillQuestionText()`'s `.enterText()`
-  call via `questionTextInput`, but this has not been isolated/confirmed with a shorter, targeted
-  repro).
+**Important caveats on this conclusion:**
+- This evidence comes from a run that was manually interrupted (browser closed), not a clean
+  completed run — it's a real, authenticated snapshot of actual live state, but the broader test
+  behavior around it (e.g., whether `.fill()` would have eventually succeeded or kept hanging)
+  wasn't observed to completion.
+- The disappearance of the "cvbvcb" leftover question between investigations means **the
+  persisted survey's question count is not stable across runs** — whatever number is "correct"
+  today may not be correct on the next run if the survey state changes again (manual edits,
+  partial test failures leaving stray questions, etc.). A hardcoded `questionIndex` is inherently
+  fragile against this persisted, shared survey — this is a structural risk, not just a one-off
+  wrong number.
 
-## Summary of findings (no fix applied)
+## 4. Stray/leftover "cvbvcb" question — status
 
-- Code and test-data wiring for `TC_BS_08` all look internally consistent (index 6, correct test
-  data shape, no `test.fixme()`).
-- The failure is a full 300s test-timeout with no specific thrown error — consistent with an
-  action (most likely the question-text fill) retrying indefinitely against a locator that never
-  resolves, given this repo's `webActions`/`playwright.config.ts` have no shorter per-action
-  timeout to fail fast instead.
-- The live page at time of failure had a 5th question ("cvbvcb"...) that doesn't correspond to any
-  configured automated test data — most likely leftover from a prior manual session on the same
-  persisted survey, and its presence/position could be shifting what `questionIndex` actually
-  resolves to in the live DOM for the question this test is trying to create.
+**Not currently present**, based on the trace above (only 4 pre-existing questions: Single Choice,
+Multiple Choice, Rating, NPS — no "cvbvcb" or similar leftover visible). Per instructions, nothing
+was deleted by this investigation — this is simply what the most recent authenticated trace shows.
+Whether it was removed intentionally (e.g. via "Delete question" during manual cleanup) or some
+other way is not known from the evidence available.
+
+## Summary
+
+| Item | Finding |
+|---|---|
+| Point Scale uses `question-text-input-${index}-input` pattern | **Confirmed**, identical binding to Single Choice/NPS |
+| Live question count right now | **4** pre-existing real questions (Single Choice, Multiple Choice, Rating, NPS) — no leftover "cvbvcb" question found in the most recent trace |
+| Correct `questionIndex` for a new Point Scale question, per source + most recent trace | **5** (`upcomingQuestionNumber = 4 + 1`) — matches the "5." shown live in the most recent interrupted-run trace. This does **not** match the currently-applied `7`, nor the original `6`. |
+| "cvbvcb" leftover question | **No longer present** in the most recent trace (previously confirmed present in an earlier trace) |
+| Live independent browser count | **Could not obtain** — hit an OAuth login wall with no usable credentials; relied on the most recent authenticated Playwright trace instead |
+
+No code was changed. The next step, if confirmed, would be updating `TC_BS_08`'s hardcoded
+`questionIndex` again (6 → 7 → possibly 5) — but given the demonstrated instability of this
+persisted survey's question count across runs, a hardcoded number may need to be revisited each
+time regardless, until a dynamic read of `surveyService`'s actual question count (or an
+equivalent DOM-derived count) replaces the fixed literal.
