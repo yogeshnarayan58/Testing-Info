@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
 $ npx playwright test tests/survey/survey-builder.spec.ts --project=chromium --workers=1 --grep "@SurveyBuilderSetup|TC_BS_0[3-9]|@MaxQuestions"
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -16,41 +16,33 @@ Global setup completed. Auth state saved.
 
 Running 8 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓  1 …ld Survey page via Start from Scratch @SurveyBuilderSetup (1.1m)
+  ✓  1 …ld Survey page via Start from Scratch @SurveyBuilderSetup (1.2m)
 Auth state loaded from storage/auth.json
-  ✓  2 …BS_03: Add a Single Choice question @SingleChoiceQuestion (2.9s)
-  ✓  3 …4: Add a Multiple Choice question @MultipleChoiceQuestion (4.5s)
-  ✓  4 …Builder › TC_BS_05: Add a Rating question @RatingQuestion (3.1s)
-  ✓  5 …rvey Builder › TC_BS_07: Add an NPS question @NPSQuestion (3.2s)
-  ✓  6 … TC_BS_08: Add a Point Scale question @PointScaleQuestion (4.8s)
-  ✓  7 … TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (4.8s)
-  ✘  8 …d question and Duplicate with limit message @MaxQuestions (2.5s)
+  ✓  2 …BS_03: Add a Single Choice question @SingleChoiceQuestion (3.1s)
+  ✓  3 …4: Add a Multiple Choice question @MultipleChoiceQuestion (4.8s)
+  ✓  4 …Builder › TC_BS_05: Add a Rating question @RatingQuestion (3.3s)
+  ✓  5 …rvey Builder › TC_BS_07: Add an NPS question @NPSQuestion (3.3s)
+  ✓  6 … TC_BS_08: Add a Point Scale question @PointScaleQuestion (5.2s)
+  ✓  7 … TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (5.4s)
+  ✘  8 … question and Duplicate with limit message @MaxQuestions (12.1s)
 
 
   1) [chromium] › tests\survey\survey-builder.spec.ts:106:7 › Survey Builder › TC_BS_08: Max questions (10) disables Add question and Duplicatewith limit message @MaxQuestions 
 
-    Error: Failed to verify max-questions limit: Failed to add Single Choice question: locator.click: Error: strict mode violation: locator('[niqtooltip=\'Edit\']') resolved to 6 elements:
-        1) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button light primary small default">…</niq-icon-button> aka locator('niq-icon-button').nth(1)
-        2) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('niq-icon-button').nth(4)
-        3) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('div:nth-child(3) > .question-header > .question-actions > niq-icon-button').first()
-        4) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('div:nth-child(4) > .question-header > .question-actions > niq-icon-button').first()
-        5) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('div:nth-child(5) > .question-header > .question-actions > niq-icon-button').first()
-        6) <niq-icon-button size="small" mode="light" tabindex="0" role="button" type="primary" iconname="edit" state="default" niqtooltip="Edit" niqtooltipposition="top" _nghost-ng-c3661479976="" _ngcontent-ng-c1213028333="" class="question-action-button default light primary small">…</niq-icon-button> aka locator('div:nth-child(6) > .question-header > .question-actions > niq-icon-button').first()
+    Error: Failed to verify max-questions limit: expect(received).toBeTruthy()
 
-    Call log:
-      - waiting for locator('[niqtooltip=\'Edit\']')
+    Received: false
 
-
-      132 |       assertTrue(questionCountAfter === 10, 'Expected question count to remain at 10');
-      133 |     } catch (error) {
-    > 134 |       throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
+      137 |       assertTrue(questionCountAfter === 10, 'Expected question count to remain at 10');
+      138 |     } catch (error) {
+    > 139 |       throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
           |             ^
-      135 |     }
-      136 |   });
-      137 |
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:134:13
+      140 |     }
+      141 |   });
+      142 |
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:139:13
 
     attachment #1: screenshot (image/png) ──────────────────────────────
     test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\test-failed-1.png
@@ -70,12 +62,8 @@ Auth state loaded from storage/auth.json
 
   1 failed
     [chromium] › tests\survey\survey-builder.spec.ts:106:7 › Survey Builder › TC_BS_08: Max questions (10) disables Add question and Duplicate with limit message @MaxQuestions 
-  7 passed (2.5m)
+  7 passed (2.8m)
 
 To open last HTML report run:
 
   npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ 
