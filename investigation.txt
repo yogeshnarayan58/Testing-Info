@@ -1,103 +1,114 @@
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+import { test, expect } from '@playwright/test';
 
-Running 10 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-  ✘   1 …n on the survey home page @LandStartFromScratch (1.2m)
-Auth state loaded from storage/auth.json
-  -   2 … confirm the Choose a dataset screen @DatasetSelection
-  -   3 …for Panelists after all 5 filters are set @DataSummary
-  -   4 …uilder after selecting a response count @ResponseCount
-  -   5 …d Survey page after proceeding @ProceedToSurveyBuilder
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-  ✘   6 …n on the survey home page @LandStartFromScratch (1.1m)
-Auth state loaded from storage/auth.json
-  -   7 … confirm the Choose a dataset screen @DatasetSelection
-  -   8 …for Panelists after all 5 filters are set @DataSummary
-  -   9 …uilder after selecting a response count @ResponseCount
-  -  10 …d Survey page after proceeding @ProceedToSurveyBuilder
-
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:28:7› Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-
-    Error: expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
-
-    attachment #1: screenshot (image/png) ─────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────
-
-  2) [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-
-    Error: expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy();
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:35:15
-
-    attachment #1: screenshot (image/png) ─────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\test-failed-1.png
-    ───────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\error-context.md
-
-    attachment #4: trace (application/zip) ────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-Microsoft-Edge\trace.zip
-
-    ───────────────────────────────────────────────────────────
-
-  2 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @LandStartFromScratch 
-    [Microsoft Edge] › tests\survey\start-from-scratch.spec.ts:28:7 › Start from scratch › Start from Scratch: Should displaythe Start from scratch option on the survey home page @LandStartFromScratch 
-  8 did not run
-
+test('test', async ({ page }) => {
+  await page.goto('https://uat.identity.nielseniq.io/oauth2/default/v1/authorize?response_type=code&scope=openid%20profile%20email%20offline_access&client_id=0oa2hdfhd9IkKJN1C1d7&state=dt5UqWsTmnKGpQOA-IY4PsMFZiMnlhV9uNHd1iY0joE&redirect_uri=http%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=2BcNCSXAbX-xgDMK0pilaRDCeouRVqF1j9rTHM1cHHI&code_challenge=cTq-Pc-goB6FtiqK6vvUW1oU_pipXJflhnWqQzJ5Yk4&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username' }).click();
+  await page.getByRole('textbox', { name: 'Username' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTeam@2023');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByText('Start from scratchBuild your').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('div').filter({ hasText: /^#US LOC OMNI SUPER CATEGORY MA$/ }).click();
+  await page.locator('[data-test-id="-icon"]').nth(5).click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.getByRole('button', { name: 'Search for Panelists' }).click();
+  await page.locator('[data-test-id="select-response-count-250"]').click();
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('t');
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('testing');
+  await page.locator('div').filter({ hasText: '1.t Add question Single' }).nth(2).click();
+  await page.locator('[data-test-id="question-type-NET_PROMOTER_SCORE"]').click();
+  await page.locator('[data-test-id="question-text-input-3-input"]').fill('Testing');
+  await page.getByText('1.t 2.testing Add question').click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).nth(4).click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).nth(4).click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).nth(4).click({
+    clickCount: 5
+  });
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('[data-test-id="review-survey"]').click();
+  await page.locator('[data-test-id="select-question-0-icon"]').click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Select All' }).click();
+  await page.getByRole('button', { name: 'Unselect All' }).click();
+  await page.getByRole('button', { name: 'Expand All' }).click();
+  await page.getByRole('button', { name: 'Expand All' }).click();
+  await page.getByRole('button', { name: 'Expand All' }).click();
+  await page.getByRole('button', { name: 'Collapse All' }).click();
+  await page.getByRole('button', { name: 'Exit Review Mode' }).click();
+  await page.locator('[data-test-id="add-question"]').click();
+  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('testv');
+  await page.locator('#cdk-drop-list-16').click();
+  await page.locator('[data-test-id="publish-survey"]').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').fill('Test Codegen Automation');
+  await page.locator('[data-test-id="save-a-copy-dialog-heading"]').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').click();
+  await page.locator('[data-test-id="create-new-folder-label"]').click();
+  await page.locator('[data-test-id="create-folder-dialog-input"]').click();
+  await page.locator('[data-test-id="create-folder-dialog-input"]').fill('Codegen Automation');
+  await page.locator('[data-test-id="create-folder-dialog-accept-button"]').click();
+  await page.getByRole('treeitem', { name: 'My Assets' }).click();
+  await page.getByRole('treeitem', { name: 'Codegen Automation' }).click();
+  await page.locator('[data-test-id="save-pending-changes-button"]').click();
+  await page.getByText('Confirm publish?').click();
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByRole('status', { name: 'Publishing survey' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByRole('link', { name: 'Find my stuff' }).click();
+  await page.getByRole('gridcell', { name: 'Codegen Automation' }).click();
+  await page.locator('#side-menu-meatball').click();
+  await page.locator('.cdk-overlay-backdrop').click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByText('Start from scratchBuild your').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-selectionMenuOption_Delete"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.getByText('#US LOC OMNI SUPER CATEGORY MA+ All').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
+  await page.locator('niq-checkbox').nth(5).click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.getByRole('button', { name: 'Search for Panelists' }).click();
+  await page.locator('[data-test-id="select-response-count-300"]').click();
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.locator('[data-test-id="question-type-NET_PROMOTER_SCORE"]').click();
+  await page.locator('[data-test-id="question-text-input-1-input"]').fill('v');
+  await page.locator('[data-test-id="save-draft"]').click();
+  await page.getByRole('treeitem', { name: 'My Assets' }).click();
+  await page.getByText('My Assets').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').fill('SaveDraft');
+  await page.locator('[data-test-id="save-pending-changes-button"]').click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/my-assets');
+  await page.getByRole('gridcell', { name: 'SaveDraft Favorite' }).click();
+  const page1Promise = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'SaveDraft' }).click();
+  const page1 = await page1Promise;
+  await page.locator('[data-test-id="cell-survey-name-row-0"] [data-test-id="survey-fms-grid-checkbox"]').click();
+  await page.getByRole('button', { name: 'Duplicate' }).click();
+});
