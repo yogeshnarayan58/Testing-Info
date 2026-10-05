@@ -1,76 +1,122 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ npx playwright test tests/survey/survey-builder.spec.ts --project=chromium --list
-◇ injected env (20) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-Listing tests:
-  [chromium] › survey\survey-builder.spec.ts:27:7 › Survey Builder › Setup: reach Build Survey page via Start from Scratch
-  [chromium] › survey\survey-builder.spec.ts:38:7 › Survey Builder › TC_BS_02: Edit survey title
-  [chromium] › survey\survey-builder.spec.ts:44:7 › Survey Builder › TC_BS_03: Add a Single Choice question
-  [chromium] › survey\survey-builder.spec.ts:51:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question
-  [chromium] › survey\survey-builder.spec.ts:60:7 › Survey Builder › TC_BS_05: Add a Rating question
-  [chromium] › survey\survey-builder.spec.ts:69:7 › Survey Builder › TC_BS_07: Add an NPS question
-  [chromium] › survey\survey-builder.spec.ts:78:7 › Survey Builder › TC_BS_08: Add a Point Scale question
-  [chromium] › survey\survey-builder.spec.ts:87:7 › Survey Builder › TC_BS_09: Add a Multi Scale question
-  [chromium] › survey\survey-builder.spec.ts:96:7 › Survey Builder › TC_BS_REVIEW_MODE: Review mode select, delete, select/unselect all, expand/collapse all, exit
-  [chromium] › survey\survey-builder.spec.ts:120:8 › Survey Builder › TC_BS_14: Publish survey end-to-end
-  [chromium] › survey\survey-builder.spec.ts:129:7 › Survey Builder › TC_BS_SAVE_DRAFT: Save survey as draft and verify in My Assets
-  [chromium] › survey\survey-builder.spec.ts:139:7 › Survey Builder › TC_BS_PUBLISH: Publish survey
-Total: 12 tests in 1 file
+$ git status --short
+M  ../.github/CODEOWNERS
+M  ../.gitignore
+M  .env.example
+ M locators/survey/start-from-scratch.locator.json
+ M locators/survey/start-with-prompt.locator.json
+UU package-lock.json
+M  playwright.config.ts
+A  playwright/reporters/grafana-reporter.ts
+ M test-data/dev-test-data.json
+M  utils/configurationDetails.ts
+M  ../libs/survey-mod-lib/package.json
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.scss
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey-data-mapper.util.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey-data-mapper.util.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey-payload.util.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey-payload.util.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts
+M  ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html
+M  ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/question-grid.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/question-grid.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/question-grid.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/question.model.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/expand-icon-renderer.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/expand-icon-renderer.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/expand-icon-renderer.component.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/expand-icon-renderer.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/options-detail-renderer.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/options-detail-renderer.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/options-detail-renderer.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/required-badge-renderer.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/question-grid/renderers/type-badge-renderer.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/models/survey-model-validator.model.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/services/survey-model-validator.service.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-model-validator/services/survey-model-validator.service.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.html
+A  ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.spec.ts
+A  ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.ts
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-overview/survey-overview.component.html
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-overview/survey-overview.component.scss
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-overview/survey-overview.component.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-overview/survey-overview.component.ts
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.html
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.scss
+A  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.spec.ts
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.ts
+M  ../libs/survey-mod-lib/src/lib/features/survey-results/models/survey-results.ts
+A  ../libs/survey-mod-lib/src/lib/shared/common/guards/published-survey-results.guard.spec.ts
+A  ../libs/survey-mod-lib/src/lib/shared/common/guards/published-survey-results.guard.ts
+M  ../libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.html
+M  ../libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.spec.ts
+M  ../libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.ts
+M  ../libs/survey-mod-lib/src/lib/shared/services/survey-common.service.spec.ts
+M  ../libs/survey-mod-lib/src/lib/shared/services/survey-common.service.ts
+A  ../libs/survey-mod-lib/src/lib/shared/utils/survey-date.util.spec.ts
+A  ../libs/survey-mod-lib/src/lib/shared/utils/survey-date.util.ts
+A  ../libs/survey-mod-lib/src/lib/shared/utils/survey-folder.util.spec.ts
+A  ../libs/survey-mod-lib/src/lib/shared/utils/survey-folder.util.ts
+M  ../libs/survey-mod-lib/src/lib/survey-mod.routes.ts
+M  ../libs/survey-mod-lib/src/public-api.ts
+M  ../package.json
+A  ../public/local-cookies.json
+M  ../src/app/app.config.ts
+M  ../src/app/app.routes.ts
+M  ../src/app/environments/environment.ts
+M  ../src/styles.scss
+?? ../.playwright-mcp/
+?? SURVEY_BUILDER_INVESTIGATION.md
+?? SURVEY_BUILDER_INVESTIGATION_A.md
+?? SURVEY_BUILDER_INVESTIGATION_B.md
+?? SURVEY_BUILDER_INVESTIGATION_C.md
+?? locators/survey/surveyBuilder.locator.json
+?? page-objects/survey/surveyBuilder.page.ts
+?? tests/survey/survey-builder.spec.ts
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ grep -rln "<<<<<<<\|>>>>>>>" . --include=*.ts --include=*.json --exclude-dir=node_modules
+./package-lock.json
 
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
-$ npx playwright test tests/survey/survey-builder.spec.ts --project=chromium --workers=1 --grep "<SetupTag>|@SingleChoiceQuestion|@ReviewMode"
-◇ injected env (20) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+$ git diff HEAD --stat -- global-setup.ts page-objects/login
 
-Running 2 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-  ✘  1 …_BS_03: Add a Single Choice question @SingleChoiceQuestion (5ms)
-  -  2 …lete, select/unselect all, expand/collapse all, exit @ReviewMode
-
-
-  1) [chromium] › tests\survey\survey-builder.spec.ts:44:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-
-    TypeError: Cannot read properties of undefined (reading 'getWebActions')
-
-       at ..\page-objects\common\common-page.ts:11
-
-       9 |
-      10 |   constructor(protected basePage: BasePage) {
-    > 11 |     this.webActionHandler = basePage.getWebActions();
-         |                                      ^
-      12 |     this.resourceManager = new ResourceManager({});
-      13 |   }
-      14 |
-        at CommonPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:11:38)
-        at SurveyBuilderPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:132:5)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:45:31
-
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\error-context.md
-
-    Error Context: test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\error-context.md
-
-    attachment #3: trace (application/zip) ─────────────────────────────
-    test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-survey-builder-Surv-35dc5-dd-a-Single-Choice-question-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:44:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-  1 did not run
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation|MERGING)
+$ 
