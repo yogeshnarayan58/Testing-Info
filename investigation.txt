@@ -1,69 +1,43 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ npx playwright test tests/survey/survey-builder.spec.ts --project=chromium --workers=1 --grep "@SurveyBuilderSetup|TC_BS_0[3-9]|@MaxQuestions"
-◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+# Build Survey — Max Questions (10) Logic
+## 1. Limit constant
+[libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts:110](../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts#L110)
+```ts
+export const MAX_SURVEY_QUESTIONS = 10;
+```
+Gate signal: [preview-mode.component.ts:66](../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.ts#L66)ts
+isAtMaxQuestions = computed(() => this.questions().length >= MAX_SURVEY_QUESTIONS);
+## 2. "Add question" bottom control
+[preview-mode.component.html:93-101](../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L93-L101), `data-test-id="add-question"`.
+```html
+<niq-button data-test-id="add-question" ... [state]="isAtMaxQuestions() ? 'disabled' : 'default'"
+    [style.pointer-events]="isAtMaxQuestions() ? 'auto' : null"
+    (click)="!isAtMaxQuestions() && (showQuestionTypeList = !showQuestionTypeList)">
+```
+Disabled binding: `niq-button`'s `[state]` input set to `'disabled'` (no native `disabled` attribute/`aria-disabled`/CSS class/`*ngIf`); click handler also no-ops via `!isAtMaxQuestions() &&`.
 
-Running 8 tests using 1 worker
+## 3. Max-questions message
+Not a toast/inline text — shown as a tooltip via `[niqTooltip]` / `[showTooltip]="isAtMaxQuestions()"` on the same `niq-button` (and on `suggest-new-questions`/`reprompt-new-questions` buttons), e.g. [preview-mode.component.html:97-98](../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L97-L98):
+```html
+[niqTooltip]="'You have already reached the maximum number of questions.'"
+[showTooltip]="isAtMaxQuestions()"
+```
+Carrying element: the `niq-button` host itself (directive `niqTooltip`), appears on hover.
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓  1 …ld Survey page via Start from Scratch @SurveyBuilderSetup (1.2m)
-Auth state loaded from storage/auth.json
-  ✓  2 …BS_03: Add a Single Choice question @SingleChoiceQuestion (3.1s)
-  ✓  3 …4: Add a Multiple Choice question @MultipleChoiceQuestion (4.8s)
-  ✓  4 …Builder › TC_BS_05: Add a Rating question @RatingQuestion (3.3s)
-  ✓  5 …rvey Builder › TC_BS_07: Add an NPS question @NPSQuestion (3.3s)
-  ✓  6 … TC_BS_08: Add a Point Scale question @PointScaleQuestion (5.2s)
-  ✓  7 … TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (5.4s)
-  ✘  8 … question and Duplicate with limit message @MaxQuestions (12.1s)
+## 4. Duplicate button
+[preview-mode.component.html:61-69](../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L61-L69) — no `data-test-id`.
+```html
+<niq-icon-button class="question-action-button" (click)="!isAtMaxQuestions() && copyQuestion(i); ..."
+    [state]="isAtMaxQuestions() ? 'disabled' : 'default'"
+    [niqTooltip]="isAtMaxQuestions() ? 'You have already reached the maximum number of questions.' : 'Duplicate'"
+    [showTooltip]="true">
+```
+Same pattern as #2: `[state]` input + `[style.pointer-events/opacity/cursor]`, message swapped via ternary in `[niqTooltip]`.
 
-
-  1) [chromium] › tests\survey\survey-builder.spec.ts:106:7 › Survey Builder › TC_BS_08: Max questions (10) disables Add question and Duplicatewith limit message @MaxQuestions 
-
-    Error: Failed to verify max-questions limit: expect(received).toBeTruthy()
-
-    Received: false
-
-      137 |       assertTrue(questionCountAfter === 10, 'Expected question count to remain at 10');
-      138 |     } catch (error) {
-    > 139 |       throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      140 |     }
-      141 |   });
-      142 |
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:139:13
-
-    attachment #1: screenshot (image/png) ──────────────────────────────
-    test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\error-context.md
-
-    Error Context: test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────
-    test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-survey-builder-Surv-d3180-uplicate-with-limit-message-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:106:7 › Survey Builder › TC_BS_08: Max questions (10) disables Add question and Duplicate with limit message @MaxQuestions 
-  7 passed (2.8m)
-
-To open last HTML report run:
-
-  npx playwright show-report
+## 5. Question numbers (`.question-number`)
+Rendered per-type in each editor template as `{{ questionNumber() }}.`, e.g. [choice-editor.component.html:45](../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html#L45). Value sourced from parent:
+[question-editor.component.ts:87-96](../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.ts#L87-L96)
+```ts
+displayQuestionNumber = computed(() => this.questionNumber() ?? this.upcomingQuestionNumber);
+get upcomingQuestionNumber(): number { return this.surveyService.getQuestions().length + 1; }
+```
+Review mode uses a plain property: [review-mode.component.html:10](../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html#L10) — `{{ question.questionNumber }}.`
