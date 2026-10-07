@@ -1,128 +1,1260 @@
-Added by Me-for suvvey creation need minimum 3-max 10 question> click on the publish button> then pop up for Publish your survey where add the name & we can create the folder or directly click on the folder where we have choose the location(My assets)>click on the continue button>pop up will show Confirm publish? and in this it will show the the 5 dimensions then 250 responses select thing will show which we need to verify that>click on the confirm button> user should get the Success message as "Survey Published Successfully"
-
-# Survey Builder — Save Draft / Publish Logic (source-grounded)
-
-## 1. Test status (e2e/tests/survey/survey-builder.spec.ts)
-
-| Test | Tag | Mode | Why |
-|---|---|---|---|
-| `TC_BS_14: Review Mode select all, de-select one, delete, and exit keeps deletions` (L218) | `@ReviewModeActions` | `test` (active) | Review-mode only, unrelated to Publish/Save draft. |
-| `TC_BS_14: Publish survey end-to-end` (L290) | `@PublishSurveyLegacy` | `test.fixme` | Comment L291-292: "BLOCKED: dev-team-confirmed non-functional — Publish is currently a no-op with no backend support." |
-| `TC_BS_SAVE_DRAFT: Save survey as draft` (L298) | `@SaveDraft`, `@WIP` | `test.fixme` | Comment L295-296: draft is created but "success toast / folder list verification is pending feature completion". |
-| `TC_BS_PUBLISH: Publish survey` (L306) | `@PublishSurvey` | `test` (active) | Full publish flow, asserted below. |
-
-**Is the "no-op / no backend support" note still true?** **No, not for Publish.** `SurveyService.publishSurvey()` ([survey.service.ts](../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts#L174)) runs a real report (`runReportService.runReport(true)`) then POSTs to `` `${apiUrls.surveyEntityServiceUrl}/publish` `` via `submitSurvey()` (L186-204), and `SurveyPublishPopupComponent.confirmPublish()` ([survey-publish-popup.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts#L50-65)) subscribes to it with real success/error toast handling. The legacy `TC_BS_14` comment in [SurveyBuilder.page.ts](page-objects/survey/SurveyBuilder.page.ts#L43-45) is outdated — it is a separate, still-`fixme`'d legacy test (`@PublishSurveyLegacy`), while `TC_BS_PUBLISH` is active and not fixme'd. Save draft also calls a real endpoint (`/survey`, `saveSurveyDraft()` L170-171) — it is not a no-op either; only its *toast/list verification* is flagged `@WIP`.
-
-## 2. Save draft logic
-
-- **Enabled when:** NOT FOUND IN SOURCE — no `isSaveDraftDisable`/disabled binding found for the "Save draft" button in [survey-header.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L49) (only a `loading` vs `default` `[state]`, driven by `isSavingDraft()`/`isLoadingFolders()`); no question-count gate located (unlike Publish's `questions().length < 3`).
-- **Save-a-copy dialog fields:** `SaveACopyComponent` bound at [survey-header.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html#L65-76): title field, `createNewFolder` option, `acceptText` = `folderDialogText.continue` ("Continue", `FOLDER_DIALOG_TEXT.continue` in [build-survey.ts](../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts#L278)) when in publish action, else `folderDialogText.saveDraft` ("Save as draft"). E2E fills title via `saveCopyTitleInput`, picks `myAssetsTreeItem` ("My Assets" tree node), clicks `savePendingChangesButton` ([SurveyBuilder.page.ts](page-objects/survey/SurveyBuilder.page.ts#L570-589) `fillSaveCopyDialog`).
-- **What Continue/confirm does:** `handleLocationSelection()` ([survey-header.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts#L113-123)) — for draft action calls `saveAsDraft(result)` (L126-...) which calls `updateSurveyFolder(result)` then `surveyService.saveSurveyDraft(SurveyStatusType.DRAFT, currentAssetIdValue)` → POST to `/survey` (`saveSurveyDraft` at [survey.service.ts](../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts#L170-171), `submitSurvey` L186-204). Folder is taken from the selected tree node (`result.folder.assetId`), not hardcoded.
-- **Feedback after saving:** Toast `InsertToast('success', 'Survey saved as draft successfully.', { dismissAfter: ToastTime.DISMISSAFTER, size: 'large', containerClass: 'survey-action-toast' })` — [survey-header.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts#L146). On error: `InsertToast('error', errorMessage, ...)` (L153). Note the e2e locator/assert text ("Success, survey saved as a draft successfully", [surveyBuilder.locator.json](locators/survey/surveyBuilder.locator.json#L44) and [survey-builder.spec.ts](tests/survey/survey-builder.spec.ts#L303)) does **not** literally match the component string ("Survey saved as draft successfully.") — NOT FOUND IN SOURCE where/if the toast UI prepends "Success, "; `ToastService`/`InsertToast` implementation is external (`@nielseniq/athena-core`), not in this repo.
-- **Where the draft appears afterwards:** Component navigates to `['../build-survey', response.data.surveyId]` only if no `surveyId` route param yet ([survey-header.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts#L148-151) — truncated in read, continuation not fully re-read). E2E's `isSurveyVisibleInMyAssets()` navigates to `survey/my-assets` and checks a `savedAssetGridcellByTitle` role=gridcell ([SurveyBuilder.page.ts](page-objects/survey/SurveyBuilder.page.ts#L604-611)). A `my-assets` feature does exist ([my-assets-page.component.ts](../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts)) but whether the saved-draft list/grid itself is implemented there: NOT FOUND IN SOURCE (not inspected further per scope; this is exactly what `TC_BS_SAVE_DRAFT`'s `@WIP` tag flags as pending).
-
-## 3. Publish logic
-
-- **Enabled/blocked rule:** `[isPublishDisable]="questions().length < 3"` — [build-survey.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/build-survey.component.html#L24). Footer renders `[state]="isPublishDisable() ? 'disabled' : 'active'"` on `data-test-id="publish-survey"` ([footer.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html#L4-6)). Exact **max** is 10, `MAX_SURVEY_QUESTIONS = 10` ([build-survey.ts](../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts#L110)), enforced on Add/Duplicate (`isAtMaxQuestions()`), with tooltip text "You have already reached the maximum number of questions." ([preview-mode.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L67)). There is no separate "max 10 blocks Publish" code path found — Publish's own gate is only the `< 3` minimum; NOT FOUND IN SOURCE of an explicit max-question check inside the Publish button logic itself (10 is just the ceiling on total questions anyway).
-- **What the user sees when blocked:** button `state="disabled"` (visual only); NOT FOUND IN SOURCE of a tooltip/message specifically on the disabled Publish button (unlike Add/Duplicate's tooltip).
-- **Dialogs in order:** 1) click Publish (`publish-survey`) → 2) Save-a-copy dialog (title + My Assets + Continue) via `prepareForPublish()`/`loadAndOpenFolderDialog` ([survey-header.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts#L94-99)) → 3) "Confirm publish?" dialog (`survey-publish-popup.component.html`). Confirmed by e2e: `publishSurvey()` clicks Publish then fills the Save-a-copy dialog ([SurveyBuilder.page.ts](page-objects/survey/SurveyBuilder.page.ts#L693-706)), then `confirmPublish()` waits for `confirmPublishDialogText` ("Confirm publish?").
-- **"Confirm publish?" content:** Title `PUBLISH_DIALOG_TEXT.title = 'Confirm publish?'` ([build-survey.ts](../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts#L262)). Dimensions rendered via `<crf-data-summary id="publish-data-summary" ...>` ([survey-publish-popup.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html#L6-9)); e2e confirms each renders `data-test-id="ds-<Label>_Dimension"` inside `#publish-data-summary` (comment, [SurveyBuilder.page.ts](page-objects/survey/SurveyBuilder.page.ts#L709-711)). Response count: `<span class="publish-response-count">{{ selectedResponseCount | number }} {{ publishText.responses }}</span>` (L14 of same html), text "You chose to receive" + count + "responses." (`responseSummary`/`responses` in `PUBLISH_DIALOG_TEXT`).
-- **Confirm/Cancel behavior:** Cancel button calls `close()` (just closes dialog, no API call) ([survey-publish-popup.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html#L24-26)). Confirm calls `confirmPublish()` ([survey-publish-popup.component.ts](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts#L50-65)): closes dialog, sets `isPublishing=true` (drives a `role="status" aria-label="Publishing survey"` loader, [survey-publish-popup.component.html](../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html#L36-38)), calls `surveyService.publishSurvey(PUBLISHED, currentAssetIdValue)`.
-- **Success message:** `InsertToast('success', 'Survey published successfully.', { dismissAfter: ToastTime.DISMISSAFTER, size: 'large', containerClass: 'survey-action-toast' })` in `SurveyPublishPopupComponent.confirmPublish()` (L62), plus `router.navigateByUrl('/my-assets/survey')`. e2e locator text is "Survey published successfully" (no trailing period) — [surveyBuilder.locator.json](locators/survey/surveyBuilder.locator.json#L51).
-- **Real backend?** Yes — `publishSurvey()` → `runReportService.runReport(true)` then `submitSurvey('/publish', ...)` → `httpClient.post(environment.apiUrls.surveyEntityServiceUrl + '/publish', payload, ...)` ([survey.service.ts](../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts#L174-204)).
-
-## 4. Locators found vs missing
-
-| Step | Locator | Source |
-|---|---|---|
-| Save draft button | `saveDraftButton` → `[data-test-id='save-draft']` | [surveyBuilder.locator.json](locators/survey/surveyBuilder.locator.json#L38) |
-| Save-a-copy title | `saveCopyTitleInput` → `[data-test-id='save-a-copy-title-input']` | locator L39 |
-| My Assets tree node | `myAssetsTreeItem` → `role=treeitem[name="My Assets"]` | locator L40 |
-| Continue/save-pending | `savePendingChangesButton` → `[data-test-id='save-pending-changes-button']` | locator L41 |
-| Draft success toast | `saveDraftSuccessToast` → text "Success, survey saved as a draft successfully" | locator L44 — text mismatches component string (see §2) |
-| Saved asset in My Assets | `savedAssetGridcellByTitle` → `role=gridcell[name="${text}"]` | locator L42 |
-| Publish button | `publishSurveyButton` → `[data-test-id='publish-survey']` | locator L46 |
-| Confirm publish dialog title | `confirmPublishDialogText` → text "Confirm publish?" | locator L43 |
-| Confirm button | `confirmPublishButton` → `niq-button:has-text('Confirm')` | locator L47 |
-| Publishing status | `publishingSurveyStatus` → `role=status[name="Publishing survey"]` | locator L45 |
-| Dimension tiles | `publish-dialog-dimension-by-index` → `` #publish-data-summary [data-test-id$='_Dimension'] >> nth=${text} `` | locator L48 |
-| Response count | `publish-response-count-text` → `.publish-response-count` | locator L49 |
-| Publish success toast | `publish-success-toast` → text "Survey published successfully" | locator L50 |
-| Save-draft button disabled state | NOT FOUND IN SOURCE | — |
-| Publish-disabled tooltip | NOT FOUND IN SOURCE | — |
-
-## 5. Recommended pass criteria / outstanding items
-
-- **Save draft:** once un-fixme'd, assert (a) POST fires to `/survey` with `status: DRAFT` (network assertion, not just UI), (b) toast appears — but first fix the text mismatch between locator ("Success, survey saved as a draft successfully") and actual component string ("Survey saved as draft successfully.") via a DevTools/runtime screenshot of the real toast, (c) only assert My Assets listing once confirmed implemented (needs a DevTools check of `/my-assets` after a real save — not confirmed in source).
-- **Publish:** assert (a) Publish button `disabled` below 3 questions and `active` at/above 3 (`questions().length < 3`, confirmed in source), (b) dialog order Save-a-copy → Confirm publish?, (c) dimension tiles count == selected dimensions via `_Dimension` data-test-ids, (d) response count text contains selected response count, (e) Confirm triggers "Publishing survey" status then "Survey published successfully" toast (no trailing period, per locator) and navigation to `/my-assets/survey`, (f) Cancel closes dialog without calling `publishSurvey()`.
-- **Needs a DevTools screenshot from me:** exact rendered text/markup of the save-draft success toast (to resolve the locator/string mismatch) and the My Assets list view after a real save-draft, to confirm whether the "draft appears in a list" step is actually implemented.
-
-
-------------
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ npx playwright test tests/survey/survey-builder.spec.ts --project=chromium --workers=1 --grep "@SurveyBuilderSetup|@PublishSurvey"
-◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 3 tests using 1 worker
+Running 16 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-  ✓  1 …ld Survey page via Start from Scratch @SurveyBuilderSetup (1.5m)
+  ✓   1 …7 › Survey Builder › Setup: reach Build Survey page via Start from Scratch @SurveyBuilderSetup (1.0m)
 Auth state loaded from storage/auth.json
-  -  2 …ilder › TC_BS_14: Publish survey end-to-end @PublishSurveyLegacy
-  ✘  3 …ey Builder › TC_BS_PUBLISH: Publish survey @PublishSurvey (5.0m)
+  ✓   2 …y\survey-builder.spec.ts:49:7 › Survey Builder › TC_BS_02: Edit survey title @EditSurveyTitle (821ms)
+  ✓   3 …r.spec.ts:55:7 › Survey Builder › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion (2.0s)
+  ✓   4 …ec.ts:62:7 › Survey Builder › TC_BS_04: Add a Multiple Choice question @MultipleChoiceQuestion (4.1s)
+  ✓   5 …survey-builder.spec.ts:71:7 › Survey Builder › TC_BS_05: Add a Rating question @RatingQuestion (2.8s)
+  ✓   6 …rvey\survey-builder.spec.ts:80:7 › Survey Builder › TC_BS_07: Add an NPS question @NPSQuestion (3.0s)
+  ✓   7 …ilder.spec.ts:89:7 › Survey Builder › TC_BS_08: Add a Point Scale question @PointScaleQuestion (4.4s)
+  ✓   8 …ilder.spec.ts:98:7 › Survey Builder › TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (4.5s)
+  ✓   9 …tepper navigation to Select Panelists retains data and back to Build Survey @StepperNavigation (4.4s)
+  ✓  10 …IONS: Max questions (10) disables Add question and Duplicate with limit message @MaxQuestions (10.9s)
+  ✓  11 … › TC_BS_13: Review Mode controls and per-question checkboxes are visible @ReviewModeControls (33.1s)
+  ✓  12 …14: Review Mode select all, de-select one, delete, and exit keeps deletions @ReviewModeActions (3.6s)
+  ✘  13 …W_MODE: Review mode select, delete, select/unselect all, expand/collapse all, exit @ReviewMode (5.0m)
+  -  14 …vey-builder.spec.ts:285:8 › Survey Builder › TC_BS_14: Publish survey end-to-end @PublishSurveyLegacy
+  -  15 …urvey-builder.spec.ts:292:8 › Survey Builder › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft @WIP
+  -  16 …s\survey\survey-builder.spec.ts:300:7 › Survey Builder › TC_BS_PUBLISH: Publish survey @PublishSurvey
 
 
-  1) [chromium] › tests\survey\survey-builder.spec.ts:306:7 › Survey Builder › TC_BS_PUBLISH: Publish survey @PublishSurvey 
+  1) [chromium] › tests\survey\survey-builder.spec.ts:259:7 › Survey Builder › TC_BS_REVIEW_MODE: Review modeselect, delete, select/unselect all, expand/collapse all, exit @ReviewMode 
 
     Test timeout of 300000ms exceeded.
 
-    Error: locator.click: Target page, context or browser has been closed
+    Error: Failed to complete Review Mode flow: Failed to add Rating question: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for locator('[data-test-id=\'question-type-STAR_RATING\']')
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:291
 
-      289 |     );
-      290 |     await addQuestion.waitFor();
-    > 291 |     await addQuestion.click();
-          |                       ^
-      292 |     await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
-      293 |   }
-      294 |
-        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
-        at SurveyBuilderPage.clickAddQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:291:23)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:313:7
+      279 |       await surveyBuilderPage.exitReviewMode();
+      280 |     } catch (error) {
+    > 281 |       throw new Error(`Failed to complete Review Mode flow: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      282 |     }
+      283 |   });
+      284 |
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\survey-builder.spec.ts:281:13
 
-    attachment #1: screenshot (image/png) ──────────────────────────────
-    test-results\survey-survey-builder-Surv-ffb75-C-BS-PUBLISH-Publish-survey-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\survey-survey-builder-Surv-61a34-ll-expand-collapse-all-exit-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-survey-builder-Surv-ffb75-C-BS-PUBLISH-Publish-survey-chromium\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-61a34-ll-expand-collapse-all-exit-chromium\error-context.md
 
-    Error Context: test-results\survey-survey-builder-Surv-ffb75-C-BS-PUBLISH-Publish-survey-chromium\error-context.md
+    Error Context: test-results\survey-survey-builder-Surv-61a34-ll-expand-collapse-all-exit-chromium\error-context.md
 
-    attachment #4: trace (application/zip) ─────────────────────────────
-    test-results\survey-survey-builder-Surv-ffb75-C-BS-PUBLISH-Publish-survey-chromium\trace.zip
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\survey-survey-builder-Surv-61a34-ll-expand-collapse-all-exit-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-survey-builder-Surv-ffb75-C-BS-PUBLISH-Publish-survey-chromium\trace.zip
+        npx playwright show-trace test-results\survey-survey-builder-Surv-61a34-ll-expand-collapse-all-exit-chromium\trace.zip
 
-    ────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-  Slow test file: [chromium] › tests\survey\survey-builder.spec.ts (6.5m)
-  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
   1 failed
-    [chromium] › tests\survey\survey-builder.spec.ts:306:7 › Survey Builder › TC_BS_PUBLISH: Publish survey @PublishSurvey 
-  1 skipped
-  1 passed (7.4m)
+    [chromium] › tests\survey\survey-builder.spec.ts:259:7 › Survey Builder › TC_BS_REVIEW_MODE: Review mode select, delete, select/unselect all, expand/collapse all, exit @ReviewMode 
+  2 skipped
+  1 did not run
+  12 passed (8.1m)
+--------------------------------------
+import { BasePage } from '@gfk/gta';
+import { CommonPage } from '../common/common-page';
+import { UI_STATE_UPDATE_DELAY, PANEL_TRANSITION_DELAY } from '../../constants/timeout-constants';
+import { envConfig } from '../../config/env.config';
+import surveyBuilderPageResources from '../../locators/survey/surveyBuilder.locator.json';
+import devTestData from '../../test-data/dev-test-data.json';
+
+const SURVEY_BUILDER_PAGE_COMPONENT_NAME = 'surveyBuilderPage';
+const MAX_QUESTIONS_TOOLTIP_TIMEOUT = 10 * 1000; // TC_BS_08 — tooltip may render in a portal after a short delay
+const ADD_QUESTION_VISIBLE_TIMEOUT = 10 * 1000; // ensureQuestionCount — preview-mode's add-question button renders async after the prior question saves
+const PUBLISH_SUCCESS_TOAST_TIMEOUT = 15 * 1000; // TC_BS_PUBLISH — toast follows the real /publish network round-trip
+const QUESTION_TYPE_PICKER_TIMEOUT = 10 * 1000; // clickQuestionTypeResource / ensureQuestionCount retry — fail fast instead of hanging 5m on a missing tile
+const QUESTION_TYPE_TILE_FIRST_CHECK_TIMEOUT = 5 * 1000; // ensureQuestionCount — first check for the type tile after a single add-question click
+const QUESTION_SAVE_TIMEOUT = 10 * 1000; // ensureQuestionCount — wait for the saved-question marker count to increase after addRatingQuestion()
+const PUBLISH_NAVIGATION_TIMEOUT = 60 * 1000; // TC_BS_PUBLISH — wait for the post-publish redirect to /my-assets/survey
+const PUBLISH_TOAST_CHECK_TIMEOUT = 10 * 1000; // TC_BS_PUBLISH — toast check once the redirect has confirmed the publish succeeded
+
+/**
+ * SurveyBuilderPage — covers the "Build Survey" screen: adding questions of each
+ * type (TC_BS_03–TC_BS_09), review mode (part of TC_BS_13), and save/publish
+ * (TC_BS_16).
+ *
+ * IMPORTANT ASSUMPTIONS / UNCONFIRMED ITEMS (verify against live DOM before
+ * trusting these in CI):
+ *
+ * 1. `optionInputByLabel`/row/column inputs are resolved by role name + `nth=0`,
+ * NOT scoped to a specific question. This only works reliably for the question
+ * currently expanded/being edited (i.e. call these methods for one question at
+ * a time, right after adding it, before adding the next). Once a question
+ * collapses (per TC_BS_03 step 4), `reopenCollapsedQuestion()` (via
+ * `editQuestionButton`, `[niqtooltip='Edit']`) re-expands it — confirmed present
+ * via live DevTools inspection. UNCONFIRMED: `[niqtooltip='Edit']` is a single
+ * static locator with no per-question scoping. Once more than one question has
+ * collapsed on the page (from TC_BS_04 onward), this selector will match
+ * multiple elements and is ambiguous — Playwright strict-mode will throw. A
+ * live-DOM check of the collapsed-question container markup is needed to scope
+ * this to the specific question (e.g. a per-question wrapper id/data-test-id)
+ * before trusting it beyond the very first question.
+ * 2. `requiredToggle` ([data-test-id='-input-checkbox']) is CONFIRMED correct per
+ * real Codegen recording — the truncated id with no real prefix is how the
+ * live DOM actually renders it.
+ * 3. Point Scale's "+ Row"/"+ Column" buttons are CONFIRMED (via source, see
+ * item 11) to share the exact same `survey-scale-editor` component and
+ * matrix-actions hover mechanism as Multi Scale (`selectedType()` only toggles
+ * radio-button vs checkbox cells, not the add-row/column controls) — the fix
+ * applied to `addRowToQuestion()`/`addColumnToQuestion()` for Multi Scale
+ * applies equally to Point Scale. `TC_BS_08` unblocked accordingly.
+ * 4. No locator exists yet for the "Text" question type (TC_BS_06) — it was never
+ * exercised in the Codegen capture. addTextQuestion() is NOT implemented here;
+ * add it once a locator is confirmed.
+ * 5. "Publish" is confirmed by the dev team (TC_BS_14, TC_BS_16) to currently be a
+ * no-op with no validation. publishSurvey() below only performs the click —
+ * callers should NOT assert a "published" outcome until backend support ships.
+ * 6. The earlier "Build Survey" blur-click fix (`surveyBuilderBlurTarget`) was
+ * REMOVED — a real test run confirmed the blur clicks fired successfully but
+ * "Add option" still never became interactable. Root cause is the question
+ * card collapsing/saving after a field fill, not just losing focus; the fix
+ * is `reopenCollapsedQuestion()` (see item 1) instead of blurring.
+ * 7. `ratingQuestionTextInput` is confirmed present via live DevTools inspection
+ * for Rating's question-text field, but has NO confirmed per-question/index
+ * scoping. Two different real DOM captures have been seen for it at different
+ * times: a generic truncated attribute `[data-test-id='-input']`, and later a
+ * numeric auto-generated `[id='text-field-80']`-style id (the latter is a
+ * classic UI-library sequential-counter id — NOT deterministically tied to
+ * the Rating question; its exact number depends on how many similar
+ * components were instantiated earlier on the page, so it can silently point
+ * at the wrong element between runs, which is the confirmed root cause of
+ * TC_BS_05 "runs without error but nothing visibly typed"). Reverted to the
+ * generic `data-test-id` attribute with a `:visible` filter appended (only the
+ * currently-expanded question's field should be visible; a prior question's
+ * collapsed field should not be) as a best-effort interim scoping — this is
+ * NOT the index-based `${text}` pattern `questionTextInput` uses, because no
+ * confirmed indexed/unique attribute exists for Rating's field yet. A fresh
+ * live-DOM capture of Rating's text field specifically while a prior question
+ * already exists on the page is needed to confirm a real indexed attribute
+ * before this can match the `questionTextInput` pattern. `addRatingQuestion()`
+ * does not accept/need a questionIndex at all, since this locator isn't index-based.
+ * 8. `addOptionButton` (shared by `addSingleChoiceQuestion()` and
+ * `addMultipleChoiceQuestion()` via `addOptionToQuestion()`) was a page-wide,
+ * unscoped `text=` locator with no question-scoping — once a prior question
+ * already exists on the page (e.g. TC_BS_04 running after TC_BS_03), its
+ * "Add option" control resolves to 2 elements and Playwright strict-mode
+ * throws. Reverted to the previously-confirmed `niq-button:has-text('Add
+ * option')` form with a `:visible` filter appended, same interim mitigation
+ * technique as item 7 — assumes a prior (collapsed) question's control isn't
+ * visible. Not independently re-confirmed live.
+ * 9. `addMultipleChoiceQuestion()`, `addRatingQuestion()`, `addNPSQuestion()`, and
+ * `addMultiScaleQuestion()` all now call the existing `clickAddQuestion()`
+ * (reusing `addQuestionLink`) at the end, to finalize/save the question (manual
+ * click confirmed live to unblock the flow for Multiple Choice → Rating). RISK:
+ * `survey-builder.spec.ts` ALSO still calls `clickAddQuestion()` separately
+ * before each of `addRatingQuestion()` (TC_BS_05) and `addNPSQuestion()`
+ * (TC_BS_07) — "Add question" is clicked twice in a row at each of those
+ * transitions, which likely creates an extra blank question each time. Not
+ * resolved here since it requires editing the spec file, out of scope for
+ * these fixes — needs an explicit follow-up decision on removing the redundant
+ * external calls. `addMultiScaleQuestion()` does NOT have this same double-click
+ * risk today since no test currently runs after TC_BS_09 that calls
+ * `clickAddQuestion()` again.
+ * 10. `addNPSQuestion()` fills NPS's question text via the SHARED
+ * `questionTextInput` resource (same index-based locator Single/Multiple
+ * Choice use: `[data-test-id='question-text-input-${text}-input']`) — CONFIRMED
+ * correct via live DevTools inspection: `<input data-test-id="question-text-
+ * input-4-input" placeholder="Question">`, matching the live-rendered index at
+ * the time of that capture. See item 12 — this index is now computed
+ * dynamically rather than passed in by the caller.
+ * 11. `addRowToQuestion()`/`addColumnToQuestion()` (Point Scale/Multi Scale):
+ * per `e2e/SURVEY_BUILDER_HOVER_INVESTIGATION.md`, the real Angular source
+ * (`libs/survey-mod-lib/.../scale-editor.component.html`) confirmed the "Row"/
+ * "Column" buttons only exist in the DOM once the WRAPPING `.matrix-action-area`
+ * div's `mouseenter` sets `showAddMenu = true` — hovering the button itself
+ * (the earlier fix) could never work, and there is NO CSS transition to delay
+ * for, so the delay-based mitigation was removed. Now hovers `scaleAddMenuTrigger`
+ * (`.matrix-action-area:has(niq-icon-button[iconname='add-large'])`) first,
+ * then resolves `addRowButton`/`addColumnButton` SCOPED WITHIN that same
+ * wrapper (via `WebElement.getWebElement()` chaining) so the Add menu's
+ * buttons are targeted, not the Delete menu's identically-labeled ones.
+ * UNCONFIRMED: this has NOT been run against the live app yet. Also: `.last()`
+ * does NOT exist on this codebase's `WebElement` API (confirmed by reading
+ * `@gfk/gta`'s webElement.d.ts) and `editQuestionButton` does NOT actually use
+ * any such pattern today (it has a known, still-open, unscoped-selector risk —
+ * see item 1) — so `scaleAddMenuTrigger` uses the same `:visible` interim
+ * scoping already used for `ratingQuestionTextInput`/`addOptionButton` (items
+ * 7-8) instead, which has the same residual multi-question-on-page risk.
+ * 12. `questionIndex` is NO LONGER a caller-supplied literal. Per
+ * `question-editor.component.ts`'s `upcomingQuestionNumber = surveyService
+ * .getQuestions().length + 1`, the real index for a new question is always
+ * `(current saved question count) + 1`, computed live — not a fixed sequence
+ * number — because the persisted survey's question count isn't stable across
+ * runs (manual testing, partial failures, etc. can leave it with more/fewer
+ * questions than the test suite assumes). Hardcoded indices (TC_BS_08 was
+ * tried as 6, then 7; the live value was actually 5) are a structural bug
+ * class, not a one-off typo. `getNextQuestionIndex()` now counts the
+ * rendered `.question-number` markers (`questionNumberMarker` resource) on
+ * already-saved questions and returns `count + 1`, mirroring the app's own
+ * computation. Every `addXQuestion()` method calls this internally; none of
+ * them accept a `questionIndex` parameter anymore.
+ */
+export class SurveyBuilderPage extends CommonPage {
+  constructor(basePage: BasePage) {
+    super(basePage);
+    this.resourceManager.registerResources(
+      SURVEY_BUILDER_PAGE_COMPONENT_NAME,
+      surveyBuilderPageResources
+    );
+  }
+
+  // Question type selection
+  private async clickQuestionTypeResource(resourceName: string): Promise<void> {
+    const typeButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource(resourceName, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await typeButton.waitFor(QUESTION_TYPE_PICKER_TIMEOUT); // fail fast if the tile never renders, instead of hanging 5m
+    await typeButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  // Shared field helpers (operate on the currently expanded/editing question)
+  private async fillQuestionText(questionIndex: number, text: string): Promise<void> {
+    const questionText = this.webActionHandler.getWebElement(
+      this.resourceManager.getDynamicResource('questionTextInput', String(questionIndex), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await questionText.waitFor();
+    await questionText.enterText(text);
+  }
+
+  /** Fills Option N / Row N / Column N fields by their visible role label, e.g. 'Option 1', 'Row 2'. */
+  private async fillLabeledField(label: string, value: string): Promise<void> {
+    const field = this.webActionHandler.getWebElement(
+      this.resourceManager.getDynamicResource('optionInputByLabel', label, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await field.waitFor();
+    await field.enterText(value);
+  }
+
+  /** Fills Rating's question-text field — see class-level comment #7 for the unscoped-locator risk. */
+  private async fillRatingQuestionText(text: string): Promise<void> {
+    const questionText = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('ratingQuestionTextInput', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await questionText.waitFor();
+    await questionText.enterText(text);
+  }
+
+  /**
+   * Computes the questionIndex for a new question the same way the app itself does:
+   * `surveyService.getQuestions().length + 1` (see question-editor.component.ts's
+   * `upcomingQuestionNumber`). Counts the rendered `.question-number` markers on
+   * already-saved questions rather than trusting any hardcoded literal, since the
+   * persisted survey's question count is not stable across runs.
+   */
+  private async getNextQuestionIndex(): Promise<number> {
+    const markers = await this.webActionHandler.getWebElementsText(
+      this.resourceManager.getResource('questionNumberMarker', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return markers.length + 1;
+  }
+
+  /** Counts rendered `.question-number` markers, for TC_BS_REVIEW_MODE's delete-count assertion. */
+  async getQuestionCount(): Promise<number> {
+    const markers = await this.webActionHandler.getWebElementsText(
+      this.resourceManager.getResource('questionNumberMarker', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return markers.length;
+  }
+
+  /** Re-expands the question card after it collapses/saves on field-fill — see class-level comment #1.
+   *  `editQuestionButton` ([niqtooltip='Edit']) matches one icon per question, so once 2+ questions
+   *  exist it's a Playwright strict-mode violation; scope to the LAST match (the question just added). */
+  private async reopenCollapsedQuestion(): Promise<void> {
+    const questionCount = await this.getQuestionCount();
+    const editButtonResource = this.resourceManager.getResource('editQuestionButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME);
+    const editButton = this.webActionHandler.getWebElement({
+      ...editButtonResource,
+      selectorType: 'playwrights',
+      selectorValue: `${editButtonResource.selectorValue} >> nth=${Math.max(questionCount - 1, 0)}`
+    });
+    await editButton.waitFor();
+    await editButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async addOptionToQuestion(): Promise<void> {
+    const addOption = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('addOptionButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addOption.waitFor();
+    await addOption.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  /** Hovers the Add-menu trigger wrapper so the Row/Column buttons render — see class-level comment #11. */
+  private async hoverScaleAddMenuTrigger() {
+    const addMenuTrigger = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('scaleAddMenuTrigger', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addMenuTrigger.waitFor();
+    await addMenuTrigger.hover();
+    return addMenuTrigger;
+  }
+
+  /** UNCONFIRMED for Point Scale — see class-level comment #3. */
+  async addRowToQuestion(): Promise<void> {
+    const addMenuTrigger = await this.hoverScaleAddMenuTrigger();
+    const addRow = addMenuTrigger.getWebElement(
+      this.resourceManager.getResource('addRowButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addRow.waitFor();
+    await addRow.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  /** UNCONFIRMED for Point Scale — see class-level comment #3. */
+  async addColumnToQuestion(): Promise<void> {
+    const addMenuTrigger = await this.hoverScaleAddMenuTrigger();
+    const addColumn = addMenuTrigger.getWebElement(
+      this.resourceManager.getResource('addColumnButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addColumn.waitFor();
+    await addColumn.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  /** UNCONFIRMED locator — see class-level comment #2. Do not rely on this without a live DOM check. */
+  async toggleRequired(): Promise<void> {
+    const toggle = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('requiredToggle', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await toggle.waitFor();
+    await toggle.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  /** TC_BS_12 — footer's "Back" button (footer.component.html), no data-test-id, resolved by text. */
+  async clickBackButton(): Promise<void> {
+    const backButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('backButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await backButton.waitFor(10000);
+    await backButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  /** TC_BS_12 — stepper's clickable circle (niq-step-circle, athena-core StepComponent), text doesn't navigate; index 0 = Select Panelists. */
+  async clickSelectPanelistsStep(): Promise<void> {
+    const step = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('select-panelists-step-circle', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await step.waitFor(10000);
+    await step.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async clickAddQuestion(): Promise<void> {
+    const addQuestion = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('addQuestionLink', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addQuestion.waitFor();
+    await addQuestion.click();
+    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+  }
+
+  // ---------------------------------------------------------------------
+  // Per-question-type methods (TC_BS_03–TC_BS_09)
+  // Each assumes it is called right after clickAddQuestion() (or for
+  // question 1, right after landing on Build Survey), while this question
+  // is the currently expanded one.
+  // ---------------------------------------------------------------------
+
+  /** TC_BS_03 */
+  async addSingleChoiceQuestion(questionText: string, options: string[]): Promise<void> {
+    try {
+      const questionIndex = await this.getNextQuestionIndex();
+      await this.clickQuestionTypeResource('questionTypeSingleChoice');
+      await this.fillQuestionText(questionIndex, questionText);
+      for (let i = 0; i < options.length; i++) {
+        if (i >= 2) {
+          await this.reopenCollapsedQuestion();
+          await this.addOptionToQuestion();
+        }
+        await this.fillLabeledField(`Option ${i + 1}`, options[i]);
+      }
+    } catch (error) {
+      throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_04 */
+  async addMultipleChoiceQuestion(questionText: string, options: string[]): Promise<void> {
+    try {
+      const questionIndex = await this.getNextQuestionIndex();
+      await this.clickQuestionTypeResource('questionTypeMultipleChoice');
+      await this.fillQuestionText(questionIndex, questionText);
+      for (let i = 0; i < options.length; i++) {
+        if (i >= 2) {
+          await this.addOptionToQuestion();
+        }
+        await this.fillLabeledField(`Option ${i + 1}`, options[i]);
+      }
+      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
+    } catch (error) {
+      throw new Error(`Failed to add Multiple Choice question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_05 */
+  async addRatingQuestion(questionText: string): Promise<void> {
+    try {
+      await this.clickQuestionTypeResource('questionTypeRating');
+      await this.fillRatingQuestionText(questionText); // Rating's input is unscoped by index, see class-level comment #7
+      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
+    } catch (error) {
+      throw new Error(`Failed to add Rating question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /**
+   * TC_BS_06 — NOT IMPLEMENTED. No confirmed locator for the "Text" question
+   * type exists yet (never exercised in the Codegen capture). Add this once
+   * `questionTypeText` is confirmed and added to survey-builder.locator.json.
+   */
+  // async addTextQuestion(questionIndex: number, questionText: string): Promise<void> { ... }
+
+  /** TC_BS_07 */
+  async addNPSQuestion(questionText: string): Promise<void> {
+    try {
+      const questionIndex = await this.getNextQuestionIndex();
+      await this.clickQuestionTypeResource('questionTypeNPS');
+      await this.fillQuestionText(questionIndex, questionText); // confirmed via DevTools: NPS reuses questionTextInput at this index, see class-level comment #10
+      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
+    } catch (error) {
+      throw new Error(`Failed to add Net Promoter Score question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /**
+   * TC_BS_08 — Point Scale. Shares the exact same `survey-scale-editor` Angular
+   * component (and matrix-actions hover mechanism) as Multi Scale — confirmed
+   * via source, see class-level comment #11.
+   */
+  async addPointScaleQuestion(
+    questionText: string,
+    rows: string[],
+    columns: string[]
+  ): Promise<void> {
+    try {
+      const questionIndex = await this.getNextQuestionIndex();
+      await this.clickQuestionTypeResource('questionTypePointScale');
+      await this.fillQuestionText(questionIndex, questionText);
+      for (let i = 0; i < rows.length; i++) {
+        if (i >= 2) {
+          await this.addRowToQuestion();
+        }
+        await this.fillLabeledField(`Row ${i + 1}`, rows[i]);
+      }
+      for (let i = 0; i < columns.length; i++) {
+        if (i >= 2) {
+          await this.addColumnToQuestion();
+        }
+        await this.fillLabeledField(`Column ${i + 1}`, columns[i]);
+      }
+      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
+    } catch (error) {
+      throw new Error(`Failed to add Point Scale question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_09 — Multi Scale, including add-row/add-column (confirmed real per Codegen + TC_BS_09). */
+  async addMultiScaleQuestion(
+    questionText: string,
+    rows: string[],
+    columns: string[]
+  ): Promise<void> {
+    try {
+      const questionIndex = await this.getNextQuestionIndex();
+      await this.clickQuestionTypeResource('questionTypeMultiScale');
+      await this.fillQuestionText(questionIndex, questionText);
+      for (let i = 0; i < rows.length; i++) {
+        if (i >= 2) {
+          await this.addRowToQuestion();
+        }
+        await this.fillLabeledField(`Row ${i + 1}`, rows[i]);
+      }
+      for (let i = 0; i < columns.length; i++) {
+        if (i >= 2) {
+          await this.addColumnToQuestion();
+        }
+        await this.fillLabeledField(`Column ${i + 1}`, columns[i]);
+      }
+      await this.clickAddQuestion(); // finalizes/saves this question, see class-level comment #9 for the double-click risk this introduces
+    } catch (error) {
+      throw new Error(`Failed to add Multi Scale question: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  // Review mode (part of TC_BS_13; select/reorder indices per Codegen —
+  // NOT independently confirmed against a clean manual flow)
+
+  async enterReviewMode(): Promise<void> {
+    const reviewButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('reviewSurveyButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await reviewButton.waitFor();
+    await reviewButton.click();
+    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+  }
+
+  async selectQuestionInReview(index: number): Promise<void> {
+    const questionCheckbox = this.webActionHandler.getWebElement(
+      this.resourceManager.getDynamicResource('selectQuestionByIndex', String(index), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await questionCheckbox.waitFor();
+    await questionCheckbox.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async deleteSelectedQuestions(): Promise<void> {
+    const deleteButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('deleteQuestionsButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await deleteButton.waitFor();
+    await deleteButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async selectAll(): Promise<void> {
+    const selectAllButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('selectAllButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await selectAllButton.waitFor(10000);
+    await selectAllButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async unselectAll(): Promise<void> {
+    const unselectAllButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('unselectAllButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await unselectAllButton.waitFor();
+    await unselectAllButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async expandAll(): Promise<void> {
+    const expandAllButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('expandAllButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await expandAllButton.waitFor(10000);
+    await expandAllButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async collapseAll(): Promise<void> {
+    const collapseAllButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('collapseAllButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await collapseAllButton.waitFor(10000);
+    await collapseAllButton.click();
+    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+  }
+
+  async exitReviewMode(): Promise<void> {
+    const exitButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('exitReviewModeButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await exitButton.waitFor();
+    await exitButton.click();
+    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+  }
+
+  /** TC_BS_13: Select All/Expand All/Collapse All/Delete/Exit Review Mode buttons all visible. */
+  async areReviewControlsVisible(): Promise<boolean> {
+    const controls = ['selectAllButton', 'expandAllButton', 'collapseAllButton', 'deleteQuestionsButton', 'exitReviewModeButton'];
+    for (const control of controls) {
+      const element = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource(control, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      if (!(await element.isVisible())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** TC_BS_13: counts visible select-question checkboxes across indices 0..questionCount-1. */
+  async getReviewCheckboxCount(questionCount: number): Promise<number> {
+    let visibleCount = 0;
+    for (let index = 0; index < questionCount; index++) {
+      const checkbox = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('selectQuestionByIndex', String(index), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      if (await checkbox.isVisible()) {
+        visibleCount++;
+      }
+    }
+    return visibleCount;
+  }
+
+  /** TC_BS_14: ticked state of a single Review Mode question checkbox — `select-question-<i>-icon`
+   * is a `<niq-icon>` with no checked state of its own; the real `checked`/`unchecked` class
+   * lives on its ancestor `.checkbox-container` (niq-checkbox's own template). */
+  async isQuestionSelected(index: number): Promise<boolean> {
+    const container = this.webActionHandler.getWebElement(
+      this.resourceManager.getDynamicResource('selectQuestionCheckboxContainer', String(index), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    const classAttr = (await container.getAttribute('class')) ?? '';
+    return classAttr.split(/\s+/).includes('checked');
+  }
+
+  /** TC_BS_14: raw `.question-number` marker texts, for post-delete renumbering assertion. */
+  async getQuestionNumbers(): Promise<string[]> {
+    return this.webActionHandler.getWebElementsText(
+      this.resourceManager.getResource('questionNumberMarker', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+  }
+
+  /** Polls `getQuestionNumbers()` until its length reaches `target`, or throws after `timeout` ms. */
+  private async waitForQuestionCountAtLeast(target: number, timeout: number): Promise<string[]> {
+    const start = Date.now();
+    let questionNumbers = await this.getQuestionNumbers();
+    while (questionNumbers.length < target) {
+      if (Date.now() - start >= timeout) {
+        throw new Error(`Timed out waiting for question count to reach ${target} (current: ${questionNumbers.length})`);
+      }
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      questionNumbers = await this.getQuestionNumbers();
+    }
+    return questionNumbers;
+  }
+
+  /** TC_BS_PUBLISH/@ReviewMode precondition — tops up to `min` Rating questions. Per
+   *  `build-survey.component.html` (`@if (questions().length === 0) { <survey-question-type-selector> }
+   *  @else { <survey-preview-mode> }`), the `add-question` button only exists once
+   *  `survey-preview-mode` has rendered (i.e. after question 1 is saved) — so question 1 is added
+   *  directly. After each save, waits for the question count to actually increase, then confirms
+   *  add-question is visible/enabled and the type tile really opens before adding the next one. */
+  async ensureQuestionCount(min: number): Promise<void> {
+    const { questionText } = devTestData.surveyQuestions.rating;
+    let questionNumbers = await this.getQuestionNumbers();
+
+    while (questionNumbers.length < min) {
+      const countBeforeAdd = questionNumbers.length;
+      await this.addRatingQuestion(`${questionText} ${countBeforeAdd + 1}`);
+      questionNumbers = await this.waitForQuestionCountAtLeast(countBeforeAdd + 1, QUESTION_SAVE_TIMEOUT);
+
+      if (questionNumbers.length >= min) break;
+
+      const addQuestion = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('addQuestionLink', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await addQuestion.waitFor(ADD_QUESTION_VISIBLE_TIMEOUT);
+      if (!(await addQuestion.isEnabled())) {
+        throw new Error(`add-question is not enabled after ${questionNumbers.length} saved questions`);
+      }
+
+      await this.clickAddQuestion();
+      const typeTile = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('questionTypeRating', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      if (!(await typeTile.isVisible(QUESTION_TYPE_TILE_FIRST_CHECK_TIMEOUT))) {
+        // Workaround for an unconfirmed root cause where the first click sometimes doesn't open the picker — retry once before failing.
+        await this.clickAddQuestion();
+        if (!(await typeTile.isVisible(QUESTION_TYPE_PICKER_TIMEOUT))) {
+          throw new Error(`Question-type picker did not open after clicking add-question twice (current question count: ${questionNumbers.length})`);
+        }
+      }
+    }
+  }
+
+  // Survey name, save, publish (TC_BS_02, TC_BS_16)
+  /** TC_BS_02 */
+  async setSurveyTitle(title: string): Promise<void> {
+    try {
+      const editIcon = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('editSurveyNameIcon', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await editIcon.waitFor();
+      await editIcon.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      const titleInput = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('surveyTitleInput', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await titleInput.waitFor();
+      await titleInput.enterText(title);
+    } catch (error) {
+      throw new Error(`Failed to set survey title: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** Fills the Save-a-copy dialog (title, My Assets, save pending changes) — shared by saveDraft() and publishSurvey(). */
+  private async fillSaveCopyDialog(title: string): Promise<void> {
+    const titleInput = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('saveCopyTitleInput', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await titleInput.waitFor();
+    await titleInput.enterText(title);
+
+    const myAssetsTreeItem = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('myAssetsTreeItem', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await myAssetsTreeItem.waitFor();
+    await myAssetsTreeItem.click();
+
+    const savePendingChangesButton = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('savePendingChangesButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await savePendingChangesButton.waitFor();
+    await savePendingChangesButton.click();
+    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+  }
+
+  /** TC_BS_SAVE_DRAFT — opens Save Draft dialog, titles the copy, picks My Assets, and confirms. */
+  async saveDraft(title: string): Promise<void> {
+    try {
+      const saveDraftButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('saveDraftButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await saveDraftButton.waitFor();
+      await saveDraftButton.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      await this.fillSaveCopyDialog(title);
+    } catch (error) {
+      throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_SAVE_DRAFT — navigates to My Assets and checks the saved survey's gridcell is visible. */
+  async isSurveyVisibleInMyAssets(title: string): Promise<boolean> {
+    const myAssetsURL = this.buildUrl(envConfig.BASE_URL, 'survey/my-assets');
+    await this.navigateToUrl(myAssetsURL);
+    const gridcell = this.webActionHandler.getWebElement(
+      this.resourceManager.getDynamicResource('savedAssetGridcellByTitle', title, SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return gridcell.isVisible();
+  }
+
+  /** TC_BS_SAVE_DRAFT — checks the post-save toast confirming the draft was saved. */
+  async isDraftSavedToastVisible(): Promise<boolean> {
+    const toast = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('saveDraftSuccessToast', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return toast.isVisible();
+  }
+
+  /** TC_BS_08 — "Add question" has no `state` attribute; disabled is reflected as a `disabled` class token (or aria-disabled). */
+  async getAddQuestionDisabledState(): Promise<{ disabled: boolean; classAttr: string }> {
+    const addQuestion = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('addQuestionLink', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    const classAttr = (await addQuestion.getAttribute('class')) ?? '';
+    const ariaDisabled = await addQuestion.getAttribute('aria-disabled');
+    return { disabled: classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true', classAttr };
+  }
+
+  /** TC_BS_08 — scrolls into view, hovers "Add question", and checks the max-questions tooltip appears. */
+  async isAddQuestionTooltipVisibleOnHover(): Promise<boolean> {
+    const addQuestion = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('addQuestionLink', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    await addQuestion.executeScript((e) => e.scrollIntoView());
+    await addQuestion.hover();
+    const message = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('maxQuestionsMessageText', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return message.isVisible(MAX_QUESTIONS_TOOLTIP_TIMEOUT); // web-first wait, no fixed delay
+  }
+
+  /** `duplicateQuestionButton` matches one icon per question — scope to a single question (default: first). */
+  private getDuplicateQuestionElement(questionIndex = 0) {
+    const duplicateResource = this.resourceManager.getResource('duplicateQuestionButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME);
+    return this.webActionHandler.getWebElement({
+      ...duplicateResource,
+      selectorType: 'playwrights',
+      selectorValue: `${duplicateResource.selectorValue} >> nth=${questionIndex}`
+    });
+  }
+
+  /** `.question-actions` (incl. Duplicate) is only revealed via `.question-row`'s (mouseenter) handler — see
+   *  preview-mode.component.html/.scss — not a CSS :hover. Scope to a single row (default: first). */
+  private getQuestionRowElement(questionIndex = 0) {
+    const rowResource = this.resourceManager.getResource('questionRow', SURVEY_BUILDER_PAGE_COMPONENT_NAME);
+    return this.webActionHandler.getWebElement({
+      ...rowResource,
+      selectorType: 'playwrights',
+      selectorValue: `${rowResource.selectorValue} >> nth=${questionIndex}`
+    });
+  }
+
+  /** TC_BS_08 — hovers the first question's row (reveals Duplicate, see getQuestionRowElement), then hovers
+   *  Duplicate and checks the tooltip appears within 10s. */
+  async isDuplicateTooltipVisibleOnHover(): Promise<boolean> {
+    const row = this.getQuestionRowElement();
+    await row.hover();
+    const duplicateButton = this.getDuplicateQuestionElement();
+    await duplicateButton.executeScript((e) => e.scrollIntoView());
+    await duplicateButton.hover();
+    const message = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('maxQuestionsMessageText', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return message.isVisible(MAX_QUESTIONS_TOOLTIP_TIMEOUT); // web-first wait (10s), no fixed delay
+  }
+
+  /** TC_BS_08 — Duplicate's disabled state (aria-disabled, or legacy `state` attribute) + outerHTML for failure diagnostics. */
+  async getDuplicateDisabledState(): Promise<{ disabled: boolean; outerHtml: string }> {
+    const duplicateButton = this.getDuplicateQuestionElement();
+    const ariaDisabled = await duplicateButton.getAttribute('aria-disabled');
+    const state = await duplicateButton.getAttribute('state');
+    const outerHtml = String(await duplicateButton.executeScript((e) => e.outerHTML)).slice(0, 400);
+    return { disabled: ariaDisabled === 'true' || state === 'disabled', outerHtml };
+  }
+
+  /** TC_BS_PUBLISH — clicks Publish, then fills the Save-a-copy dialog to proceed to the Confirm publish? prompt. */
+  async publishSurvey(title: string): Promise<void> {
+    try {
+      const publishButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('publishSurveyButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await publishButton.waitFor();
+      await publishButton.click();
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+
+      await this.fillSaveCopyDialog(title);
+    } catch (error) {
+      throw new Error(`Failed to publish survey: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_PUBLISH — "Quick review" dimensions in the Confirm publish? dialog each render with
+   *  `data-test-id="ds-<Label>_Dimension"` inside `#publish-data-summary` (confirmed via
+   *  @nielsen/crf-data-summary's compiled template). Checks the last expected index is visible. */
+  async isPublishDialogDimensionCountVisible(expectedCount: number): Promise<boolean> {
+    try {
+      if (expectedCount <= 0) return true;
+      const lastDimension = this.webActionHandler.getWebElement(
+        this.resourceManager.getDynamicResource('publish-dialog-dimension-by-index', String(expectedCount - 1), SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await lastDimension.waitFor(10000);
+      return await lastDimension.isVisible(10000);
+    } catch (error) {
+      throw new Error(`Failed to verify Confirm publish? dimension count: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_PUBLISH — reads the "<count> responses." text from the Confirm publish? dialog's response summary. */
+  async getPublishResponseSummaryText(): Promise<string> {
+    try {
+      const responseCount = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('publish-response-count-text', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await responseCount.waitFor(10000);
+      const text = await responseCount.getText();
+      return (text ?? '').trim();
+    } catch (error) {
+      throw new Error(`Failed to read Confirm publish? response summary: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  /** TC_BS_PUBLISH — "Survey published successfully." toast fired by survey-publish-popup.component.ts after confirm. */
+  async isPublishSuccessToastVisible(): Promise<boolean> {
+    const toast = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('publish-success-toast', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    return toast.isVisible(PUBLISH_SUCCESS_TOAST_TIMEOUT);
+  }
+
+  /** TC_BS_PUBLISH — post-Confirm success check: waits for the `/my-assets` redirect (confirmPublish calls
+   *  router.navigateByUrl('/my-assets/survey')), then checks the success toast. Throws with current URL,
+   *  elapsed time, and any `.survey-action-toast` text if either wait fails. */
+  async verifyPublishSucceeded(confirmClickTime: number): Promise<boolean> {
+    const elapsedSeconds = () => ((Date.now() - confirmClickTime) / 1000).toFixed(1);
+    const describeFailure = async (reason: string) => {
+      const currentUrl = await this.webActionHandler.getPageUrl();
+      const actionToast = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('survey-action-toast', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      const toastText = (await actionToast.isVisible()) ? await actionToast.getText() : 'none visible';
+      return `${reason} (url: ${currentUrl}, elapsed: ${elapsedSeconds()}s, .survey-action-toast text: ${toastText})`;
+    };
+
+    const navigationDeadline = Date.now() + PUBLISH_NAVIGATION_TIMEOUT;
+    let currentUrl = await this.webActionHandler.getPageUrl();
+    while (!currentUrl.includes('my-assets')) {
+      if (Date.now() >= navigationDeadline) {
+        throw new Error(await describeFailure('Timed out waiting for navigation to /my-assets after Confirm'));
+      }
+      await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      currentUrl = await this.webActionHandler.getPageUrl();
+    }
+
+    const toast = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('publish-success-toast', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+    );
+    const isToastVisible = await toast.isVisible(PUBLISH_TOAST_CHECK_TIMEOUT);
+    if (!isToastVisible) {
+      throw new Error(await describeFailure('"Survey published successfully" toast did not appear after redirect'));
+    }
+    return true;
+  }
+
+  /** TC_BS_PUBLISH — asserts "Confirm publish?" prompt, clicks Confirm, and waits for the "Publishing survey" status. */
+  async confirmPublish(): Promise<boolean> {
+    try {
+      const confirmPublishDialogText = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('confirmPublishDialogText', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await confirmPublishDialogText.waitFor();
+      const isConfirmDialogVisible = await confirmPublishDialogText.isVisible();
+
+      const confirmButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('confirmPublishButton', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await confirmButton.waitFor();
+      await confirmButton.click();
+
+      const publishingSurveyStatus = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('publishingSurveyStatus', SURVEY_BUILDER_PAGE_COMPONENT_NAME)
+      );
+      await publishingSurveyStatus.waitFor();
+      const isPublishingStatusVisible = await publishingSurveyStatus.isVisible();
+
+      return isConfirmDialogVisible && isPublishingStatusVisible;
+    } catch (error) {
+      throw new Error(`Failed to confirm publish: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+}
+---------------------
+import { test } from '@playwright/test';
+import { BasePage } from '@gfk/gta';
+import { BasePageFactory } from '../../utils/base-page-factory';
+import { assertTrue } from '../../page-objects/common/assert-utils';
+import { StartFromScratchPage } from '../../page-objects/survey/start-from-scratch.page';
+import { completePanelistSelectionFlow } from '../../page-objects/common/panelist-flow.helper';
+import { SurveyBuilderPage } from '../../page-objects/survey/surveyBuilder.page';
+import { SelectPanelistPage } from '../../page-objects/common/select-panelist.page';
+import devTestData from '../../test-data/dev-test-data.json';
+
+const datasetNames = Object.keys(devTestData.datasets) as Array<keyof typeof devTestData.datasets>;
+const DATASET_NAME = datasetNames[0];
+const datasetConfig = devTestData.datasets[DATASET_NAME];
+
+if (!datasetConfig) {
+  throw new Error('No dataset found in dev-test-data.json');
+}
+
+test.describe.serial('Survey Builder', () => {
+  let basePage: BasePage;
+
+  test.afterAll(async () => {
+    if (basePage) {
+      await basePage.getWebActions().closeBrowser();
+    }
+  });
+
+  test('Setup: reach Build Survey page via Start from Scratch', { tag: '@SurveyBuilderSetup' }, async () => {
+    basePage = await BasePageFactory.createBasePage();
+    const startFromScratchPage = new StartFromScratchPage(basePage);
+    await startFromScratchPage.navigateToSurvey();
+    await startFromScratchPage.clickStartFromScratch();
+
+    await startFromScratchPage.selectProductOffering('');
+    const isDatasetSelectionConfirmed = await startFromScratchPage.searchAndSelectDataset(
+      datasetConfig.searchTerm,
+      String(DATASET_NAME)
+    );
+    assertTrue(isDatasetSelectionConfirmed, `Expected "Choose a dataset" confirmation not visible after selecting ${DATASET_NAME}`);
+
+    await startFromScratchPage.proceedToNextAfterDatasetSelection();
+    await startFromScratchPage.applyEntireDataset();
+
+    const reachedBuildSurvey = await completePanelistSelectionFlow(basePage, datasetConfig.dimensionSelections);
+
+    assertTrue(reachedBuildSurvey, 'Expected to land on Build Survey page after panelist selection flow');
+  });
+
+  test('TC_BS_02: Edit survey title', { tag: '@EditSurveyTitle' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.setSurveyTitle(devTestData.surveyQuestions.surveyTitle);
+  });
+
+  test('TC_BS_03: Add a Single Choice question', { tag: '@SingleChoiceQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    const { questionText, options } = devTestData.surveyQuestions.singleChoice;
+
+    await surveyBuilderPage.addSingleChoiceQuestion(questionText, options);
+  });
+
+  test('TC_BS_04: Add a Multiple Choice question', { tag: '@MultipleChoiceQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+    const { questionText, options } = devTestData.surveyQuestions.multipleChoice;
+
+    await surveyBuilderPage.addMultipleChoiceQuestion(questionText, options);
+  });
+
+  test('TC_BS_05: Add a Rating question', { tag: '@RatingQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+    const { questionText } = devTestData.surveyQuestions.rating;
+
+    await surveyBuilderPage.addRatingQuestion(questionText);
+  });
+
+  test('TC_BS_07: Add an NPS question', { tag: '@NPSQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+    const { questionText } = devTestData.surveyQuestions.nps;
+
+    await surveyBuilderPage.addNPSQuestion(questionText);
+  });
+
+  test('TC_BS_08: Add a Point Scale question', { tag: '@PointScaleQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+    const { questionText, rows, columns } = devTestData.surveyQuestions.pointScale;
+
+    await surveyBuilderPage.addPointScaleQuestion(questionText, rows, columns);
+  });
+
+  test('TC_BS_09: Add a Multi Scale question', { tag: '@MultiScaleQuestion' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    await surveyBuilderPage.clickAddQuestion();
+    const { questionText, rows, columns } = devTestData.surveyQuestions.multiScale;
+
+    await surveyBuilderPage.addMultiScaleQuestion(questionText, rows, columns);
+  });
+
+  test('TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey', { tag: '@StepperNavigation' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    const selectPanelistPage = new SelectPanelistPage(basePage);
+    const EXPECTED_RESPONSE_COUNT_TEST_ID = 'select-response-count-250'; // Setup used click250Responses()
+
+    try {
+      await surveyBuilderPage.clickAddQuestion();
+      const { questionText } = devTestData.surveyQuestions.rating;
+      await surveyBuilderPage.addRatingQuestion(questionText);
+      const questionNumbersBefore = await surveyBuilderPage.getQuestionNumbers();
+
+      await surveyBuilderPage.clickSelectPanelistsStep();
+
+      assertTrue(
+        await selectPanelistPage.isProceedToSurveyBuilderVisible(),
+        'proceed-to-survey visible after stepper navigation'
+      );
+      const currentUrl = await selectPanelistPage.getCurrentUrl();
+      assertTrue(currentUrl.includes('select-panelist'), `URL contains select-panelist (got ${currentUrl})`);
+
+      const selectedResponseCountTestId = await selectPanelistPage.getSelectedResponseCountDataTestId();
+      assertTrue(
+        selectedResponseCountTestId === EXPECTED_RESPONSE_COUNT_TEST_ID,
+        `response count retained (expected ${EXPECTED_RESPONSE_COUNT_TEST_ID}, got ${selectedResponseCountTestId})`
+      );
+      // The 5 dimension filters (Product/Retailer/Geography/Demographic/Period) have no stable
+      // "currently selected" locator in select-panelist.locator.json — `filledDimensionTile` needs
+      // the exact rendered dimension label text, which isn't confirmed in source, so it's skipped
+      // rather than guessed.
+
+      await selectPanelistPage.clickProceedToSurveyBuilder();
+      assertTrue(
+        await selectPanelistPage.isBuildSurveyPageLoaded(),
+        'Build Survey page visible after Proceed'
+      );
+
+      const questionNumbersAfter = await surveyBuilderPage.getQuestionNumbers();
+      assertTrue(
+        questionNumbersAfter.length === questionNumbersBefore.length,
+        `question count retained (expected ${questionNumbersBefore.length}, got ${questionNumbersAfter.length})`
+      );
+    } catch (error) {
+      throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
+    }
+  });
+
+  test('TC_BS_MAX_QUESTIONS: Max questions (10) disables Add question and Duplicate with limit message', { tag: '@MaxQuestions' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    const { questionText: ratingText } = devTestData.surveyQuestions.rating;
+
+    try {
+      let questionNumbers = await surveyBuilderPage.getQuestionNumbers();
+      while (questionNumbers.length < 10) {
+        const addQuestionState = await surveyBuilderPage.getAddQuestionDisabledState();
+        if (addQuestionState.disabled) {
+          break;
+        }
+        await surveyBuilderPage.clickAddQuestion();
+        await surveyBuilderPage.addRatingQuestion(ratingText);
+        questionNumbers = await surveyBuilderPage.getQuestionNumbers();
+      }
+
+      assertTrue(
+        questionNumbers.length === 10,
+        `Expected 10 questions, got ${questionNumbers.length}: ${JSON.stringify(questionNumbers)}`
+      );
+
+      assertTrue(
+        await surveyBuilderPage.isAddQuestionTooltipVisibleOnHover(),
+        'limit message after hover on add'
+      );
+      const addQuestionState = await surveyBuilderPage.getAddQuestionDisabledState();
+      assertTrue(
+        addQuestionState.disabled,
+        `add-question disabled (class="${addQuestionState.classAttr}")`
+      );
+
+      assertTrue(
+        await surveyBuilderPage.isDuplicateTooltipVisibleOnHover(),
+        'limit message after hover on duplicate'
+      );
+      const duplicateState = await surveyBuilderPage.getDuplicateDisabledState();
+      assertTrue(
+        duplicateState.disabled,
+        `duplicate disabled (outerHTML="${duplicateState.outerHtml}")`
+      );
+
+      const questionNumbersAfter = await surveyBuilderPage.getQuestionNumbers();
+      assertTrue(questionNumbersAfter.length === 10, 'count stays 10');
+    } catch (error) {
+      throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
+    }
+  });
+
+  test('TC_BS_13: Review Mode controls and per-question checkboxes are visible', { tag: '@ReviewModeControls' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    try {
+      await surveyBuilderPage.enterReviewMode();
+
+      const controlsVisible = await surveyBuilderPage.areReviewControlsVisible();
+      assertTrue(controlsVisible, 'Expected Select All, Expand All, Collapse All, Delete, Exit Review Mode buttons to be visible');
+
+      const questionCount = await surveyBuilderPage.getQuestionCount();
+      const checkboxCount = await surveyBuilderPage.getReviewCheckboxCount(questionCount);
+      assertTrue(checkboxCount === questionCount, `Expected one checkbox per question (${questionCount}), found ${checkboxCount}`);
+    } catch (error) {
+      throw new Error(`Failed to verify Review Mode controls: ${error instanceof Error ? error.message : error}`);
+    }
+  });
+
+  test('TC_BS_14: Review Mode select all, de-select one, delete, and exit keeps deletions', { tag: '@ReviewModeActions' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    try {
+      await surveyBuilderPage.collapseAll();
+      await surveyBuilderPage.expandAll();
+      const questionCountBeforeDelete = await surveyBuilderPage.getQuestionCount();
+      await surveyBuilderPage.selectAll();
+
+      for (let index = 0; index < questionCountBeforeDelete; index++) {
+        assertTrue(await surveyBuilderPage.isQuestionSelected(index), `Expected checkbox ${index} to be ticked after Select All`);
+      }
+
+      await surveyBuilderPage.selectQuestionInReview(0);
+      assertTrue(!(await surveyBuilderPage.isQuestionSelected(0)), 'Expected question 0 checkbox to clear after de-selecting it');
+      for (let index = 1; index < questionCountBeforeDelete; index++) {
+        assertTrue(await surveyBuilderPage.isQuestionSelected(index), `Expected checkbox ${index} to remain ticked after de-selecting question 0`);
+      }
+
+      await surveyBuilderPage.deleteSelectedQuestions();
+      const deletedCount = questionCountBeforeDelete - 1;
+      const questionCountAfterDelete = await surveyBuilderPage.getQuestionCount();
+      assertTrue(
+        questionCountAfterDelete === questionCountBeforeDelete - deletedCount,
+        `Expected question count to drop by ${deletedCount}, found ${questionCountAfterDelete}`
+      );
+
+      const questionNumbersAfterDelete = await surveyBuilderPage.getQuestionNumbers();
+      assertTrue(
+        questionNumbersAfterDelete.every((number, idx) => number.trim() === `${idx + 1}.`),
+        'Expected remaining questions to be renumbered sequentially'
+      );
+
+      await surveyBuilderPage.exitReviewMode();
+      const questionCountAfterExit = await surveyBuilderPage.getQuestionCount();
+      assertTrue(questionCountAfterExit === questionCountAfterDelete, 'Expected Build Survey view to keep deletions after exiting Review Mode');
+    } catch (error) {
+      throw new Error(`Failed to complete Review Mode actions flow: ${error instanceof Error ? error.message : error}`);
+    }
+  });
+
+  test('TC_BS_REVIEW_MODE: Review mode select, delete, select/unselect all, expand/collapse all, exit', { tag: '@ReviewMode' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+
+    try {
+      await surveyBuilderPage.ensureQuestionCount(3);
+
+      await surveyBuilderPage.enterReviewMode();
+
+      const countBeforeDelete = await surveyBuilderPage.getQuestionCount();
+      await surveyBuilderPage.selectQuestionInReview(0);
+      await surveyBuilderPage.deleteSelectedQuestions();
+      const countAfterDelete = await surveyBuilderPage.getQuestionCount();
+      assertTrue(countAfterDelete === countBeforeDelete - 1, 'Expected question count to drop by 1 after delete');
+
+      await surveyBuilderPage.selectAll();
+      await surveyBuilderPage.unselectAll();
+
+      await surveyBuilderPage.expandAll();
+      await surveyBuilderPage.collapseAll();
+
+      await surveyBuilderPage.exitReviewMode();
+    } catch (error) {
+      throw new Error(`Failed to complete Review Mode flow: ${error instanceof Error ? error.message : error}`);
+    }
+  });
+
+  test.fixme('TC_BS_14: Publish survey end-to-end',{ tag: '@PublishSurveyLegacy' },async () => {
+      // Legacy placeholder, superseded by TC_BS_PUBLISH (@PublishSurvey). Kept skipped; Publish calls a real backend per source.
+    }
+  );
+
+// List/folder verification pending: feature under development.
+  // WIP: draft is created, but the success toast / folder list verification is pending feature completion; remove .fixme and @WIP when ready.
+  test.fixme('TC_BS_SAVE_DRAFT: Save survey as draft', { tag: ['@SaveDraft', '@WIP'] }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    const title = `SaveDraft_${Date.now()}`;
+    await surveyBuilderPage.saveDraft(title);
+    const isToastVisible = await surveyBuilderPage.isDraftSavedToastVisible();
+    assertTrue(isToastVisible, 'Expected "Success, survey saved as a draft successfully" toast to be visible after saving draft');
+  });
+
+  test('TC_BS_PUBLISH: Publish survey', { tag: '@PublishSurvey' }, async () => {
+    const surveyBuilderPage = new SurveyBuilderPage(basePage);
+    const title = `Publish_${Date.now()}`;
+    const SELECTED_RESPONSE_COUNT = 250; // Setup used click250Responses()
+
+    await surveyBuilderPage.ensureQuestionCount(3);
+
+    await surveyBuilderPage.publishSurvey(title);
+
+    const areDimensionsShown = await surveyBuilderPage.isPublishDialogDimensionCountVisible(datasetConfig.dimensionSelections.length);
+    assertTrue(areDimensionsShown, `Expected ${datasetConfig.dimensionSelections.length} dimension selections in Confirm publish? dialog`);
+
+    const responseSummaryText = await surveyBuilderPage.getPublishResponseSummaryText();
+    assertTrue(
+      responseSummaryText.includes(String(SELECTED_RESPONSE_COUNT)),
+      `Expected "${SELECTED_RESPONSE_COUNT} responses" in Confirm publish? dialog, got "${responseSummaryText}"`
+    );
+
+    const confirmClickTime = Date.now();
+    const isPublishConfirmed = await surveyBuilderPage.confirmPublish();
+    assertTrue(isPublishConfirmed, 'Expected "Confirm publish?" prompt and "Publishing survey" status to appear');
+
+    const isSuccessToastVisible = await surveyBuilderPage.verifyPublishSucceeded(confirmClickTime);
+    assertTrue(isSuccessToastVisible, 'Expected "Survey published successfully" message after publish');
+  });
+});
