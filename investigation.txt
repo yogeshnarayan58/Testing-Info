@@ -1,67 +1,112 @@
-e2e/locators/survey/surveyBuilder.locator.json
- { "elementName": "publishSurveyButton", "selectorType": "css", "selectorValue": "[data-test-id='publish-survey']" },
- { "elementName": "confirmPublishButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Confirm')" },
- { "elementName": "publish-dialog-dimension-by-index", "selectorType": "playwrights", "selectorValue": "#publish-data-summary [data-test-id$='_Dimension'] >> nth=${text}" },
- { "elementName": "publish-response-count-text", "selectorType": "css", "selectorValue": ".publish-response-count" },
-Copilot commented 4 minutes ago
-Copilot
-Copilot
-AI
-4m ago
-Medium
-Use publish-response-summary class for response text
-The publish dialog renders the response text with class publish-response-summary (survey-publish-popup.component.html:19), not publish-response-count. Consequently, getPublishResponseSummaryText() times out before Confirm is clicked, independently of any backend publishing issue. Use the rendered class.
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+e2e/investigation/PLAN_START_WITH_PROMPT.md
 
-Suggested changeset 1 (1)
-e2e/locators/survey/surveyBuilder.locator.json
-Original file line number	Diff line number	Diff line change
-  { "elementName": "publishSurveyButton", "selectorType": "css", "selectorValue": "[data-test-id='publish-survey']" },
-  { "elementName": "confirmPublishButton", "selectorType": "playwrights", "selectorValue": "niq-button:has-text('Confirm')" },
-  { "elementName": "publish-dialog-dimension-by-index", "selectorType": "playwrights", "selectorValue": "#publish-data-summary [data-test-id$='_Dimension'] >> nth=${text}" },
-  { "elementName": "publish-response-count-text", "selectorType": "css", "selectorValue": ".publish-response-count" },
-  { "elementName": "publish-response-count-text", "selectorType": "css", "selectorValue": ".publish-response-summary" },
-  { "elementName": "publish-success-toast", "selectorType": "text", "selectorValue": "Survey published successfully" },
-  { "elementName": "survey-action-toast", "selectorType": "css", "selectorValue": ".survey-action-toast" }
-  ]
-Copilot uses AI. Check for mistakes.
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/survey/surveyBuilder.page.ts
-Comment on lines +212 to +218
-      for (let i = 0; i < options.length; i++) {
-        if (i >= 2) {
-          await this.reopenCollapsedQuestion();
-          await this.addOptionToQuestion();
-        }
-        await this.fillLabeledField(`Option ${i + 1}`, options[i]);
-      }
-Copilot commented 4 minutes ago
-Copilot
-Copilot
-AI
-4m ago
-Medium
-Save question editor before waiting for preview
-On a fresh Start from Scratch survey, filling the first two options leaves the initial editor open. question-type-selector.component.ts saves only on an outside click or Save changes. No saved preview row or Edit button exists yet, so this call times out for the three-option fixture and the remaining serial tests are skipped. Fill the extra options in the open editor, then explicitly save and wait for the preview question before returning.
+----------
+# Phase 1 — Start with Prompt (AI) Audit
 
-Suggested changeset 1 (1)
-e2e/page-objects/survey/surveyBuilder.page.ts
-Original file line number	Diff line number	Diff line change
-       await this.fillQuestionText(questionIndex, questionText);
-       for (let i = 0; i < options.length; i++) {
-         if (i >= 2) {
-           await this.reopenCollapsedQuestion();
-           await this.addOptionToQuestion();
-         }
-         await this.fillLabeledField(`Option ${i + 1}`, options[i]);
-       }
-       const saveChanges = this.webActionHandler.getWebElement({
-         elementName: 'saveQuestionChangesButton',
-         selectorType: 'playwrights',
-         selectorValue: 'survey-question-editor .save-changes-action:visible'
-       });
-       await this.waitUntilVisible(saveChanges, 'Save question changes button');
-       await saveChanges.click();
-       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
-     } catch (error) {
-       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-     }
+`investigation.txt` (codegen recording) was NOT found anywhere in the workspace — UNKNOWN, could not read it.
+
+## 1-2. Generate Survey screen elements
+
+The "question count input / Generate button / Rephrase with AI / Suggest new questions / Describe questions to add"
+live on two different components, both reused by the real AI flow (`preview-mode` = Build Survey screen,
+`question-generator` = the initial question-generation form inside it):
+
+| Element | Current selector (e2e) | data-test-id? | Evidence |
+|---|---|---|---|
+| Question-count slider | none in e2e locators | Yes — `question-count-slider` | [question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html#L10) |
+| Question-count out-of-range error | none | No (only `role="alert")` | question-generator.html#L17 |
+| Question type list (multi-select) | none | No — child `<survey-question-type-list>` has no data-test-id on its options (component not found under that name search; file is `question-type-list.component.ts`) | question-generator.html#L25 |
+| "Generate questions" button | none | Yes — `generate-questions` | question-generator.html#L35 |
+| Rephrase with AI (per question) | none | No | [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L38) — only class `.rephrase-action` |
+| Rephrase prompt textarea | none | No | preview-mode.component.html#L41 — class `.rephrase-input` |
+| Rephrase send button | none | No | preview-mode.component.html#L44 — class `.rephrase-send` |
+| "Generate more questions" (Suggest new questions) | none | Yes — `suggest-new-questions` | preview-mode.component.html#L108 |
+| "Describe questions to add" | none | Yes — `reprompt-new-questions` | preview-mode.component.html#L118 |
+| Reprompt panel textarea | none | No | [reprompt-actions.component.html](../../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html#L4) — class `.reprompt-input` |
+| Reprompt Close/Submit buttons | none | No | reprompt-actions.component.html#L15,24 |
+| Loading state (Generate questions) | n/a | button `[state]` bound, no separate element/id | question-generator.html#L36 |
+| Loading state (Generate more questions) | n/a | same pattern, no id | preview-mode.component.html#L104 |
+| Loading state (Rephrase) | n/a | class `.rephrase-send-loading`, no id | preview-mode.component.html#L42 |
+| Validation/error summary | none | No | question-generator.html#L17 (`question-count-error`) |
+| Start-with-Prompt entry button | `[data-testid='quick-survey-quick-1']` | Yes | [start-with-prompt.locator.json](../../locators/survey/start-with-prompt.locator.json) — UNKNOWN which app component renders this; not found by grep in libs |
+| Prompt textarea (pre-generate) | `textarea.prompt-input` | No | [select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html#L53) |
+| Generate Survey / Proceed button | `[data-test-id='proceed-to-survey']` | Yes | select-panelist.component.html#L71 |
+
+## 3. Missing data-test-ids → proposed
+
+- Question-type-list options -> `question-type-<type>` (not confirmed what attribute carries the type value — UNKNOWN without reading `question-type-list.component.ts`/html, not opened in this pass)
+- Rephrase with AI button -> `rephrase-with-ai-${index}`
+- Rephrase prompt textarea -> `rephrase-input-${index}`
+- Rephrase send button -> `rephrase-send-${index}`
+- Reprompt panel textarea -> `reprompt-input`
+- Reprompt Close button -> `reprompt-close`
+- Reprompt Submit button -> `reprompt-submit`
+- Question-count-error message -> `question-count-error`
+
+## 4. Reuse from existing helpers
+
+- `start-with-prompt.page.ts` already reuses `dataset-selection.helper.ts` (`searchAndSelectDatasetHelper`) for dataset search/select — same as `panelist-flow.helper.ts`'s underlying `SelectPanelistPage`.
+- `SelectPanelistPage` (used directly in `start-with-prompt.spec.ts`) covers dimension selection, response-count, and Build Survey-loaded check — reusable as-is for the AI flow's panelist step.
+- `surveyBuilder.page.ts` already has `getQuestionNumbers()`, `clickAddQuestion()`, add-question-type flows — reusable pattern for asserting generated question counts, but it targets the manual "Add question" editor, not the AI generator's `question-count-slider`/`generate-questions` button, which have no page-object coverage yet.
+
+## 5. UNKNOWN / not confirmed
+
+- `investigation.txt` (AI flow codegen recording) — file does not exist in the workspace.
+- Exact attribute/data-test-id for individual question-type options in `survey-question-type-list`.
+- Which component renders `[data-testid='quick-survey-quick-1']` (start-with-prompt entry tile) — not located via grep in `libs/`.
+- Runtime text of the question-count slider's numeric readout (if any) — not in template beyond the slider itself.
+
+-----
+# Plan: Start with Prompt (AI) Flow
+
+- [x] 1. Audit (Part A)
+  - [x] Read start-with-prompt.page.ts, locator JSON, spec
+  - [x] Read Generate Survey screen source (question-generator, preview-mode, reprompt-actions)
+  - [x] investigation.txt — NOT FOUND, flagged UNKNOWN
+  - [x] Write phase1-start-with-prompt-audit.md
+
+- [ ] 2. AI flow: page object, locators and tests
+  - [ ] Add data-test-ids to app source for elements missing them (see audit §3) — not run
+  - [ ] Add locators for question-count slider, generate-questions, rephrase controls, suggest-new-questions, reprompt panel
+  - [ ] Page object methods: set question count, click Generate, assert question count matches
+  - [ ] Test: count validation (out-of-range error shown/blocked)
+  - [ ] Test: generate N questions
+  - [ ] Test: Rephrase with AI
+  - [ ] Test: Suggest new questions (Generate more questions)
+  - [ ] Test: Describe questions to add (reprompt panel submit)
+
+- [ ] 3. Fixes + independence + Review merge + stepper verification
+  - [ ] Apply fixes from run-1 report — not run (report not located yet)
+  - [ ] Test independence: continue-on-failure across start-with-prompt.spec.ts tests
+  - [ ] Merge Review tests into 2 (Select All -> Delete removes all questions)
+  - [ ] Verify stepper dimensions (reuse TC_BS_12 pattern / isDimensionSelectionRetained)
+
+- [ ] 4. Negative tests + new publish UI
+  - [ ] Publish blocked under 3 questions
+  - [ ] Cancel on confirm-publish dialog
+  - [ ] New publish UI: "Edit survey" button/flow
+  - [ ] New publish UI: "Review survey details" / "Publish survey" flow
+
+- [ ] 5. Remaining sheet cases
+  - [ ] Empty Build Survey state
+  - [ ] Min 2 options validation (choice questions)
+  - [ ] Cancel adding a question
+  - [ ] Duplicate question
+  - [ ] Delete question
+  - [ ] Required star toggle
+  - [ ] Drag and drop reordering
+  - [ ] Skip "Move to trash" (explicitly out of scope)
+
+- [ ] 6. Cleanup
+  - [ ] Remove duplication between Start with Prompt and Start from Scratch flows (shared helpers)
+  - [ ] Rename tests to sheet IDs
+---------------
+- Phase 1 audit: `investigation.txt` (AI flow codegen recording) not found in workspace.
+- Generate Survey screen = `question-generator` (count/types/Generate) + `preview-mode` (Rephrase/Generate more/Describe) + `reprompt-actions`; most controls lack data-test-id.
+- See e2e/investigation/phase1-start-with-prompt-audit.md and PLAN_START_WITH_PROMPT.md (git-excluded) for details.
