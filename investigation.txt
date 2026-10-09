@@ -1,42 +1,3 @@
-Running 10 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓   1 …rvey home page @StartWithPrompt @StartWithPrompt (16.5s)
-Auth state loaded from storage/auth.json
-  ✓   2 …pe and dataset @StartWithPrompt @DatasetSelection (3.7s)
-  ✓   3 …arch for panelists @StartWithPrompt @DataSummary (44.1s)
-  ✓   4 … a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 …uild Survey page @StartWithPrompt @GenerateSurvey (2.0s)
-  -   6 …out of range via the UI @StartWithPrompt @GenerateSurvey
-  ✓   7 …e question count @StartWithPrompt @GenerateSurvey (5.0s)
-  ✘   8 …el after submit @StartWithPrompt @GenerateSurvey (484ms)
-  -   9 …ease the question count @StartWithPrompt @GenerateSurvey
-  -  10 …unt and close the panel @StartWithPrompt @GenerateSurvey
-
-
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrasepanel after submit @StartWithPrompt @GenerateSurvey 
-
-    Error: Failed to rephrase question 0: Web element with name 'rephraseInput' does not have a dynamic selector that includes '0'.
-
-       at ..\page-objects\survey\start-with-prompt.page.ts:235
-
-      233 |       }
-      234 |     } catch (error) {
-    > 235 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      236 |     }
-      237 |   }
-      238 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:235:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
-
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
-  1 skipped
-  2 did not run
-  6 passed (2.1m)
-----------------------------------------------
 # Start with Prompt (AI) — single investigation log
 
 ## Audit conclusions still relevant
@@ -78,6 +39,12 @@ Auth state loaded from storage/auth.json
 
 - [ ] 3. Fixes + independence + Review merge + stepper verification
   - [x] Apply fixes from run-1 report — test 8 fixed: `.question-actions` (Rephrase) is hidden until `.question-row`'s (mouseenter), so `rephraseQuestion()` now hovers the row (new `questionRow` locator + nth) before clicking, and moves the mouse off afterward so hover doesn't leak into the next test. Tests 9/10 (suggest-new-questions, reprompt-new-questions, reprompt panel) checked: none are hover/state-gated in `.add-actions-row` — no change needed.
+  - [x] Test 8 follow-up fix: `rephraseInput`/`rephraseSendButton` have static DEV selectors (no `${}` placeholder, per pending table) but were called via `getDynamicResource`, throwing "no dynamic selector". `rephraseOpenIndex` is a single value, so only one panel exists at a time — switched both calls to plain `getResource` (no index). Reprompt elements were already using `getResource` correctly.
+  - [x] Test 8 flaky-timing fix: panel-close check already used `ELEMENT_WAIT_TIMEOUT` (15s, not instant), but didn't wait for the send button's loading state first — added a sequential `.rephrase-send-loading` hidden-wait before the panel-hidden wait. Reprompt submit has no equivalent CSS loading class (uses a `state="loading"` button attribute) — left unchanged.
+  - Part 2 (read-only): TC_BS_12 verifies BOTH response count (`getSelectedResponseCountDataTestId`) AND dimension selections (`isDimensionSelectionRetained` per dimension), not just response count.
+  - Test 8 read-only investigation: both `isVisible(ELEMENT_WAIT_TIMEOUT=15000)` waits (loading hidden, then panel hidden) poll, neither is instant — reported 3s failure matches no explicit timeout in rephraseQuestion(), origin UNKNOWN (likely Playwright default actionability timeout or API latency).
+  - App side: `rephraseOpenIndex = null` (panel close) is set ONLY in the success `next()` callback (preview-mode.component.ts:407); on API error only `console.error` runs and the panel stays open with no toast/error text — `finalize()` always clears `rephraseLoadingIndex` (spinner) on both success and error, so the loading-hidden wait always passes but the panel-hidden wait only passes on success.
+  - Part 3 (read-only): `start-with-prompt.spec.ts` is `describe.serial`; `basePage`/browser are created once in test 1 and reused for all tests (no per-test reset). In Playwright serial mode, a failing test skips all remaining tests in the block, so tests 7-10 are NOT independent today. Least-cost fix: keep the shared ~45-55s setup (tests 1-6) but switch the describe block to non-serial (or add `test.describe.configure({ retries })`) only for tests 7-10, plus a `beforeEach` that re-verifies/re-opens the Build Survey page state so one panel-interaction failure doesn't cascade. UNKNOWN: whether page DOM state (e.g., stray open panels) after a failed test affects the next test without an explicit reset.
   - [ ] Test independence: continue-on-failure across start-with-prompt.spec.ts tests
   - [ ] Merge Review tests into 2 (Select All -> Delete removes all questions)
   - [ ] Verify stepper dimensions (reuse TC_BS_12 pattern / isDimensionSelectionRetained)
@@ -101,4 +68,88 @@ Auth state loaded from storage/auth.json
 - [ ] 6. Cleanup
   - [ ] Remove duplication between Start with Prompt and Start from Scratch flows (shared helpers)
   - [ ] Rename tests to sheet IDs
+
+----------------------------
+
+last run result
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 10 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+isLambdaTest = false
+  ✓   1 …rvey home page @StartWithPrompt @StartWithPrompt (24.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 …pe and dataset @StartWithPrompt @DatasetSelection (3.4s)
+  ✓   3 …arch for panelists @StartWithPrompt @DataSummary (47.2s)
+  ✓   4 … a response count @StartWithPrompt @ResponseCount (3.4s)
+  ✓   5 …uild Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  -   6 …out of range via the UI @StartWithPrompt @GenerateSurvey
+  ✓   7 …e question count @StartWithPrompt @GenerateSurvey (1.2s)
+  ✘   8 …nel after submit @StartWithPrompt @GenerateSurvey (3.5m)
+  -   9 …ease the question count @StartWithPrompt @GenerateSurvey
+  -  10 …unt and close the panel @StartWithPrompt @GenerateSurvey
+
+
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrasepanel after submit @StartWithPrompt @GenerateSurvey 
+
+    Error: Failed to rephrase question 0: Rephrase panel (index 0) did not close after submit
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:241
+
+      239 |       }
+      240 |     } catch (error) {
+    > 241 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      242 |     }
+      243 |   }
+      244 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:241:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
+
+    attachment #1: screenshot (image/png) ───────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ──────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  2 did not run
+  6 passed (5.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
 
