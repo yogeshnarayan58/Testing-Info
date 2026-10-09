@@ -1,138 +1,63 @@
-Global setup completed. Auth state saved.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git status
+On branch feature/start-with-prompt-ai-automation
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/start-with-prompt.locator.json
+        modified:   page-objects/survey/start-with-prompt.page.ts
+        modified:   tests/survey/start-with-prompt.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+        modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
 
-Running 10 tests using 1 worker
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        SURVEY_BUILDER_INVESTIGATION_SWP.md
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 …ey home page @StartWithPrompt @StartWithPrompt (23.1s)
-Auth state loaded from storage/auth.json
-  ✓   2 … and dataset @StartWithPrompt @DatasetSelection (5.5s)
-  ✓   3 …ch for panelists @StartWithPrompt @DataSummary (54.6s)
-  ✓   4 … response count @StartWithPrompt @ResponseCount (3.3s)
-  ✓   5 …ld Survey page @StartWithPrompt @GenerateSurvey (2.7s)
-  -   6 …t of range via the UI @StartWithPrompt @GenerateSurvey
-  ✓   7 …question count @StartWithPrompt @GenerateSurvey (2.5s)
-  ✘   8 … after submit @StartWithPrompt @GenerateSurvey (16.5s)
-  -   9 …se the question count @StartWithPrompt @GenerateSurvey
-  -  10 …t and close the panel @StartWithPrompt @GenerateSurvey
+no changes added to commit (use "git add" and/or "git commit -a")
 
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+----------------------------
+# Start with Prompt (AI) — single investigation log
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+## Audit conclusions still relevant
+- Generate Survey screen = `question-generator` (count/types/Generate) + `preview-mode` (Rephrase/Generate more/Describe) + `reprompt-actions`; most controls lacked data-test-id (now added in libs, not yet on DEV).
+- UNKNOWN: `investigation.txt`/`swp-codegen-recording.txt` (codegen recordings) — not found in workspace.
+- UNKNOWN: which component renders `[data-testid='quick-survey-quick-1']` entry tile — not under `libs/` or `src/app`.
+- UNKNOWN: `niq-slider` (third-party) numeric readout/drag mechanics — not vendored in workspace.
+- Skipped: "set question count" page-object method — slider drag mechanism unconfirmable (above).
+- Skipped: count-validation test — `isQuestionCountOutOfRange()` unreachable via UI since slider's own min/max bound the same constants.
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+## Pending: switch to data-test-id once DEV has the new build
+| Element | DEV selector used now | data-test-id to switch to |
+|---|---|---|
+| Rephrase with AI button | `.rephrase-action >> nth=${index}` | `rephrase-with-ai-${index}` |
+| Rephrase prompt textarea | `.rephrase-input` | `rephrase-input-${index}` |
+| Rephrase send button | `.rephrase-send` | `rephrase-send-${index}` |
+| Reprompt panel textarea | `.reprompt-input` | `reprompt-input` |
+| Reprompt Close button | `role=button[name="Close"]` | `reprompt-close` |
+| Reprompt Submit button | `role=button[name="Submit"]` | `reprompt-submit` |
+| Question-count error message | `.question-count-error` | `question-count-error` |
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:218
-
-      216 |       }
-      217 |     } catch (error) {
-    > 218 |       throw new Error(`Failed to rephrase question${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      219 |     }
-      220 |   }
-      221 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:218:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
-
-    attachment #1: screenshot (image/png) ─────────────────────
-    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
-
-    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ────────────────────
-    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 ›Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
-  1 skipped
-  2 did not run
-  6 passed (2.9m)
-
-To open last HTML report run:
-------
-# Phase 1 — Start with Prompt (AI) Audit
-
-`investigation.txt` (codegen recording) was NOT found anywhere in the workspace — UNKNOWN, could not read it.
-
-## 1-2. Generate Survey screen elements
-
-The "question count input / Generate button / Rephrase with AI / Suggest new questions / Describe questions to add"
-live on two different components, both reused by the real AI flow (`preview-mode` = Build Survey screen,
-`question-generator` = the initial question-generation form inside it):
-
-| Element | Current selector (e2e) | data-test-id? | Evidence |
-|---|---|---|---|
-| Question-count slider | none in e2e locators | Yes — `question-count-slider` | [question-generator.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html#L10) |
-| Question-count out-of-range error | none | No (only `role="alert")` | question-generator.html#L17 |
-| Question type list (multi-select) | none | No — child `<survey-question-type-list>` has no data-test-id on its options (component not found under that name search; file is `question-type-list.component.ts`) | question-generator.html#L25 |
-| "Generate questions" button | none | Yes — `generate-questions` | question-generator.html#L35 |
-| Rephrase with AI (per question) | none | No | [preview-mode.component.html](../../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html#L38) — only class `.rephrase-action` |
-| Rephrase prompt textarea | none | No | preview-mode.component.html#L41 — class `.rephrase-input` |
-| Rephrase send button | none | No | preview-mode.component.html#L44 — class `.rephrase-send` |
-| "Generate more questions" (Suggest new questions) | none | Yes — `suggest-new-questions` | preview-mode.component.html#L108 |
-| "Describe questions to add" | none | Yes — `reprompt-new-questions` | preview-mode.component.html#L118 |
-| Reprompt panel textarea | none | No | [reprompt-actions.component.html](../../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html#L4) — class `.reprompt-input` |
-| Reprompt Close/Submit buttons | none | No | reprompt-actions.component.html#L15,24 |
-| Loading state (Generate questions) | n/a | button `[state]` bound, no separate element/id | question-generator.html#L36 |
-| Loading state (Generate more questions) | n/a | same pattern, no id | preview-mode.component.html#L104 |
-| Loading state (Rephrase) | n/a | class `.rephrase-send-loading`, no id | preview-mode.component.html#L42 |
-| Validation/error summary | none | No | question-generator.html#L17 (`question-count-error`) |
-| Start-with-Prompt entry button | `[data-testid='quick-survey-quick-1']` | Yes | [start-with-prompt.locator.json](../../locators/survey/start-with-prompt.locator.json) — UNKNOWN which app component renders this; not found by grep in libs |
-| Prompt textarea (pre-generate) | `textarea.prompt-input` | No | [select-panelist.component.html](../../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html#L53) |
-| Generate Survey / Proceed button | `[data-test-id='proceed-to-survey']` | Yes | select-panelist.component.html#L71 |
-
-## 3. Missing data-test-ids → proposed
-
-- Question-type-list options -> `question-type-<type>` (not confirmed what attribute carries the type value — UNKNOWN without reading `question-type-list.component.ts`/html, not opened in this pass)
-- Rephrase with AI button -> `rephrase-with-ai-${index}`
-- Rephrase prompt textarea -> `rephrase-input-${index}`
-- Rephrase send button -> `rephrase-send-${index}`
-- Reprompt panel textarea -> `reprompt-input`
-- Reprompt Close button -> `reprompt-close`
-- Reprompt Submit button -> `reprompt-submit`
-- Question-count-error message -> `question-count-error`
-
-## 4. Reuse from existing helpers
-
-- `start-with-prompt.page.ts` already reuses `dataset-selection.helper.ts` (`searchAndSelectDatasetHelper`) for dataset search/select — same as `panelist-flow.helper.ts`'s underlying `SelectPanelistPage`.
-- `SelectPanelistPage` (used directly in `start-with-prompt.spec.ts`) covers dimension selection, response-count, and Build Survey-loaded check — reusable as-is for the AI flow's panelist step.
-- `surveyBuilder.page.ts` already has `getQuestionNumbers()`, `clickAddQuestion()`, add-question-type flows — reusable pattern for asserting generated question counts, but it targets the manual "Add question" editor, not the AI generator's `question-count-slider`/`generate-questions` button, which have no page-object coverage yet.
-
-## 5. UNKNOWN / not confirmed
-
-- `swp-codegen-recording.txt` (AI flow codegen recording, Phase 2 request) — also not found anywhere in the workspace.
-- Which component renders `[data-testid='quick-survey-quick-1']` (start-with-prompt entry tile) — not in `libs/survey-mod-lib` or `src/app`; must be an external npm package not vendored into this workspace.
-- Numeric readout of the question-count slider — `niq-slider` is `SliderModule` from `@nielseniq/athena-core` (third-party, not in workspace), so its rendered DOM/attributes cannot be confirmed from source. Consequently `isQuestionCountOutOfRange()` (question-generator.ts) cannot be driven true via the UI, since the slider's own min/max are bound to the same constants — count-validation test is `test.skip`'d with this reasoning.
-
-### Resolved
-
-- Question-type option attribute: already implemented — `[attr.data-test-id]="'question-type-' + option.value"` in question-type-list.component.html. No edit needed.
-------------
-# Plan: Start with Prompt (AI) Flow
-
+## Plan: Start with Prompt (AI) Flow
 - [x] 1. Audit (Part A)
   - [x] Read start-with-prompt.page.ts, locator JSON, spec
   - [x] Read Generate Survey screen source (question-generator, preview-mode, reprompt-actions)
   - [x] investigation.txt — NOT FOUND, flagged UNKNOWN
-  - [x] Write phase1-start-with-prompt-audit.md
+  - [x] Write audit conclusions (above)
 
 - [x] 2. AI flow: page object, locators and tests
   - [x] Add data-test-ids to app source for elements missing them (rephrase button/textarea/send, question-count-error, reprompt input/close/submit) — question-type option id already existed, no change
   - [x] Add locators for question-count slider, generate-questions, rephrase controls, suggest-new-questions, reprompt panel
-  - [x] Page object methods: question-count error check, click Generate, get generated question count, rephrase a question, click Suggest new questions, describe+submit reprompt — "set question count" skipped (niq-slider drag mechanism unconfirmed, third-party component)
-  - [x] Test: count validation — test.skip'd, reason recorded (UI cannot reach out-of-range state)
+  - [x] Page object methods: question-count error check, click Generate, get generated question count, rephrase a question, click Suggest new questions, describe+submit reprompt — "set question count" skipped (see above)
+  - [x] Test: count validation — test.skip'd, reason recorded (see above)
   - [x] Test: generate N questions (asserts count increase only)
   - [x] Test: Rephrase with AI (asserts panel closes only)
   - [x] Test: Suggest new questions (asserts count increase only)
   - [x] Test: Describe questions to add (asserts count increase + panel closes)
-  - [x] DEV run-1 fix: rephrase/reprompt/count-error locators switched from (not-yet-deployed) data-test-ids to class/role selectors that exist in current DEV source; pending-swap tracked in swp-pending-test-ids.md (git-excluded)
+  - [x] DEV run-1 fix: rephrase/reprompt/count-error locators switched from (not-yet-deployed) data-test-ids to class/role selectors that exist in current DEV source (table above)
 
 - [ ] 3. Fixes + independence + Review merge + stepper verification
   - [ ] Apply fixes from run-1 report — not run (report not located yet)
@@ -159,17 +84,13 @@ live on two different components, both reused by the real AI flow (`preview-mode
 - [ ] 6. Cleanup
   - [ ] Remove duplication between Start with Prompt and Start from Scratch flows (shared helpers)
   - [ ] Rename tests to sheet IDs
-----------------
-# Pending: switch to data-test-id once DEV has the new build
+-------------------------------------------
+Part A: Consolidated into SURVEY_BUILDER_INVESTIGATION_SWP.md (plan, pending data-test-id table, audit conclusions). Deleted the 3 old investigation files and removed their exclude entries.
 
-| Element | DEV selector used now | data-test-id to switch to |
-|---|---|---|
-| Rephrase with AI button | `.rephrase-action >> nth=${index}` | `rephrase-with-ai-${index}` |
-| Rephrase prompt textarea | `.rephrase-input` | `rephrase-input-${index}` |
-| Rephrase send button | `.rephrase-send` | `rephrase-send-${index}` |
-| Reprompt panel textarea | `.reprompt-input` | `reprompt-input` |
-| Reprompt Close button | `role=button[name="Close"]` | `reprompt-close` |
-| Reprompt Submit button | `role=button[name="Submit"]` | `reprompt-submit` |
-| Question-count error message | `.question-count-error` | `question-count-error` |
+Part B (read-only, test 8 = "Rephrase with AI"):
 
-------------
+.rephrase-action sits inside .question-actions, whose display is flex only when hoveredQuestionIndex === i || rephraseOpenIndex === i (and editingIndex !== i), else none — preview-mode.component.html:29. hoveredQuestionIndex is set only via (mouseenter) on .question-row.
+Test just before it ("Generate more questions") only calls clickGenerateQuestions() + reads counts — never hovers/clicks any row.
+Test 8 (rephraseQuestion(0, ...)) clicks rephraseWithAiButton directly with no prior hover/select — so .question-actions is still display:none, button present but not visible → 15s timeout.
+Minimal fix: before clicking, trigger mouseenter on the row (or click it, since selectQuestion(i) also runs on row click) for index 0, then click rephrase.
+UNKNOWN: whether selectQuestion(i)/editingIndex interferes — not read in this pass.
