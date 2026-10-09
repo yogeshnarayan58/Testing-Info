@@ -1,3 +1,62 @@
+Global setup completed. Auth state saved.
+
+Running 10 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …ey home page @StartWithPrompt @StartWithPrompt (23.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 … and dataset @StartWithPrompt @DatasetSelection (5.5s)
+  ✓   3 …ch for panelists @StartWithPrompt @DataSummary (54.6s)
+  ✓   4 … response count @StartWithPrompt @ResponseCount (3.3s)
+  ✓   5 …ld Survey page @StartWithPrompt @GenerateSurvey (2.7s)
+  -   6 …t of range via the UI @StartWithPrompt @GenerateSurvey
+  ✓   7 …question count @StartWithPrompt @GenerateSurvey (2.5s)
+  ✘   8 … after submit @StartWithPrompt @GenerateSurvey (16.5s)
+  -   9 …se the question count @StartWithPrompt @GenerateSurvey
+  -  10 …t and close the panel @StartWithPrompt @GenerateSurvey
+
+
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+
+    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:218
+
+      216 |       }
+      217 |     } catch (error) {
+    > 218 |       throw new Error(`Failed to rephrase question${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      219 |     }
+      220 |   }
+      221 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:218:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
+
+    attachment #1: screenshot (image/png) ─────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 ›Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  2 did not run
+  6 passed (2.9m)
+
+To open last HTML report run:
+------
 # Phase 1 — Start with Prompt (AI) Audit
 
 `investigation.txt` (codegen recording) was NOT found anywhere in the workspace — UNKNOWN, could not read it.
@@ -55,41 +114,62 @@ live on two different components, both reused by the real AI flow (`preview-mode
 ### Resolved
 
 - Question-type option attribute: already implemented — `[attr.data-test-id]="'question-type-' + option.value"` in question-type-list.component.html. No edit needed.
----------------------------------------------
+------------
+# Plan: Start with Prompt (AI) Flow
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓   1 …ey home page @StartWithPrompt @StartWithPrompt (23.0s)
-Auth state loaded from storage/auth.json
-  ✓   2 … and dataset @StartWithPrompt @DatasetSelection (6.3s)
-  ✓   3 …ch for panelists @StartWithPrompt @DataSummary (52.1s)
-  ✓   4 … response count @StartWithPrompt @ResponseCount (3.0s)
-  ✓   5 …ld Survey page @StartWithPrompt @GenerateSurvey (2.2s)
-  -   6 …t of range via the UI @StartWithPrompt @GenerateSurvey
-  ✓   7 …question count @StartWithPrompt @GenerateSurvey (3.8s)
-  ✘   8 … after submit @StartWithPrompt @GenerateSurvey (15.3s)
-  -   9 …se the question count @StartWithPrompt @GenerateSurvey
-  -  10 …t and close the panel @StartWithPrompt @GenerateSurvey
+- [x] 1. Audit (Part A)
+  - [x] Read start-with-prompt.page.ts, locator JSON, spec
+  - [x] Read Generate Survey screen source (question-generator, preview-mode, reprompt-actions)
+  - [x] investigation.txt — NOT FOUND, flagged UNKNOWN
+  - [x] Write phase1-start-with-prompt-audit.md
 
+- [x] 2. AI flow: page object, locators and tests
+  - [x] Add data-test-ids to app source for elements missing them (rephrase button/textarea/send, question-count-error, reprompt input/close/submit) — question-type option id already existed, no change
+  - [x] Add locators for question-count slider, generate-questions, rephrase controls, suggest-new-questions, reprompt panel
+  - [x] Page object methods: question-count error check, click Generate, get generated question count, rephrase a question, click Suggest new questions, describe+submit reprompt — "set question count" skipped (niq-slider drag mechanism unconfirmed, third-party component)
+  - [x] Test: count validation — test.skip'd, reason recorded (UI cannot reach out-of-range state)
+  - [x] Test: generate N questions (asserts count increase only)
+  - [x] Test: Rephrase with AI (asserts panel closes only)
+  - [x] Test: Suggest new questions (asserts count increase only)
+  - [x] Test: Describe questions to add (asserts count increase + panel closes)
+  - [x] DEV run-1 fix: rephrase/reprompt/count-error locators switched from (not-yet-deployed) data-test-ids to class/role selectors that exist in current DEV source; pending-swap tracked in swp-pending-test-ids.md (git-excluded)
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+- [ ] 3. Fixes + independence + Review merge + stepper verification
+  - [ ] Apply fixes from run-1 report — not run (report not located yet)
+  - [ ] Test independence: continue-on-failure across start-with-prompt.spec.ts tests
+  - [ ] Merge Review tests into 2 (Select All -> Delete removes all questions)
+  - [ ] Verify stepper dimensions (reuse TC_BS_12 pattern / isDimensionSelectionRetained)
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+- [ ] 4. Negative tests + new publish UI
+  - [ ] Publish blocked under 3 questions
+  - [ ] Cancel on confirm-publish dialog
+  - [ ] New publish UI: "Edit survey" button/flow
+  - [ ] New publish UI: "Review survey details" / "Publish survey" flow
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:218
+- [ ] 5. Remaining sheet cases
+  - [ ] Empty Build Survey state
+  - [ ] Min 2 options validation (choice questions)
+  - [ ] Cancel adding a question
+  - [ ] Duplicate question
+  - [ ] Delete question
+  - [ ] Required star toggle
+  - [ ] Drag and drop reordering
+  - [ ] Skip "Move to trash" (explicitly out of scope)
 
-      216 |       }
-      217 |     } catch (error) {
-    > 218 |       throw new Error(`Failed to rephrase question${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      219 |     }
-      220 |   }
-      221 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:218:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
+- [ ] 6. Cleanup
+  - [ ] Remove duplication between Start with Prompt and Start from Scratch flows (shared helpers)
+  - [ ] Rename tests to sheet IDs
+----------------
+# Pending: switch to data-test-id once DEV has the new build
 
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 ›Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
-  1 skipped
-  2 did not run
-  6 passed (2.8m)
+| Element | DEV selector used now | data-test-id to switch to |
+|---|---|---|
+| Rephrase with AI button | `.rephrase-action >> nth=${index}` | `rephrase-with-ai-${index}` |
+| Rephrase prompt textarea | `.rephrase-input` | `rephrase-input-${index}` |
+| Rephrase send button | `.rephrase-send` | `rephrase-send-${index}` |
+| Reprompt panel textarea | `.reprompt-input` | `reprompt-input` |
+| Reprompt Close button | `role=button[name="Close"]` | `reprompt-close` |
+| Reprompt Submit button | `role=button[name="Submit"]` | `reprompt-submit` |
+| Question-count error message | `.question-count-error` | `question-count-error` |
+
+------------
