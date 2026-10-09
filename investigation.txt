@@ -69,3 +69,89 @@
   - [ ] Remove duplication between Start with Prompt and Start from Scratch flows (shared helpers)
   - [ ] Rename tests to sheet IDs
 
+
+---------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 10 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+isLambdaTest = false
+  ✓   1 …rvey home page @StartWithPrompt @StartWithPrompt (24.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 …pe and dataset @StartWithPrompt @DatasetSelection (3.4s)
+  ✓   3 …arch for panelists @StartWithPrompt @DataSummary (47.2s)
+  ✓   4 … a response count @StartWithPrompt @ResponseCount (3.4s)
+  ✓   5 …uild Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  -   6 …out of range via the UI @StartWithPrompt @GenerateSurvey
+  ✓   7 …e question count @StartWithPrompt @GenerateSurvey (1.2s)
+  ✘   8 …nel after submit @StartWithPrompt @GenerateSurvey (3.5m)
+  -   9 …ease the question count @StartWithPrompt @GenerateSurvey
+  -  10 …unt and close the panel @StartWithPrompt @GenerateSurvey
+
+
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrasepanel after submit @StartWithPrompt @GenerateSurvey 
+
+    Error: Failed to rephrase question 0: Rephrase panel (index 0) did not close after submit
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:241
+
+      239 |       }
+      240 |     } catch (error) {
+    > 241 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      242 |     }
+      243 |   }
+      244 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:241:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:89:5
+
+    attachment #1: screenshot (image/png) ───────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    Error Context: test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ──────────────────────
+    test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-fbfd5-rephrase-panel-after-submit-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:88:7 › Start with a prompt › Rephrase with AI: Should close the rephrase panel after submit @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  2 did not run
+  6 passed (5.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
