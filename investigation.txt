@@ -1,71 +1,60 @@
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓   1 …option on the survey home page @StartWithPrompt @StartWithPrompt (35.0s)
+  ✓   1 …option on the survey home page @StartWithPrompt @StartWithPrompt (15.3s)
 Auth state loaded from storage/auth.json
-  ✓   2 …t the dataset type and dataset @StartWithPrompt @DatasetSelection (5.8s)
-  ✓   3 …elections and search for panelists @StartWithPrompt @DataSummary (45.5s)
-  ✓   4 …t: Should select a response count @StartWithPrompt @ResponseCount (4.0s)
-  ✓   5 … and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  ✓   2 …t the dataset type and dataset @StartWithPrompt @DatasetSelection (3.5s)
+  ✓   3 …elections and search for panelists @StartWithPrompt @DataSummary (43.2s)
+  ✓   4 …t: Should select a response count @StartWithPrompt @ResponseCount (3.5s)
+  ✓   5 … and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.8s)
   -   6 …annot be driven out of range via the UI @StartWithPrompt @GenerateSurvey
-  ✓   7 …ould increase the question count @StartWithPrompt @GenerateSurvey (4.2s)
-  ✓   8 …ter AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (649ms)
-  ✓   9 …ng state and prompt after submit @StartWithPrompt @GenerateSurvey (7.9s)
-  ✓  10 …ould increase the question count @StartWithPrompt @GenerateSurvey (2.9s)
-  ✓  11 …estion count and close the panel @StartWithPrompt @GenerateSurvey (7.7s)
-  ✘  12 …uired toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (5.0m)
-  -  13 … text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  14 …on checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  15 … and exit keeps deletions @StartWithPrompt @StartWithPrompt @BuildSurvey
+  ✓   7 …ould increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
+  ✓   8 …ter AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (362ms)
+  ✓   9 …ng state and prompt after submit @StartWithPrompt @GenerateSurvey (6.6s)
+  ✓  10 …ould increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
+  ✓  11 …estion count and close the panel @StartWithPrompt @GenerateSurvey (7.0s)
+  ✓  12 …uired toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (7.7s)
+  ✓  13 …a the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (488ms)
+  ✓  14 …kboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey (2.8s)
+  ✘  15 …t keeps deletions @StartWithPrompt @StartWithPrompt @BuildSurvey (16.5s)
 
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:172:7 › Start with a prompt › TC_BS_14: Review Mode select all, delete, and exit keeps deletions @StartWithPrompt @StartWithPrompt @BuildSurvey 
 
-    Test timeout of 300000ms exceeded.
+    Error: Failed to exit review mode: Exit review mode button not visible after15000ms
 
-    Error: Failed to set Required (index 0) to false: Failed to open question 0 for editing: Question row (step: hover, index 0, locator: .question-row >> nth=0)not visible after 15000ms
+       at ..\page-objects\survey\surveyBuilder.page.ts:463
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:903
-
-      901 |       }
-      902 |     } catch (error) {
-    > 903 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+      461 |       await this.waitUntilVisible(reviewButtonAfterExit, 'Review survey button (back on Build Survey screen)');
+      462 |     } catch (error) {
+    > 463 |       throw new Error(`Failed to exit review mode: ${error instanceof Error ? error.message : error}`);
           |             ^
-      904 |     }
-      905 |   }
-      906 |
-        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:903:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:5
+      464 |     }
+      465 |   }
+      466 |
+        at SurveyBuilderPage.exitReviewMode (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:463:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:186:5
 
     attachment #1: screenshot (image/png) ───────────────────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\test-failed-1.png
     ─────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\error-context.md
 
     attachment #3: start-with-prompt-video (video/webm) ─────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\attachments\start-with-prompt-video-272e09daaf618da5c6c848b8ccc06b4aebbada00.webm
+    test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\attachments\start-with-prompt-video-ccca4191732c0fec9eef001d3b82e74b9939617a.webm
     ─────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\error-context.md
 
     attachment #5: trace (application/zip) ──────────────────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+    test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-47c67-te-and-exit-keeps-deletions-chromium\trace.zip
 
     ─────────────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
+    [chromium] › tests\survey\start-with-prompt.spec.ts:172:7 › Start with a prompt › TC_BS_14: Review Mode select all, delete, and exit keeps deletions @StartWithPrompt @StartWithPrompt @BuildSurvey 
   1 skipped
-  3 did not run
-  10 passed (8.3m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
+  13 passed (2.7m)
