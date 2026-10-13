@@ -1,50 +1,74 @@
-All points are motioned below are tested on Dev and working as expected.
-
-1. AI-generated survey title in Optiq flow-Working
-Fix: In AI flow, the survey title is now taken from the title returned by the generate-questions API. Scratch flow is unchanged.
-How to verify: Open survey/aiflow/build-survey, generate questions, and verify that the header displays the title from the API response instead of "Untitled Survey."
-
-2. "Last refreshed" date persists after reload-Working
-Fix: When a saved draft reloads, the app retrieves the selected dataset's refresh date and restores it in the footer.
-How to verify: Select a dataset, go to Build Survey, save a draft, refresh the page, and verify that the "Last refreshed" date is still displayed.
-
-3. Deleting all questions keeps the user in Build Survey-Working
-Fix: In AI flow, deleting all questions keeps the user on Build Survey and displays the Add Question options. It no longer returns the user to the generator screen.
-How to verify: Generate questions, delete all of them, and verify that the page remains on aiflow/build-survey with the Add Question options visible.
-
-4. Single question-count error with consistent color
-Fix: The duplicate slider error has been removed, leaving a single message: "Please enter a value between 3 and 10." The error now uses the shared error color token (#680404).
-How to verify: In AI flow, enter an out-of-range value such as 1444 and verify that only one error message is displayed.
-
-5. Drag and drop in Build Survey-Working
-Fix: Question reordering works correctly, and the drag icon remains in its original position.
-How to verify: Add two or more questions, drag a question using the drag handle, and verify that the order updates correctly.
-
-6. First Rating/NPS question loses focus while typing-working
-Fix: The first question no longer loses focus, saves unexpectedly, or closes while the user is typing. It saves only after a valid outside click or save action.
-How to verify: Create a new survey, add a Rating or NPS question first, type into its fields, and verify that the editor remains active and editable.
-
-7. Same question type can be selected again-working
-Fix: Deleting the last question clears the previously selected question type.
-How to verify: Add a Single Choice question, delete it, and then select Single Choice again. A new question editor should open.
-
-8. Duplicate survey cannot be saved without a title-working
-Fix: Draft saves now reject empty or whitespace-only titles for both new and duplicated surveys. An error toast is displayed with the message: "Survey request validation failed: name is required."
-How to verify: Duplicate a survey from My Assets, clear the title, and click Save Draft. Verify that the error message is shown and the survey is not saved.
--------------------------------
-
-toggleRequired() uses [data-test-id='-input-checkbox'] unscoped — matches every editor's toggle page-wide.
-data-test-id="-input-checkbox" only exists inside niq-toggle (confirmed by template usage in choice/nps/rating/scale/text-editor); it's rendered once per survey-question-editor instance that's in edit mode — one per .question-row (editingIndex) and a separate always-edit .inline-add-editor instance (Add Question panel), both can coexist.
-Toggle is niq-toggle ([variant]='withLabel'); internal DOM/clickable element (host vs inner input) is UNKNOWN — not found in vendored @nielseniq package source (no readable template, likely AOT metadata only). Whether clicking it counts as "outside click" for the editor is also UNKNOWN.
-Pencil click sets editingIndex = i, making that row's survey-question-editor go mode='edit' — it's per-row, not a single global editor. Correct scoped selector: .question-row >> nth=${index} >> [data-test-id='-input-checkbox'] (or scope via .toggle-container inside that row).
-Star renders as <span>*</span> sibling appended inside .question-text (readonly branch) when isRequired() is true — e.g. .question-row >> nth=${index} >> .question-text >> span.
-UNKNOWN — not investigated in this pass (out of scope of files read); survey-header title binding wasn't re-checked here beyond prior TC_AI_07 note already in the SWP.
-Only niq-slider (data-test-id="question-count-slider") found; no separate number input next to it. Error shown via data-test-id="question-count-error" when isQuestionCountOutOfRange(). Whether typing 1444 is achievable depends on slider's own input affordance — UNKNOWN, not confirmed.
-UNKNOWN — not located in files read this pass; add-question div (data-test-id="add-question" button) exists in preview-mode.component.html unconditionally, so it's a candidate, but the "stay on Build Survey after delete-all" behavior itself wasn't traced.
-Proposed minimal fix (not applied): make requiredToggle's selector row-scoped (.question-row >> nth=${index} >> [data-test-id='-input-checkbox']) instead of a bare nth on the global attribute, and scope the star-check locator the same way (.question-row >> nth=${index} >> .question-text >> span) so both read from the same row instance.
-
-------------------------------
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 … prompt option on the survey home page @StartWithPrompt @StartWithPrompt (15.7s)
+Auth state loaded from storage/auth.json
+  ✓   2 …ld select the dataset type and dataset @StartWithPrompt @DatasetSelection (4.9s)
+  ✓   3 …ension selections and search for panelists @StartWithPrompt @DataSummary (43.4s)
+  ✓   4 …nse Count: Should select a response count @StartWithPrompt @ResponseCount (3.9s)
+  ✓   5 …e prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  -   6 …slider cannot be driven out of range via the UI @StartWithPrompt @GenerateSurvey
+  ✓   7 …ions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.0s)
+  ✓   8 …title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (480ms)
+  ✓   9 …he loading state and prompt after submit @StartWithPrompt @GenerateSurvey (6.6s)
+  ✓  10 …ons: Should increase the question count @StartWithPrompt @GenerateSurvey (866ms)
+  ✓  11 …e the question count and close the panel @StartWithPrompt @GenerateSurvey (6.6s)
+  ✘  12 … the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (5.0m)
+  -  13 …question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  14 …r-question checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  15 … delete, and exit keeps deletions @StartWithPrompt @StartWithPrompt @BuildSurvey
 
 
-## TC_BS_07 root cause (read-only re-check)
-`survey-question-editor` is instantiated once per `.question-row` (mode `edit`/`readonly`) PLUS a separate always-`edit`-mode instance in `.inline-add-editor` (Add Question panel) — niq-toggle/`-input-checkbox` only renders in the `edit`-mode branch, so 2 real matches are possible at once (edited row + open add-panel), confirming the shared-selector bug; `toggleRequired(index)` should scope by `.question-row >> nth=${index} .toggle-container [data-test-id='-input-checkbox']` (or equivalent container-scoped selector), not a bare nth on the page-wide attribute. niq-toggle's internal DOM/exact clickable element (host vs inner input) is UNKNOWN — not found in vendored `@nielseniq` package source (likely AOT-compiled, no readable template).
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: Failed to set Required (index 0) to false: Failed to open question 0 for editing: locator.hover: Target page, context or browser has been closed
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:882
+
+      880 |       }
+      881 |     } catch (error) {
+    > 882 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      883 |     }
+      884 |   }
+      885 |
+        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:882:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:5
+
+    attachment #1: screenshot (image/png) ───────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ──────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  1 skipped
+  3 did not run
+  10 passed (7.4m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+npm notice
+npm notice New major version of npm available! 11.20.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
