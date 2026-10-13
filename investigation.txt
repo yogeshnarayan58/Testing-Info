@@ -1,75 +1,8 @@
-# Start with Prompt (AI) — single investigation log
-
-## Audit conclusions still relevant
-- Generate Survey screen = `question-generator` (count/types/Generate) + `preview-mode` (Rephrase/Generate more/Describe) + `reprompt-actions`; most controls lacked data-test-id (now added in libs, not yet on DEV).
-- UNKNOWN: `investigation.txt`/`swp-codegen-recording.txt`, `niq-slider` drag mechanics, `[data-testid='quick-survey-quick-1']` owning component — not found/vendored in workspace.
-- Skipped: "set question count" method + count-validation test — slider's own min/max bounds the same constants, unreachable via UI.
-
-## Pending: switch to data-test-id once DEV has the new build
-| Element | DEV selector used now | data-test-id to switch to |
-|---|---|---|
-| Rephrase with AI button | `.rephrase-action >> nth=${index}` | `rephrase-with-ai-${index}` |
-| Rephrase prompt textarea | `.rephrase-input` | `rephrase-input-${index}` |
-| Rephrase send button | `.rephrase-send` | `rephrase-send-${index}` |
-| Reprompt panel textarea | `.reprompt-input` | `reprompt-input` |
-| Reprompt Close/Submit buttons | `role=button[name="Close"/"Submit"]` | `reprompt-close`/`reprompt-submit` |
-| Question-count error message | `.question-count-error` | `question-count-error` |
-
-## Plan: Start with Prompt (AI) Flow
-- [x] 1. Audit — read page object/locators/spec + Generate Survey screen source; conclusions above.
-- [x] 2. AI flow: page object, locators, tests 1-7 (count-validation test.skip'd; generate/rephrase/suggest/describe tests added).
-- [ ] 3. Fixes + reuse tests (in progress):
-  - [x] Test 8 hover-gate fix (`questionRow` + nth), dynamic→static resource fix, loading/panel-hidden sequencing fix.
-  - [x] Test 8 root cause: `isVisible(timeout)` waits for APPEAR not disappear — replaced with `waitFor(...,'hidden')`/`isHidden()`.
-  - [x] DEV evidence: rephrase panel does NOT close on success (source says it should) — panel-closed assertion dropped; rule is "DEV behavior over local source when they conflict".
-  - [x] `isVisible(0)` hang (Playwright treats timeout 0 as "wait forever") fixed via `isHidden()`; rephrase panel-open click retried once (never when already open); final checks tolerate both DEV post-success states (panel open-empty or gone); every wait/read now has an explicit timeout constant. Same tolerant fix applied to `describeAndSubmitReprompt`.
-  - [x] Reuse audit (read-only, see below) completed.
-  - [x] Reuse tests added to start-with-prompt.spec.ts (new `SurveyBuilderPage` methods: `openQuestionForEditing`, `saveQuestionChanges`, `editQuestionText`, `getSurveyTitleDisplay`, `getQuestionTextDisplay`): TC_AI_07 title edit, TC_BS_07 Required star, Edit question (pencil), TC_BS_13/14 Review Mode controls, TC_BS_14 Review Mode delete (last).
-  - [x] TC_AI_07 fix: `fill()`/`enterText()` never blurs, and title only commits on `(blur)="disableEdit()"` (survey-header.component.ts) — added `commitSurveyTitle()` (presses Tab) and moved TC_AI_07 right after "Generate more questions" (test 7), matching when `addMoreQuestions()` can no longer race the title (no `title` field in its response, unlike initial `generateQuestions()`).
-  - [x] TC_BS_07 fix: `requiredToggle`'s `[data-test-id='-input-checkbox']` matches EVERY question identically (shared attribute bug), so it isn't scoped once more than one editor has rendered — added optional `index` (nth-scoped) to `toggleRequired()`, call site now passes 0; no close/cancel method exists in either page object to assert no other editor is open.
-  - [ ] Test independence (serial describe, tests 7-10 not isolated from failures), merge Review tests, verify stepper dimensions.
-- [ ] 4. Negative tests + new publish UI (publish<3 blocked, cancel-publish dialog, Edit/Review/Publish survey new UI).
-- [ ] 5. Remaining sheet cases: empty Build Survey state, min 2 options, cancel add question, duplicate/delete question, drag-drop reorder (Required star now covered above).
-- [ ] 6. Cleanup: remove Start-with-Prompt/Start-from-Scratch duplication, rename tests to sheet IDs.
-
-## AI-generated survey reuse audit (read-only)
-`build-survey.component.html` is shared by both flows — review-mode, survey-header, preview-mode question-actions, publish-footer are NOT flowType-gated; only question-generator and the AI-only Generate-more/Describe buttons are `aiflow`-only.
-- Fully reusable (now implemented as tests): Review Mode (TC_BS_13/14), Required star (TC_BS_07), Edit pencil, TC_AI_07 title edit, TC_AI_01.
-- Need new locators/methods (not implemented): TC_BS_06 duplicate/delete click, TC_BS_08/TC_AI_11 AI-only disabled buttons, TC_BS_09 publish-disabled check, TC_BS_15 drag-drop, TC_AI_04 multi-type selection.
-- Not possible/confirmed: TC_AI_06 back-to-prompt — no control found in source, flagged UNKNOWN.
-
-## 9-item batch implemented (TC_AI_04/11, TC_BS_01/05/06/09/14-split/15)
-All 9 items implemented with source-confirmed locators/methods (deleteQuestionButton `.delete-action`; new SurveyBuilderPage/StartWithPromptPage methods) — no UNKNOWNs, no `test.fixme`. TC_BS_15's drag uses mouseMove/mouseDown/mouseUp steps (CDK drag, confirmed `cdkDrag`/`.drag-handle` in source) but the step/timing physics needed to trigger a reorder are unverified by an actual run — watch for flakiness.
-
-## Part A/B hardening
-- Part A: `hover()`/`click()` have no timeout param (webElement.js delegates to Playwright with none, and `playwright.config.ts` sets no `actionTimeout`, so it's unbounded by default) — wrapped each in `withTimeout()` (Promise.race) in `openQuestionForEditing`/`toggleRequired`/`saveQuestionChanges`, errors now include locator+index+step; no locator/logic changed.
-- Part B: extracted `closeBrowserAndAttachVideo()` into `base-page-factory.ts`, used by all 3 `describe.serial` specs' `afterAll` (survey-builder, start-with-prompt, start-from-scratch) — same pattern as before, no duplication.
-- `isVisible(0)` hang fix: replaced with `isHidden()` in `closeInlineAddEditorIfOpen()` and the publish-toast poll loop (surveyBuilder.page.ts) — `isVisible(0)` waits forever, not an instant check.
-
-
-## TC_BS_07 root cause (read-only re-check)
-`survey-question-editor` is instantiated once per `.question-row` (mode `edit`/`readonly`) PLUS a separate always-`edit`-mode instance in `.inline-add-editor` (Add Question panel) — niq-toggle/`-input-checkbox` only renders in the `edit`-mode branch, so 2 real matches are possible at once (edited row + open add-panel), confirming the shared-selector bug; `toggleRequired(index)` should scope by `.question-row >> nth=${index} .toggle-container [data-test-id='-input-checkbox']` (or equivalent container-scoped selector), not a bare nth on the page-wide attribute. niq-toggle's internal DOM/exact clickable element (host vs inner input) is UNKNOWN — not found in vendored `@nielseniq` package source (likely AOT-compiled, no readable template).
-
-## TC_BS_07 fix applied
-State-aware fix: AI-generated questions can start Required ON, so a blind toggle-click could turn it OFF. Added `isRequiredOn`/`waitForRequiredState`/`setRequired(index, desired)` (no-op if already desired, else opens row editor, clicks row-scoped toggle+Save, confirms new state); test now drives true→false→true via `setRequired`+`waitForRequiredState`.
-
-## TC_AI_04 fix applied
-`DefaultQuestionTypes` (build-survey.ts) pre-selects SINGLE_CHOICE/MULTIPLE_CHOICE/STAR_RATING, and multi-mode clicks toggle — blindly clicking them deselected all three. Added state-aware `setQuestionTypeSelected(value, desired)` (checks `isQuestionTypeSelected` first, no-op if already desired).
-Rewrite: test now verifies real DEV defaults (Single/Multiple Choice, Rating, NPS selected; Point/Multi Scale not), clicks Point Scale (multi-select check), toggles Single Choice off/on, then restores Point Scale to keep Generate's default set intact; marker remains `state="active"` attribute.
-TC_AI_04 marked test.fixme — `state="active"` attribute read is unreliable against real DEV default state; needs the actual selected-state DOM marker re-verified.
-TC_AI_11/TC_BS_08 reordered to match scratch's TC_BS_MAX_QUESTIONS sequence exactly (tooltip-hover before disabled-state read, same helpers); hang in isDuplicateTooltipVisibleOnHover is UNKNOWN — likely leftover overlay from Describe-questions panel, not a code difference.
-
-## TC_BS_06 finding
-`copyQuestion` (preview-mode.component.ts:436) appends `[...questions, duplicatedQuestion]` — copy lands at END of list, not directly below original as sheet expects. Test downgraded to assert 2 matching-text questions exist + sequential renumbering, with a DEFECT? annotation; position check left as TODO pending product confirmation.
-
-## Edit question (pencil) fix
-Root cause: Rating's `niq-text-field` has no `data-test-id` at all (only Choice/NPS/Scale set `question-text-input-<questionNumber>`), so its inner input renders as literal `-input`; `editQuestionText` now matches the common `[data-test-id$='-input']` suffix scoped to `.question-row >> nth=${index} >> survey-question-editor`, working for any question type. `closeInlineAddEditorIfOpen` now uses `isVisible(0)` (instant, element is normally absent) instead of a 5s wait.
--------------------------------------------------------------------------------------------------------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ override existing { override: true}
+◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -83,83 +16,40 @@ Global setup completed. Auth state saved.
 
 Running 23 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 isLambdaTest = false
-  ✓   1 … on the survey home page @StartWithPrompt @StartWithPrompt (14.8s)
+  ✓   1 … option on the survey home page @StartWithPrompt @StartWithPrompt (17.1s)
 Auth state loaded from storage/auth.json
-  ✓   2 …dataset type and dataset @StartWithPrompt @DatasetSelection (2.8s)
-  ✓   3 …ons and search for panelists @StartWithPrompt @DataSummary (49.9s)
-  ✓   4 …ld select a response count @StartWithPrompt @ResponseCount (18.7s)
-  ✓   5 …each the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  -   6 …be driven out of range via the UI @StartWithPrompt @GenerateSurvey
-  -   7 …on the Customize Questions screen @StartWithPrompt @GenerateSurvey
-  ✓   8 …ncrease the question count @StartWithPrompt @GenerateSurvey (4.2s)
-  ✓   9 … generation @StartWithPrompt @StartWithPrompt @BuildSurvey (388ms)
-  ✓  10 …te and prompt after submit @StartWithPrompt @GenerateSurvey (7.6s)
-  ✓  11 …ncrease the question count @StartWithPrompt @GenerateSurvey (3.6s)
-  ✓  12 … count and close the panel @StartWithPrompt @GenerateSurvey (8.5s)
-  -  13 …tions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions
-  ✓  14 …toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (8.2s)
-  ✓  15 …pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (612ms)
-     16 …a hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
-textsBefore: ["How well does the appliance meet your needs? *","Which of the following best describes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would you rate your satisfaction with the appli","How satisfied are you with the following aspects of the appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate thespeed of delivery for your most recen"]
-textsAfter: ["How well does the appliance meet your needs? *","Which of the following best describes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would you rate your satisfaction withthe appli","How satisfied are you with the following aspects of the appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate the speed of delivery for your most recen","How well does the appliance meet your needs? *"]
-  ✓  16 … row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (2.7s)
-  ✓  17 …rs questions @StartWithPrompt @StartWithPrompt @BuildSurvey (1.8s)
-  ✓  18 …nt unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey (3.6s)
+  ✓   2 …ct the dataset type and dataset @StartWithPrompt @DatasetSelection (3.7s)
+  ✓   3 …selections and search for panelists @StartWithPrompt @DataSummary (48.7s)
+  ✓   4 …nt: Should select a response count @StartWithPrompt @ResponseCount (3.0s)
+  ✓   5 …t and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  -   6 …cannot be driven out of range via the UI @StartWithPrompt @GenerateSurvey
+  -   7 … types on the Customize Questions screen @StartWithPrompt @GenerateSurvey
+  ✓   8 …hould increase the question count @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   9 …after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (1.0s)
+  ✓  10 …ing state and prompt after submit @StartWithPrompt @GenerateSurvey (6.7s)
+  ✓  11 …ould increase the question count @StartWithPrompt @GenerateSurvey (952ms)
+  ✓  12 …uestion count and close the panel @StartWithPrompt @GenerateSurvey (8.2s)
+  -  13 …x) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions
+  ✓  14 …quired toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (8.6s)
+  ✓  15 …via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (1.2s)
+     16 …tion via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
+textsBefore: ["How well does the appliance meet your needs? *","Which of the following best describes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would yourate your satisfaction with the appli","How satisfied are you with the following aspects of the appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate the speed of delivery for your most recen"]
+textsAfter: ["How well does the appliance meet your needs? *","Which of the following bestdescribes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would you rate your satisfaction with the appli","How satisfied are you with the following aspects ofthe appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate the speed of delivery foryour most recen","How well does the appliance meet your needs? *"]
+  ✓  16 …a hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.2s)
+  ✓  18 …ion count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey (4.0s)
+     18 …e question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
 TC_BS_05: survey was at max questions - deleting one first to free up Add Question.
-  ✓  19 … are visible @StartWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
-  ✘  20 … 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.9s)
-  -  21 … keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  22 …ey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  23 … options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
+  ✓  19 …ckboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey (5.1s)
+  ✓  20 …er than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey (4.9s)
+  ✓  21 … keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey (1.6s)
+  ✓  22 …ey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey (1.5s)
+TC_BS_14: Review Mode already closed after delete-all (Exit Review Mode button not shown) - skipping exitReviewMode().
+  ✓  23 …options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey (197ms)
 
-
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:302:7 › Start with a prompt › TC_BS_09: Review & Publish Survey is disabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey 
-
-    Error: Expected "Review & Publish Survey" disabled with fewer than 3 questions
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:310:15
-
-    attachment #1: screenshot (image/png) ─────────────────────────────────
-    test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────
-    test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\attachments\start-with-prompt-video-a7cdcf2ab26a610a5bc276269eee5e18c0588bb1.webm
-    ───────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────
-    test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-bf718-with-fewer-than-3-questions-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:302:7 › Start witha prompt › TC_BS_09: Review & Publish Survey is disabled with fewer than 3questions @StartWithPrompt @StartWithPrompt @BuildSurvey 
   3 skipped
-  3 did not run
-  16 passed (3.2m)
+  20 passed (3.1m)
 
 To open last HTML report run:
 
