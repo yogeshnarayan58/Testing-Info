@@ -1,24 +1,38 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
 Running 22 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (18.1s)
+  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (19.4s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (3.8s)
-  ✓   3 …imension selections and search for panelists @StartWithPrompt @DataSummary (44.9s)
+  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (4.5s)
+  ✓   3 …dimension selections and search for panelists @StartWithPrompt @DataSummary (1.0m)
   ✓   4 …ponse Count: Should select a response count @StartWithPrompt @ResponseCount (3.0s)
-  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   6 …on types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.8s)
-  ✓   7 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (3.5s)
-  ✓   8 …y title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (665ms)
-  ✓   9 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (8.6s)
-  ✓  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (4.1s)
-  ✓  11 …ase the question count and close the panel @StartWithPrompt @GenerateSurvey (8.9s)
-  ✓  12 …ax) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (770ms)
-  ✘  13 …en the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (6.9s)
-  -  14 …e question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
+  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.7s)
+  ✓   6 …on types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (9.7s)
+  ✓   7 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (2.0s)
+  ✓   8 …ey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (2.6s)
+  ✓   9 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (9.1s)
+  ✓  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓  11 …se the question count and close the panel @StartWithPrompt @GenerateSurvey (11.1s)
+  ✓  12 …max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (3.6s)
+  ✓  13 …n the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (13.5s)
+  ✘  14 …ion text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (4.2s)
   -  15 …te a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
   -  16 …5: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey
   -  17 …leaves the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
@@ -29,46 +43,46 @@ Auth state loaded from storage/auth.json
   -  22 …ows Add Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
 
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:155:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:174:7 › Start with a prompt › Edit question: Should update the question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey 
 
-    Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+    Error: Failed to edit question 0 text: Question text field (index 0) not visible after15000ms
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:1088
+       at ..\page-objects\survey\surveyBuilder.page.ts:1261
 
-      1086 |       }
-      1087 |     } catch (error) {
-    > 1088 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}:${error instanceof Error ? error.message : error}`);
+      1259 |       await this.saveQuestionChanges(index);
+      1260 |     } catch (error) {
+    > 1261 |       throw new Error(`Failed to edit question ${index} text: ${error instanceof Error ? error.message : error}`);
            |             ^
-      1089 |     }
-      1090 |   }
-      1091 |
-        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:1088:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:165:5
+      1262 |     }
+      1263 |   }
+      1264 | }
+        at SurveyBuilderPage.editQuestionText (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:1261:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:178:5
 
     attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\test-failed-1.png
     ───────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\error-context.md
 
     attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\attachments\start-with-prompt-video-1600db7ada8562eee5233805e8e7dee37f4cff42.webm
+    test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\attachments\start-with-prompt-video-0608f18e7ef08d2b2975e980e9722697e05d50de.webm
     ───────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\error-context.md
 
     attachment #5: trace (application/zip) ────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+    test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-4f3b2-on-text-via-the-pencil-icon-chromium\trace.zip
 
     ───────────────────────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:155:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey 
-  9 did not run
-  12 passed (2.8m)
+    [chromium] › tests\survey\start-with-prompt.spec.ts:174:7 › Start with a prompt › Editquestion: Should update the question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  8 did not run
+  13 passed (3.5m)
 
 To open last HTML report run:
 
@@ -76,6 +90,4 @@ To open last HTML report run:
 
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+$ 
