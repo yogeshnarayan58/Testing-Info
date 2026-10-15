@@ -1,56 +1,31 @@
-Copy prompt
-Error: Failed to check duplicate tooltip on hover: Hover Duplicate button timed out after 15000ms | diagnostics: row.outerHTML="<div _ngcontent-ng-c4029420898="" cdkdrag="" class="cdk-drag question-row ng-star-inserted"><div _ngcontent-ng-c4029420898="" cdkdraghandle="" class="cdk-drag-handle drag-handle" style="visibility: hidden; pointer-events: none; touch-action: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; user-select: none;"><niq-icon _ngcontent-ng-c4029420898="" iconname="drag-drop-circle" | questionActions.outerHTML="<div _ngcontent-ng-c4029420898="" class="question-actions" style="display: none;"><div _ngcontent-ng-c4029420898="" class="rephrase-wrap"><niq-button _ngcontent-ng-c4029420898="" size="small" iconposition="right" textcolor="AI" variant="ghostAI" class="rephrase-action ng-tns-c653818712-76 ng-trigger ng-trigger-clickAnimation default ghostAI light small text-AI icon-right ng-star-inserted" _nghost-" | questionActionsVisibleAfterSecondHover=true | elementFromPoint(firstRowCenter)={"tagName":"DIV","className":"stars","outerHtml":"<div _ngcontent-ng-c4007690273=\"\" class=\"stars\"><span _ngcontent-ng-c4007690273="} | visibleCdkOverlayPanes=0 | nearestScrollableAncestor={"scrollTop":32,"tag":"DIV","className":"cdk-drop-list container"}
+Final test titles in order:
 
-   at ..\page-objects\survey\surveyBuilder.page.ts:875
+Start with a Prompt: Should display the Start with a prompt option on the survey home page
+Dataset Selection: Should select the dataset type and dataset
+Panelist Filters: Should set dimension selections and search for panelists
+Response Count: Should select a response count
+Generate Survey: Should fill the prompt and reach the Build Survey page
+TC_AI_04: Should allow selecting multiple question types on the Customize Questions screen
+Generate more questions: Should increase the question count
+TC_AI_07: Edit the survey title after AI generation
+Rephrase with AI: Should clear the loading state and prompt after submit
+Suggest new questions: Should increase the question count
+Describe questions to add: Should increase the question count and close the panel
+TC_AI_11/TC_BS_08: Add Question/Duplicate/Generate more/Describe are disabled at 10 (max) questions
+TC_BS_07: Required star appears when the Required toggle is on
+Edit question: Should update the question text via the pencil icon
+TC_BS_06: Delete and duplicate a question via hover row actions
+TC_BS_15: Drag and drop reorders questions
+TC_BS_05: Cancelling Add Question leaves the question count unchanged
+TC_BS_13/TC_BS_14a Review Mode controls, delete selected, exit
+TC_BS_09: Review & Publish Survey is disabled with fewer than 3 questions
+TC_BS_14b Review Mode select all, delete, stay on Build Survey
+TC_BS_01: Empty Build Survey state shows Add Question options and 0 rows
 
-  873 |     } catch (error) {
-  874 |       const diagnostics = await this.getHoverDiagnostics();
-> 875 |       throw new Error(`Failed to check duplicate tooltip on hover: ${error instanceof Error ? error.message : error} | diagnostics: ${diagnostics}`);
-      |             ^
-  876 |     }
-  877 |   }
-  878 |
-    at SurveyBuilderPage.isDuplicateTooltipVisibleOnHover (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:875:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:140:16
 
-
-Before Hooks
-19ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-110ms
-Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-32ms
-Hover locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-59ms
-Wait for selector locator('text=You have already reached the maximum number of questions.')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-438ms
-Mouse move— ../node_modules/@gfk/gta/core/web/webActions.ts:528
-53ms
-Wait for selector locator('text=You have already reached the maximum number of questions.')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-157ms
-Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-17ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-46ms
-Wait for selector locator('niq-icon-button[iconname=\'duplicate\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-28ms
-Evaluate locator('niq-icon-button[iconname=\'duplicate\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-21ms
-Hover locator('niq-icon-button[iconname=\'duplicate\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-15.1s
-Evaluate locator('.question-row').first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-33ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-50ms
-Evaluate locator('.question-row').first() ✕ 4— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-126ms
-After Hooks
-1.7s
-Worker Cleanup
------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
@@ -64,141 +39,39 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 22 tests using 1 worker
+Running 21 tests using 1 worker
 
 ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (17.1s)
+  ✓   1 …n on the survey home page @StartWithPrompt @StartWithPrompt (22.6s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (3.1s)
-  ✓   3 …imension selections and search for panelists @StartWithPrompt @DataSummary (50.6s)
-  ✓   4 …ponse Count: Should select a response count @StartWithPrompt @ResponseCount (3.6s)
-  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.4s)
-  ✓   6 …on types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (6.5s)
-  ✓   7 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.3s)
-  ✓   8 …ey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (1.5s)
-  ✓   9 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (7.1s)
-  ✓  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
-  ✓  11 …ase the question count and close the panel @StartWithPrompt @GenerateSurvey (7.9s)
-  ✘  12 …ax) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (17.0s)
-  -  13 …ears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  14 …e question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  15 …te a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  16 …5: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  17 …leaves the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  18 …per-question checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  19 …delete, and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  20 …isabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  21 …ay on Build Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  22 …ows Add Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:130:7 › Start with a prompt › TC_AI_11/TC_BS_08: Add Question/Duplicate/Generate more/Describe are disabled at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions 
-    Error: Failed to check duplicate tooltip on hover: Hover Duplicate button timed out after 15000ms | diagnostics: row.outerHTML="<div _ngcontent-ng-c4029420898="" cdkdrag="" class="cdk-drag question-row ng-star-inserted"><div _ngcontent-ng-c4029420898="" cdkdraghandle="" class="cdk-drag-handle drag-handle" style="visibility: hidden; pointer-events: none; touch-action: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; user-select: none;"><niq-icon _ngcontent-ng-c4029420898="" iconname="drag-drop-circle" | questionActions.outerHTML="<div _ngcontent-ng-c4029420898="" class="question-actions" style="display: none;"><div _ngcontent-ng-c4029420898="" class="rephrase-wrap"><niq-button _ngcontent-ng-c4029420898="" size="small" iconposition="right" textcolor="AI" variant="ghostAI" class="rephrase-action ng-tns-c653818712-76 ng-trigger ng-trigger-clickAnimation default ghostAI light small text-AI icon-right ng-star-inserted" _nghost-" | questionActionsVisibleAfterSecondHover=true | elementFromPoint(firstRowCenter)={"tagName":"DIV","className":"stars","outerHtml":"<div _ngcontent-ng-c4007690273=\"\" class=\"stars\"><span _ngcontent-ng-c4007690273="} | visibleCdkOverlayPanes=0 | nearestScrollableAncestor={"scrollTop":32,"tag":"DIV","className":"cdk-drop-list container"}
-       at ..\page-objects\survey\surveyBuilder.page.ts:875
-      873 |     } catch (error) {
-      874 |       const diagnostics = await this.getHoverDiagnostics();
-    > 875 |       throw new Error(`Failed to check duplicate tooltip on hover: ${error instanceof Error ? error.message : error} | diagnostics: ${diagnostics}`);
-          |             ^
-      876 |     }
-      877 |   }
-      878 |
-        at SurveyBuilderPage.isDuplicateTooltipVisibleOnHover (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:875:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:140:16
-    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────────────────
-    Error Context: test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\error-context.md
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\attachments\start-with-prompt-video-4d86d8981b4e3b09c4bc2beb677c07a2331c222d.webm
-    ───────────────────────────────────────────────────────────────────────────────────────
-    Error Context: test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\error-context.md
-    attachment #5: trace (application/zip) ────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\trace.zip
-    Usage:
-        npx playwright show-trace test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\trace.zip
-    ───────────────────────────────────────────────────────────────────────────────────────
+  ✓   2 … dataset type and dataset @StartWithPrompt @DatasetSelection (3.3s)
+  ✓   3 …ions and search for panelists @StartWithPrompt @DataSummary (49.3s)
+  ✓   4 …ould select a response count @StartWithPrompt @ResponseCount (3.1s)
+  ✓   5 …reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.2s)
+  ✓   6 … Customize Questions screen @StartWithPrompt @GenerateSurvey (4.5s)
+  ✓   7 …increase the question count @StartWithPrompt @GenerateSurvey (1.3s)
+  ✓   8 …I generation @StartWithPrompt @StartWithPrompt @BuildSurvey (791ms)
+  ✓   9 …ate and prompt after submit @StartWithPrompt @GenerateSurvey (6.8s)
+  ✓  10 …ncrease the question count @StartWithPrompt @GenerateSurvey (888ms)
+  ✓  11 …n count and close the panel @StartWithPrompt @GenerateSurvey (6.8s)
+  ✓  12 …@StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (2.2s)
+  ✓  13 … toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (7.7s)
+  ✓  14 … pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (947ms)
+  ✓  15 …r row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  16 …ers questions @StartWithPrompt @StartWithPrompt @BuildSurvey (1.7s)
+  ✓  17 …unt unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
+  ✓  18 …elected, exit @StartWithPrompt @StartWithPrompt @BuildSurvey (5.2s)
+  ✓  19 …n 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.6s)
+  ✓  20 … Build Survey @StartWithPrompt @StartWithPrompt @BuildSurvey (1.2s)
+  ✓  21 …s and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey (106ms)
 
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:130:7 › Start with a prompt › TC_AI_11/TC_BS_08: Add Question/Duplicate/Generate more/Describe are disabled at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions 
-  10 did not run
-  11 passed (2.9m)
+  21 passed (3.1m)
 
 To open last HTML report run:
-                                    How satisfied are you with the appliance you purchased from ","How well did the appliance you purchased from a dollar store","Which of the following best describes your satisfaction with","How would you rate the delivery speed of your most recent
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
 
-Running 22 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-  ✓   1 …t with a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (15.9s)
-Auth state loaded from storage/auth.json
-  ✓   2 …on: Should select the dataset type and dataset @StartWithPrompt @DatasetSelection (4.2s)
-  ✓   3 … set dimension selections and search for panelists @StartWithPrompt @DataSummary (43.9s)
-  ✓   4 … › Response Count: Should select a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 … fill the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.0s)
-  ✓   6 …question types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.9s)
-  ✓   7 …re questions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
-  ✓   8 … survey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (800ms)
-  ✓   9 … clear the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (6.5s)
-  ✓  10 …ew questions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
-  ✓  11 … increase the question count and close the panel @StartWithPrompt @GenerateSurvey (6.9s)
-  ✘  12 … 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (16.5s)
-  -  13 …ar appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  14 …ate the question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  15 …uplicate a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  16 …C_BS_15: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  17 …stion leaves the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  18 …s and per-question checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  19 … one, delete, and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  20 …y is disabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  21 …and stay on Build Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  22 …ate shows Add Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
-
-
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:130:7 › Start with a prompt › TC_AI_11/TC_BS_08: Add Question/Duplicate/Generate more/Describe are disabled at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions 
-
-    Error: Failed to check duplicate tooltip on hover: Hover Duplicate button timed out after 15000ms | diagnostics: row.outerHTML="<div _ngcontent-ng-c4029420898="" cdkdrag="" class="cdk-drag question-row ng-star-inserted"><div _ngcontent-ng-c4029420898="" cdkdraghandle="" class="cdk-drag-handle drag-handle" style="visibility: hidden; pointer-events: none; touch-action: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; user-select: none;"><niq-icon _ngcontent-ng-c4029420898="" iconname="drag-drop-circle" | questionActions.outerHTML="<div _ngcontent-ng-c4029420898="" class="question-actions" style="display: none;"><div _ngcontent-ng-c4029420898=""class="rephrase-wrap"><niq-button _ngcontent-ng-c4029420898="" size="small" iconposition="right"textcolor="AI" variant="ghostAI" class="rephrase-action ng-tns-c653818712-76 ng-trigger ng-trigger-clickAnimation default ghostAI light small text-AI icon-right ng-star-inserted" _nghost-" | questionActionsVisibleAfterSecondHover=true | elementFromPoint(firstRowCenter)={"tagName":"DIV","className":"stars","outerHtml":"<div _ngcontent-ng-c4007690273=\"\" class=\"stars\"><span _ngcontent-ng-c4007690273="} | visibleCdkOverlayPanes=0 | nearestScrollableAncestor={"scrollTop":32,"tag":"DIV","className":"cdk-drop-list container"}
-
-       at ..\page-objects\survey\surveyBuilder.page.ts:875
-
-      873 |     } catch (error) {
-      874 |       const diagnostics = await this.getHoverDiagnostics();
-    > 875 |       throw new Error(`Failed to check duplicate tooltip on hover: ${error instanceof Error ? error.message : error} | diagnostics: ${diagnostics}`);
-          |             ^
-      876 |     }
-      877 |   }
-      878 |
-        at SurveyBuilderPage.isDuplicateTooltipVisibleOnHover (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:875:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:140:16
-    attachment #1: screenshot (image/png) ───────────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────────────────────────
-    Error Context: test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\error-context.md
-    attachment #3: start-with-prompt-video (video/webm) ─────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\attachments\start-with-prompt-video-5a5301c581a5859aa6eae2f1f0569bb6df8fc379.webm
-    ─────────────────────────────────────────────────────────────────────────────────────────────
-    Error Context: test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\error-context.md
-    attachment #5: trace (application/zip) ──────────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\trace.zip
-    Usage:
-        npx playwright show-trace test-results\survey-start-with-prompt-S-2b99e-isabled-at-10-max-questions-chromium\trace.zip
-    ─────────────────────────────────────────────────────────────────────────────────────────────
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:130:7 › Start with a prompt › TC_AI_11/TC_BS_08: Add Question/Duplicate/Generate more/Describe are disabled at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions 
-  10 did not run
-  11 passed (2.6m)
-To open last HTML report run:
   npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
