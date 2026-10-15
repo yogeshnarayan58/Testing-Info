@@ -1,14 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
 ◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -20,42 +14,79 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 23 tests using 1 worker
+Running 22 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (18.3s)
+  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (24.4s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (3.5s)
-  ✓   3 …dimension selections and search for panelists @StartWithPrompt @DataSummary (1.3m)
-  ✓   4 …ponse Count: Should select a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.8s)
-  -   6 …: slider cannot be driven out of range via the UI @StartWithPrompt @GenerateSurvey
-  -   7 … question types on the Customize Questions screen @StartWithPrompt @GenerateSurvey
-  ✓   8 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.8s)
-  ✓   9 …y title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (835ms)
-  ✓  10 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (7.0s)
-  ✓  11 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.8s)
-  ✓  12 …ase the question count and close the panel @StartWithPrompt @GenerateSurvey (8.2s)
-  -  13 …at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions
-  ✓  14 …en the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (7.8s)
-  ✓  15 …on text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (606ms)
-     16 …te a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
-textsBefore: ["How well does the appliance meet your needs? *","Which of the following best describes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would yourate your satisfaction with the appli","How satisfied are you with the following aspects of the appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate the speed of delivery for your most recen"]
-textsAfter: ["How well does the appliance meet your needs? *","Which of the following bestdescribes why you are satisfied ","How likely are you to recommend this appliance to someone lo","What, if anything, would you improve about the appliance?","Overall, how would you rate your satisfaction with the appli","How satisfied are you with the following aspects ofthe appl","Which of the following best describes your satisfaction with","How important was delivery speed when choosing where to buy ","How would you rate the speed of delivery foryour most recen","How well does the appliance meet your needs? *"]
-  ✓  16 …estion via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  17 … and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey (1.9s)
-  ✓  18 …the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey (3.6s)
-TC_BS_05: survey was at max questions - deleting one first to free up Add Question.
-  ✓  19 …stion checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey (3.9s)
-  ✓  20 … and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey (1.5s)
-  ✓  21 … with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.4s)
-  ✓  22 …uild Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey (1.1s)
-TC_BS_14: Review Mode already closed after delete-all (Exit Review Mode button not shown) - skipping exitReviewMode().
-  ✓  23 … Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey (90ms)
+  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (4.3s)
+  ✓   3 …imension selections and search for panelists @StartWithPrompt @DataSummary (49.1s)
+  ✓   4 …onse Count: Should select a response count @StartWithPrompt @ResponseCount (15.5s)
+  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  ✘   6 …n types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (330ms)
+  -   7 …ore questions: Should increase the question count @StartWithPrompt @GenerateSurvey
+  -   8 …he survey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -   9 …d clear the loading state and prompt after submit @StartWithPrompt @GenerateSurvey
+  -  10 …new questions: Should increase the question count @StartWithPrompt @GenerateSurvey
+  -  11 …d increase the question count and close the panel @StartWithPrompt @GenerateSurvey
+  -  12 …at 10 (max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  13 …ears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  14 …e question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  15 …te a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  16 …5: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  17 …leaves the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  18 …per-question checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  19 …delete, and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  20 …isabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  21 …ay on Build Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey
+  -  22 …ows Add Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
 
-  3 skipped
-  20 passed (3.4m)
+
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:77:7 › Start with a prompt › TC_AI_04: Should allow selecting multiple question types on the Customize Questions screen @StartWithPrompt @GenerateSurvey 
+
+    Error: Expected "SINGLE_CHOICE" to be selected by default (outerHtml="<niq-button _ngcontent-ng-c419570041="" size="medium" colortheme="light" class="question-types list-type-icon ng-tns-c653818712-65 ng-trigger ng-trigger-clickAnimation active light medium secondary text-neutral icon-left ng-star-inserted" _nghost-ng-c653818712="" data-test-id="question-type-SINGLE_CHOICE" tabindex="0" role="button"><niq-icon _ngcontent-ng-c653818712="" _nghost-ng-c3915167208="" cl")
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:82:17
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────────
+    test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\attachments\start-with-prompt-video-6af1babed6aff086550f706478c7ed871ffc0ee6.webm
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-40c50--Customize-Questions-screen-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:77:7 › Start with a prompt › TC_AI_04: Should allow selecting multiple question types on the Customize Questions screen @StartWithPrompt @GenerateSurvey 
+  16 did not run
+  5 passed (2.6m)
 
 To open last HTML report run:
 
@@ -63,6 +94,91 @@ To open last HTML report run:
 
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-Reordered: TC_BS_14(select-one/exit, now asserts ≥3 remain) → TODO comment → TC_BS_09 → TC_BS_14(select-all) → TC_BS_01, all unchanged otherwise. TC_BS_06 comparisons now whitespace-stripped.
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Global setup failed: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('role=button[name="Verify"]')
+    - locator resolved to <button disabled type="submit" id="btnSignIn" data-id="button" class="is-disabled" aria-disabled="true" data-skform="signonForm" data-skbuttonvalue="SIGNON" data-skcomponent="skbutton" data-require-filled="#password" data-skbuttontype="form-submit">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is not enabled
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is not enabled
+    - retrying click action
+      - waiting 100ms
+    57 × waiting for element to be visible, enabled and stable
+       - element is not enabled
+     - retrying click action
+       - waiting 500ms
 
-No dependency issues found: TC_BS_09 only reads/deletes its own question count; TC_BS_14(select-all) and TC_BS_01 both expect a fresh 0-question state and nothing downstream (end of file) reads question count afterward. 
+    at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
+    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:79:8)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:5) {
+  log: [
+    `  - waiting for locator('role=button[name="Verify"]')`,
+    '    - locator resolved to <button disabled type="submit" id="btnSignIn" data-id="button" class="is-disabled" aria-disabled="true" data-skform="signonForm" data-skbuttonvalue="SIGNON" data-skcomponent="skbutton" data-require-filled="#password" data-skbuttontype="form-submit">…</button>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not enabled',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not enabled',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    57 × waiting for element to be visible, enabled and stable',
+    '       - element is not enabled',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+Global setup completed. Auth state saved.
+Error: Global setup failed: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('role=button[name="Verify"]')
+    - locator resolved to <button disabled type="submit" id="btnSignIn" data-id="button" class="is-disabled" aria-disabled="true" data-skform="signonForm" data-skbuttonvalue="SIGNON" data-skcomponent="skbutton" data-require-filled="#password" data-skbuttontype="form-submit">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is not enabled
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is not enabled
+    - retrying click action
+      - waiting 100ms
+    57 × waiting for element to be visible, enabled and stable
+       - element is not enabled
+     - retrying click action
+       - waiting 500ms
+
+
+   at ..\helpers\global-setup.ts:43
+
+  41 |     console.error('Global setup failed:', error);
+  42 |     if (error instanceof Error) {
+> 43 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  44 |     }
+  45 |     throw new Error('Global setup failed with an unknown error');
+  46 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
