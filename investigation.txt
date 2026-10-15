@@ -83,11 +83,3 @@ Auth state loaded from storage/auth.json
     [chromium] › tests\survey\start-with-prompt.spec.ts:174:7 › Start with a prompt › Editquestion: Should update the question text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey 
   8 did not run
   13 passed (3.5m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
