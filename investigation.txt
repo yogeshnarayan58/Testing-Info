@@ -1,5 +1,148 @@
-Part A: TC_BS_PUBLISH uses ensureQuestionCount(3) (tops up Rating questions), publishSurvey(title), isPublishDialogDimensionCountVisible/getPublishResponseSummaryText (dialog assertions), confirmPublish(), verifyPublishSucceeded(confirmClickTime).
+# data-test-id inventory
 
-These methods target the OLD flow only: publishSurvey looks for saveCopyTitleInput/confirmPublishDialogText; confirmPublish clicks confirmPublishButton and waits on publishingSurveyStatus. None reference a "Name + location + Continue" step or a "Review survey details" step with "Edit survey"/"Publish survey" buttons — the NEW two-dialog flow isn't supported.
+Read-only inventory. No template/locator/test/page-object was changed to produce this report.
 
-Part B: Not added — the scratch publish code (publishSurvey/confirmPublish) has no locators/steps for the new "Publish your survey" (Continue) or "Review survey details" (Publish survey) dialogs, so I can't reuse it without changing page-object behavior, which is out of scope. Missing: resources/steps for the Continue step and the Review-survey-details confirm step.
+Scope note on "in main/deployed?": no `git diff`/`git log` was run (not permitted for this task). The only
+known fact is the last `git status --short` seen in this session, which shows these `libs/survey-mod-lib`
+template files as **locally modified (uncommitted)**: `preview-mode.component.html`, `question-generator.html`,
+`reprompt-actions.component.html`. Rows sourced from those 3 files are marked "NO — locally modified,
+uncommitted" for that column. All other template files referenced below were NOT in that modified list, so they
+reflect the current branch's committed HEAD, but whether that HEAD matches `main`/deployed was not verified
+(no diff was run) — those rows are marked "UNKNOWN (not diffed against origin/main)".
+
+---
+
+## Section A — locators WITHOUT data-test-id
+
+Skipped per instructions (listed once, not itemized): `select-panelists-step-circle` (surveyBuilder.locator.json,
+`.niq-step-circle`), `myAssetsTreeItem` / `savedAssetGridcellByTitle` (surveyBuilder.locator.json, My Assets
+treeitem/gridcell), and the entire `niq-step-circle` vendor class — **skipped, not ours**.
+
+Total rows below: 53 (31 in surveyBuilder.locator.json, 12 in start-with-prompt.locator.json, 7 in
+select-panelist.locator.json, 3 in start-from-scratch.locator.json). Two entries use `data-testid` (no hyphen)
+instead of `data-test-id` and are included here because they don't satisfy the `data-test-id` convention either.
+
+### surveyBuilder.locator.json
+
+| elementName | locator file | current selector | owning template (path:line) | data-test-id already on element | proposed data-test-id | in main/deployed? | notes/risk |
+|---|---|---|---|---|---|---|---|
+| optionInputByLabel | surveyBuilder.locator.json | `role=textbox[name="${text}"] >> nth=0` | question-editor/choice-editor/choice-editor.component.html:16 | none | `option-input-${index}` | UNKNOWN (not diffed) | Placeholder-based role selector; breaks on copy/localization changes. |
+| addOptionButton | surveyBuilder.locator.json | `niq-button:has-text('Add option'):visible` | question-editor/choice-editor/choice-editor.component.html:25 | none | `add-option` | UNKNOWN (not diffed) | Text-based; breaks on copy changes. |
+| addRowButton | surveyBuilder.locator.json | `niq-button:has-text('Row')` | question-editor/scale-editor/scale-editor.component.html:72 | none | `add-row` | UNKNOWN (not diffed) | — |
+| addColumnButton | surveyBuilder.locator.json | `niq-button:has-text('Column')` | question-editor/scale-editor/scale-editor.component.html:75 | none | `add-column` | UNKNOWN (not diffed) | — |
+| scaleAddMenuTrigger | surveyBuilder.locator.json | `.matrix-action-area:has(niq-icon-button[iconname='add-large']):visible` | question-editor/scale-editor/scale-editor.component.html:65 | none | `matrix-add-menu-trigger` | UNKNOWN (not diffed) | Same `.matrix-action-area` class is reused for the delete menu at line 84; selector disambiguates only via `:has()`. |
+| editQuestionButton | surveyBuilder.locator.json | `[niqtooltip='Edit']` | preview-mode/preview-mode.component.html:60 | none (uses `niqTooltip` attr, not data-test-id) | `edit-question-${index}` | NO — locally modified, uncommitted | Tooltip text is shared with other buttons' tooltip attr name casing (`niqtooltip` vs Angular's `niqTooltip` binding) — fragile. |
+| duplicateQuestionButton | surveyBuilder.locator.json | `niq-icon-button[iconname='duplicate']` | preview-mode/preview-mode.component.html:64 | none | `duplicate-question-${index}` | NO — locally modified, uncommitted | — |
+| deleteQuestionButton | surveyBuilder.locator.json | `.delete-action` | preview-mode/preview-mode.component.html:74 | none | `delete-question-${index}` | NO — locally modified, uncommitted | — |
+| maxQuestionsMessageText | surveyBuilder.locator.json | text "You have already reached the maximum number of questions." | preview-mode/preview-mode.component.html:69,99,111,123 (same string repeated on 4 tooltip bindings) | none | `max-questions-tooltip` | NO — locally modified, uncommitted | Same literal string duplicated 4x in the template; one data-test-id per disabled control would be more precise than a shared text match. |
+| questionNumberMarker | surveyBuilder.locator.json | `.question-number` | question-editor/choice-editor/choice-editor.component.html:45 (same class repeated in nps/rating/scale/text-editor + review-mode) | none | `question-number-${index}` | UNKNOWN (not diffed) | Class is reused across 6 templates; a class-only selector can't disambiguate editor type if ever needed. |
+| backButton | surveyBuilder.locator.json | text "Back" | build-survey/components/footer/footer.component.html:3 | none | `back` | UNKNOWN (not diffed) | — |
+| confirmPublishDialogText | surveyBuilder.locator.json | text "Confirm publish?" | build-survey/components/survey-publish-popup/survey-publish-popup.component.html:2 | none | `publish-dialog-title` | NO — locally modified? **No** (file not in modified list) but **selector appears stale regardless**: the template's actual title text (from `PUBLISH_DIALOG_TEXT.title` in `build-survey.ts:263`) is **"Review survey details"**, not "Confirm publish?". This is a functional risk independent of data-test-id. |
+| saveDraftSuccessToast | surveyBuilder.locator.json | text "Survey saved as draft successfully" | not located (toast text not found verbatim in templates searched; likely set via a toast service call analogous to the publish toast) | none | `save-draft-success-toast` | UNKNOWN | Could not confirm exact wording source within the targeted search scope. |
+| publishingSurveyStatus | surveyBuilder.locator.json | `role=status[name="Publishing survey"]` | build-survey/components/survey-publish-popup/survey-publish-popup.component.html:35 (`aria-label="Publishing survey"`) | none | `publish-loading-status` | UNKNOWN (not diffed) | This one still matches current markup. |
+| confirmPublishButton | surveyBuilder.locator.json | `niq-button:has-text('Confirm')` | build-survey/components/survey-publish-popup/survey-publish-popup.component.html:28-29 | none | `confirm-publish` | UNKNOWN (not diffed) | **Stale**: button text is driven by `PUBLISH_DIALOG_TEXT.confirm` = **"Publish survey"**, not "Confirm" — `has-text('Confirm')` will not match current markup. |
+| publish-response-count-text | surveyBuilder.locator.json | `.publish-response-summary` | build-survey/components/survey-publish-popup/survey-publish-popup.component.html:19 | none | `publish-response-summary` | UNKNOWN (not diffed) | — |
+| publish-success-toast | surveyBuilder.locator.json | text "Survey published successfully" | survey-publish-popup/survey-publish-popup.component.ts:70 (`toastService.InsertToast('success', 'Survey published successfully.', ...)`) | none | `publish-success-toast` | UNKNOWN (not diffed) | Template text has a trailing period the locator lacks; Playwright `text=` is a substring match by default so this still matches. |
+| survey-action-toast | surveyBuilder.locator.json | `.survey-action-toast` | survey-publish-popup/survey-publish-popup.component.ts:70 (`containerClass: 'survey-action-toast'`) | none | `survey-action-toast` | UNKNOWN (not diffed) | Class set programmatically via toast service, not in HTML. |
+| saveQuestionChangesButton | surveyBuilder.locator.json | `survey-question-editor .save-changes-action:visible` | question-editor/question-editor.component.html:37 | none | `save-question-changes` | UNKNOWN (not diffed) | — |
+| surveyTitleDisplay | surveyBuilder.locator.json | `.survey-title` | survey-header/survey-header.component.html:7 | none | `survey-title-display` | UNKNOWN (not diffed) | Same class also used in survey-results/survey-overview.component.html:5, which already has `data-test-id="survey-overview-title"` there — a different, unrelated screen. |
+| questionTextDisplay | surveyBuilder.locator.json | `.question-text` | question-editor/choice-editor/choice-editor.component.html (readonly `@else` branch, ~line 53) | none | `question-text-display-${index}` | UNKNOWN (not diffed) | — |
+| surveyTitleInput | surveyBuilder.locator.json | `role=textbox[name="Survey Title"]` | survey-header/survey-header.component.html:15-18 (`placeholder="Survey Title"`) | none | `survey-title-input` | NO — locally modified? **No**, file not modified; **not diffed** | — |
+| editSurveyNameIcon | surveyBuilder.locator.json | `.edit-icon` | survey-header/survey-header.component.html:9 | none | `edit-survey-name` | UNKNOWN (not diffed) | — |
+| exitReviewModeButton | surveyBuilder.locator.json | text "Exit Review Mode" | survey-header/survey-header.component.html:44 | none | `exit-review-mode` | UNKNOWN (not diffed) | — |
+| selectAllButton | surveyBuilder.locator.json | `niq-button:has-text('Select All')` | survey-header/survey-header.component.html:32 (`{{ allSelected() ? 'Unselect All' : 'Select All' }}`) | none | `review-toggle-all` | UNKNOWN (not diffed) | Same button toggles text between Select All / Unselect All — two separate locators (`selectAllButton`/`unselectAllButton`) target one physical element by text state. |
+| unselectAllButton | surveyBuilder.locator.json | text "Unselect All" | survey-header/survey-header.component.html:32 | none | `review-toggle-all` | UNKNOWN (not diffed) | Same element as selectAllButton above. |
+| expandAllButton | surveyBuilder.locator.json | `niq-button:has-text('Expand All')` | survey-header/survey-header.component.html:36 | none | `review-expand-all` | UNKNOWN (not diffed) | — |
+| collapseAllButton | surveyBuilder.locator.json | `niq-button:has-text('Collapse All')` | survey-header/survey-header.component.html:40 | none | `review-collapse-all` | UNKNOWN (not diffed) | — |
+| deleteQuestionsButton | surveyBuilder.locator.json | `niq-button:has-text('Delete')` | survey-header/survey-header.component.html:26-28 | none | `review-delete-selected` | UNKNOWN (not diffed) | Text "Delete" is generic; also appears as `data-test-id="delete-survey"` on an unrelated button at line 55 — collision risk if ever matched loosely. |
+| inlineAddEditor | surveyBuilder.locator.json | `.inline-add-editor` | preview-mode/preview-mode.component.html:148 | none | `inline-add-editor` | NO — locally modified, uncommitted | — |
+| questionRow | surveyBuilder.locator.json | `.question-row` | preview-mode/preview-mode.component.html:13 | none | `question-row-${index}` | NO — locally modified, uncommitted | — |
+
+### start-with-prompt.locator.json
+
+| elementName | locator file | current selector | owning template (path:line) | data-test-id already on element | proposed data-test-id | in main/deployed? | notes/risk |
+|---|---|---|---|---|---|---|---|
+| startWithPrompt | start-with-prompt.locator.json | `[data-testid='quick-survey-quick-1']` | NOT FOUND under `libs/survey-mod-lib` (searched) | none found | `start-with-prompt` | UNKNOWN | Uses `data-testid` (no hyphen) — inconsistent with the rest of the suite's `data-test-id` convention; template not found in this repo (likely host-app screen outside survey-mod-lib). |
+| datasetByText | start-with-prompt.locator.json | text `"${text}"` | external `re-dataset-picker` component (used via `<re-dataset-picker>` in panelist-dataselector.component.html:4); internal markup not in this repo | UNKNOWN | n/a — not ours to add | UNKNOWN | Vendored/external component; we don't own its markup. |
+| promptTextarea | start-with-prompt.locator.json | `textarea.prompt-input` | select-panelist/select-panelist.component.html:53 | none | `survey-prompt-input` | UNKNOWN (not diffed) | — |
+| questionCountError | start-with-prompt.locator.json | `.question-count-error` | build-survey/components/question-generator/question-generator.html:16 | **yes — `data-test-id="question-count-error"` already present** | (already exists, unused) | NO — locally modified, uncommitted | Also reported in Section B: existing id not used by this locator. |
+| questionNumberMarker | start-with-prompt.locator.json | `.question-number` | same as surveyBuilder's entry above | none | `question-number-${index}` | UNKNOWN (not diffed) | Duplicate elementName vs. surveyBuilder.locator.json entry — same underlying class across both locator files. |
+| questionRow | start-with-prompt.locator.json | `.question-row` | preview-mode/preview-mode.component.html:13 | none | `question-row-${index}` | NO — locally modified, uncommitted | Duplicate elementName vs. surveyBuilder.locator.json entry. |
+| rephraseWithAiButton | start-with-prompt.locator.json | `.rephrase-action >> nth=${text}` | preview-mode/preview-mode.component.html:35 | **yes — `[attr.data-test-id]="'rephrase-with-ai-' + i"` already present** | (already exists, unused) | NO — locally modified, uncommitted | Also reported in Section B. |
+| rephraseInput | start-with-prompt.locator.json | `.rephrase-input` | preview-mode/preview-mode.component.html:43 | **yes — `[attr.data-test-id]="'rephrase-input-' + i"` already present** | (already exists, unused) | NO — locally modified, uncommitted | Also reported in Section B. |
+| rephraseSendButton | start-with-prompt.locator.json | `.rephrase-send` | preview-mode/preview-mode.component.html:48 | **yes — `[attr.data-test-id]="'rephrase-send-' + i"` already present** | (already exists, unused) | NO — locally modified, uncommitted | Also reported in Section B. |
+| repromptInput | start-with-prompt.locator.json | `.reprompt-input` | shared/components/reprompt-actions/reprompt-actions.component.html:5 | **yes — `data-test-id="reprompt-input"` already present** | (already exists, unused) | NO — locally modified, uncommitted | Also reported in Section B. |
+| repromptCloseButton | start-with-prompt.locator.json | `role=button[name="Close"]` | shared/components/reprompt-actions/reprompt-actions.component.html (close button not individually confirmed by line in this pass) | UNKNOWN | `reprompt-close` | NO — locally modified, uncommitted | File is in the modified set; exact line not re-verified in this pass. |
+| repromptSubmitButton | start-with-prompt.locator.json | `role=button[name="Submit"]` | shared/components/reprompt-actions/reprompt-actions.component.html (submit button not individually confirmed by line in this pass) | UNKNOWN | `reprompt-submit` | NO — locally modified, uncommitted | Same as above. |
+
+### select-panelist.locator.json
+
+| elementName | locator file | current selector | owning template (path:line) | data-test-id already on element | proposed data-test-id | in main/deployed? | notes/risk |
+|---|---|---|---|---|---|---|---|
+| checkboxLabel | select-panelist.locator.json | `div.item-container:has-text('${text}') niq-checkbox >> nth=0` | NOT FOUND under `libs/survey-mod-lib` | UNKNOWN | n/a | UNKNOWN | `ds-*` prefixed sibling ids in this same file point to an external "data selector" widget outside this repo; not confirmed ours. |
+| selectedOption | select-panelist.locator.json | `[data-cy='Selected-option']` | NOT FOUND under `libs/survey-mod-lib` | n/a (uses `data-cy`, a different attribute convention) | n/a | UNKNOWN | — |
+| searchForPanelistsButton | select-panelist.locator.json | `[id='report-btn-run']` | select-panelist/panelist-dataselector/panelist-dataselector.component.html:38 (`id="report-btn-run"`, also `data-cy="report-btn-run"` at line 39) | none (`data-test-id`); has `id` and `data-cy` | `search-for-panelists` | UNKNOWN (not diffed) | Works today via `id`, but doesn't follow the `data-test-id` convention used elsewhere. |
+| 250ResponsesButton | select-panelist.locator.json | text "250 Responses" | select-panelist/select-panelist.component.html:36 | **yes — `[attr.data-test-id]="'select-response-count-' + count"` already present** | (already exists, unused) | UNKNOWN (not diffed) | Also reported in Section B. |
+| selectedResponseCountButton | select-panelist.locator.json | `.responses button.selected` | select-panelist/select-panelist.component.html:34-36 | **yes — same `select-response-count-${count}` ids already present on each button** | (already exists, unused) | UNKNOWN (not diffed) | Also reported in Section B. |
+| buildSurveyButton | select-panelist.locator.json | text "Build Survey" | NOT FOUND under `libs/survey-mod-lib` | UNKNOWN | n/a | UNKNOWN | Likely a host-app navigation element outside this repo. |
+| buildSurveyPageHeading | select-panelist.locator.json | `text= Build Survey >>nth=0` | NOT FOUND under `libs/survey-mod-lib` | UNKNOWN | n/a | UNKNOWN | Same as above. |
+
+### start-from-scratch.locator.json
+
+| elementName | locator file | current selector | owning template (path:line) | data-test-id already on element | proposed data-test-id | in main/deployed? | notes/risk |
+|---|---|---|---|---|---|---|---|
+| startFromScratch | start-from-scratch.locator.json | `[data-testid='quick-survey-quick-2']` | NOT FOUND under `libs/survey-mod-lib` | none found | `start-from-scratch` | UNKNOWN | Same `data-testid` (no hyphen) inconsistency as `startWithPrompt`. |
+| productOfferingHeading | start-from-scratch.locator.json | `role=heading[name="Product Offering"]` | NOT FOUND under `libs/survey-mod-lib` | UNKNOWN | n/a | UNKNOWN | Likely host-app screen. |
+| selectPanelistsHeading | start-from-scratch.locator.json | text "Select Panelists" | NOT FOUND under `libs/survey-mod-lib` | UNKNOWN | n/a | UNKNOWN | Likely host-app screen. |
+
+---
+
+## Section B — existing data-test-id values not used by any locator
+
+Grep scope: `libs/survey-mod-lib/**/*.html` for Select Panelists, Generate (question-generator, preview-mode,
+reprompt-actions), Build Survey, review-mode, question editors, and publish screens only.
+
+| data-test-id value | template (path:line) | element | used in any locator JSON? | which locator could use it |
+|---|---|---|---|---|
+| `question-count-error` | question-generator/question-generator.html:16 | out-of-range question-count error `<div>` | no | `questionCountError` (currently `.question-count-error` class-only) |
+| `rephrase-with-ai-${i}` | preview-mode/preview-mode.component.html:35 | per-question "rephrase with AI" niq-button | no | `rephraseWithAiButton` (currently `.rephrase-action >> nth=${text}`) |
+| `rephrase-input-${i}` | preview-mode/preview-mode.component.html:43 | per-question rephrase `<textarea>` | no | `rephraseInput` (currently `.rephrase-input`) |
+| `rephrase-send-${i}` | preview-mode/preview-mode.component.html:48 | per-question rephrase send niq-icon-button | no | `rephraseSendButton` (currently `.rephrase-send`) |
+| `reprompt-input` | shared/components/reprompt-actions/reprompt-actions.component.html:5 | reprompt `<textarea>` | no | `repromptInput` (currently `.reprompt-input`) |
+| `select-response-count-${count}` | select-panelist/select-panelist.component.html:36 | each response-count option button | no | `250ResponsesButton` and `selectedResponseCountButton` (currently text/CSS-class based) |
+| `question-type-${option.value}` | question-type-list/question-type-list.component.html:3 | question type tile button | **yes** (`questionTypeOption`, `questionTypeSingleChoice`, etc. already use this pattern) | n/a — already correctly used |
+| `question-text-input-${questionNumber()}` | choice-editor.component.html:10 / nps-editor.component.html:8 / scale-editor.component.html:7 | question text `niq-text-field` | **yes** (`questionTextInput` already uses `question-text-input-${text}-input`, see Section D for the `-input` suffix) | n/a — already used (see Section D caveat) |
+| `select-question-${$index}` | review-mode/review-mode.component.html:8 | per-question review checkbox | **yes** (`selectQuestionCheckboxContainer` uses the base id; `selectQuestionByIndex` adds a `-icon` suffix, see Section D) | n/a — already used |
+| `reorder-question-${$index}` | review-mode/review-mode.component.html:6 | per-question drag handle row | **yes** (`reorderQuestionByIndex`) | n/a — already used |
+
+No other unused `data-test-id` values were found in the targeted templates within the search scope (publish screens,
+survey-header, footer, question editors) beyond the ones listed above.
+
+---
+
+## Section C — suspicious ids already in the app
+
+| template:line | what the DOM renders (from template) | problem | proposed fix |
+|---|---|---|---|
+| choice-editor/nps-editor/rating-editor/scale-editor/text-editor `<niq-toggle>` (e.g. choice-editor.component.html:38-39) | `<niq-toggle class="toggle-container" (change)="toggleChange($event)" [checked]="isRequired()" ... [label]="'Required'">` — **no `data-test-id` binding at all** on any of the 5 editors' Required toggle | `requiredToggle` locator targets `[data-test-id='-input-checkbox']` — an empty-prefix id with no corresponding template binding anywhere in the 5 editors searched. This looks like a leftover from a removed/renamed binding; the selector can only "work" if the underlying niq-toggle component self-generates a `-input-checkbox` suffix even with no id supplied, which could not be confirmed (niq-toggle internals excluded from scope). | Add an explicit id, e.g. `[attr.data-test-id]="'required-toggle-' + questionNumber()"` to all 5 `<niq-toggle>` usages, matching the convention used for text fields (`question-text-input-${questionNumber()}`). |
+| rating-editor/rating-editor.component.html:9-12 (`<niq-text-field class="text-field" [value]="question()" ...>`) | Same `niq-text-field` used elsewhere (choice/nps/scale editors) **but with no `[attr.data-test-id]` binding** — unlike its 3 sibling editors which all bind `'question-text-input-' + questionNumber()` | `ratingQuestionTextInput` locator falls back to `[data-test-id='-input']:visible`, an empty-prefix, effectively unscoped-by-index selector (acknowledged in a page-object comment as an "interim :visible-based mitigation") | Add `[attr.data-test-id]="'question-text-input-' + questionNumber()"` to rating-editor's `niq-text-field`, matching choice/nps/scale editors, then update `ratingQuestionTextInput` to the same indexed pattern as `questionTextInput`. |
+| review-mode/review-mode.component.html:8 (`<niq-checkbox [attr.data-test-id]="'select-question-' + $index" ...>`) | Template sets `select-question-${$index}` directly on `<niq-checkbox>` | `selectQuestionByIndex` locator expects a **`-icon` suffix** (`select-question-${text}-icon`) that is not present anywhere in this template — implies niq-checkbox forwards/renders the provided id onto an inner icon element with an appended `-icon` suffix (component-internal behavior, not visible in this template) | Could not propose a template fix without inspecting niq-checkbox internals (out of scope); flagging as a naming-convention risk for whoever owns the niq-checkbox wrapper. |
+| survey-header/survey-header.component.html:55 (`data-test-id="delete-survey"`) vs. `niq-button:has-text('Delete')` used for `deleteQuestionsButton` | Two different, unrelated "Delete" controls exist: the review-mode "Delete" (selected questions) at line 26-28 (no id) and the standalone "Delete survey" button at line 55 (`data-test-id="delete-survey"`) | Text-only `has-text('Delete')` selector for `deleteQuestionsButton` is a substring match and could theoretically match either "Delete" or "Delete survey" if DOM scoping ever changes | Add an explicit id to the review-mode Delete button (e.g. `data-test-id="review-delete-selected"`) to remove ambiguity with `delete-survey`. |
+
+No duplicate `data-test-id` *values* were found in the templates searched (the only "duplicate" is the shared
+`.question-number` / `.question-row` **class name**, reused by design across question-type editor templates —
+not a data-test-id collision).
+
+---
+
+## Section D — how data-test-id lands: HOST vs INNER element
+
+Evidence is from this repo's templates and e2e locator patterns only; niq-* component internals (node_modules) were not inspected.
+
+| component | evidence | landing |
+|---|---|---|
+| `niq-button` | `data-test-id="publish-survey"` / `data-test-id="save-draft"` / `data-test-id="generate-questions"` etc. written as a plain or `[attr.]` attribute directly on the `<niq-button>` tag, and e2e locators that use these ids (`publishSurveyButton`, `saveDraftButton`, `generateQuestionsButton`) match the **exact same string with no suffix** | HOST element |
+| `niq-icon-button` | `[attr.data-test-id]="'rephrase-send-' + i"` written directly on `<niq-icon-button>` (preview-mode.component.html:48); no e2e locator independently exercises a `-${suffix}`-mangled id for this component in this repo | HOST element (same attribute-binding pattern as niq-button; not independently confirmed by a suffix-mismatch case the way niq-text-field/niq-checkbox/niq-toggle were) |
+| `niq-text-field` | Template binds `[attr.data-test-id]="'question-text-input-' + questionNumber()"` on the `<niq-text-field>` host (choice/nps/scale editors), but the e2e locator `questionTextInput` must match `[data-test-id='question-text-input-${text}-input']` — an extra **`-input` suffix** not written in any template | INNER element (component re-renders/forwards the given id onto an internal `<input>`, appending `-input`) — confirmed only via the e2e locator's required suffix, not by inspecting the component itself |
+| `niq-toggle` | No template anywhere in the 5 question editors currently binds a `data-test-id` to `<niq-toggle>`, yet the stale `requiredToggle` locator expects `[data-test-id='-input-checkbox']` (empty prefix + `-input-checkbox` suffix) | UNKNOWN — the `-input-checkbox` suffix pattern suggests INNER landing with a compound suffix, but with no current template binding to confirm against, this cannot be verified from this repo's evidence alone |
+| `niq-checkbox` | Template binds `[attr.data-test-id]="'select-question-' + $index"` on `<niq-checkbox>` host (review-mode.component.html:8), but `selectQuestionByIndex` needs a `-icon` suffix while `selectQuestionCheckboxContainer` uses the base id unchanged as an ancestor selector | Mixed evidence: base id usable as ancestor (suggests it also stays on/near HOST), but a `-icon`-suffixed variant is expected elsewhere — most consistent with INNER landing on a nested icon element, with the id also still present/queryable on the HOST as an ancestor. Not fully resolved — reported as evidence-based inference, not a confirmed fact. |
