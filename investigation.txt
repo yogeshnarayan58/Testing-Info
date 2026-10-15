@@ -1,79 +1,53 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
 Running 22 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (16.8s)
+  ✓   1 … a prompt option on the survey home page @StartWithPrompt @StartWithPrompt (16.0s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (2.9s)
-  ✓   3 …imension selections and search for panelists @StartWithPrompt @DataSummary (46.6s)
-  ✓   4 …ponse Count: Should select a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.1s)
-  ✓   6 …on types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (4.6s)
-  ✓   7 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
-  ✓   8 …ey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (1.1s)
-  ✓   9 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (6.8s)
-  ✓  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (1.2s)
-  ✓  11 …ase the question count and close the panel @StartWithPrompt @GenerateSurvey (7.6s)
-  ✓  12 …max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (1.7s)
-  ✓  13 …en the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (7.7s)
-  ✓  14 …on text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (641ms)
+  ✓   2 …ould select the dataset type and dataset @StartWithPrompt @DatasetSelection (2.4s)
+  ✓   3 …imension selections and search for panelists @StartWithPrompt @DataSummary (54.8s)
+  ✓   4 …onse Count: Should select a response count @StartWithPrompt @ResponseCount (10.1s)
+  ✓   5 …the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (3.6s)
+  ✓   6 …n types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (12.8s)
+  ✓   7 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (4.3s)
+  ✓   8 …ey title after AI generation @StartWithPrompt @StartWithPrompt @BuildSurvey (1.3s)
+  ✓   9 … the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (8.4s)
+  ✓  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey (4.0s)
+  ✓  11 …ase the question count and close the panel @StartWithPrompt @GenerateSurvey (9.8s)
+  ✓  12 …max) questions @StartWithPrompt @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
+  ✓  13 …n the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (14.2s)
+  ✓  14 …on text via the pencil icon @StartWithPrompt @StartWithPrompt @BuildSurvey (909ms)
      15 …te a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey
-textsBefore: ["Which of the following best describes your overall experienc","How likely are you to recommend the appliance brand or produ","Which aspects of the appliance(s) you purchased were satisfa","What, if anything, would improve your satisfaction with appl","How satisfied are you with the appliance(s) you purchased fr","What aspects of the appliance(s) you purchased were most imp","Please rate the appliance(s) you purchased from a dollar sto","How would you rate the speed of delivery for the appliance(s","Which delivery speed best describes your most recent applian"]
-textsAfter: ["Which of the following best describes your overall experienc","How likely are you to recommend the appliance brand or produ","Which aspects of the appliance(s) you purchased were satisfa","What, if anything, would improve your satisfaction with appl","How satisfied are you with the appliance(s) you purchased fr","What aspects of the appliance(s) you purchased were most imp","Please rate the appliance(s) you purchased from a dollar sto","How would you rate the speed of delivery for the appliance(s","Which delivery speed best describes your most recent applian","Which of the following best describes your overall experienc"]
-  ✘  15 …estion via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.0s)
-  -  16 …5: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  17 …leaves the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  18 …per-question checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  19 …delete, and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  20 …isabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  21 …ay on Build Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey
-  -  22 …ows Add Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey
+textsBefore: ["Overall, how satisfied are you with the appliance you purcha","Which aspects of the appliance are you satisfied with?","How well did the appliance meet your expectations? *","How likely are you to buy another appliance from a dollar st","How satisfied are you with the appliance you purchased from ","How well did the appliance you purchased from adollar store","Which of the following best describes your satisfaction with","How would you rate the delivery speed of your most recent ap","Which of the following best describes the delivery speed of "]
+textsAfter: ["Overall, how satisfied are you with the appliance you purcha","Which aspectsof the appliance are you satisfied with?","How well did the appliance meet your expectations? *","How likely are you to buy another appliance from a dollar st","How satisfied are you with the appliance you purchased from ","How well did the appliance you purchased from a dollar store","Which of the following best describes your satisfaction with","How would yourate the delivery speed of your most recent ap","Which of the following best describes thedelivery speed of ","Overall, how satisfied are you with the appliance you purcha"]
+  ✓  15 …estion via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey (4.1s)
+  ✓  16 … and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  17 …the question count unchanged @StartWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
+TC_BS_05: survey was at max questions - deleting one first to free up Add Question.
+  ✓  18 …stion checkboxes are visible @StartWithPrompt @StartWithPrompt @BuildSurvey (4.8s)
+  ✓  19 … and exit keeps the deletion @StartWithPrompt @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  20 … with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey (3.6s)
+  ✓  21 …uild Survey (no Exit needed) @StartWithPrompt @StartWithPrompt @BuildSurvey (1.5s)
+TC_BS_14: Review Mode already closed after delete-all (Exit Review Mode button not shown) - skipping exitReviewMode().
+  ✓  22 … Question options and 0 rows @StartWithPrompt @StartWithPrompt @BuildSurvey (93ms)
 
-
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:184:7 › Start with a prompt › TC_BS_06: Delete and duplicate a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey 
-
-    Error: Expected exactly 2 questions matching the original text, found 0 (indexes: )
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:224:15
-
-    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────────
-    test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\attachments\start-with-prompt-video-8deb028c09780e274fcb6dbd21c68f1d15084f3b.webm
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────────────────────
-    test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-fe8db-stion-via-hover-row-actions-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:184:7 › Start with a prompt › TC_BS_06: Delete and duplicate a question via hover row actions @StartWithPrompt @StartWithPrompt @BuildSurvey 
-  7 did not run
-  14 passed (2.7m)
+  22 passed (3.7m)
 
 To open last HTML report run:
 
@@ -82,89 +56,3 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
-
-----------------
-Error: Expected exactly 2 questions matching the original text, found 0 (indexes: )
-expect(received).toBeTruthy()
-
-Received: false
-
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:224:15
----------------------
-Before Hooks
-15ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-76ms
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-22ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-66ms
-Wait for selector locator('.delete-action').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-29ms
-Click locator('.delete-action').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-102ms
-Evaluate locator('.question-number') ✕ 2— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-86ms
-Wait for selector locator('.question-row').first().locator('.question-text') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-95ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-81ms
-Wait for selector locator('.question-row').nth(2).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-85ms
-Wait for selector locator('.question-row').nth(3).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-88ms
-Wait for selector locator('.question-row').nth(4).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-92ms
-Wait for selector locator('.question-row').nth(5).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-96ms
-Wait for selector locator('.question-row').nth(6).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-99ms
-Wait for selector locator('.question-row').nth(7).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-103ms
-Wait for selector locator('.question-row').nth(8).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-107ms
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-59ms
-Wait for selector locator('niq-icon-button[iconname=\'duplicate\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-43ms
-Click locator('niq-icon-button[iconname=\'duplicate\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-127ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-40ms
-Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-130ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-130ms
-Wait for selector locator('.question-row').nth(2).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-133ms
-Wait for selector locator('.question-row').nth(3).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-140ms
-Wait for selector locator('.question-row').nth(4).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-143ms
-Wait for selector locator('.question-row').nth(5).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-147ms
-Wait for selector locator('.question-row').nth(6).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-151ms
-Wait for selector locator('.question-row').nth(7).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-154ms
-Wait for selector locator('.question-row').nth(8).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-155ms
-Wait for selector locator('.question-row').nth(9).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-159ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-23ms
-After Hooks
-1.7s
