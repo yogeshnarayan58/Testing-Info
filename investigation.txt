@@ -1,74 +1,37 @@
-All points are motioned below are tested on Dev and working as expected.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --headed --workers=1
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
 
-1. AI-generated survey title in Optiq flow-Working
-Fix: In AI flow, the survey title is now taken from the title returned by the generate-questions API. Scratch flow is unchanged.
-How to verify: Open survey/aiflow/build-survey, generate questions, and verify that the header displays the title from the API response instead of "Untitled Survey."
+   at e2e\tests\survey\start-from-scratch.spec.ts:18
 
-2. "Last refreshed" date persists after reload-Working
-Fix: When a saved draft reloads, the app retrieves the selected dataset's refresh date and restores it in the footer.
-How to verify: Select a dataset, go to Build Survey, save a draft, refresh the page, and verify that the "Last refreshed" date is still displayed.
+  16 | }
+  17 |
+> 18 | test.describe.serial('Start from scratch', () => {
+     |               ^
+  19 |   let basePage: BasePage;
+  20 |   let surveyPage: StartFromScratchPage;
+  21 |   let selectPanelistPage: SelectPanelistPage;
+    at _TestTypeImpl._currentSuite (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:2224:13)
+    at _TestTypeImpl._describe (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:2266:24)
+    at Function.serial (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:1154:12)
+    at Object.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:18:15)
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
 
-QA Comment-we need to fix this as its for the scenario when user save the survey using save draft but if user reload without Save Draft then its showing issue. Happening in both SFS and SWP.
 
-3. Deleting all questions keeps the user in Build Survey-Working
-Fix: In AI flow, deleting all questions keeps the user on Build Survey and displays the Add Question options. It no longer returns the user to the generator screen.
-How to verify: Generate questions, delete all of them, and verify that the page remains on aiflow/build-survey with the Add Question options visible.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
+Error: Project(s) "chromium" not found. Available projects: ""
+    at Object.filterProjects (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\runner\index.js:2164:11)
+    at runTests (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\cli\testActions.js:59:30)
+    at async _Command.<anonymous> (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\program.js:55:7)
 
-4. Single question-count error with consistent color-Working
-Fix: The duplicate slider error has been removed, leaving a single message: "Please enter a value between 3 and 10." The error now uses the shared error color token (#680404).
-How to verify: In AI flow, enter an out-of-range value such as 1444 and verify that only one error message is displayed.
-
-5. Drag and drop in Build Survey-Working
-Fix: Question reordering works correctly, and the drag icon remains in its original position.
-How to verify: Add two or more questions, drag a question using the drag handle, and verify that the order updates correctly.
-
-6. First Rating/NPS question loses focus while typing-Working
-Fix: The first question no longer loses focus, saves unexpectedly, or closes while the user is typing. It saves only after a valid outside click or save action.
-How to verify: Create a new survey, add a Rating or NPS question first, type into its fields, and verify that the editor remains active and editable.
-
-7. Same question type can be selected again-Working
-Fix: Deleting the last question clears the previously selected question type.
-How to verify: Add a Single Choice question, delete it, and then select Single Choice again. A new question editor should open.
-
-8. Duplicate survey cannot be saved without a title-Working
-Fix: Draft saves now reject empty or whitespace-only titles for both new and duplicated surveys. An error toast is displayed with the message: "Survey request validation failed: name is required."
-How to verify: Duplicate a survey from My Assets, clear the title, and click Save Draft. Verify that the error message is shown and the survey is not saved.
-
------------------------------
-
-1.      Limiting no.of options we can add in question as 15 and disabling the button and adding respective tooltips when maximum options reached.         
-
-2.      When adding new options, add auto focus.
-
-3.      Selecting all question types as default types when creating an AI survey.
-------------------------------------------
-
-Validated that FMS survey page is loading successfully in dev environment and all the scenarios are working fine.
-
-Things to be checked as part of this ticket.
-
-FMS survey page should be accessible in this path https://si.connect.nielseniq.io/reportexperience-dev/my-assets/survey/my-assets.
-Navigating to different tabs like Recently opened, Shared with me, Favorites, Trash should show the grid and load the respective survey assets.
-Hovering over any row should show favorite star icon on the Asset title row if its a survey(will not be visible for folder asset) and duplicate(not for folder) and info icon.
-Clicking on the favorite star icon should make that survey asset Favorite, update the favorite icon to filled one, should show appropriate toast message and that asset should be visible in the Favorite tab grid.
-Clicking again that filled star icon should remove it from the Favorite grid.
-Opening any survey asset should update its open date and that survey asset should be visible in Recently opened tab grid.
-----------------------------------------------
-Provide existing users with visibility of ongoing survey activities.
-
-Welcome Back section.
-
-Recent survey status cards:
-
-Complete
-In Progress
-Draft
-Survey asset display.
-
-Survey history summary.
-
-Survey entry points with correct contents
-
-Build with optiq
-Start from scratch
-Import a survey(icon changes)
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
+$ 
