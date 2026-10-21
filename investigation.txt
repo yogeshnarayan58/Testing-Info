@@ -1,99 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (25) from .env // tip: ⌘ enable debugging { debug:true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms accepted successfully.
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 19 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓   1 …ion on the survey home page @LandStartFromScratch (16.8s)
-Auth state loaded from storage/auth.json
-  ✓   2 …firm the Choose a dataset screen @DatasetSelection (2.8s)
-  ✓   3 …anelists after all 5 filters are set @DataSummary (41.7s)
-  ✓   4 …er after selecting a response count @ResponseCount (5.2s)
-  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (620ms)
-  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (383ms)
-  ✘   7 …dd a Single Choice question @SingleChoiceQuestion (15.9s)
-  -   8 …4: Add a Multiple Choice question @MultipleChoiceQuestion
-  -   9 …scratch › TC_BS_05: Add a Rating question @RatingQuestion
-  -  10 …from scratch › TC_BS_07: Add an NPS question @NPSQuestion
-  -  11 … TC_BS_08: Add a Point Scale question @PointScaleQuestion
-  -  12 … TC_BS_09: Add a Multi Scale question @MultiScaleQuestion
-  -  13 … retains data and back to Build Survey @StepperNavigation
-  -  14 …d question and Duplicate with limit message @MaxQuestions
-  -  15 …d per-question checkboxes are visible @ReviewModeControls
-  -  16 … one, delete, and exit keeps deletions @ReviewModeActions
-  -  17 …elect/unselect all, expand/collapse all, exit @ReviewMode
-  -  18 …ratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft
-  -  19 …om scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
-
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:85:7 › Start from scratch › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-
-    Error: Failed to add Single Choice question: Edit question button not visible after 15000ms
-
-       at ..\page-objects\survey\surveyBuilder.page.ts:247
-
-      245 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
-      246 |     } catch (error) {
-    > 247 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      248 |     }
-      249 |   }
-      250 |
-        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:247:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:89:5
-
-    attachment #1: screenshot (image/png) ────────────────────────
-    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ─────────
-    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\attachments\start-from-scratch-video-8aae1c96ccaec44371226ae9a2bef70c9393e1ab.webm
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ───────────────────────
-    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:85:7 › Start from scratch › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
-  12 did not run
-  6 passed (2.0m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
-
-------------------------
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -107,27 +16,27 @@ Global setup completed. Auth state saved.
 
 Running 19 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-  ✓   1 …ion on the survey home page @LandStartFromScratch (16.6s)
+  ✓   1 …ion on the survey home page @LandStartFromScratch (19.6s)
 Auth state loaded from storage/auth.json
-  ✓   2 …firm the Choose a dataset screen @DatasetSelection (2.2s)
-  ✓   3 …anelists after all 5 filters are set @DataSummary (43.9s)
-  ✓   4 …er after selecting a response count @ResponseCount (5.2s)
-  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (503ms)
-  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (255ms)
-  ✓   7 …dd a Single Choice question @SingleChoiceQuestion (14.4s)
-  ✓   8 …a Multiple Choice question @MultipleChoiceQuestion (3.5s)
-  ✓   9 … › TC_BS_05: Add a Rating question @RatingQuestion (2.7s)
-  ✓  10 …ratch › TC_BS_07: Add an NPS question @NPSQuestion (2.7s)
-  ✓  11 …08: Add a Point Scale question @PointScaleQuestion (3.9s)
-  ✓  12 …09: Add a Multi Scale question @MultiScaleQuestion (3.6s)
-  ✓  13 … data and back to Build Survey @StepperNavigation (19.9s)
-  ✓  14 …on and Duplicate with limit message @MaxQuestions (10.3s)
-  ✓  15 …estion checkboxes are visible @ReviewModeControls (789ms)
+  ✓   2 …firm the Choose a dataset screen @DatasetSelection (3.0s)
+  ✓   3 …anelists after all 5 filters are set @DataSummary (41.9s)
+  ✓   4 …er after selecting a response count @ResponseCount (6.2s)
+  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (583ms)
+  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (317ms)
+  ✓   7 …Add a Single Choice question @SingleChoiceQuestion (1.2s)
+  ✓   8 …a Multiple Choice question @MultipleChoiceQuestion (3.7s)
+  ✓   9 … › TC_BS_05: Add a Rating question @RatingQuestion (2.8s)
+  ✓  10 …ratch › TC_BS_07: Add an NPS question @NPSQuestion (2.8s)
+  ✓  11 …08: Add a Point Scale question @PointScaleQuestion (4.0s)
+  ✓  12 …09: Add a Multi Scale question @MultiScaleQuestion (4.1s)
+  ✓  13 … data and back to Build Survey @StepperNavigation (19.8s)
+  ✓  14 …on and Duplicate with limit message @MaxQuestions (10.5s)
+  ✓  15 …estion checkboxes are visible @ReviewModeControls (893ms)
   ✓  16 …elete, and exit keeps deletions @ReviewModeActions (2.7s)
   ✓  17 …select all, expand/collapse all, exit @ReviewMode (18.5s)
-  ✘  18 …TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (16.5s)
+  ✘  18 …TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (17.4s)
   -  19 …om scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
 
 
@@ -135,16 +44,16 @@ Auth state loaded from storage/auth.json
 
     Error: Failed to save draft: My Assets tree item not visible after 15000ms
 
-       at ..\page-objects\survey\surveyBuilder.page.ts:548
+       at ..\page-objects\survey\surveyBuilder.page.ts:553
 
-      546 |       await this.fillSaveCopyDialog(title);
-      547 |     } catch (error) {
-    > 548 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+      551 |       await this.fillSaveCopyDialog(title);
+      552 |     } catch (error) {
+    > 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
           |             ^
-      549 |     }
-      550 |   }
-      551 |
-        at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:548:13)
+      554 |     }
+      555 |   }
+      556 |
+        at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
         at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
 
     attachment #1: screenshot (image/png) ────────────────────────
@@ -154,7 +63,7 @@ Auth state loaded from storage/auth.json
     Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
 
     attachment #3: start-from-scratch-video (video/webm) ─────────
-    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\attachments\start-from-scratch-video-d45bed5c7aa89957ad31d0249e290c65d1e82ca3.webm
+    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\attachments\start-from-scratch-video-a58a68ca9b3201b4c93add7b5e42fa781d79c2a9.webm
     ──────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
@@ -170,7 +79,7 @@ Auth state loaded from storage/auth.json
   1 failed
     [chromium] › tests\survey\start-from-scratch.spec.ts:317:5 › Start from scratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft 
   1 did not run
-  17 passed (3.7m)
+  17 passed (3.6m)
 
 To open last HTML report run:
 
@@ -179,3 +88,53 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
+-----------------------------------
+Error: Failed to save draft: My Assets tree item not visible after 15000ms
+
+   at ..\page-objects\survey\surveyBuilder.page.ts:553
+
+  551 |       await this.fillSaveCopyDialog(title);
+  552 |     } catch (error) {
+> 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  554 |     }
+  555 |   }
+  556 |
+    at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
+
+TC_BS_SAVE_DRAFT: Save survey as draft
+survey/start-from-scratch.spec.ts:317
+17.4s
+chromiumSaveDraft
+serial
+Copy prompt
+Error: Failed to save draft: My Assets tree item not visible after 15000ms
+
+   at ..\page-objects\survey\surveyBuilder.page.ts:553
+
+  551 |       await this.fillSaveCopyDialog(title);
+  552 |     } catch (error) {
+> 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  554 |     }
+  555 |   }
+  556 |
+    at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
+Filter steps
+Before Hooks
+17ms
+Wait for selector locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+66ms
+Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+83ms
+Wait for selector locator('[data-test-id=\'save-a-copy-title-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+1.9s
+Fill "SaveDraft_1792559310801" locator('[data-test-id=\'save-a-copy-title-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+82ms
+Wait for selector locator('role=treeitem[name="My Assets"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.1s
+After Hooks
+1.6s
+Worker Cleanup
