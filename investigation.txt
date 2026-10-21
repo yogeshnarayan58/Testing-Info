@@ -1,86 +1,45 @@
-import { test, expect } from '@playwright/test';
+Copy prompt
+Error: Failed to publish survey: Publish survey button not visible after 15000ms
 
-test('test', async ({ page }) => {
-  await page.goto('https://niqloginuat.identity.nielseniq.io/as/authorize?response_type=code&scope=openid%20email%20profile%20offline_access%201bd20d33-5a7e-404a-a849-6ab1b3923a24.access&client_id=1bd20d33-5a7e-404a-a849-6ab1b3923a24&state=SRzD9TtTewTGhq1iyo8vDz0VKEvk68jA0rrqQv_KDaw&redirect_uri=https%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=RrYgPV75gxfvx4n16VnPOp-JAZP0w2Jlqm_-x-W-pG8&code_challenge=YgJ_OvWyP7jUxPUBKlp7rIacOK0R_WcYPu8ji8KaTVA&code_challenge_method=S256');
-  await page.getByRole('textbox', { name: 'Email' }).click({
-    modifiers: ['ControlOrMeta']
-  });
-  await page.getByRole('textbox', { name: 'Email' }).fill('automation1gen@nielseniq.com');
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTemplates@2027');
-  await page.getByRole('button', { name: 'Verify' }).click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
-  await page.getByText('Start from scratchBuild your').click();
-  await page.locator('[data-test-id="btn-next-dataset"]').click();
-  await page.locator('[data-test-id="apply-dataset-btn"]').click();
-  await page.locator('[data-test-id="apply-dataset-btn"]').click();
-  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
-  await page.locator('[data-test-id="ds-closeButton"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
-  await page.locator('niq-checkbox').nth(5).click();
-  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
-  await page.locator('[data-test-id="ds-closeButton"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
-  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
-  await page.locator('[data-test-id="ds-Period_Dimension"]').click();
-  await page.locator('[data-test-id="ds-delete"]').click();
-  await page.locator('[data-test-id="ds-addButton"]').click();
-  await page.locator('[data-test-id="ds-filterOut_Package_null"]').nth(2).click();
-  await page.locator('div:nth-child(10) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
-  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
-  await page.getByRole('button', { name: 'Search for Panelists' }).click();
-  await page.locator('[data-test-id="select-response-count-250"]').click();
-  await page.locator('[data-test-id="proceed-to-survey"]').click();
-  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
-  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('testing');
-  await page.locator('div').filter({ hasText: '1. Required Discard changes' }).nth(2).click();
-  await page.locator('niq-icon-button').nth(2).click();
-  await page.locator('niq-icon-button').nth(2).click();
-  await page.locator('[data-test-id="validate-survey"]').click();
-  await page.locator('[data-test-id="-close-button"]').click();
-  await page.locator('[data-test-id="save-draft"]').click();
-  await page.locator('[data-test-id="save-a-copy-title-input"]').fill('Automation Cocegen');
-  await page.locator('[data-test-id="create-new-folder-label"]').click();
-  await page.locator('[data-test-id="create-folder-dialog-input"]').click();
-  await page.locator('[data-test-id="create-folder-dialog-input"]').fill('Codegen survey');
-  await page.locator('[data-test-id="create-folder-dialog-accept-button"]').click();
-  await page.getByRole('treeitem', { name: '  My Assets' }).click();
-  await page.locator('.arrow').click();
-  await page.getByRole('treeitem', { name: ' Codegen Automation' }).click();
-  await page.getByRole('treeitem', { name: ' Codegen survey' }).click();
-  await page.locator('[data-test-id="save-pending-changes-button"]').click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.locator('[data-test-id="validate-survey"]').click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.locator('[data-test-id="publish-survey"]').click();
-  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
-  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
-  await page.locator('[data-test-id="ds-Geography_Dimension"]').click();
-  await page.locator('[data-test-id="ds-Demographic_Dimension"]').click();
-  await page.locator('[data-test-id="ds-Period_Dimension"]').click();
-  await page.getByText('questions').click();
-  await page.getByText('250 responses').click();
-  await page.getByText('Review survey details').click();
-  await page.locator('[data-test-id="-footer"]').getByRole('button', { name: 'Publish survey' }).click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/my-assets');
-  await page.locator('[data-test-id="cell-survey-name-row-0"] [data-test-id="survey-grid-title"]').click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_16952ED74E8A000ADBEEBA28393D3B1E');
-  await page.getByText('Automation Cocegen').click();
-  await page.locator('[data-test-id="validate-survey"]').click();
-  await page.getByText('Validating your survey Optiq').click();
-  await page.getByText('Automation Cocegen View Optiq feedback Save draft Review Survey Delete survey 1').click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.locator('[data-test-id="publish-survey"]').click();
-  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
-  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
-  await page.locator('.publish-review-details').click();
-  await page.locator('[data-test-id="-footer"]').getByRole('button', { name: 'Publish survey' }).click();
-  await page.locator('[data-test-id="-description"]').click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/my-assets');
-  await page.locator('[data-test-id="cell-survey-access-row-0"]').getByTitle('Duplicate').click();
-});
+   at ..\page-objects\survey\surveyBuilder.page.ts:859
+
+  857 |       }
+  858 |     } catch (error) {
+> 859 |       throw new Error(`Failed to publish survey: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  860 |     }
+  861 |   }
+  862 |
+    at SurveyBuilderPage.publishSurvey (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:859:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:332:5
+Filter steps
+Before Hooks
+31ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+79ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+540ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+82ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+121ms
+Wait for selector locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+82ms
+Fill "Rate your experience 3" locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+71ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+34ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+387ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+27ms
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+5.7s
+Worker Cleanup
+2ms
