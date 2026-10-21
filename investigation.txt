@@ -83,46 +83,17 @@ $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
   1 skipped
   25 did not run
 
-----------
-Copy prompt
-Error: "Start from scratch" option not visible after navigating to survey
-expect(received).toBeTruthy()
+To open last HTML report run:
 
-Received: false
+  npx playwright show-report
 
-   at ..\page-objects\common\assert-utils.ts:14
 
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:37:15
-Filter steps
-Before Hooks
-11ms
-Launch browser— ../node_modules/@gfk/gta/core/web/basePage.ts:59
-811ms
-Create context— ../node_modules/@gfk/gta/core/web/basePage.ts:70
-1.2s
-Create page— ../node_modules/@gfk/gta/core/web/basePage.ts:71
-398ms
-Navigate si.connect.nielseniq.io/reportexperience-dev/survey— ../node_modules/@gfk/gta/core/web/webActions.ts:627
-3.4s
-Wait for selector locator('[data-testid=\'quick-survey-quick-2\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-1.0m
-Wait for selector locator('[data-testid=\'quick-survey-quick-2\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-After Hooks
-10.0s
-afterAll hook— survey/start-from-scratch.spec.ts:24
-9.9s
-Worker Cleanup
-----------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
+
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 | tail -30
 Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/ page.goto: net::ERR_TIMED_OUT at https://si.connect.nielseniq.io/reportexperience-dev/
@@ -176,6 +147,78 @@ Call log:
   46 |   } finally {
     at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
 
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 | tail -30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\attachments\start-with-prompt-video-fb3f10bcfc384b6125c15dbe2fa1ad89ff14e447.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\shared\build-survey.shared.ts:216:7 › Start with a prompt› TC_BS_03: Add a Single Choice question @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  19 did not run
+  8 passed (2.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 | tail -30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\attachments\start-with-prompt-video-c8abc2174108dd8f8086f844228c6097d40781f8.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-a25ea-dd-a-Single-Choice-question-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\shared\build-survey.shared.ts:216:7 › Start with a prompt› TC_BS_03: Add a Single Choice question @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  19 did not run
+  8 passed (2.3m)
 
 To open last HTML report run:
 
