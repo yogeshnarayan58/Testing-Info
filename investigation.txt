@@ -1,37 +1,89 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --headed --workers=1
-Error: Playwright Test did not expect test.describe() to be called here.
-Most common reasons include:
-- You are calling test.describe() in a configuration file.
-- You are calling test.describe() in a file that is imported by the configuration file.
-- You have two different versions of @playwright/test. This usually happens
-  when one of the dependencies in your package.json depends on @playwright/test.
-- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
-
-   at e2e\tests\survey\start-from-scratch.spec.ts:18
-
-  16 | }
-  17 |
-> 18 | test.describe.serial('Start from scratch', () => {
-     |               ^
-  19 |   let basePage: BasePage;
-  20 |   let surveyPage: StartFromScratchPage;
-  21 |   let selectPanelistPage: SelectPanelistPage;
-    at _TestTypeImpl._currentSuite (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:2224:13)
-    at _TestTypeImpl._describe (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:2266:24)
-    at Function.serial (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:1154:12)
-    at Object.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:18:15)
-Error: No tests found.
-Make sure that arguments are regular expressions matching test files.
-You may need to escape symbols like "$" or "*" and quote the arguments.
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-Error: Project(s) "chromium" not found. Available projects: ""
-    at Object.filterProjects (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\runner\index.js:2164:11)
-    at runTests (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\cli\testActions.js:59:30)
-    at async _Command.<anonymous> (C:\Users\yogesh.upadhyay\AppData\Local\npm-cache\_npx\e41f203b7505f1fb\node_modules\playwright\lib\program.js:55:7)
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms accepted successfully.
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/start-with-prompt-ai-automation)
+Running 19 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …ion on the survey home page @LandStartFromScratch (16.8s)
+Auth state loaded from storage/auth.json
+  ✓   2 …firm the Choose a dataset screen @DatasetSelection (2.8s)
+  ✓   3 …anelists after all 5 filters are set @DataSummary (41.7s)
+  ✓   4 …er after selecting a response count @ResponseCount (5.2s)
+  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (620ms)
+  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (383ms)
+  ✘   7 …dd a Single Choice question @SingleChoiceQuestion (15.9s)
+  -   8 …4: Add a Multiple Choice question @MultipleChoiceQuestion
+  -   9 …scratch › TC_BS_05: Add a Rating question @RatingQuestion
+  -  10 …from scratch › TC_BS_07: Add an NPS question @NPSQuestion
+  -  11 … TC_BS_08: Add a Point Scale question @PointScaleQuestion
+  -  12 … TC_BS_09: Add a Multi Scale question @MultiScaleQuestion
+  -  13 … retains data and back to Build Survey @StepperNavigation
+  -  14 …d question and Duplicate with limit message @MaxQuestions
+  -  15 …d per-question checkboxes are visible @ReviewModeControls
+  -  16 … one, delete, and exit keeps deletions @ReviewModeActions
+  -  17 …elect/unselect all, expand/collapse all, exit @ReviewMode
+  -  18 …ratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft
+  -  19 …om scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:85:7 › Start from scratch › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
+
+    Error: Failed to add Single Choice question: Edit question button not visible after 15000ms
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:247
+
+      245 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
+      246 |     } catch (error) {
+    > 247 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      248 |     }
+      249 |   }
+      250 |
+        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:247:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:89:5
+
+    attachment #1: screenshot (image/png) ────────────────────────
+    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ─────────
+    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\attachments\start-from-scratch-video-8aae1c96ccaec44371226ae9a2bef70c9393e1ab.webm
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────
+    test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--00900-dd-a-Single-Choice-question-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:85:7 › Start from scratch › TC_BS_03: Add a Single Choice question @SingleChoiceQuestion 
+  12 did not run
+  6 passed (2.0m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
