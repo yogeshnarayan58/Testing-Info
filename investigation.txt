@@ -1,140 +1,86 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ enable debugging { debug:true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+import { test, expect } from '@playwright/test';
 
-Running 19 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 …ion on the survey home page @LandStartFromScratch (19.6s)
-Auth state loaded from storage/auth.json
-  ✓   2 …firm the Choose a dataset screen @DatasetSelection (3.0s)
-  ✓   3 …anelists after all 5 filters are set @DataSummary (41.9s)
-  ✓   4 …er after selecting a response count @ResponseCount (6.2s)
-  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (583ms)
-  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (317ms)
-  ✓   7 …Add a Single Choice question @SingleChoiceQuestion (1.2s)
-  ✓   8 …a Multiple Choice question @MultipleChoiceQuestion (3.7s)
-  ✓   9 … › TC_BS_05: Add a Rating question @RatingQuestion (2.8s)
-  ✓  10 …ratch › TC_BS_07: Add an NPS question @NPSQuestion (2.8s)
-  ✓  11 …08: Add a Point Scale question @PointScaleQuestion (4.0s)
-  ✓  12 …09: Add a Multi Scale question @MultiScaleQuestion (4.1s)
-  ✓  13 … data and back to Build Survey @StepperNavigation (19.8s)
-  ✓  14 …on and Duplicate with limit message @MaxQuestions (10.5s)
-  ✓  15 …estion checkboxes are visible @ReviewModeControls (893ms)
-  ✓  16 …elete, and exit keeps deletions @ReviewModeActions (2.7s)
-  ✓  17 …select all, expand/collapse all, exit @ReviewMode (18.5s)
-  ✘  18 …TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (17.4s)
-  -  19 …om scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
-
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:317:5 ›Start from scratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft 
-
-    Error: Failed to save draft: My Assets tree item not visible after 15000ms
-
-       at ..\page-objects\survey\surveyBuilder.page.ts:553
-
-      551 |       await this.fillSaveCopyDialog(title);
-      552 |     } catch (error) {
-    > 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      554 |     }
-      555 |   }
-      556 |
-        at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
-
-    attachment #1: screenshot (image/png) ────────────────────────
-    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ─────────
-    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\attachments\start-from-scratch-video-a58a68ca9b3201b4c93add7b5e42fa781d79c2a9.webm
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ───────────────────────
-    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:317:5 › Start from scratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft 
-  1 did not run
-  17 passed (3.6m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
------------------------------------
-Error: Failed to save draft: My Assets tree item not visible after 15000ms
-
-   at ..\page-objects\survey\surveyBuilder.page.ts:553
-
-  551 |       await this.fillSaveCopyDialog(title);
-  552 |     } catch (error) {
-> 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  554 |     }
-  555 |   }
-  556 |
-    at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
-
-TC_BS_SAVE_DRAFT: Save survey as draft
-survey/start-from-scratch.spec.ts:317
-17.4s
-chromiumSaveDraft
-serial
-Copy prompt
-Error: Failed to save draft: My Assets tree item not visible after 15000ms
-
-   at ..\page-objects\survey\surveyBuilder.page.ts:553
-
-  551 |       await this.fillSaveCopyDialog(title);
-  552 |     } catch (error) {
-> 553 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  554 |     }
-  555 |   }
-  556 |
-    at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:553:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
-Filter steps
-Before Hooks
-17ms
-Wait for selector locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-66ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-83ms
-Wait for selector locator('[data-test-id=\'save-a-copy-title-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-1.9s
-Fill "SaveDraft_1792559310801" locator('[data-test-id=\'save-a-copy-title-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-82ms
-Wait for selector locator('role=treeitem[name="My Assets"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.1s
-After Hooks
-1.6s
-Worker Cleanup
+test('test', async ({ page }) => {
+  await page.goto('https://niqloginuat.identity.nielseniq.io/as/authorize?response_type=code&scope=openid%20email%20profile%20offline_access%201bd20d33-5a7e-404a-a849-6ab1b3923a24.access&client_id=1bd20d33-5a7e-404a-a849-6ab1b3923a24&state=SRzD9TtTewTGhq1iyo8vDz0VKEvk68jA0rrqQv_KDaw&redirect_uri=https%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=RrYgPV75gxfvx4n16VnPOp-JAZP0w2Jlqm_-x-W-pG8&code_challenge=YgJ_OvWyP7jUxPUBKlp7rIacOK0R_WcYPu8ji8KaTVA&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Email' }).click({
+    modifiers: ['ControlOrMeta']
+  });
+  await page.getByRole('textbox', { name: 'Email' }).fill('automation1gen@nielseniq.com');
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTemplates@2027');
+  await page.getByRole('button', { name: 'Verify' }).click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
+  await page.getByText('Start from scratchBuild your').click();
+  await page.locator('[data-test-id="btn-next-dataset"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="apply-dataset-btn"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA"]').click();
+  await page.locator('niq-checkbox').nth(5).click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-closeButton"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-navigationItemLabel_Channel"]').click();
+  await page.locator('div:nth-child(5) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.locator('[data-test-id="ds-Period_Dimension"]').click();
+  await page.locator('[data-test-id="ds-delete"]').click();
+  await page.locator('[data-test-id="ds-addButton"]').click();
+  await page.locator('[data-test-id="ds-filterOut_Package_null"]').nth(2).click();
+  await page.locator('div:nth-child(10) > .checkbox-container.checkbox-container-non-fact > .item-value-checkbox').click();
+  await page.locator('[data-test-id="ds-breadcrumbDoneButton"]').click();
+  await page.getByRole('button', { name: 'Search for Panelists' }).click();
+  await page.locator('[data-test-id="select-response-count-250"]').click();
+  await page.locator('[data-test-id="proceed-to-survey"]').click();
+  await page.locator('[data-test-id="question-type-STAR_RATING"]').click();
+  await page.getByRole('textbox', { name: 'Question', exact: true }).fill('testing');
+  await page.locator('div').filter({ hasText: '1. Required Discard changes' }).nth(2).click();
+  await page.locator('niq-icon-button').nth(2).click();
+  await page.locator('niq-icon-button').nth(2).click();
+  await page.locator('[data-test-id="validate-survey"]').click();
+  await page.locator('[data-test-id="-close-button"]').click();
+  await page.locator('[data-test-id="save-draft"]').click();
+  await page.locator('[data-test-id="save-a-copy-title-input"]').fill('Automation Cocegen');
+  await page.locator('[data-test-id="create-new-folder-label"]').click();
+  await page.locator('[data-test-id="create-folder-dialog-input"]').click();
+  await page.locator('[data-test-id="create-folder-dialog-input"]').fill('Codegen survey');
+  await page.locator('[data-test-id="create-folder-dialog-accept-button"]').click();
+  await page.getByRole('treeitem', { name: '  My Assets' }).click();
+  await page.locator('.arrow').click();
+  await page.getByRole('treeitem', { name: ' Codegen Automation' }).click();
+  await page.getByRole('treeitem', { name: ' Codegen survey' }).click();
+  await page.locator('[data-test-id="save-pending-changes-button"]').click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.locator('[data-test-id="validate-survey"]').click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.locator('[data-test-id="publish-survey"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('[data-test-id="ds-Geography_Dimension"]').click();
+  await page.locator('[data-test-id="ds-Demographic_Dimension"]').click();
+  await page.locator('[data-test-id="ds-Period_Dimension"]').click();
+  await page.getByText('questions').click();
+  await page.getByText('250 responses').click();
+  await page.getByText('Review survey details').click();
+  await page.locator('[data-test-id="-footer"]').getByRole('button', { name: 'Publish survey' }).click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/my-assets');
+  await page.locator('[data-test-id="cell-survey-name-row-0"] [data-test-id="survey-grid-title"]').click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_16952ED74E8A000ADBEEBA28393D3B1E');
+  await page.getByText('Automation Cocegen').click();
+  await page.locator('[data-test-id="validate-survey"]').click();
+  await page.getByText('Validating your survey Optiq').click();
+  await page.getByText('Automation Cocegen View Optiq feedback Save draft Review Survey Delete survey 1').click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.locator('[data-test-id="publish-survey"]').click();
+  await page.locator('[data-test-id="ds-Product_Dimension"]').click();
+  await page.locator('[data-test-id="ds-Retailer_Dimension"]').click();
+  await page.locator('.publish-review-details').click();
+  await page.locator('[data-test-id="-footer"]').getByRole('button', { name: 'Publish survey' }).click();
+  await page.locator('[data-test-id="-description"]').click();
+  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey/my-assets');
+  await page.locator('[data-test-id="cell-survey-access-row-0"]').getByTitle('Duplicate').click();
+});
