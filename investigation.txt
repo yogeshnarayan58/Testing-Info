@@ -1,45 +1,150 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 20 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✓   1 …ch option on the survey home page @LandStartFromScratch (21.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 …nd confirm the Choose a dataset screen @DatasetSelection (3.6s)
+  ✓   3 … for Panelists after all 5 filters are set @DataSummary (48.2s)
+  ✓   4 … builder after selecting a response count @ResponseCount (4.9s)
+  ✓   5 …ld Survey page after proceeding @ProceedToSurveyBuilder (773ms)
+  ✓   6 …m scratch › TC_BS_02: Edit survey title @EditSurveyTitle (1.2s)
+  ✓   7 …S_03: Add a Single Choice question @SingleChoiceQuestion (2.0s)
+  ✓   8 …: Add a Multiple Choice question @MultipleChoiceQuestion (4.0s)
+  ✓   9 …cratch › TC_BS_05: Add a Rating question @RatingQuestion (3.7s)
+  ✓  10 …rom scratch › TC_BS_07: Add an NPS question @NPSQuestion (2.9s)
+  ✓  11 …TC_BS_08: Add a Point Scale question @PointScaleQuestion (5.0s)
+  ✓  12 …TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (5.0s)
+  ✓  13 …etains data and back to Build Survey @StepperNavigation (22.1s)
+  ✓  14 …question and Duplicate with limit message @MaxQuestions (13.4s)
+  ✓  15 … per-question checkboxes are visible @ReviewModeControls (2.6s)
+  ✓  16 …one, delete, and exit keeps deletions @ReviewModeActions (3.6s)
+  ✓  17 …ect/unselect all, expand/collapse all, exit @ReviewMode (20.9s)
+  ✓  18 …atch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (4.5s)
+  ✘  19 … recommendations and Optiq feedback link @ValidateSurvey (9.7s)
+  -  20 …art from scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:325:7 › Startfrom scratch › TC_BS_23: Validate survey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
+
+    Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:331:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────
+    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ───────────────
+    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\attachments\start-from-scratch-video-0da417a7aef4cff91dde4b2485500cb24126c39e.webm
+    ────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────
+    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:325:7 › Start from scratch › TC_BS_23: Validate survey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
+  1 did not run
+  18 passed (4.1m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+-------------------
+serial
 Copy prompt
-Error: Failed to publish survey: Publish survey button not visible after 15000ms
+Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
+expect(received).toBeTruthy()
 
-   at ..\page-objects\survey\surveyBuilder.page.ts:859
+Received: false
 
-  857 |       }
-  858 |     } catch (error) {
-> 859 |       throw new Error(`Failed to publish survey: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  860 |     }
-  861 |   }
-  862 |
-    at SurveyBuilderPage.publishSurvey (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:859:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:332:5
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:331:15
 Filter steps
 Before Hooks
-31ms
+109ms
 Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-79ms
+143ms
 Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 5.0s
 Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-44ms
+37ms
 Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-540ms
+685ms
 Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-82ms
+74ms
 Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-121ms
+160ms
 Wait for selector locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-82ms
+96ms
 Fill "Rate your experience 3" locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-71ms
+92ms
 Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-34ms
+43ms
 Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-387ms
+518ms
 Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-27ms
-Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
+14ms
+Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+12ms
+Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+82ms
+Wait for selector locator('text=Validating your survey')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+128ms
 After Hooks
-5.7s
+6.1s
 Worker Cleanup
 2ms
