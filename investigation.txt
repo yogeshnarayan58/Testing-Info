@@ -2,7 +2,7 @@ yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
 ◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -16,75 +16,70 @@ Global setup completed. Auth state saved.
 
 Running 20 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 …ch option on the survey home page @LandStartFromScratch (21.1s)
+  ✓   1 …ch option on the survey home page @LandStartFromScratch (15.8s)
 Auth state loaded from storage/auth.json
-  ✓   2 …nd confirm the Choose a dataset screen @DatasetSelection (3.6s)
-  ✓   3 … for Panelists after all 5 filters are set @DataSummary (48.2s)
-  ✓   4 … builder after selecting a response count @ResponseCount (4.9s)
-  ✓   5 …ld Survey page after proceeding @ProceedToSurveyBuilder (773ms)
-  ✓   6 …m scratch › TC_BS_02: Edit survey title @EditSurveyTitle (1.2s)
-  ✓   7 …S_03: Add a Single Choice question @SingleChoiceQuestion (2.0s)
-  ✓   8 …: Add a Multiple Choice question @MultipleChoiceQuestion (4.0s)
-  ✓   9 …cratch › TC_BS_05: Add a Rating question @RatingQuestion (3.7s)
-  ✓  10 …rom scratch › TC_BS_07: Add an NPS question @NPSQuestion (2.9s)
-  ✓  11 …TC_BS_08: Add a Point Scale question @PointScaleQuestion (5.0s)
-  ✓  12 …TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (5.0s)
-  ✓  13 …etains data and back to Build Survey @StepperNavigation (22.1s)
-  ✓  14 …question and Duplicate with limit message @MaxQuestions (13.4s)
-  ✓  15 … per-question checkboxes are visible @ReviewModeControls (2.6s)
-  ✓  16 …one, delete, and exit keeps deletions @ReviewModeActions (3.6s)
-  ✓  17 …ect/unselect all, expand/collapse all, exit @ReviewMode (20.9s)
-  ✓  18 …atch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (4.5s)
-  ✘  19 … recommendations and Optiq feedback link @ValidateSurvey (9.7s)
-  -  20 …art from scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
+  ✓   2 …nd confirm the Choose a dataset screen @DatasetSelection (4.0s)
+  ✓   3 … for Panelists after all 5 filters are set @DataSummary (42.1s)
+  ✓   4 … builder after selecting a response count @ResponseCount (5.2s)
+  ✓   5 …ld Survey page after proceeding @ProceedToSurveyBuilder (570ms)
+  ✓   6 … scratch › TC_BS_02: Edit survey title @EditSurveyTitle (586ms)
+  ✓   7 …S_03: Add a Single Choice question @SingleChoiceQuestion (1.9s)
+  ✓   8 …: Add a Multiple Choice question @MultipleChoiceQuestion (3.9s)
+  ✓   9 …cratch › TC_BS_05: Add a Rating question @RatingQuestion (2.9s)
+  ✓  10 …rom scratch › TC_BS_07: Add an NPS question @NPSQuestion (3.1s)
+  ✓  11 …TC_BS_08: Add a Point Scale question @PointScaleQuestion (4.2s)
+  ✓  12 …TC_BS_09: Add a Multi Scale question @MultiScaleQuestion (4.8s)
+  ✓  13 …etains data and back to Build Survey @StepperNavigation (20.1s)
+  ✓  14 …question and Duplicate with limit message @MaxQuestions (11.6s)
+  ✓  15 …per-question checkboxes are visible @ReviewModeControls (978ms)
+  ✓  16 …one, delete, and exit keeps deletions @ReviewModeActions (2.7s)
+  ✓  17 …ect/unselect all, expand/collapse all, exit @ReviewMode (19.1s)
+  ✓  18 …atch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (3.8s)
+  ✓  19 …recommendations and Optiq feedback link @ValidateSurvey (11.4s)
+  ✘  20 … scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey (28.8s)
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:325:7 › Startfrom scratch › TC_BS_23: Validate survey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:352:7 › Startfrom scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey 
 
-    Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
-    expect(received).toBeTruthy()
+    Error: Failed to verify publish succeeded: Publish failed: " ErrorSurvey publish failed for surveyId: svy_E79E47C787C16DFA88DAAE8839FED023 " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_E79E47C787C16DFA88DAAE8839FED023, elapsed: 7.4s)
 
-    Received: false
+       at ..\page-objects\survey\surveyBuilder.page.ts:974
 
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:331:15
+      972 |       throw new Error(`Timed out waiting for navigation to /my-assets after Confirm (url: ${currentUrl}, elapsed: ${elapsedSeconds()}s, .survey-action-toast text: ${toastText})`);
+      973 |     } catch (error) {
+    > 974 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      975 |     }
+      976 |   }
+      977 |
+        at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:974:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:374:35
 
     attachment #1: screenshot (image/png) ──────────────────────────────
-    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\test-failed-1.png
+    test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\error-context.md
 
     attachment #3: start-from-scratch-video (video/webm) ───────────────
-    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\attachments\start-from-scratch-video-0da417a7aef4cff91dde4b2485500cb24126c39e.webm
+    test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\attachments\start-from-scratch-video-8aa694d82bfcae40aaf7a05160e842419a0d87a4.webm
     ────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\error-context.md
 
     attachment #5: trace (application/zip) ─────────────────────────────
-    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
+    test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--33f90-C-BS-PUBLISH-Publish-survey-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:325:7 › Start from scratch › TC_BS_23: Validate survey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
-  1 did not run
-  18 passed (4.1m)
+    [chromium] › tests\survey\start-from-scratch.spec.ts:352:7 › Start from scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey 
+  19 passed (4.2m)
 
 To open last HTML report run:
 
@@ -93,58 +88,58 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
--------------------
+-------------
+TC_BS_PUBLISH: Publish survey
+survey/start-from-scratch.spec.ts:352
+28.8s
+chromiumPublishSurvey
 serial
 Copy prompt
-Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
-expect(received).toBeTruthy()
+Error: Failed to verify publish succeeded: Publish failed: " Error  Survey publish failed for surveyId: svy_E79E47C787C16DFA88DAAE8839FED023 " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_E79E47C787C16DFA88DAAE8839FED023, elapsed: 7.4s)
 
-Received: false
+   at ..\page-objects\survey\surveyBuilder.page.ts:974
 
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:331:15
+  972 |       throw new Error(`Timed out waiting for navigation to /my-assets after Confirm (url: ${currentUrl}, elapsed: ${elapsedSeconds()}s, .survey-action-toast text: ${toastText})`);
+  973 |     } catch (error) {
+> 974 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  975 |     }
+  976 |   }
+  977 |
+    at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:974:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:374:35
 Filter steps
 Before Hooks
-109ms
+15ms
 Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-143ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-5.0s
-Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-37ms
-Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-685ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-74ms
-Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-160ms
-Wait for selector locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-96ms
-Fill "Rate your experience 3" locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-92ms
-Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-43ms
-Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-518ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-14ms
+77ms
 Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-82ms
-Wait for selector locator('text=Validating your survey')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-128ms
+5.0s
+Wait for selector locator('[data-test-id=\'-close-button\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+43ms
+Click locator('[data-test-id=\'-close-button\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+68ms
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+68ms
+Click locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+198ms
+Wait for selector locator('[data-test-id=\'save-a-copy-title-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.4s
+Wait for selector locator('text=Review survey details')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+127ms
+Wait for selector locator('.publish-review-details [data-test-id$=\'_Dimension\']').nth(4) ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+58ms
+Wait for selector locator('.publish-review-details')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+33ms
+Wait for selector locator('text=Review survey details') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Wait for selector locator('[data-test-id=\'-footer\']').locator('role=button[name="Publish survey"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+22ms
+Click locator('[data-test-id=\'-footer\']').locator('role=button[name="Publish survey"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+111ms
+Wait for selector locator('role=status[name="Publishing survey"]') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+253ms
 After Hooks
-6.1s
+3.9s
 Worker Cleanup
 2ms
