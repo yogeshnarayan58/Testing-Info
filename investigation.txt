@@ -87,3 +87,95 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
+
+------------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 19 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …ion on the survey home page @LandStartFromScratch (16.6s)
+Auth state loaded from storage/auth.json
+  ✓   2 …firm the Choose a dataset screen @DatasetSelection (2.2s)
+  ✓   3 …anelists after all 5 filters are set @DataSummary (43.9s)
+  ✓   4 …er after selecting a response count @ResponseCount (5.2s)
+  ✓   5 …vey page after proceeding @ProceedToSurveyBuilder (503ms)
+  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (255ms)
+  ✓   7 …dd a Single Choice question @SingleChoiceQuestion (14.4s)
+  ✓   8 …a Multiple Choice question @MultipleChoiceQuestion (3.5s)
+  ✓   9 … › TC_BS_05: Add a Rating question @RatingQuestion (2.7s)
+  ✓  10 …ratch › TC_BS_07: Add an NPS question @NPSQuestion (2.7s)
+  ✓  11 …08: Add a Point Scale question @PointScaleQuestion (3.9s)
+  ✓  12 …09: Add a Multi Scale question @MultiScaleQuestion (3.6s)
+  ✓  13 … data and back to Build Survey @StepperNavigation (19.9s)
+  ✓  14 …on and Duplicate with limit message @MaxQuestions (10.3s)
+  ✓  15 …estion checkboxes are visible @ReviewModeControls (789ms)
+  ✓  16 …elete, and exit keeps deletions @ReviewModeActions (2.7s)
+  ✓  17 …select all, expand/collapse all, exit @ReviewMode (18.5s)
+  ✘  18 …TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (16.5s)
+  -  19 …om scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:317:5 ›Start from scratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft 
+
+    Error: Failed to save draft: My Assets tree item not visible after 15000ms
+
+       at ..\page-objects\survey\surveyBuilder.page.ts:548
+
+      546 |       await this.fillSaveCopyDialog(title);
+      547 |     } catch (error) {
+    > 548 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      549 |     }
+      550 |   }
+      551 |
+        at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\surveyBuilder.page.ts:548:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:320:5
+
+    attachment #1: screenshot (image/png) ────────────────────────
+    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ─────────
+    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\attachments\start-from-scratch-video-d45bed5c7aa89957ad31d0249e290c65d1e82ca3.webm
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────
+    test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--87330--DRAFT-Save-survey-as-draft-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:317:5 › Start from scratch › TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft 
+  1 did not run
+  17 passed (3.7m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
