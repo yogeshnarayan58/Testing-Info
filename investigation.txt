@@ -1,134 +1,16 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git --no-pager diff --stat HEAD...origin/main -- .
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git add page-objects/common/common-page.ts page-objects/common/select-panelist.page.ts utils/base-page-factory.ts
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git commit -m "test: video attach helper, remove unused page helpers"
-[feature/start-with-prompt-ai-automation f7f0cf8] test: video attach helper, remove unused page helpers
- Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
-Your name and email address were configured automatically based
-on your username and hostname. Please check that they are accurate.
-You can suppress this message by setting them explicitly. Run the
-following command and follow the instructions in your editor to edit
-your configuration file:
-
-    git config --global --edit
-
-After doing this, you may fix the identity used for this commit with:
-
-    git commit --amend --reset-author
-
- 3 files changed, 16 insertions(+), 23 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git status
-On branch feature/start-with-prompt-ai-automation
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
-        modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
-
-no changes added to commit (use "git add" and/or "git commit -a")
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git add ../libs
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git commit -m "chore: data-test-ids in build-survey templates"
-[feature/start-with-prompt-ai-automation 6bd2bbf] chore: data-test-ids in build-survey templates
- Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
-Your name and email address were configured automatically based
-on your username and hostname. Please check that they are accurate.
-You can suppress this message by setting them explicitly. Run the
-following command and follow the instructions in your editor to edit
-your configuration file:
-
-    git config --global --edit
-
-After doing this, you may fix the identity used for this commit with:
-
-    git commit --amend --reset-author
-
- 3 files changed, 7 insertions(+), 4 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git fetch origin
-remote: Enumerating objects: 1740, done.
-remote: Counting objects: 100% (839/839), done.
-remote: Compressing objects: 100% (208/208), done.
-remote: Total 1740 (delta 649), reused 727 (delta 602), pack-reused 901 (from 1)
-Receiving objects: 100% (1740/1740), 884.85 KiB | 5.50 MiB/s, done.
-Resolving deltas: 100% (1002/1002), completed with 118 local objects.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * [new branch]        cache-mechanism-implementatiion -> origin/cache-mechanism-implementatiion
- * [new branch]        feature/RBOC-220762-validation-changes ->origin/feature/RBOC-220762-validation-changes
- * [new branch]        feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration -> origin/feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration
- * [new branch]        feature/RBOC-220770-pie-chart-integration-> origin/feature/RBOC-220770-pie-chart-integration
- * [new branch]        feature/RBOC-222565 -> origin/feature/RBOC-222565
- * [new branch]        feature/build-survey-auth-guard -> origin/feature/build-survey-auth-guard
- * [new branch]        feature/cycode-vulnerability-fixes -> origin/feature/cycode-vulnerability-fixes
-   16cf281c..9efc9faa  gh-pages            -> origin/gh-pages
-   afc9ff53..619df2ce  main                -> origin/main
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git --no-pager log HEAD..origin/main --oneline -- . ../libs | head -20
-585e3afa Survey Modernization Library version 26.21.17-dev published to Artifactory
-f3ae461c RBOC-219621: Updated validate API response model and payload
-05c72558 Survey Modernization Library version 26.21.16-dev published to Artifactory
-9dcb2116 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
-aa7b18ed Survey Modernization Library version 26.21.15-dev published to Artifactory
-420a8e91 Adding fix for the readFileSync error
-dc6dbd82 Merge branch 'feature/RBOC-222572-show-survey-detail-right-panel' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
-b83bc8fa Add role attribute to survey avatar span
-fd7b37eb Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
-bb59cb91 Unit test fix
-62a4d1c7 Add unit tests for GenerateSurveyComponent and SurveyModelValidatorService
-c878aa2f Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
-e2165f0f Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
-906103d0 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
-19c7d987 Survey Modernization Library version 26.21.14-dev published to Artifactory
-bd05438f Merge branch 'main' into feature/RBOC-219621-V1
-846bab70 Survey Modernization Library version 26.21.13-dev published to Artifactory
-12370736 Merge branch 'main' into feature/RBOC-219621-V1
-2d0163c6 Feature/RBOC - 222569 folder functionality (#173)
-a56383e3 Added info side panel
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git --no-pager diff --stat HEAD...origin/main -- . ../libs | tail -15
- .../services/question-chart-preview.service.ts     |  23 +
- .../common-side-panel.component.html               |  15 +
- .../common-side-panel.component.scss               |  34 +
- .../common-side-panel.component.ts                 |  36 +
- .../crf-survey-wrapper.component.spec.ts           |  17 +-
- .../crf-survey-wrapper.component.ts                |   3 +
- .../survey-avatar/survey-avatar.component.html     |   7 +
- .../survey-avatar/survey-avatar.component.scss     |  21 +
- .../survey-avatar/survey-avatar.component.ts       |  17 +
- .../src/lib/shared/styles/_question-title.scss     |  18 +
- .../lib/shared/utils/survey-folder.util.spec.ts    |   4 +
- .../src/lib/survey-mod.routes.spec.ts              |  58 ++
- libs/survey-mod-lib/src/lib/survey-mod.routes.ts   | 241 +++---
- libs/survey-mod-lib/src/public-api.ts              |   5 +-
- 115 files changed, 9222 insertions(+), 1102 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git status
-On branch feature/start-with-prompt-ai-automation
-nothing to commit, working tree clean
+$ git --no-pager diff --stat HEAD...origin/main -- ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions
+ .../preview-mode/preview-mode.component.html       |  6 ++-
+ .../preview-mode/preview-mode.component.scss       |  2 +
+ .../preview-mode/preview-mode.component.spec.ts    |  2 +
+ .../preview-mode/preview-mode.component.ts         | 44 +++++++++++++---
+ .../question-generator/question-generator.html     | 60 ++++++++++++----------
+ .../question-generator/question-generator.spec.ts  |  2 +-
+ .../question-generator/question-generator.ts       | 10 ++--
+ 7 files changed, 87 insertions(+), 39 deletions(-)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
