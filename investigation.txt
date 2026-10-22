@@ -1,11 +1,10 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  16 [chromium] › tests\survey\shared\build-survey.shared.ts:101:7 › Start with a prompt › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @StartWithPrompt @BuildSurvey (2.0s)
-    Error: Expected questions 0/1 to swap (before: ["How would you rate the appliance you bought on the following attributes? *", "How likely are you to buy the same appliancebrand again from this store? *"], after: ["How likely are you to buy the same appliancebrand again from this store? *", "Which of the following best describes your overall experience with the appliance purchase?"])
-    test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\test-failed-1.png
+$ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
+  ✘  28 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:337:7 › Start from scratch › TC_BS_09: Validate survey is disabled with fewer than 3 questions @ValidateDisabled (15.2s)
+    Error: Failed to delete questions down to 2: Failed to enter review mode: Review survey button not visible after 15000ms
+    test-results\survey-start-from-scratch--2eeea-with-fewer-than-3-questions-chromium\test-failed-1.png
   1 failed
-  12 did not run
-  15 passed (2.5m)
+  56 passed (6.9m)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
