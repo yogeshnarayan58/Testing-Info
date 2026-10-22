@@ -1,29 +1,38 @@
-TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey
-survey/common-test-cases/build-survey-common-test-cases.ts:287
-11.3s
-chromiumStepperNavigation
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
+  ✘  20 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:310:7 › Start from scratch › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey @StepperNavigation (11.4s)
+    Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
+    test-results\survey-start-from-scratch--1f65e-ta-and-back-to-Build-Survey-chromium\test-failed-1.png
+  1 failed
+  9 did not run
+  51 passed (9.1m)
+--------
 serial
 Copy prompt
 Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
 
-  329 |       );
-  330 |     } catch (error) {
-> 331 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
+  352 |       );
+  353 |     } catch (error) {
+> 354 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
       |             ^
-  332 |     }
-  333 |   });
-  334 | }
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:331:13
+  355 |     }
+  356 |   });
+  357 | }
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:354:13
 Filter steps
 Before Hooks
-20ms
+9ms
 Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-60ms
+71ms
 Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-78ms
+105ms
 Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 10.0s
 After Hooks
-2.0s
+2.6s
 Worker Cleanup
-2ms
+3ms
+
+screenshot
+
+trace
