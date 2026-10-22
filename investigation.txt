@@ -1,6 +1,10 @@
+
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git commit -m "test: Build Survey common test cases for both flows, builder page moved to common"
-[feature/start-with-prompt-ai-automation 8197db2] test: Build Survey common test cases for both flows, builder page moved to common
+$ git add page-objects/common/common-page.ts page-objects/common/select-panelist.page.ts utils/base-page-factory.ts
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git commit -m "test: video attach helper, remove unused page helpers"
+[feature/start-with-prompt-ai-automation f7f0cf8] test: video attach helper, remove unused page helpers
  Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
 Your name and email address were configured automatically based
 on your username and hostname. Please check that they are accurate.
@@ -14,73 +18,117 @@ After doing this, you may fix the identity used for this commit with:
 
     git commit --amend --reset-author
 
- 9 files changed, 2438 insertions(+), 1119 deletions(-)
- rename e2e/locators/survey/{surveyBuilder.locator.json => survey-builder.locator.json} (72%)
- create mode 100644 e2e/page-objects/common/survey-builder.page.ts
- delete mode 100644 e2e/page-objects/survey/surveyBuilder.page.ts
- create mode 100644 e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts
- delete mode 100644 e2e/tests/survey/survey-builder.spec.ts
+ 3 files changed, 16 insertions(+), 23 deletions(-)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git --no-pager diff -- page-objects/common/common-page.ts page-objects/common/select-panelist.page.ts utils/base-page-factory.ts package-lock.json ../libs | grep -E "^[+-]" | grep -v "^+++\|^---" | head -150
--    "node_modules/asynckit": {
--      "version": "0.4.0",
--      "resolved": "https://nielseniq.jfrog.io/artifactory/api/npm/npmjs-remote/asynckit/-/asynckit-0.4.0.tgz",
--      "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
--      "license": "MIT"
--    },
--    "node_modules/axios": {
-+    "node_modules/asynck 
--
--  public getBasePage(): BasePage {
--    return this.basePage;
--  }
--  async clickSelectPanelistsTab(): Promise<void> {
--    const selectPanelistsTab = this.webActionHandler.getWebElement(
--      this.resourceManager.getResource('selectPanelistsTab', SELECT_PANELIST_PAGE_COMPONENT_NAME)
--    );
--    await selectPanelistsTab.waitFor();
--    await selectPanelistsTab.click();
--    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
--  }
--
--  async clickBuildSurvey(): Promise<void> {
--    const buildSurveyButton = this.webActionHandler.getWebElement(
--      this.resourceManager.getResource('buildSurveyButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
--    );
--    await buildSurveyButton.waitFor();
--    await buildSurveyButton.click();
--    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
--  }
--
--import { chromium, test } from '@playwright/test';
-+import { chromium, test, type TestInfo } from '@playwright/test';
-+/** Shared by every `describe.serial` suite's `afterAll`: closes the browser (finalizing the .webm video,
-+ *  same as `closeBrowser()` alone did before), then attaches the video to the report if one was recorded.
-+ *  A missing video (e.g. video not enabled) is logged, not thrown - it must never fail the suite. */
-+export async function closeBrowserAndAttachVideo(basePage: BasePage, testInfo: TestInfo, attachmentName: string): Promise<void> {
-+  const page = (BasePage as any).page as import('playwright').Page | undefined; // gta exposes no public getter for the raw Page
-+  const video = page?.video();
-+  await basePage.getWebActions().closeBrowser(); // closes the context, which finalizes the .webm file
-+  const videoPath = await video?.path().catch(() => undefined);
-+  if (videoPath) {
-+    await testInfo.attach(attachmentName, { path: videoPath, contentType: 'video/webm' });
-+  } else {
-+    console.log(`${attachmentName}: video path unavailable`);
-+  }
-+}
-+
--                            <niq-button class="rephrase-action"
-+                            <niq-button class="rephrase-action"[attr.data-test-id]="'rephrase-with-ai-' + i"
--                                <textarea class="rephrase-input" rows="4" placeholder="Type your prompt..."
-+                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
--                                <niq-icon-button class="rephrase-send"
-+                                <niq-icon-button class="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
--          <div class="question-count-error" role="alert">
-+          <div class="question-count-error" data-test-id="question-count-error" role="alert">
-+      data-test-id="reprompt-input"
-+          data-test-id="reprompt-close"
-+          data-test-id="reprompt-submit"
+$ git status
+On branch feature/start-with-prompt-ai-automation
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+        modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git add ../libs
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git commit -m "chore: data-test-ids in build-survey templates"
+[feature/start-with-prompt-ai-automation 6bd2bbf] chore: data-test-ids in build-survey templates
+ Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git fetch origin
+remote: Enumerating objects: 1740, done.
+remote: Counting objects: 100% (839/839), done.
+remote: Compressing objects: 100% (208/208), done.
+remote: Total 1740 (delta 649), reused 727 (delta 602), pack-reused 901 (from 1)
+Receiving objects: 100% (1740/1740), 884.85 KiB | 5.50 MiB/s, done.
+Resolving deltas: 100% (1002/1002), completed with 118 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * [new branch]        cache-mechanism-implementatiion -> origin/cache-mechanism-implementatiion
+ * [new branch]        feature/RBOC-220762-validation-changes ->origin/feature/RBOC-220762-validation-changes
+ * [new branch]        feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration -> origin/feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration
+ * [new branch]        feature/RBOC-220770-pie-chart-integration-> origin/feature/RBOC-220770-pie-chart-integration
+ * [new branch]        feature/RBOC-222565 -> origin/feature/RBOC-222565
+ * [new branch]        feature/build-survey-auth-guard -> origin/feature/build-survey-auth-guard
+ * [new branch]        feature/cycode-vulnerability-fixes -> origin/feature/cycode-vulnerability-fixes
+   16cf281c..9efc9faa  gh-pages            -> origin/gh-pages
+   afc9ff53..619df2ce  main                -> origin/main
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git --no-pager log HEAD..origin/main --oneline -- . ../libs | head -20
+585e3afa Survey Modernization Library version 26.21.17-dev published to Artifactory
+f3ae461c RBOC-219621: Updated validate API response model and payload
+05c72558 Survey Modernization Library version 26.21.16-dev published to Artifactory
+9dcb2116 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
+aa7b18ed Survey Modernization Library version 26.21.15-dev published to Artifactory
+420a8e91 Adding fix for the readFileSync error
+dc6dbd82 Merge branch 'feature/RBOC-222572-show-survey-detail-right-panel' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
+b83bc8fa Add role attribute to survey avatar span
+fd7b37eb Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
+bb59cb91 Unit test fix
+62a4d1c7 Add unit tests for GenerateSurveyComponent and SurveyModelValidatorService
+c878aa2f Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-222572-show-survey-detail-right-panel
+e2165f0f Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
+906103d0 Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-227812/survey-validator-modal-ui
+19c7d987 Survey Modernization Library version 26.21.14-dev published to Artifactory
+bd05438f Merge branch 'main' into feature/RBOC-219621-V1
+846bab70 Survey Modernization Library version 26.21.13-dev published to Artifactory
+12370736 Merge branch 'main' into feature/RBOC-219621-V1
+2d0163c6 Feature/RBOC - 222569 folder functionality (#173)
+a56383e3 Added info side panel
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git --no-pager diff --stat HEAD...origin/main -- . ../libs | tail -15
+ .../services/question-chart-preview.service.ts     |  23 +
+ .../common-side-panel.component.html               |  15 +
+ .../common-side-panel.component.scss               |  34 +
+ .../common-side-panel.component.ts                 |  36 +
+ .../crf-survey-wrapper.component.spec.ts           |  17 +-
+ .../crf-survey-wrapper.component.ts                |   3 +
+ .../survey-avatar/survey-avatar.component.html     |   7 +
+ .../survey-avatar/survey-avatar.component.scss     |  21 +
+ .../survey-avatar/survey-avatar.component.ts       |  17 +
+ .../src/lib/shared/styles/_question-title.scss     |  18 +
+ .../lib/shared/utils/survey-folder.util.spec.ts    |   4 +
+ .../src/lib/survey-mod.routes.spec.ts              |  58 ++
+ libs/survey-mod-lib/src/lib/survey-mod.routes.ts   | 241 +++---
+ libs/survey-mod-lib/src/public-api.ts              |   5 +-
+ 115 files changed, 9222 insertions(+), 1102 deletions(-)
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git status
+On branch feature/start-with-prompt-ai-automation
+nothing to commit, working tree clean
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
