@@ -1,38 +1,20 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  20 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:310:7 › Start from scratch › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey @StepperNavigation (11.4s)
-    Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
-    test-results\survey-start-from-scratch--1f65e-ta-and-back-to-Build-Survey-chromium\test-failed-1.png
+$  npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
+  ✘  43 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:33:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (37.0s)
+    Error: Failed to set Required (index 0) to true: Failed to openquestion 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
   1 failed
-  9 did not run
-  51 passed (9.1m)
---------
-serial
-Copy prompt
-Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
+  19 did not run
+  41 passed (7.8m)
 
-  352 |       );
-  353 |     } catch (error) {
-> 354 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  355 |     }
-  356 |   });
-  357 | }
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:354:13
-Filter steps
-Before Hooks
-9ms
-Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-71ms
-Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-105ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10.0s
-After Hooks
-2.6s
-Worker Cleanup
-3ms
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$  npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
+  ✘  39 [chromium] › tests\survey\start-with-prompt.spec.ts:104:7 ›Start with a prompt › Rephrase with AI: Should clear the loading state and prompt after submit @StartWithPrompt @GenerateSurvey (16.1s)
+    Error: Failed to rephrase question 0: Rephrase send button (index 0) stayed in loading state after 15000ms
+    test-results\survey-start-with-prompt-S-dc2cc-ate-and-prompt-after-submit-chromium\test-failed-1.png
+  1 failed
+  23 did not run
+  37 passed (6.9m)
 
-screenshot
-
-trace
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
