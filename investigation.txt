@@ -1,186 +1,41 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  18 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:396:7 › Start from scratch › TC_BS_04: Options boundary - min 2, max 15 @OptionBoundary (5.0m)
-  ✘  58 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:396:7 › Start with a prompt › TC_BS_04: Optionsboundary - min 2, max 15 @StartWithPrompt @StartWithPrompt @OptionBoundary (5.0m)
-    Error: Failed to add option to question: locator.click: Targetpage, context or browser has been closed
-    test-results\survey-start-from-scratch--ac80d-ons-boundary---min-2-max-15-chromium\test-failed-1.png
-    Error: Failed to add option to question: locator.click: Targetpage, context or browser has been closed
-    test-results\survey-start-with-prompt-S-ddf97-ons-boundary---min-2-max-15-chromium\test-failed-1.png
-  2 failed
-  12 did not run
-  45 passed (16.2m)
+  ✘  19 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:287:7 › Start from scratch › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey @StepperNavigation (11.7s)
+    Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
+    test-results\survey-start-from-scratch--1f65e-ta-and-back-to-Build-Survey-chromium\test-failed-1.png
+  1 failed
+  9 did not run
+  49 passed (8.5m)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
-----------
+--
+TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey
+survey/common-test-cases/build-survey-common-test-cases.ts:287
+11.7s
+chromiumStepperNavigation
+serial
 Copy prompt
-Test timeout of 300000ms exceeded.
-Error: Failed to add option to question: locator.click: Target page, context or browser has been closed
-Call log:
-  - waiting for locator('niq-button:has-text(\'Add option\'):visible')
-    - locator resolved to <niq-button size="small" tabindex="-1" role="button" colortheme="light" aria-disabled="true" niqtooltipposition="top" _nghost-ng-c653818712="" _ngcontent-ng-c1368459136="" class="action-link add-icon ng-tns-c653818712-192 ng-trigger ng-trigger-clickAnimation ghost light small text-neutral icon-right ng-star-inserted disabled">…</niq-button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-      - waiting 100ms
-    534 × waiting for element to be visible, enabled and stable
-        - element is not enabled
-      - retrying click action
-        - waiting 500ms
+Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
 
-
-   at ..\page-objects\common\survey-builder.page.ts:131
-
-  129 |       await this.clickWhenVisible('addOptionButton', 'Add option button');
-  130 |     } catch (error) {
-> 131 |       throw new Error(`Failed to add option to question: ${error instanceof Error ? error.message : error}`);
+  329 |       );
+  330 |     } catch (error) {
+> 331 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
       |             ^
-  132 |     }
-  133 |   }
-  134 |
-    at SurveyBuilderPage.addOptionToQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:131:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:431:5
+  332 |     }
+  333 |   });
+  334 | }
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:331:13
 Filter steps
 Before Hooks
-20ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-65ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
+24ms
 Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-26ms
+153ms
 Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-106ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-17ms
-Wait for selector locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-19ms
-Click locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-121ms
-Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-47ms
-Fill "How satisfied are you with this product?" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-96ms
-Wait for selector locator('role=textbox[name="Option 1"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-27ms
-Fill "Very satisfied" locator('role=textbox[name="Option 1"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-72ms
-Wait for selector locator('role=textbox[name="Option 2"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-28ms
-Fill "Satisfied" locator('role=textbox[name="Option 2"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-115ms
-Wait for selector locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-35ms
-Click locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-111ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-24ms
-Wait for selector locator('.question-row').nth(6)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Hover locator('.question-row').nth(6)— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-73ms
-Wait for selector locator('[niqtooltip=\'Edit\']').nth(6)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-24ms
-Click locator('[niqtooltip=\'Edit\']').nth(6)— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-134ms
-Wait for selector locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-21ms
-Evaluate locator('.option-row')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-18ms
-Evaluate locator('.option-row niq-icon.close-icon')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-18ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-37ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-136ms
-Evaluate locator('.option-row')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-39ms
-Evaluate locator('.option-row niq-icon.close-icon') ✕ 2— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-89ms
-Wait for selector locator('.option-row niq-icon.close-icon').nth(2)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-47ms
-Click locator('.option-row niq-icon.close-icon').nth(2)— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-79ms
-Evaluate locator('.option-row')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-17ms
-Evaluate locator('.option-row niq-icon.close-icon')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-20ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-28ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-109ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-94ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-144ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-25ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-129ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-61ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-162ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-58ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-157ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-30ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-160ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-80ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-133ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-82ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-169ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-54ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-144ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-30ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-184ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-74ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-170ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-63ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-99ms
-Evaluate locator('.option-row')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-78ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-44ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-121ms
-Evaluate locator('.option-row')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-46ms
-Evaluate locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-23ms
-Hover locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-88ms
-Wait for selector locator('text="You have already reached the maximum number of options."').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-429ms
-Mouse move— ../node_modules/@gfk/gta/core/web/webActions.ts:528
-48ms
-Wait for selector locator('text="You have already reached the maximum number of options."').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-179ms
-Wait for selector locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-29ms
-Click locator('niq-button:has-text(\'Add option\'):visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-4.7m
+269ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+10.1s
 After Hooks
-4.2s
+6.2s
 Worker Cleanup
-1ms
+2ms
