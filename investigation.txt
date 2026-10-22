@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey --project=chromium --workers=1 -g "<entry steps>|Validate survey"
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 -g "Start with a Prompt:|Dataset Selection|Panelist Filters|Response Count|Generate Survey:|Validate survey"
 ◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -14,69 +14,49 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 4 tests using 1 worker
+Running 7 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✘  1 …mendations and Optiq feedback link @ValidateSurvey (32ms)
-  -  2 …is disabled with fewer than 3 questions @ValidateDisabled
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-  ✘  3 …ons @StartWithPrompt @StartWithPrompt @BuildSurvey (28ms)
-  -  4 …ck link @StartWithPrompt @StartWithPrompt @ValidateSurvey
+  ✓  1 …urvey home page @StartWithPrompt @StartWithPrompt (18.6s)
+Auth state loaded from storage/auth.json
+  ✓  2 …ype and dataset @StartWithPrompt @DatasetSelection (4.8s)
+  ✓  3 …earch for panelists @StartWithPrompt @DataSummary (47.6s)
+  ✓  4 …t a response count @StartWithPrompt @ResponseCount (4.0s)
+  ✓  5 …Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✘  6 …ns @StartWithPrompt @StartWithPrompt @BuildSurvey (20.3s)
+  -  7 …ck link @StartWithPrompt @StartWithPrompt @ValidateSurvey
 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:390:7 › Start from scratch › TC_BS_23: Validate survey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:360:7 › Start with a prompt › TC_BS_09: Validate survey is disabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey 
 
-    TypeError: Cannot read properties of undefined (reading 'getWebActions')
+    Error: Failed to get publish disabled state: Get publish survey button text timed out after 15000ms
 
-       at ..\page-objects\common\common-page.ts:11
+       at ..\page-objects\common\survey-builder.page.ts:862
 
-       9 |
-      10 |   constructor(protected basePage: BasePage) {
-    > 11 |     this.webActionHandler = basePage.getWebActions();
-         |                                      ^
-      12 |     this.resourceManager = new ResourceManager({});
-      13 |   }
-      14 |
-        at CommonPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:11:38)
-        at SurveyBuilderPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:12:5)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:391:31
+      860 |       };
+      861 |     } catch (error) {
+    > 862 |       throw new Error(`Failed to get publish disabled state: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      863 |     }
+      864 |   }
+      865 |
+        at SurveyBuilderPage.getPublishDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:862:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:371:9
 
-    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
-
-    Error Context: test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\error-context.md
-
-    attachment #3: trace (application/zip) ──────────────────────
-    test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--a7f4c-ons-and-Optiq-feedback-link-chromium\trace.zip
-
+    attachment #1: screenshot (image/png) ───────────────────────
+    test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\test-failed-1.png
     ─────────────────────────────────────────────────────────────
 
-  2) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:360:7 › Start with a prompt › TC_BS_09: Validate survey is disabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey 
+    Error Context: test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\error-context.md
 
-    TypeError: Cannot read properties of undefined (reading 'getWebActions')
-
-       at ..\page-objects\common\common-page.ts:11
-
-       9 |
-      10 |   constructor(protected basePage: BasePage) {
-    > 11 |     this.webActionHandler = basePage.getWebActions();
-         |                                      ^
-      12 |     this.resourceManager = new ResourceManager({});
-      13 |   }
-      14 |
-        at CommonPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:11:38)
-        at SurveyBuilderPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:12:5)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:361:31
+    attachment #3: start-with-prompt-video (video/webm) ─────────
+    test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\attachments\start-with-prompt-video-1653bbad78ea00fea3e9b17201b2ca0a343cbd3e.webm
+    ─────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\error-context.md
 
-    Error Context: test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\error-context.md
-
-    attachment #3: trace (application/zip) ──────────────────────
+    attachment #5: trace (application/zip) ──────────────────────
     test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\trace.zip
     Usage:
 
@@ -84,10 +64,10 @@ isLambdaTest = false
 
     ─────────────────────────────────────────────────────────────
 
-  2 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:390:7 › Start from scratch › TC_BS_23: Validatesurvey shows the loading message, recommendations and Optiq feedback link @ValidateSurvey 
+  1 failed
     [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:360:7 › Start with a prompt › TC_BS_09: Validate survey is disabled with fewer than 3 questions @StartWithPrompt@StartWithPrompt @BuildSurvey 
-  2 did not run
+  1 did not run
+  5 passed (2.5m)
 
 To open last HTML report run:
 
