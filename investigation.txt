@@ -1,16 +1,163 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git --no-pager diff --stat HEAD...origin/main -- .
+$ git merge origin/main
+Auto-merging libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+Auto-merging libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+CONFLICT (content): Merge conflict in libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+Automatic merge failed; fix conflicts and then commit the result.
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation|MERGING)
+$ git checkout --theirs -- ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation|MERGING)
+$ git add ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation|MERGING)
+$ git status
+On branch feature/start-with-prompt-ai-automation
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+        new file:   ../libs/survey-mod-lib/assets/survey-results/bar.json
+        new file:   ../libs/survey-mod-lib/assets/survey-results/column.json
+        new file:   ../libs/survey-mod-lib/assets/survey-results/common.json
+        new file:   ../libs/survey-mod-lib/assets/survey-results/data-summary.json
+        new file:   ../libs/survey-mod-lib/assets/survey-results/line.json
+        new file:   ../libs/survey-mod-lib/assets/survey-results/pie.json
+        modified:   ../libs/survey-mod-lib/package.json
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/build-survey.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/build-survey.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/build-survey.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/base-question-editor.directive.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/base-question-editor.directive.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/suggestion-tags/suggestion-tags.component.scss
+        new file:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/suggestion-tags/suggestion-tags.component.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/suggestion-tags/suggestion-tags.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/survey-details/survey-details.component.html
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/survey-details/survey-details.component.scss
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/survey-details/survey-details.component.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/components/survey-details/survey-details.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/constants/my-assets-tabs.constant.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/constants/survey-status.constant.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/models/survey-asset.model.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/services/survey-asset-api.service.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/services/survey-asset-api.service.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/services/survey-grid-handler.service.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/my-assets/services/survey-grid-handler.service.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/utils/my-assets-route.util.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/my-assets/utils/my-assets-route.util.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/generate-survey/generate-survey.component.ts
+        deleted:    ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.html
+        deleted:    ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.scss
+        deleted:    ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.spec.ts
+        deleted:    ../libs/survey-mod-lib/src/lib/features/survey-model-validator/components/survey-model-validator-shell/survey-model-validator-shell.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/models/survey-model-validator.model.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/services/survey-model-validator.service.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-model-validator/services/survey-model-validator.service.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/question-chart/question-chart.component.html
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/question-chart/question-chart.component.scss
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/question-chart/question-chart.component.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/question-chart/question-chart.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/results-dashboard/results-dashboard.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.scss
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/components/survey-results/survey-results.component.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/constants/survey-results-preview.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/models/question-result.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/survey-results/models/survey-results.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/services/question-chart-preview.service.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/features/survey-results/services/question-chart-preview.service.ts
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.html
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.scss
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.ts
+        modified:   ../libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.ts
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/survey-avatar/survey-avatar.component.html
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/survey-avatar/survey-avatar.component.scss
+        new file:   ../libs/survey-mod-lib/src/lib/shared/components/survey-avatar/survey-avatar.component.ts
+        new file:   ../libs/survey-mod-lib/src/lib/shared/styles/_question-title.scss
+        modified:   ../libs/survey-mod-lib/src/lib/shared/utils/survey-folder.util.spec.ts
+        new file:   ../libs/survey-mod-lib/src/lib/survey-mod.routes.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/survey-mod.routes.ts
+        modified:   ../libs/survey-mod-lib/src/public-api.ts
+        modified:   ../package-lock.json
+        modified:   ../package.json
+        modified:   ../public/local-cookies.json
+        modified:   ../src/app/app.routes.ts
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation|MERGING)
+$ git commit --no-edit
+[feature/start-with-prompt-ai-automation 649c3f0b] Merge remote-tracking branch 'origin/main' into feature/start-with-prompt-ai-automation
+ Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git --no-pager diff --stat HEAD...origin/main -- ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions
- .../preview-mode/preview-mode.component.html       |  6 ++-
- .../preview-mode/preview-mode.component.scss       |  2 +
- .../preview-mode/preview-mode.component.spec.ts    |  2 +
- .../preview-mode/preview-mode.component.ts         | 44 +++++++++++++---
- .../question-generator/question-generator.html     | 60 ++++++++++++----------
- .../question-generator/question-generator.spec.ts  |  2 +-
- .../question-generator/question-generator.ts       | 10 ++--
- 7 files changed, 87 insertions(+), 39 deletions(-)
+$ npx tsc --noEmit
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
