@@ -1,85 +1,100 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  28 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:337:7 › Start from scratch › TC_BS_09: Validate survey is disabled with fewer than 3 questions @ValidateDisabled (193ms)
-  ✘  58 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:367:7 › Start with a prompt › TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link @StartWithPrompt @StartWithPrompt @ValidateSurvey (1.8s)
-    Error: Expected exactly 2 questions, found 0
-    test-results\survey-start-from-scratch--2eeea-with-fewer-than-3-questions-chromium\test-failed-1.png
-    Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
-    test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\test-failed-1.png
+  ✘  29 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:396:7 › Start from scratch › TC_BS_04: Options boundary - min 2, max 15 @OptionBoundary (15.8s)
+  ✘  42 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:33:7 › Start with a prompt › TC_BS_07: Requiredstar appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (22.1s)
+    Error: Failed to add Single Choice question: Question text input not visible after 15000ms
+    test-results\survey-start-from-scratch--ac80d-ons-boundary---min-2-max-15-chromium\test-failed-1.png
+    Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
   2 failed
-  55 passed (7.0m)
+  18 did not run
+  39 passed (6.7m)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
----------------------
-TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link
-survey/common-test-cases/build-survey-common-test-cases.ts:367
-1.8s
-chromiumStartWithPromptStartWithPrompt @ValidateSurvey
-serial
-Copy prompt
-Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
-expect(received).toBeTruthy()
+-------------
+Error: Failed to add Single Choice question: Question text input not visible after 15000ms
 
-Received: false
+   at ..\page-objects\common\survey-builder.page.ts:317
 
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:373:15
+  315 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
+  316 |     } catch (error) {
+> 317 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  318 |     }
+  319 |   }
+  320 |
+    at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:317:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:401:5
 Filter steps
 Before Hooks
-23ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-147ms
-Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-22ms
-Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-1.1s
-Wait for selector locator('text="Validating your survey"')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-120ms
-After Hooks
-2.1s
-Worker Cleanup
-5ms
-
-----------------------------------
-TC_BS_09: Validate survey is disabled with fewer than 3 questions
-survey/common-test-cases/build-survey-common-test-cases.ts:337
-193ms
-chromiumValidateDisabled
-serial
-Copy prompt
-Error: Expected exactly 2 questions, found 0
-expect(received).toBeTruthy()
-
-Received: false
-
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:342:15
-Filter steps
-Before Hooks
-12ms
+9ms
 Evaluate locator('.question-number') ✕ 2— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-82ms
+126ms
+Wait for selector locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+53ms
+Click locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+457ms
+Wait for selector locator('[data-test-id=\'question-text-input-1-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.1s
 After Hooks
-1.6s
+2.0s
 Worker Cleanup
+1ms
+
+------------
+Copy prompt
+Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+
+   at ..\page-objects\common\survey-builder.page.ts:1234
+
+  1232 |       }
+  1233 |     } catch (error) {
+> 1234 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1235 |     }
+  1236 |   }
+  1237 |
+    at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1234:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:5
+Filter steps
+Before Hooks
+13ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+69ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+14ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+23ms
+Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+17ms
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+57ms
+Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+20ms
+Click locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+102ms
+Wait for selector locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+28ms
+Wait for selector locator('.question-row').first().locator('[data-test-id=\'-input-checkbox\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15ms
+Click locator('.question-row').first().locator('[data-test-id=\'-input-checkbox\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+84ms
+Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+499ms
+Click locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+110ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+178ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+39ms
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+42ms
+Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+1.8s
+Worker Cleanup
+2ms
