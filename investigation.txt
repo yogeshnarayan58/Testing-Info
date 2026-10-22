@@ -1,18 +1,6 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  19 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:287:7 › Start from scratch › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey @StepperNavigation (11.7s)
-    Error: Failed to verify stepper navigation retains data: Failed to add Rating question: Question-type tile "questionTypeRating" not visible after 10000ms
-    test-results\survey-start-from-scratch--1f65e-ta-and-back-to-Build-Survey-chromium\test-failed-1.png
-  1 failed
-  9 did not run
-  49 passed (8.5m)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
---
 TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey
 survey/common-test-cases/build-survey-common-test-cases.ts:287
-11.7s
+11.3s
 chromiumStepperNavigation
 serial
 Copy prompt
@@ -28,14 +16,14 @@ Error: Failed to verify stepper navigation retains data: Failed to add Rating qu
     at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:331:13
 Filter steps
 Before Hooks
-24ms
+20ms
 Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-153ms
+60ms
 Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-269ms
+78ms
 Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10.1s
+10.0s
 After Hooks
-6.2s
+2.0s
 Worker Cleanup
 2ms
