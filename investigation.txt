@@ -1,4 +1,10 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ rm ../all-changes.patch SURVEY_BUILDER_INVESTIGATION_SWP.md
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ rm -rf ../test-results
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ git status
 On branch feature/start-with-prompt-ai-automation
 Changes to be committed:
@@ -23,12 +29,6 @@ Changes not staged for commit:
         modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
         modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
         modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        ../all-changes.patch
-        SURVEY_BUILDER_INVESTIGATION_SWP.md
-        ../test-results/
 
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
