@@ -3,21 +3,22 @@ $ git status
 On branch feature/start-with-prompt-ai-automation
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-        renamed:    locators/survey/surveyBuilder.locator.json -> locators/survey/survey-builder.locator.json
-
-Changes not staged for commit:
-  (use "git add/rm <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
         modified:   locators/survey/start-with-prompt.locator.json
-        modified:   locators/survey/survey-builder.locator.json
-        modified:   package-lock.json
-        modified:   page-objects/common/common-page.ts
-        modified:   page-objects/common/select-panelist.page.ts
+        renamed:    locators/survey/surveyBuilder.locator.json -> locators/survey/survey-builder.locator.json
+        new file:   page-objects/common/survey-builder.page.ts
         modified:   page-objects/survey/start-with-prompt.page.ts
         deleted:    page-objects/survey/surveyBuilder.page.ts
+        new file:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
         modified:   tests/survey/start-from-scratch.spec.ts
         modified:   tests/survey/start-with-prompt.spec.ts
         deleted:    tests/survey/survey-builder.spec.ts
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   package-lock.json
+        modified:   page-objects/common/common-page.ts
+        modified:   page-objects/common/select-panelist.page.ts
         modified:   utils/base-page-factory.ts
         modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
         modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
@@ -27,8 +28,6 @@ Untracked files:
   (use "git add <file>..." to include in what will be committed)
         ../all-changes.patch
         SURVEY_BUILDER_INVESTIGATION_SWP.md
-        page-objects/common/survey-builder.page.ts
-        tests/survey/common-test-cases/
         ../test-results/
 
 
