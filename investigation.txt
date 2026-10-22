@@ -1,10 +1,85 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  28 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:337:7 › Start from scratch › TC_BS_09: Validate survey is disabled with fewer than 3 questions @ValidateDisabled (15.2s)
-    Error: Failed to delete questions down to 2: Failed to enter review mode: Review survey button not visible after 15000ms
+  ✘  28 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:337:7 › Start from scratch › TC_BS_09: Validate survey is disabled with fewer than 3 questions @ValidateDisabled (193ms)
+  ✘  58 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:367:7 › Start with a prompt › TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link @StartWithPrompt @StartWithPrompt @ValidateSurvey (1.8s)
+    Error: Expected exactly 2 questions, found 0
     test-results\survey-start-from-scratch--2eeea-with-fewer-than-3-questions-chromium\test-failed-1.png
-  1 failed
-  56 passed (6.9m)
+    Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
+    test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\test-failed-1.png
+  2 failed
+  55 passed (7.0m)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
+---------------------
+TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link
+survey/common-test-cases/build-survey-common-test-cases.ts:367
+1.8s
+chromiumStartWithPromptStartWithPrompt @ValidateSurvey
+serial
+Copy prompt
+Error: Expected "Validating your survey" toast to be visible right after clicking Validate survey
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:373:15
+Filter steps
+Before Hooks
+23ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+147ms
+Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+22ms
+Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.1s
+Wait for selector locator('text="Validating your survey"')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+120ms
+After Hooks
+2.1s
+Worker Cleanup
+5ms
+
+----------------------------------
+TC_BS_09: Validate survey is disabled with fewer than 3 questions
+survey/common-test-cases/build-survey-common-test-cases.ts:337
+193ms
+chromiumValidateDisabled
+serial
+Copy prompt
+Error: Expected exactly 2 questions, found 0
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:342:15
+Filter steps
+Before Hooks
+12ms
+Evaluate locator('.question-number') ✕ 2— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+82ms
+After Hooks
+1.6s
+Worker Cleanup
