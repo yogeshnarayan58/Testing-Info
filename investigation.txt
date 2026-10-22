@@ -1,81 +1,36 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$  npx playwright test tests/survey --project=chromium --workers=1 2>&1 | grep -E "✘|passed|failed|did not run|Error:"
-  ✘  43 [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:33:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @StartWithPrompt @BuildSurvey (37.3s)
-    Error: Failed to set Required (index 0) to true: Failed to openquestion 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
-    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
-  1 failed
-  19 did not run
-  41 passed (7.2m)
+$ git status
+On branch feature/start-with-prompt-ai-automation
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        renamed:    locators/survey/surveyBuilder.locator.json -> locators/survey/survey-builder.locator.json
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/start-with-prompt.locator.json
+        modified:   locators/survey/survey-builder.locator.json
+        modified:   package-lock.json
+        modified:   page-objects/common/common-page.ts
+        modified:   page-objects/common/select-panelist.page.ts
+        modified:   page-objects/survey/start-with-prompt.page.ts
+        deleted:    page-objects/survey/surveyBuilder.page.ts
+        modified:   tests/survey/start-from-scratch.spec.ts
+        modified:   tests/survey/start-with-prompt.spec.ts
+        deleted:    tests/survey/survey-builder.spec.ts
+        modified:   utils/base-page-factory.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
+        modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        ../all-changes.patch
+        SURVEY_BUILDER_INVESTIGATION_SWP.md
+        page-objects/common/survey-builder.page.ts
+        tests/survey/common-test-cases/
+        ../test-results/
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
------------------
-
-Start with a prompt
-next »
-TC_BS_07: Required star appears when the Required toggle is on
-survey/common-test-cases/build-survey-common-test-cases.ts:33
-37.3s
-chromiumStartWithPromptStartWithPrompt @BuildSurvey
-serial
-Copy prompt
-Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
-
-   at ..\page-objects\common\survey-builder.page.ts:1263
-
-  1261 |       }
-  1262 |     } catch (error) {
-> 1263 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
-       |             ^
-  1264 |     }
-  1265 |   }
-  1266 |
-    at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1263:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:5
-Filter steps
-Before Hooks
-10ms
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-76ms
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-17ms
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-21ms
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-64ms
-Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-22ms
-Click locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-131ms
-Wait for selector locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-42ms
-Wait for selector locator('.question-row').first().locator('[data-test-id=\'-input-checkbox\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-22ms
-Click locator('.question-row').first().locator('[data-test-id=\'-input-checkbox\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-107ms
-Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-394ms
-Click locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-120ms
-Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-136ms
-Click locator('.survey-title')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-132ms
-Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-15.0s
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-56ms
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-5.0s
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-22ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-77ms
-Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-2.3s
-Worker Cleanup
-2ms
