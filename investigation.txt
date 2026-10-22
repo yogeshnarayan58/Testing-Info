@@ -1,35 +1,86 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ rm ../all-changes.patch SURVEY_BUILDER_INVESTIGATION_SWP.md
+$ git commit -m "test: Build Survey common test cases for both flows, builder page moved to common"
+[feature/start-with-prompt-ai-automation 8197db2] test: Build Survey common test cases for both flows, builder page moved to common
+ Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 9 files changed, 2438 insertions(+), 1119 deletions(-)
+ rename e2e/locators/survey/{surveyBuilder.locator.json => survey-builder.locator.json} (72%)
+ create mode 100644 e2e/page-objects/common/survey-builder.page.ts
+ delete mode 100644 e2e/page-objects/survey/surveyBuilder.page.ts
+ create mode 100644 e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts
+ delete mode 100644 e2e/tests/survey/survey-builder.spec.ts
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ rm -rf ../test-results
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git status
-On branch feature/start-with-prompt-ai-automation
-Changes to be committed:
-  (use "git restore --staged <file>..." to unstage)
-        modified:   locators/survey/start-with-prompt.locator.json
-        renamed:    locators/survey/surveyBuilder.locator.json -> locators/survey/survey-builder.locator.json
-        new file:   page-objects/common/survey-builder.page.ts
-        modified:   page-objects/survey/start-with-prompt.page.ts
-        deleted:    page-objects/survey/surveyBuilder.page.ts
-        new file:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
-        modified:   tests/survey/start-from-scratch.spec.ts
-        modified:   tests/survey/start-with-prompt.spec.ts
-        deleted:    tests/survey/survey-builder.spec.ts
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   package-lock.json
-        modified:   page-objects/common/common-page.ts
-        modified:   page-objects/common/select-panelist.page.ts
-        modified:   utils/base-page-factory.ts
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html
-        modified:   ../libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html
-
+$ git --no-pager diff -- page-objects/common/common-page.ts page-objects/common/select-panelist.page.ts utils/base-page-factory.ts package-lock.json ../libs | grep -E "^[+-]" | grep -v "^+++\|^---" | head -150
+-    "node_modules/asynckit": {
+-      "version": "0.4.0",
+-      "resolved": "https://nielseniq.jfrog.io/artifactory/api/npm/npmjs-remote/asynckit/-/asynckit-0.4.0.tgz",
+-      "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
+-      "license": "MIT"
+-    },
+-    "node_modules/axios": {
++    "node_modules/asynck 
+-
+-  public getBasePage(): BasePage {
+-    return this.basePage;
+-  }
+-  async clickSelectPanelistsTab(): Promise<void> {
+-    const selectPanelistsTab = this.webActionHandler.getWebElement(
+-      this.resourceManager.getResource('selectPanelistsTab', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+-    );
+-    await selectPanelistsTab.waitFor();
+-    await selectPanelistsTab.click();
+-    await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
+-  }
+-
+-  async clickBuildSurvey(): Promise<void> {
+-    const buildSurveyButton = this.webActionHandler.getWebElement(
+-      this.resourceManager.getResource('buildSurveyButton', SELECT_PANELIST_PAGE_COMPONENT_NAME)
+-    );
+-    await buildSurveyButton.waitFor();
+-    await buildSurveyButton.click();
+-    await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+-  }
+-
+-import { chromium, test } from '@playwright/test';
++import { chromium, test, type TestInfo } from '@playwright/test';
++/** Shared by every `describe.serial` suite's `afterAll`: closes the browser (finalizing the .webm video,
++ *  same as `closeBrowser()` alone did before), then attaches the video to the report if one was recorded.
++ *  A missing video (e.g. video not enabled) is logged, not thrown - it must never fail the suite. */
++export async function closeBrowserAndAttachVideo(basePage: BasePage, testInfo: TestInfo, attachmentName: string): Promise<void> {
++  const page = (BasePage as any).page as import('playwright').Page | undefined; // gta exposes no public getter for the raw Page
++  const video = page?.video();
++  await basePage.getWebActions().closeBrowser(); // closes the context, which finalizes the .webm file
++  const videoPath = await video?.path().catch(() => undefined);
++  if (videoPath) {
++    await testInfo.attach(attachmentName, { path: videoPath, contentType: 'video/webm' });
++  } else {
++    console.log(`${attachmentName}: video path unavailable`);
++  }
++}
++
+-                            <niq-button class="rephrase-action"
++                            <niq-button class="rephrase-action"[attr.data-test-id]="'rephrase-with-ai-' + i"
+-                                <textarea class="rephrase-input" rows="4" placeholder="Type your prompt..."
++                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
+-                                <niq-icon-button class="rephrase-send"
++                                <niq-icon-button class="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
+-          <div class="question-count-error" role="alert">
++          <div class="question-count-error" data-test-id="question-count-error" role="alert">
++      data-test-id="reprompt-input"
++          data-test-id="reprompt-close"
++          data-test-id="reprompt-submit"
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
