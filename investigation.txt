@@ -1,25 +1,125 @@
-Attaching Codex review for this PR. please check once
- 
-I found three issues I’d correct before merging, plus several maintainability cleanups.
-Findings
-[P2] Tagged tests cannot run independently.
-Both serial suites create basePage inside the first test. Running a focused tag such as @ValidateSurvey, @SaveDraft, or @ReviewModeActions excludes that setup test, leaving basePage undefined. Some review-mode tests also depend on the previous test leaving the page in review mode. Move environment setup into fixtures/hooks and make tagged cases establish their own required state—or consolidate them into one explicitly stateful scenario.
-Start-with-prompt setup · Start-from-scratch setup · Dependent review test
-[P2] The validation test accepts outcomes that contradict its following assertions.
-It accepts “complete,” “recommended,” or “needed,” but then always requires a recommendation tag and Optiq feedback link. A successful “Validation complete” response with no recommendations will fail. Return an outcome enum and assert recommendation controls only for outcomes that provide recommendations.
-Validation assertions
-[P2] Publish coverage is removed without a traceable defect.
-The previously active publish case is now test.fixme, and its Jira reference is still <defect ID to be added>. That permits publishing regressions indefinitely while CI remains green. Restore the test or add a real defect reference, owner, and removal condition for the quarantine.
-Disabled publish test
-[P3] Newly added stable test IDs are not used.
-Rephrase and reprompt controls receive data-test-id attributes, but the locator file continues using CSS classes, global role selectors, and nth. Use the new IDs, including the question index, to reduce selector ambiguity.
-Fragile locators
-Duplication and standards cleanup
-waitUntilVisible and withTimeout are effectively duplicated in both page objects. Move them to CommonPage as protected utilities.
-Survey builder copy · Prompt copy
-SurveyBuilderPage is now 1,419 lines and combines editing, review mode, validation, persistence, and publishing. Splitting these concerns would make future changes safer.
-Static inspection found unused additions: waitForQuestionEditorClosed, clickBackButton, isSurveyVisibleInMyAssets, isChangesRecommendedToastVisible, and the optionInput locator.
-Several new imports are not Prettier-compliant, particularly the compressed imports at line 3/9. The E2E package has no lint/format script, while the root ESLint configuration disables unused-variable checking—explaining why these pass CI.
-Test identifiers are reused for unrelated behavior, such as TC_BS_05, TC_BS_07, TC_BS_08, and TC_BS_09. Assign unique IDs so reports remain traceable.
-The three start-from-scratch review-mode cases overlap substantially; consolidate them or isolate their setup and assertions.
-This was a read-only review of PR #178 at cb5e201. I did not modify the branch or post GitHub comments. The visible CI gates do not execute these Playwright scenarios.
+TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey
+survey/common-test-cases/build-survey-common-test-cases.ts:310
+533ms
+chromiumStartWithPromptStartWithPrompt @BuildSurvey
+serial
+Copy prompt
+Error: Failed to verify stepper navigation retains data: Failed to add Rating question: locator.fill: Error: Cannot type text into input[type=number]
+Call log:
+  - waiting for locator('[data-test-id=\'-input\']:visible')
+    - locator resolved to <input type="number" placeholder="" autocomplete="off" id="text-field-16" data-test-id="-input" class="search-text number" _ngcontent-ng-c3887798003=""/>
+    - fill("Rate your experience")
+  - attempting fill action
+    - waiting for element to be visible, enabled and editable
+  352 |       );
+  353 |     } catch (error) {
+> 354 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  355 |     }
+  356 |   });
+  357 | }
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:354:13
+Filter steps
+Before Hooks
+15ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+79ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+81ms
+Wait for selector locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Fill "Rate your experience" locator('[data-test-id=\'-input\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+86ms
+----
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey --project=chromium --workers=1 -g "Start from Scratch:|Start with a Prompt:|Dataset Selection|Panelist Filters|Response Count|Survey Builder:|Generate Survey:|TC_BS_02|TC_AI_07|TC_BS_12"
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms accepted successfully.
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 14 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …on on the survey home page @LandStartFromScratch (21.0s)
+Auth state loaded from storage/auth.json
+  ✓   2 …irm the Choose a dataset screen @DatasetSelection (4.9s)
+  ✓   3 …nelists after all 5 filters are set @DataSummary (44.9s)
+  ✓   4 …r after selecting a response count @ResponseCount (5.7s)
+  ✓   5 …ey page after proceeding @ProceedToSurveyBuilder (566ms)
+  ✓   6 …h › TC_BS_02: Edit survey title @EditSurveyTitle (737ms)
+  ✓   7 …data and back to Build Survey @StepperNavigation (28.7s)
+  ✓   8 …rvey home page @StartWithPrompt @StartWithPrompt (16.6s)
+Auth state loaded from storage/auth.json
+  ✓   9 …pe and dataset @StartWithPrompt @DatasetSelection (3.1s)
+  ✓  10 …arch for panelists @StartWithPrompt @DataSummary (17.0s)
+  ✓  11 … a response count @StartWithPrompt @ResponseCount (3.6s)
+  ✓  12 …uild Survey page @StartWithPrompt @GenerateSurvey (2.5s)
+  ✓  13 …n @StartWithPrompt @StartWithPrompt @BuildSurvey (848ms)
+  ✘  14 …y @StartWithPrompt @StartWithPrompt @BuildSurvey (533ms)
+
+
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:310:7 › Start with a prompt › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build Survey @StartWithPrompt @StartWithPrompt @BuildSurvey 
+
+    Error: Failed to verify stepper navigation retains data: Failed to add Rating question: locator.fill: Error: Cannot type textinto input[type=number]
+    Call log:
+      - waiting for locator('[data-test-id=\'-input\']:visible')
+        - locator resolved to <input type="number" placeholder="" autocomplete="off" id="text-field-16" data-test-id="-input" class="search-text number" _ngcontent-ng-c3887798003=""/>
+        - fill("Rate your experience")
+      - attempting fill action
+        - waiting for element to be visible, enabled and editable
+
+
+      352 |       );
+      353 |     } catch (error) {
+    > 354 |       throw new Error(`Failed to verify stepper navigation retains data: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      355 |     }
+      356 |   });
+      357 | }
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:354:13
+
+    attachment #1: screenshot (image/png) ───────────────────────
+    test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ─────────
+    test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\attachments\start-with-prompt-video-9394c0960d9e1825e9e7dafc5028bdc024a2342f.webm
+    ─────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────────
+    test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-526b8-ta-and-back-to-Build-Survey-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:310:7 › Start with a prompt › TC_BS_12: Steppernavigation to Select Panelists retains data and back to Build Survey @StartWithPrompt @StartWithPrompt @BuildSurvey 
+  13 passed (3.3m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
