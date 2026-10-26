@@ -169,3 +169,69 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
+----------------
+TC_BS_07: Required star appears when the Required toggle is on
+survey/common-test-cases/build-survey-common-test-cases.ts:36
+20.3s
+chromiumStartFromScratchRequiredStar
+serial
+Copy prompt
+Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+
+   at ..\page-objects\common\survey-builder.page.ts:1205
+
+  1203 |       }
+  1204 |     } catch (error) {
+> 1205 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1206 |     }
+  1207 |   }
+  1208 |
+    at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1205:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
+Filter steps
+Before Hooks
+16ms
+Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+13ms
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+63ms
+Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+1.8s
+Worker Cleanup
+2ms
+---------
+TC_AI_10: Rephrase with AI clears the loading state and prompt
+survey/start-with-prompt.spec.ts:136
+15.2s
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+
+   at ..\page-objects\survey\start-with-prompt.page.ts:286
+
+  284 |       }
+  285 |     } catch (error) {
+> 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  287 |     }
+  288 |   }
+  289 |
+    at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+Filter steps
+Before Hooks
+22ms
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+115ms
+Wait for selector locator('[data-test-id=\'rephrase-with-ai-0\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+2.4s
+Worker Cleanup
+2ms
