@@ -1,61 +1,166 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ grep -n "rephrase-with-ai\|reprompt-submit" locators/survey/start-with-prompt.locator.json
-30:    { "elementName": "rephraseWithAiButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-with-ai-${text}']" },
-36:    { "elementName": "repromptSubmitButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-submit']" }
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 Starting global setup...
-Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Starting login process...
-Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/ page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
-Call log:
-  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
-
-    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
-    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:69:35)
-    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:61:16)
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
-  log: [
-    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
-  ],
-  name: 'Error'
-}
-Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
-Call log:
-  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
-
-    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
-    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:69:35)
-    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:61:16)
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
-  log: [
-    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
-  ],
-  name: 'Error'
-}
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
-Error: Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
-Call log:
-  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
+
+Running 60 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+isLambdaTest = false
+  ✓   1 …n the survey home page @StartFromScratch @LandStartFromScratch (21.3s)
+Auth state loaded from storage/auth.json
+  ✓   2 …the Choose a dataset screen @StartFromScratch @DatasetSelection (4.3s)
+  ✓   3 …sts after all 5 filters are set @StartFromScratch @DataSummary (44.0s)
+  ✓   4 …ter selecting a response count @StartFromScratch @ResponseCount (5.8s)
+  ✓   5 …age after proceeding @StartFromScratch @ProceedToSurveyBuilder (739ms)
+  ✓   6 …TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (648ms)
+  ✓   7 … Single Choice question @StartFromScratch @SingleChoiceQuestion (1.5s)
+  ✓   8 …tiple Choice question @StartFromScratch @MultipleChoiceQuestion (4.0s)
+  ✓   9 …BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.9s)
+  ✓  10 …› TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.9s)
+  ✓  11 …dd a Point Scale question @StartFromScratch @PointScaleQuestion (4.7s)
+  ✓  12 …dd a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.5s)
+  ✘  13 …when the Required toggle is on @StartFromScratch @RequiredStar (20.3s)
+  -  14 … the question text via the pencil icon @StartFromScratch @EditQuestion
+  -  15 …rd changes / Save changes on a question @StartFromScratch @DiscardSave
+  -  16 …aves the question count unchanged @StartFromScratch @CancelAddQuestion
+  -  17 …TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
+  -  18 …te a question via hover row actions @StartFromScratch @DeleteDuplicate
+  -  19 …04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  20 …ins data and back to Build Survey @StartFromScratch @StepperNavigation
+  -  21 …stion and Duplicate with limit message @StartFromScratch @MaxQuestions
+  -  22 … controls, select, delete selected, exit @StartFromScratch @ReviewMode
+  -  23 … scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
+  -  24 …dback when there are recommendations @StartFromScratch @ValidateSurvey
+  -  25 …h › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  26 …l, delete, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  27 …te shows Add Question options and 0 rows @StartFromScratch @EmptyState
+  -  28 …sabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✓  29 … with a prompt option on the survey home page @StartWithPrompt (17.0s)
+Auth state loaded from storage/auth.json
+  ✓  30 …the dataset type and dataset @StartWithPrompt @DatasetSelection (3.4s)
+  ✓  31 …ections and search for panelists @StartWithPrompt @DataSummary (16.2s)
+  ✓  32 … Should select a response count @StartWithPrompt @ResponseCount (3.4s)
+  ✓  33 …nd reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓  34 …the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.7s)
+  ✓  35 … increases the question count @StartWithPrompt @GenerateSurvey (29.4s)
+  ✓  36 …survey title after AI generation @StartWithPrompt @BuildSurvey (470ms)
+  ✘  37 … the loading state and prompt @StartWithPrompt @GenerateSurvey (15.2s)
+  -  38 …s: Should increase the question count @StartWithPrompt @GenerateSurvey
+  -  39 …s to add increases the question count @StartWithPrompt @GenerateSurvey
+  -  40 …bled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  41 …r appears when the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  42 …te the question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  43 …ard changes / Save changes on a question @StartWithPrompt @DiscardSave
+  -  44 …plicate a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  45 …_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  46 …tion leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  47 … controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  48 … is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  49 …select all, delete, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  50 …te shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  51 … TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  52 …C_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  53 …rompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  54 … prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  55 … › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  56 … › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  57 …ts retains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  58 …_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  59 … a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  60 …edback when there are recommendations @StartWithPrompt @ValidateSurvey
 
 
-   at ..\helpers\global-setup.ts:43
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
 
-  41 |     console.error('Global setup failed:', error);
-  42 |     if (error instanceof Error) {
-> 43 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  44 |     }
-  45 |     throw new Error('Global setup failed with an unknown error');
-  46 |   } finally {
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+    Error: Failed to set Required (index 0) to true: Failed to open question 0for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
 
+       at ..\page-objects\common\survey-builder.page.ts:1205
+
+      1203 |       }
+      1204 |     } catch (error) {
+    > 1205 |       throw new Error(`Failed to set Required (index ${index}) to${desired}: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1206 |     }
+      1207 |   }
+      1208 |
+        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1205:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ──────────────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\attachments\start-from-scratch-video-8aedc2c32903c7ec3711d781f1bc5ce9b0b4b1df.webm
+    ───────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+
+    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:286
+
+      284 |       }
+      285 |     } catch (error) {
+    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      287 |     }
+      288 |   }
+      289 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-189c7ac0b97a1d26601b1065bd05ead672043aee.webm
+    ───────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
+    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  37 did not run
+  20 passed (4.4m)
 
 To open last HTML report run:
 
