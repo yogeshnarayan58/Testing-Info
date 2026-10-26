@@ -1,378 +1,100 @@
-diff --git a/e2e/page-objects/common/survey-builder.page.ts b/e2e/page-objects/common/survey-builder.page.ts
-index 7428f4f9..0414f4b3 100644
---- a/e2e/page-objects/common/survey-builder.page.ts
-+++ b/e2e/page-objects/common/survey-builder.page.ts
-@@ -92,7 +92,7 @@ export class SurveyBuilderPage extends CommonPage {
-     try {
-       const addOptionButton = this.webActionHandler.getWebElement(this.getResource('addOptionButton'));
-       await this.waitUntilVisible(addOptionButton, 'Add option button');
--      await this.withTimeout(addOptionButton.click(), ELEMENT_WAIT_TIMEOUT, 'Click Add option button');
-+      await addOptionButton.click();
-     } catch (error) {
-       throw new Error(`Failed to add option to question: ${error instanceof Error ? error.message : error}`);
-     }
-@@ -101,11 +101,7 @@ export class SurveyBuilderPage extends CommonPage {
-   /** Counts `.option-row` on the currently open question editor. */
-   async getOptionCount(): Promise<number> {
-     try {
--      const rows = await this.withTimeout(
--        this.webActionHandler.getWebElementsText(this.getResource('optionRow')),
--        ELEMENT_WAIT_TIMEOUT,
--        'Get option rows'
--      );
-+      const rows = await this.webActionHandler.getWebElementsText(this.getResource('optionRow'));
-       return rows.length;
-     } catch (error) {
-       throw new Error(`Failed to get option count: ${error instanceof Error ? error.message : error}`);
-@@ -115,11 +111,7 @@ export class SurveyBuilderPage extends CommonPage {
-   /** Counts remove (X) icons on the currently open question editor; 0 when at the 2-option minimum. */
-   async getRemoveOptionIconCount(): Promise<number> {
-     try {
--      const icons = await this.withTimeout(
--        this.webActionHandler.getWebElementsText(this.getResource('removeOptionIcon')),
--        ELEMENT_WAIT_TIMEOUT,
--        'Get remove-option icons'
--      );
-+      const icons = await this.webActionHandler.getWebElementsText(this.getResource('removeOptionIcon'));
-       return icons.length;
-     } catch (error) {
-       throw new Error(`Failed to get remove-option icon count: ${error instanceof Error ? error.message : error}`);
-@@ -137,7 +129,7 @@ export class SurveyBuilderPage extends CommonPage {
-         selectorValue: `${removeResource.selectorValue} >> nth=${count - 1}`,
-       });
-       await this.waitUntilVisible(lastIcon, 'Remove option icon');
--      await this.withTimeout(lastIcon.click(), ELEMENT_WAIT_TIMEOUT, 'Click remove option icon');
-+      await lastIcon.click();
-     } catch (error) {
-       throw new Error(`Failed to remove last option: ${error instanceof Error ? error.message : error}`);
-     }
-@@ -147,13 +139,8 @@ export class SurveyBuilderPage extends CommonPage {
-   async isAddOptionDisabled(): Promise<boolean> {
-     try {
-       const addOption = this.webActionHandler.getWebElement(this.getResource('addOptionButton'));
--      const classAttr =
--        (await this.withTimeout(addOption.getAttribute('class'), ELEMENT_WAIT_TIMEOUT, 'Get add-option class attribute')) ?? '';
--      const ariaDisabled = await this.withTimeout(
--        addOption.getAttribute('aria-disabled'),
--        ELEMENT_WAIT_TIMEOUT,
--        'Get add-option aria-disabled'
--      );
-+      const classAttr = (await addOption.getAttribute('class')) ?? '';
-+      const ariaDisabled = await addOption.getAttribute('aria-disabled');
-       return classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true';
-     } catch (error) {
-       throw new Error(`Failed to get add-option disabled state: ${error instanceof Error ? error.message : error}`);
-@@ -164,12 +151,8 @@ export class SurveyBuilderPage extends CommonPage {
-   async isMaxOptionsTooltipVisibleOnHover(): Promise<boolean> {
-     try {
-       const addOption = this.webActionHandler.getWebElement(this.getResource('addOptionButton'));
--      await this.withTimeout(
--        addOption.executeScript((e) => e.scrollIntoView()),
--        ELEMENT_WAIT_TIMEOUT,
--        'Scroll Add option into view'
--      );
--      await this.withTimeout(addOption.hover(), ELEMENT_WAIT_TIMEOUT, 'Hover Add option');
-+      await addOption.executeScript((e) => e.scrollIntoView());
-+      await addOption.hover();
-       const message = this.webActionHandler.getWebElement(this.getResource('maxOptionsMessageText'));
-       const isTooltipVisible = await message.isVisible(MEDIUM_TIMEOUT); // web-first wait, no fixed delay
-       await this.webActionHandler.mouseMove(0, 0); // move off the hovered button so the tooltip doesn't linger into the next test
-@@ -235,11 +218,7 @@ export class SurveyBuilderPage extends CommonPage {
-           selectorValue: `${rowResource.selectorValue} >> nth=${index} >> ${toggleResource.selectorValue}`,
-         });
-         await this.waitUntilVisible(toggle, `Required toggle (index ${index})`);
--        await this.withTimeout(
--          toggle.click(),
--          ELEMENT_WAIT_TIMEOUT,
--          `Click Required toggle (step: toggleRequired, index ${index}, locator: ${rowResource.selectorValue} >> nth=${index} >> ${toggleResource.selectorValue})`
--        );
-+        await toggle.click();
-       }
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-     } catch (error) {
-@@ -617,12 +596,8 @@ export class SurveyBuilderPage extends CommonPage {
-   async isAddQuestionTooltipVisibleOnHover(): Promise<boolean> {
-     try {
-       const addQuestion = this.webActionHandler.getWebElement(this.getResource('addQuestionLink'));
--      await this.withTimeout(
--        addQuestion.executeScript((e) => e.scrollIntoView()),
--        ELEMENT_WAIT_TIMEOUT,
--        'Scroll Add question into view'
--      );
--      await this.withTimeout(addQuestion.hover(), ELEMENT_WAIT_TIMEOUT, 'Hover Add question');
-+      await addQuestion.executeScript((e) => e.scrollIntoView());
-+      await addQuestion.hover();
-       const message = this.webActionHandler.getWebElement(this.getResource('maxQuestionsMessageText'));
-       const isTooltipVisible = await message.isVisible(MEDIUM_TIMEOUT); // web-first wait, no fixed delay
-       await this.webActionHandler.mouseMove(0, 0); // move off the hovered button so the tooltip doesn't linger into the next test
-@@ -668,10 +643,10 @@ export class SurveyBuilderPage extends CommonPage {
-     try {
-       const row = this.getQuestionRowElement(index);
-       await this.waitUntilVisible(row, `Question row (index ${index})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, `Hover question row (step: deleteQuestionAt, index ${index})`);
-+      await row.hover();
-       const deleteButton = this.getDeleteQuestionElement(index);
-       await this.waitUntilVisible(deleteButton, `Delete question button (index ${index})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(deleteButton.click(), ELEMENT_WAIT_TIMEOUT, `Click Delete question button (index ${index})`);
-+      await deleteButton.click();
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-     } catch (error) {
-       throw new Error(`Failed to delete question (index ${index}): ${error instanceof Error ? error.message : error}`);
-@@ -683,10 +658,10 @@ export class SurveyBuilderPage extends CommonPage {
-     try {
-       const row = this.getQuestionRowElement(index);
-       await this.waitUntilVisible(row, `Question row (index ${index})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, `Hover question row (step: duplicateQuestionAt, index ${index})`);
-+      await row.hover();
-       const duplicateButton = this.getDuplicateQuestionElement(index);
-       await this.waitUntilVisible(duplicateButton, `Duplicate question button (index ${index})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(duplicateButton.click(), ELEMENT_WAIT_TIMEOUT, `Click Duplicate question button (index ${index})`);
-+      await duplicateButton.click();
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-     } catch (error) {
-       throw new Error(`Failed to duplicate question (index ${index}): ${error instanceof Error ? error.message : error}`);
-@@ -698,7 +673,7 @@ export class SurveyBuilderPage extends CommonPage {
-     try {
-       const row = this.getQuestionRowElement(fromIndex);
-       await this.waitUntilVisible(row, `Question row (index ${fromIndex})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, `Hover question row (step: dragQuestionRow, index ${fromIndex})`);
-+      await row.hover();
- 
-       const rowResource = this.getResource('questionRow');
-       const handle = this.webActionHandler.getWebElement({
-@@ -738,69 +713,45 @@ export class SurveyBuilderPage extends CommonPage {
-       await nativePage.mouse.up();
-       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
- 
--      const waitForSettled = (async () => {
--        let text = await this.getQuestionTextDisplay(toIndex);
--        while (text !== sourceText) {
--          await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
--          text = await this.getQuestionTextDisplay(toIndex);
-+      const deadline = Date.now() + ELEMENT_WAIT_TIMEOUT;
-+      while (Date.now() <= deadline) {
-+        const text = await this.getQuestionTextDisplay(toIndex);
-+        if (Date.now() > deadline) {
-+          break;
-         }
--      })();
--      await this.withTimeout(waitForSettled, ELEMENT_WAIT_TIMEOUT, `Wait for dragged question to settle at index ${toIndex}`);
-+        if (text === sourceText) {
-+          break;
-+        }
-+        await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-+      }
-+      if (Date.now() > deadline) {
-+        throw new Error(`Wait for dragged question to settle at index ${toIndex} timed out after ${ELEMENT_WAIT_TIMEOUT}ms`);
-+      }
-     } catch (error) {
-       throw new Error(`Failed to drag question row (from ${fromIndex} to ${toIndex}): ${error instanceof Error ? error.message : error}`);
-     }
-   }
- 
--  /** Shared body for getPublishDisabledState/getValidateDisabledState; `stepLabel` (e.g. 'publish survey') feeds every withTimeout step string. Checks both the niq-button host (aria-disabled/state/disabled/class) and its inner `<button>` (`.disabled` property). */
-+  /** Shared body for getPublishDisabledState/getValidateDisabledState; checks both the niq-button host and its inner `<button>`. */
-   private async getButtonDisabledState(
--    resourceName: string,
--    stepLabel: string
-+    resourceName: string
-   ): Promise<{ disabled: boolean; hostOuterHtml: string; innerButtonOuterHtml: string | null; matchCount: number; innerText: string }> {
--    const matchCount = (
--      await this.withTimeout(
--        this.webActionHandler.getWebElementsText(this.getResource(resourceName)),
--        ELEMENT_WAIT_TIMEOUT,
--        `Get ${stepLabel} button matches`
--      )
--    ).length;
-+    const matchCount = (await this.webActionHandler.getWebElementsText(this.getResource(resourceName))).length;
-     const button = this.webActionHandler.getWebElement(this.getResource(resourceName));
--    const innerText = (await this.withTimeout(button.getText(), ELEMENT_WAIT_TIMEOUT, `Get ${stepLabel} button text`)).trim();
--    const ariaDisabled = await this.withTimeout(
--      button.getAttribute('aria-disabled'),
--      ELEMENT_WAIT_TIMEOUT,
--      `Get ${stepLabel} aria-disabled`
--    );
--    const state = await this.withTimeout(button.getAttribute('state'), ELEMENT_WAIT_TIMEOUT, `Get ${stepLabel} state`);
--    const disabledAttr = await this.withTimeout(
--      button.getAttribute('disabled'),
--      ELEMENT_WAIT_TIMEOUT,
--      `Get ${stepLabel} disabled attribute`
--    );
--    const classAttr =
--      (await this.withTimeout(button.getAttribute('class'), ELEMENT_WAIT_TIMEOUT, `Get ${stepLabel} class attribute`)) ?? '';
--    const hostOuterHtml = String(
--      await this.withTimeout(
--        button.executeScript((e) => e.outerHTML),
--        ELEMENT_WAIT_TIMEOUT,
--        `Get ${stepLabel} host outerHTML`
--      )
--    ).slice(0, 400);
--    const innerButtonDisabled = await this.withTimeout(
--      button.executeScript((e) => {
--        const inner = e.querySelector('button');
--        return inner ? inner.disabled : null;
--      }),
--      ELEMENT_WAIT_TIMEOUT,
--      `Get ${stepLabel} inner button disabled`
--    );
--    const innerButtonOuterHtml = await this.withTimeout(
--      button.executeScript((e) => {
--        const inner = e.querySelector('button');
--        return inner ? inner.outerHTML : null;
--      }),
--      ELEMENT_WAIT_TIMEOUT,
--      `Get ${stepLabel} inner button outerHTML`
--    );
-+    const innerText = (await button.getText()).trim();
-+    const ariaDisabled = await button.getAttribute('aria-disabled');
-+    const state = await button.getAttribute('state');
-+    const disabledAttr = await button.getAttribute('disabled');
-+    const classAttr = (await button.getAttribute('class')) ?? '';
-+    const hostOuterHtml = String(await button.executeScript((e) => e.outerHTML)).slice(0, 400);
-+    const innerButtonDisabled = await button.executeScript((e) => {
-+      const inner = e.querySelector('button');
-+      return inner ? inner.disabled : null;
-+    });
-+    const innerButtonOuterHtml = await button.executeScript((e) => {
-+      const inner = e.querySelector('button');
-+      return inner ? inner.outerHTML : null;
-+    });
-     const disabled =
-       ariaDisabled === 'true' ||
-       state === 'disabled' ||
-@@ -825,7 +776,7 @@ export class SurveyBuilderPage extends CommonPage {
-     innerText: string;
-   }> {
-     try {
--      return await this.getButtonDisabledState('publishSurveyButton', 'publish survey');
-+      return await this.getButtonDisabledState('publishSurveyButton');
-     } catch (error) {
-       throw new Error(`Failed to get publish disabled state: ${error instanceof Error ? error.message : error}`);
-     }
-@@ -840,7 +791,7 @@ export class SurveyBuilderPage extends CommonPage {
-     innerText: string;
-   }> {
-     try {
--      return await this.getButtonDisabledState('validateSurveyButton', 'validate survey');
-+      return await this.getButtonDisabledState('validateSurveyButton');
-     } catch (error) {
-       throw new Error(`Failed to get validate disabled state: ${error instanceof Error ? error.message : error}`);
-     }
-@@ -873,11 +824,7 @@ export class SurveyBuilderPage extends CommonPage {
-         await this.clickAddQuestion();
-       }
-       const ratingTile = this.webActionHandler.getWebElement(this.getResource('questionTypeRating'));
--      await this.withTimeout(
--        ratingTile.waitFor(ELEMENT_WAIT_TIMEOUT, 'visible'),
--        ELEMENT_WAIT_TIMEOUT,
--        'Wait for Add Question tiles visible'
--      );
-+      await ratingTile.waitFor(ELEMENT_WAIT_TIMEOUT, 'visible');
-     } catch (error) {
-       throw new Error(`Failed to open Add Question panel: ${error instanceof Error ? error.message : error}`);
-     }
-@@ -922,17 +869,13 @@ export class SurveyBuilderPage extends CommonPage {
-       let hovered = false;
-       for (let attempt = 1; attempt <= 3 && !hovered; attempt++) {
-         try {
--          await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, 'Hover first question row');
-+          await row.hover();
-           if (!(await duplicateButton.isVisible(SMALL_TIMEOUT))) {
-             await this.webActionHandler.mouseMove(0, 0);
--            await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, 'Re-hover first question row');
-+            await row.hover();
-             await this.waitUntilVisible(duplicateButton, 'Duplicate question button', SMALL_TIMEOUT);
-           }
--          await this.withTimeout(
--            duplicateButton.executeScript((e) => e.scrollIntoView()),
--            ELEMENT_WAIT_TIMEOUT,
--            'Scroll Duplicate button into view'
--          );
-+          await duplicateButton.executeScript((e) => e.scrollIntoView());
-           await nativePage.locator(duplicateResource.selectorValue).first().hover({ force: true, timeout: SMALL_TIMEOUT });
-           hovered = true;
-         } catch (error) {
-@@ -1282,7 +1225,7 @@ export class SurveyBuilderPage extends CommonPage {
-       const rowLocator = `${rowResource.selectorValue} >> nth=${index}`;
-       const row = this.getQuestionRowElement(index);
-       await this.waitUntilVisible(row, `Question row (step: hover, index ${index}, locator: ${rowLocator})`, ELEMENT_WAIT_TIMEOUT);
--      await this.withTimeout(row.hover(), ELEMENT_WAIT_TIMEOUT, `Hover question row (step: hover, index ${index}, locator: ${rowLocator})`);
-+      await row.hover();
-       const editButtonResource = this.getResource('editQuestionButton');
-       const editButtonLocator = `${editButtonResource.selectorValue} >> nth=${index}`;
-       const editButton = this.webActionHandler.getWebElement({
-@@ -1295,11 +1238,7 @@ export class SurveyBuilderPage extends CommonPage {
-         `Edit question button (step: click edit pencil, index ${index}, locator: ${editButtonLocator})`,
-         ELEMENT_WAIT_TIMEOUT
-       );
--      await this.withTimeout(
--        editButton.click(),
--        ELEMENT_WAIT_TIMEOUT,
--        `Click Edit question button (step: click edit pencil, index ${index}, locator: ${editButtonLocator})`
--      );
-+      await editButton.click();
-       const saveButtonResource = this.getResource('saveQuestionChangesButton');
-       const saveButton = this.webActionHandler.getWebElement(saveButtonResource);
-       await this.waitUntilVisible(
-@@ -1329,17 +1268,13 @@ export class SurveyBuilderPage extends CommonPage {
-           selectorValue: `${rowResource.selectorValue} >> nth=${index} >> .save-changes-action:visible`,
-         });
-         await this.waitUntilVisible(saveButton, `Save changes button (index ${index})`);
--        await this.withTimeout(
--          saveButton.click(),
--          ELEMENT_WAIT_TIMEOUT,
--          `Click Save changes button (step: saveQuestionChanges, index ${index}, locator: ${rowResource.selectorValue} >> nth=${index} >> .save-changes-action:visible)`
--        );
-+        await saveButton.click();
-       }
- 
-       // Some question types (e.g. AI Multi Scale) leave the editor open after Save changes; click outside the card to close it.
-       if (await saveButton.isVisible(SMALL_TIMEOUT)) {
-         const header = this.webActionHandler.getWebElement(this.getResource('surveyTitleDisplay'));
--        await this.withTimeout(header.click(), ELEMENT_WAIT_TIMEOUT, 'Click outside question card to close editor');
-+        await header.click();
-         await saveButton.waitFor(ELEMENT_WAIT_TIMEOUT, 'hidden');
- 
-         // Outside click didn't close it either; fall back to Discard.
-@@ -1368,7 +1303,7 @@ export class SurveyBuilderPage extends CommonPage {
-     try {
-       const discardButton = this.webActionHandler.getWebElement(this.getResource('discardChangesButton'));
-       await this.waitUntilVisible(discardButton, 'Discard changes button');
--      await this.withTimeout(discardButton.click(), ELEMENT_WAIT_TIMEOUT, 'Click Discard changes button');
-+      await discardButton.click();
-     } catch (error) {
-       throw new Error(`Failed to discard question changes: ${error instanceof Error ? error.message : error}`);
-     }
-diff --git a/e2e/utils/base-page-factory.ts b/e2e/utils/base-page-factory.ts
-index 1848b50c..96190c86 100644
---- a/e2e/utils/base-page-factory.ts
-+++ b/e2e/utils/base-page-factory.ts
-@@ -5,6 +5,7 @@ import path from 'path';
- import { WebActions } from '@gfk/gta/dist/core/web/webActions';
- import { getLambdaTestBuildName, getLambdaTestSessionDir } from './configurationDetails';
- import { safeJoin, assertContainedDir } from './safe-path';
-+import { ELEMENT_WAIT_TIMEOUT, NAVIGATION_TIMEOUT } from '../constants/timeout-constants';
- 
- /**
-  * BasePageFactory: wires up a Playwright browser for tests, either
-@@ -118,6 +119,8 @@ export class BasePageFactory {
- 
-       const context = await browser.newContext(contextOptions);
-       const page = await context.newPage();
-+      page.setDefaultTimeout(ELEMENT_WAIT_TIMEOUT);
-+      page.setDefaultNavigationTimeout(NAVIGATION_TIMEOUT);
- 
-       try {
-         const rawWorkerIndex = Number(process.env.TEST_WORKER_INDEX || 0);
-@@ -202,6 +205,10 @@ export class BasePageFactory {
-       recordVideo: { dir: 'test-results/videos', size: { width: 1280, height: 720 } },
-     };
- 
--    return await BasePage.initializer(browserName, browserOptions, contextOptions);
-+    const basePage = await BasePage.initializer(browserName, browserOptions, contextOptions);
-+    const page = (BasePage as any).page as import('playwright').Page;
-+    page.setDefaultTimeout(ELEMENT_WAIT_TIMEOUT);
-+    page.setDefaultNavigationTimeout(NAVIGATION_TIMEOUT);
-+    return basePage;
-   }
- }
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e ((7f82e8b0...))
+$ npx playwright test tests/survey --project=chromium --workers=1 --grep @StartFromScratch
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 28 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …home page @StartFromScratch @LandStartFromScratch (17.3s)
+Auth state loaded from storage/auth.json
+  ✓   2 …dataset screen @StartFromScratch @DatasetSelection (4.1s)
+  ✓   3 … 5 filters are set @StartFromScratch @DataSummary (43.0s)
+  ✓   4 … a response count @StartFromScratch @ResponseCount (4.7s)
+  ✓   5 …ceeding @StartFromScratch @ProceedToSurveyBuilder (617ms)
+  ✓   6 …t survey title @StartFromScratch @EditSurveyTitle (821ms)
+  ✓   7 …e question @StartFromScratch @SingleChoiceQuestion (2.4s)
+  ✓   8 …question @StartFromScratch @MultipleChoiceQuestion (3.6s)
+  ✓   9 … Rating question @StartFromScratch @RatingQuestion (2.7s)
+  ✓  10 …Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
+  ✓  11 …ale question @StartFromScratch @PointScaleQuestion (4.2s)
+  ✓  12 …ale question @StartFromScratch @MultiScaleQuestion (4.2s)
+  ✘  13 …ired toggle is on @StartFromScratch @RequiredStar (20.3s)
+  -  14 … text via the pencil icon @StartFromScratch @EditQuestion
+  -  15 …Save changes on a question @StartFromScratch @DiscardSave
+  -  16 …tion count unchanged @StartFromScratch @CancelAddQuestion
+  -  17 …g and drop reorders questions @StartFromScratch @DragDrop
+  -  18 … via hover row actions @StartFromScratch @DeleteDuplicate
+  -  19 …oundary - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  20 …back to Build Survey @StartFromScratch @StepperNavigation
+  -  21 …licate with limit message @StartFromScratch @MaxQuestions
+  -  22 …lect, delete selected, exit @StartFromScratch @ReviewMode
+  -  23 …_BS_10: Save survey as draft @StartFromScratch @SaveDraft
+  -  24 …ere are recommendations @StartFromScratch @ValidateSurvey
+  -  25 …TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  26 …ay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  27 …Question options and 0 rows @StartFromScratch @EmptyState
+  -  28 …ewer than 3 questions @StartFromScratch @ValidateDisabled
+
+
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
+
+    Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:1262
+
+      1260 |       }
+      1261 |     } catch (error) {
+    > 1262 |       throw new Error(`Failed to set Required (index${index}) to ${desired}: ${error instanceof Error ? error.message: error}`);
+           |             ^
+      1263 |     }
+      1264 |   }
+      1265 |
+        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1262:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
+
+    attachment #1: screenshot (image/png) ────────────────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ─────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\attachments\start-from-scratch-video-37df8da6901182541716b0c04e72c124208fa928.webm
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
+  1 skipped
+  14 did not run
+  12 passed (2.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e ((7f82e8b0...))
+$ 
