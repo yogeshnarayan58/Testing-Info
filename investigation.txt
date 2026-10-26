@@ -1,79 +1,66 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ grep -rn "setDefaultTimeout\|timeout: 0\|timeout:0" node_modules/@gfk/gta --include=*.ts --include=*.js | grep -v "\.d\.ts"
-node_modules/@gfk/gta/dist/test/testUtils.js:97:        setDefaultTimeout: jest.fn(),
+$ grep -n "rephrase-with-ai\|reprompt-submit" locators/survey/start-with-prompt.locator.json
+30:    { "elementName": "rephraseWithAiButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-with-ai-${text}']" },
+36:    { "elementName": "repromptSubmitButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-submit']" }
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ grep -n "async click\|async hover\|async enterText" -A6 node_modules/@gfk/gta/core/web/webElement.ts
-grep: node_modules/@gfk/gta/core/web/webElement.ts: No such file or directory
+$ npx playwright test tests/survey --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/ page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ grep -n "click(\|hover(\|fill(\|\.type(" node_modules/@gfk/gta/dist/core/web/webEl
-ement.js | head -20
-42:                .fill("")
-57:    async click(force = false) {
-60:                .click({ force: force })
-78:                .dblclick()
-112:                .fill(text)
-410:            await this.webElement.type(text, { delay: delayTyping });
-443:            await this.webElement.filter({ hasText: text }).nth(listElementIndex).click();
-583:            await this.click();
-584:            await this.webElement.click({ button: "right" });
-658:    async hover(force = false) {
-660:            await this.webElement.hover({ force: force }).then(() => {
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:69:35)
+    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:61:16)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ grep -rn "withTimeout" page-objects utils
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:69:35)
+    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:61:16)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+Global setup completed. Auth state saved.
+Error: Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx tsc --noEmit
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git add -A -- . ':!PR178_REVIEW_FIXES.md' ':!LOCATOR_TESTID_INVESTIGATION.md'
-warning: in the working copy of 'e2e/locators/survey/start-with-prompt.locator.json', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/common/common-page.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/common/dataset-selection.helper.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/common/login.page.ts',LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/common/select-panelist.page.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/common/survey-builder.page.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/page-objects/survey/start-with-prompt.page.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts', LF will be replaced by CRLF the next timeGit touches it
-warning: in the working copy of 'e2e/tests/survey/start-from-scratch.spec.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/tests/survey/start-with-prompt.spec.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/utils/base-page-factory.ts', LF will be replaced by CRLF the next time Git touches it
+   at ..\helpers\global-setup.ts:43
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git commit -m "refactor(e2e): replace withTimeout with page default timeout"
-[feature/start-with-prompt-ai-automation 375c85ea] refactor(e2e): replace withTimeout with page default timeout
- Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
-Your name and email address were configured automatically based
-on your username and hostname. Please check that they are accurate.
-You can suppress this message by setting them explicitly. Run the
-following command and follow the instructions in your editor to edit
-your configuration file:
+  41 |     console.error('Global setup failed:', error);
+  42 |     if (error instanceof Error) {
+> 43 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  44 |     }
+  45 |     throw new Error('Global setup failed with an unknown error');
+  46 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
 
-    git config --global --edit
 
-After doing this, you may fix the identity used for this commit with:
+To open last HTML report run:
 
-    git commit --amend --reset-author
+  npx playwright show-report
 
- 11 files changed, 134 insertions(+), 266 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git log --oneline -6
-375c85ea (HEAD -> feature/start-with-prompt-ai-automation) refactor(e2e): replace withTimeout with page default timeout
-7f82e8b0 test(e2e): validation via persistent state, TC IDs, review-modemerge, stateful scenario
-ff205937 style(e2e): add prettier config and format PR178 files
-af8a7326 refactor(e2e): merge duplicate methods, remove dead code
-4ad0ee4e refactor(e2e): move shared page helpers to CommonPage
-cb5e2017 (origin/feature/start-with-prompt-ai-automation) Fix of PR
-(END)
-375c85ea (HEAD -> feature/start-with-prompt-ai-automation) refactor(e2e): replace withTimeout with page default timeout
-7f82e8b0 test(e2e): validation via persistent state, TC IDs, review-modemerge, stateful scenario
-ff205937 style(e2e): add prettier config and format PR178 files
-af8a7326 refactor(e2e): merge duplicate methods, remove dead code
-4ad0ee4e refactor(e2e): move shared page helpers to CommonPage
-cb5e2017 (origin/feature/start-with-prompt-ai-automation) Fix of PR
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
