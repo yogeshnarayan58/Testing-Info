@@ -1,6 +1,12 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
@@ -16,283 +22,163 @@ Global setup completed. Auth state saved.
 
 Running 60 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 …home page @StartFromScratch @LandStartFromScratch (17.2s)
+  ✓   1 …home page @StartFromScratch @LandStartFromScratch (19.2s)
 Auth state loaded from storage/auth.json
-  ✓   2 …dataset screen @StartFromScratch @DatasetSelection (2.8s)
-  ✓   3 … 5 filters are set @StartFromScratch @DataSummary (43.1s)
-  ✓   4 … a response count @StartFromScratch @ResponseCount (5.1s)
-  ✓   5 …ceeding @StartFromScratch @ProceedToSurveyBuilder (511ms)
-  ✓   6 …t survey title @StartFromScratch @EditSurveyTitle (548ms)
-  ✓   7 … question @StartFromScratch @SingleChoiceQuestion (714ms)
-  ✓   8 …question @StartFromScratch @MultipleChoiceQuestion (4.4s)
-  ✓   9 … Rating question @StartFromScratch @RatingQuestion (2.9s)
-  ✓  10 …Add an NPS question @StartFromScratch @NPSQuestion (2.9s)
-  ✓  11 …ale question @StartFromScratch @PointScaleQuestion (4.2s)
+  ✓   2 …dataset screen @StartFromScratch @DatasetSelection (4.0s)
+  ✓   3 … 5 filters are set @StartFromScratch @DataSummary (44.2s)
+  ✓   4 … a response count @StartFromScratch @ResponseCount (5.3s)
+  ✓   5 …ceeding @StartFromScratch @ProceedToSurveyBuilder (618ms)
+  ✓   6 …it survey title @StartFromScratch @EditSurveyTitle (1.0s)
+  ✓   7 …e question @StartFromScratch @SingleChoiceQuestion (1.8s)
+  ✓   8 …question @StartFromScratch @MultipleChoiceQuestion (4.2s)
+  ✓   9 … Rating question @StartFromScratch @RatingQuestion (3.6s)
+  ✓  10 …Add an NPS question @StartFromScratch @NPSQuestion (3.3s)
+  ✓  11 …ale question @StartFromScratch @PointScaleQuestion (4.5s)
   ✓  12 …ale question @StartFromScratch @MultiScaleQuestion (4.6s)
-  ✓  13 …ired toggle is on @StartFromScratch @RequiredStar (28.7s)
-  ✓  14 …ia the pencil icon @StartFromScratch @EditQuestion (5.7s)
-  ✓  15 …nges on a question @StartFromScratch @DiscardSave (26.6s)
-  ✓  16 …unt unchanged @StartFromScratch @CancelAddQuestion (2.7s)
-  ✓  17 …rop reorders questions @StartFromScratch @DragDrop (1.7s)
-  ✓  18 …ver row actions @StartFromScratch @DeleteDuplicate (1.7s)
-  ✓  19 …- min 2, max 15 @StartFromScratch @OptionBoundary (31.8s)
-  ✓  20 …Build Survey @StartFromScratch @StepperNavigation (18.3s)
-  ✓  21 …ith limit message @StartFromScratch @MaxQuestions (18.5s)
-  ✘  22 …lete selected, exit @StartFromScratch @ReviewMode (17.7s)
-  -  23 …_BS_10: Save survey as draft @StartFromScratch @SaveDraft
-  -  24 …and Optiq feedback link @StartFromScratch @ValidateSurvey
+  ✓  13 …ired toggle is on @StartFromScratch @RequiredStar (28.4s)
+  ✓  14 …ia the pencil icon @StartFromScratch @EditQuestion (5.9s)
+  ✓  15 …nges on a question @StartFromScratch @DiscardSave (26.5s)
+  ✓  16 …unt unchanged @StartFromScratch @CancelAddQuestion (2.9s)
+  ✓  17 …rop reorders questions @StartFromScratch @DragDrop (2.2s)
+  ✓  18 …ver row actions @StartFromScratch @DeleteDuplicate (2.0s)
+  ✓  19 …- min 2, max 15 @StartFromScratch @OptionBoundary (32.3s)
+  ✓  20 …Build Survey @StartFromScratch @StepperNavigation (18.8s)
+  ✓  21 …ith limit message @StartFromScratch @MaxQuestions (18.7s)
+  ✓  22 …elete selected, exit @StartFromScratch @ReviewMode (8.3s)
+  ✓  23 … Save survey as draft @StartFromScratch @SaveDraft (6.9s)
+  ✓  24 …q feedback link @StartFromScratch @ValidateSurvey (11.2s)
   -  25 …TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  26 …ay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  27 …Question options and 0 rows @StartFromScratch @EmptyState
-  -  28 …ewer than 3 questions @StartFromScratch @ValidateDisabled
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-  ✓  29 …t option on the survey home page @StartWithPrompt (18.1s)
+  ✓  26 …uild Survey @StartFromScratch @ReviewModeDeleteAll (2.1s)
+  ✓  27 … options and 0 rows @StartFromScratch @EmptyState (146ms)
+  ✓  28 …an 3 questions @StartFromScratch @ValidateDisabled (5.3s)
+  ✓  29 …t option on the survey home page @StartWithPrompt (19.1s)
 Auth state loaded from storage/auth.json
-  ✓  30 …ype and dataset @StartWithPrompt @DatasetSelection (3.9s)
-  ✓  31 …earch for panelists @StartWithPrompt @DataSummary (16.6s)
-  ✓  32 …t a response count @StartWithPrompt @ResponseCount (3.9s)
-  ✓  33 …Build Survey page @StartWithPrompt @GenerateSurvey (2.1s)
-  ✓  34 … Questions screen @StartWithPrompt @GenerateSurvey (3.9s)
-  ✓  35 …he question count @StartWithPrompt @GenerateSurvey (4.3s)
-  ✓  36 …after AI generation @StartWithPrompt @BuildSurvey (434ms)
-  ✓  37 … state and prompt @StartWithPrompt @GenerateSurvey (7.6s)
-  ✓  38 …he question count @StartWithPrompt @GenerateSurvey (3.7s)
-  ✓  39 …he question count @StartWithPrompt @GenerateSurvey (8.2s)
-  ✓  40 …stions @StartWithPrompt @BuildSurvey @MaxQuestions (2.2s)
-  ✓  41 …quired toggle is on @StartWithPrompt @BuildSurvey (17.7s)
-  ✓  42 … via the pencil icon @StartWithPrompt @BuildSurvey (7.6s)
-  ✓  43 …anges on a question @StartWithPrompt @DiscardSave (30.0s)
-  ✓  44 …ia hover row actions @StartWithPrompt @BuildSurvey (3.8s)
-  ✘  45 … reorders questions @StartWithPrompt @BuildSurvey (17.2s)
-  -  46 …he question count unchanged @StartWithPrompt @BuildSurvey
-  -  47 …lect, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  48 …with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  49 …elete, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  50 …Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  51 …dd a Single Choice question @StartWithPrompt @BuildSurvey
-  -  52 … a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  53 …_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  54 …BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  55 … Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  56 … Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  57 …ta and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  58 …boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  59 …C_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  60 … and Optiq feedback link @StartWithPrompt @ValidateSurvey
+  ✓  30 …ype and dataset @StartWithPrompt @DatasetSelection (6.2s)
+  ✓  31 …earch for panelists @StartWithPrompt @DataSummary (17.9s)
+  ✓  32 …t a response count @StartWithPrompt @ResponseCount (3.0s)
+  ✓  33 …Build Survey page @StartWithPrompt @GenerateSurvey (2.3s)
+  ✓  34 … Questions screen @StartWithPrompt @GenerateSurvey (6.2s)
+  ✓  35 …he question count @StartWithPrompt @GenerateSurvey (1.4s)
+  ✓  36 …after AI generation @StartWithPrompt @BuildSurvey (734ms)
+  ✓  37 … state and prompt @StartWithPrompt @GenerateSurvey (7.0s)
+  ✓  38 …he question count @StartWithPrompt @GenerateSurvey (1.1s)
+  ✓  39 …he question count @StartWithPrompt @GenerateSurvey (8.0s)
+  ✓  40 …stions @StartWithPrompt @BuildSurvey @MaxQuestions (3.1s)
+  ✓  41 …quired toggle is on @StartWithPrompt @BuildSurvey (19.8s)
+  ✓  42 … via the pencil icon @StartWithPrompt @BuildSurvey (6.9s)
+  ✓  43 …anges on a question @StartWithPrompt @DiscardSave (29.3s)
+  ✓  44 …ia hover row actions @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  45 …p reorders questions @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  46 …tion count unchanged @StartWithPrompt @BuildSurvey (4.1s)
+  ✓  47 …lete selected, exit @StartWithPrompt @BuildSurvey (11.2s)
+  ✓  48 …wer than 3 questions @StartWithPrompt @BuildSurvey (5.5s)
+  ✓  49 …stay on Build Survey @StartWithPrompt @BuildSurvey (1.7s)
+  ✓  50 … options and 0 rows @StartWithPrompt @BuildSurvey (214ms)
+  ✓  51 …ngle Choice question @StartWithPrompt @BuildSurvey (1.7s)
+  ✓  52 …iple Choice question @StartWithPrompt @BuildSurvey (4.6s)
+  ✓  53 …dd a Rating question @StartWithPrompt @BuildSurvey (3.2s)
+  ✓  54 … Add an NPS question @StartWithPrompt @BuildSurvey (3.4s)
+  ✓  55 …Point Scale question @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  56 …Multi Scale question @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  57 …ack to Build Survey @StartWithPrompt @BuildSurvey (24.9s)
+  ✓  58 … - min 2, max 15 @StartWithPrompt @OptionBoundary (33.7s)
+  ✓  59 …: Save survey as draft @StartWithPrompt @SaveDraft (4.5s)
+  ✘  60 …iq feedback link @StartWithPrompt @ValidateSurvey (18.8s)
 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:195:7 › Start from scratch › TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:466:7 › Start with a prompt › TC_AI_13: Validatesurvey shows the loading message, recommendations and Optiq feedback link @StartWithPrompt @ValidateSurvey 
 
-    Error: Failed to unselect all: Unselect all button not visible after 15000ms
+    Error: Expected a validation result toast (complete / recommended / needed), got outcome "none"
+    expect(received).toBeTruthy()
 
-       at ..\page-objects\common\survey-builder.page.ts:414
+    Received: false
 
-      412 |       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      413 |     } catch (error) {
-    > 414 |       throw new Error(`Failed to unselect all: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      415 |     }
-      416 |   }
-      417 |
-        at SurveyBuilderPage.unselectAll (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:414:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:225:7
+       at ..\page-objects\common\assert-utils.ts:14
 
-    attachment #1: screenshot (image/png) ────────────────────────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ─────────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\attachments\start-from-scratch-video-e9409ecb2333e98adc1d035d6cf385ecb9630fc7.webm
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ───────────────────────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────
-
-  2) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:151:7 › Start with a prompt › TC_BS_15: Drag anddrop reorders questions @StartWithPrompt @BuildSurvey 
-
-    Error: Failed to drag question row (from 0 to 1): Wait for dragged question to settle at index 1 timed out after 15000ms
-
-       at ..\page-objects\common\survey-builder.page.ts:750
-
-      748 |       await this.withTimeout(waitForSettled, ELEMENT_WAIT_TIMEOUT, `Wait for dragged question to settle at index ${toIndex}`);
-      749 |     } catch (error) {
-    > 750 |       throw new Error(`Failed to drag question row (from ${fromIndex} to ${toIndex}): ${error instanceof Error ? error.message : error}`);
-          |             ^
-      751 |     }
-      752 |   }
-      753 |
-        at SurveyBuilderPage.dragQuestionRow (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:750:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:160:5
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:483:17
 
     attachment #1: screenshot (image/png) ────────────────────────
-    test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\test-failed-1.png
+    test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\test-failed-1.png
     ──────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\error-context.md
 
     attachment #3: start-with-prompt-video (video/webm) ──────────
-    test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\attachments\start-with-prompt-video-b39cb13eca17957ed486f0ac036936205e2c9afd.webm
+    test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\attachments\start-with-prompt-video-6e9840887bbad874085622c7de370166f600a7c6.webm
     ──────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\error-context.md
 
     attachment #5: trace (application/zip) ───────────────────────
-    test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\trace.zip
+    test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-4fa54-and-drop-reorders-questions-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-c242e-ons-and-Optiq-feedback-link-chromium\trace.zip
 
     ──────────────────────────────────────────────────────────────
 
-  2 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:195:7 › Start from scratch › TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode 
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:151:7 › Start with a prompt › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey 
+  Slow test file: [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts (6.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:466:7 › Start with a prompt › TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link @StartWithPrompt @ValidateSurvey 
   1 skipped
-  20 did not run
-  37 passed (7.6m)
-
-
+  58 passed (9.9m)
 ------------
-TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit
-survey/common-test-cases/build-survey-common-test-cases.ts:195
-17.7s
-chromiumStartFromScratchReviewMode
+TC_AI_13: Validate survey shows the loading message, recommendations and Optiq feedback link
+survey/common-test-cases/build-survey-common-test-cases.ts:466
+18.8s
+chromiumStartWithPromptValidateSurvey
 serial
 Copy prompt
-Error: Failed to unselect all: Unselect all button not visible after 15000ms
+Error: Expected a validation result toast (complete / recommended / needed), got outcome "none"
+expect(received).toBeTruthy()
 
-   at ..\page-objects\common\survey-builder.page.ts:414
+Received: false
 
-  412 |       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-  413 |     } catch (error) {
-> 414 |       throw new Error(`Failed to unselect all: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  415 |     }
-  416 |   }
-  417 |
-    at SurveyBuilderPage.unselectAll (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:414:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:225:7
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:483:17
 Filter steps
 Before Hooks
-13ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-61ms
-Wait for selector locator('[data-test-id=\'review-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Click locator('[data-test-id=\'review-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-510ms
-Wait for selector locator('niq-button:has-text(\'Select All\')') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-49ms
-Wait for selector locator('niq-button:has-text(\'Expand All\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-13ms
-Wait for selector locator('niq-button:has-text(\'Collapse All\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-34ms
-Wait for selector locator('niq-button:has-text(\'Delete\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Wait for selector locator('text=Exit Review Mode')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-18ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-20ms
-Wait for selector locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Wait for selector locator('[data-test-id=\'select-question-1-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-18ms
-Wait for selector locator('[data-test-id=\'select-question-2-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-19ms
-Wait for selector locator('[data-test-id=\'select-question-3-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Wait for selector locator('[data-test-id=\'select-question-4-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Wait for selector locator('[data-test-id=\'select-question-5-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-17ms
-Wait for selector locator('[data-test-id=\'select-question-6-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Wait for selector locator('[data-test-id=\'select-question-7-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Wait for selector locator('[data-test-id=\'select-question-8-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15ms
-Wait for selector locator('[data-test-id=\'select-question-9-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Wait for selector locator('niq-button:has-text(\'Select All\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-13ms
-Click locator('niq-button:has-text(\'Select All\')')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
 44ms
-Wait for selector locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-18ms
-Click locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-59ms
-Wait for selector locator('text=Unselect All')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-2.3s
-Worker Cleanup
-2ms
-------------
-Start with a prompt
-« previous
-TC_BS_15: Drag and drop reorders questions
-survey/common-test-cases/build-survey-common-test-cases.ts:151
-17.2s
-chromiumStartWithPromptBuildSurvey
-serial
-Copy prompt
-Error: Failed to drag question row (from 0 to 1): Wait for dragged question to settle at index 1 timed out after 15000ms
-
-   at ..\page-objects\common\survey-builder.page.ts:750
-
-  748 |       await this.withTimeout(waitForSettled, ELEMENT_WAIT_TIMEOUT, `Wait for dragged question to settle at index ${toIndex}`);
-  749 |     } catch (error) {
-> 750 |       throw new Error(`Failed to drag question row (from ${fromIndex} to ${toIndex}): ${error instanceof Error ? error.message : error}`);
-      |             ^
-  751 |     }
-  752 |   }
-  753 |
-    at SurveyBuilderPage.dragQuestionRow (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:750:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:160:5
-Filter steps
-Before Hooks
-18ms
-Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-120ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-54ms
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-33ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-142ms
-Wait for selector locator('.question-row').first().locator('.drag-handle')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-82ms
-Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-21ms
-Evaluate locator('.question-row').first().locator('.drag-handle')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-34ms
-Wait for selector locator('.question-row').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-31ms
-Evaluate locator('.question-row').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:184
-51ms
-Mouse move— ../page-objects/common/survey-builder.page.ts:728
-67ms
-Mouse down— ../page-objects/common/survey-builder.page.ts:729
-85ms
-Mouse move ✕ 10— ../page-objects/common/survey-builder.page.ts:732
-351ms
-Mouse up— ../page-objects/common/survey-builder.page.ts:738
-37ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text') ✕ 41— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+128ms
+Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+25ms
+Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.8s
+Wait for selector locator('text="Validating your survey"').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+448ms
+Wait for selector locator('.footer-page-loader')— ../page-objects/common/survey-builder.page.ts:979
 1.0s
+Wait for selector locator('text="Validation complete"').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('text="Changes recommended"').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('text="Changes needed"').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
 After Hooks
-2.2s
+2.6s
 Worker Cleanup
-4ms
