@@ -1,61 +1,142 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git fetch origin
-remote: Enumerating objects: 864, done.
-remote: Counting objects: 100% (280/280), done.
-remote: Compressing objects: 100% (44/44), done.
-remote: Total 864 (delta 246), reused 249 (delta 230), pack-reused 584 (from 1)
-Receiving objects: 100% (864/864), 596.74 KiB | 2.80 MiB/s, done.
-Resolving deltas: 100% (444/444), completed with 44 local objects.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * [new branch]        RBOC-220773/Grid-and-Heat-grid-integration-> origin/RBOC-220773/Grid-and-Heat-grid-integration
-   7bbb218b..e6cee0a5  cache-mechanism-implementatiion -> origin/cache-mechanism-implementatiion
- * [new branch]        feature/RBOC-219620 -> origin/feature/RBOC-219620
- * [new branch]        feature/RBOC-229276-intermittent-breadcrumb-duplication-fix -> origin/feature/RBOC-229276-intermittent-breadcrumb-duplication-fix
- * [new branch]        feature/vulnerability-fixes -> origin/feature/vulnerability-fixes
-   9efc9faa..0ed721cf  gh-pages            -> origin/gh-pages
-   619df2ce..efd89ab1  main                -> origin/main
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …tFromScratch @LandStartFromScratch (19.7s)
+Auth state loaded from storage/auth.json
+  ✓   2 …@StartFromScratch @DatasetSelection (3.3s)
+  ✓   3 …set @StartFromScratch @DataSummary (43.5s)
+  ✓   4 …nt @StartFromScratch @ResponseCount (4.1s)
+  ✓   5 …romScratch @ProceedToSurveyBuilder (617ms)
+  ✓   6 …@StartFromScratch @EditSurveyTitle (752ms)
+  ✓   7 …rtFromScratch @SingleChoiceQuestion (1.6s)
+  ✓   8 …FromScratch @MultipleChoiceQuestion (4.5s)
+  ✓   9 …n @StartFromScratch @RatingQuestion (2.7s)
+  ✓  10 …tion @StartFromScratch @NPSQuestion (2.7s)
+  ✓  11 …tartFromScratch @PointScaleQuestion (4.2s)
+  ✓  12 …tartFromScratch @MultiScaleQuestion (4.3s)
+  ✓  13 …on @StartFromScratch @RequiredStar (28.5s)
+  ✓  14 …con @StartFromScratch @EditQuestion (5.7s)
+  ✓  15 …ion @StartFromScratch @DiscardSave (26.5s)
+  ✓  16 …StartFromScratch @CancelAddQuestion (2.6s)
+  ✓  17 …estions @StartFromScratch @DragDrop (1.7s)
+  ✓  18 … @StartFromScratch @DeleteDuplicate (1.7s)
+  ✓  19 … @StartFromScratch @OptionBoundary (31.4s)
+  ✓  20 …tartFromScratch @StepperNavigation (18.6s)
+  ✓  21 …ge @StartFromScratch @MaxQuestions (20.7s)
+  ✓  22 … exit @StartFromScratch @ReviewMode (6.1s)
+  ✓  23 … draft @StartFromScratch @SaveDraft (4.6s)
+  ✓  24 …s @StartFromScratch @ValidateSurvey (7.0s)
+  -  25 …sh survey @StartFromScratch @PublishSurvey
+  ✓  26 …artFromScratch @ReviewModeDeleteAll (1.8s)
+  ✓  27 … rows @StartFromScratch @EmptyState (80ms)
+  ✓  28 …@StartFromScratch @ValidateDisabled (5.2s)
+  ✓  29 … survey home page @StartWithPrompt (21.1s)
+Auth state loaded from storage/auth.json
+  ✓  30 … @StartWithPrompt @DatasetSelection (3.2s)
+  ✓  31 …ists @StartWithPrompt @DataSummary (17.4s)
+  ✓  32 …unt @StartWithPrompt @ResponseCount (2.9s)
+  ✓  33 …ge @StartWithPrompt @GenerateSurvey (2.2s)
+  ✓  34 …en @StartWithPrompt @GenerateSurvey (4.2s)
+  ✓  35 …nt @StartWithPrompt @GenerateSurvey (4.3s)
+  ✓  36 …tion @StartWithPrompt @BuildSurvey (538ms)
+  ✘  37 …t @StartWithPrompt @GenerateSurvey (15.3s)
+  -  38 …ion count @StartWithPrompt @GenerateSurvey
+  -  39 …ion count @StartWithPrompt @GenerateSurvey
+  -  40 …StartWithPrompt @BuildSurvey @MaxQuestions
+  -  41 …toggle is on @StartWithPrompt @BuildSurvey
+  -  42 … pencil icon @StartWithPrompt @BuildSurvey
+  -  43 …n a question @StartWithPrompt @DiscardSave
+  -  44 … row actions @StartWithPrompt @BuildSurvey
+  -  45 …rs questions @StartWithPrompt @BuildSurvey
+  -  46 …nt unchanged @StartWithPrompt @BuildSurvey
+  -  47 …lected, exit @StartWithPrompt @BuildSurvey
+  -  48 … 3 questions @StartWithPrompt @BuildSurvey
+  -  49 …Build Survey @StartWithPrompt @BuildSurvey
+  -  50 …s and 0 rows @StartWithPrompt @BuildSurvey
+  -  51 …ice question @StartWithPrompt @BuildSurvey
+  -  52 …ice question @StartWithPrompt @BuildSurvey
+  -  53 …ing question @StartWithPrompt @BuildSurvey
+  -  54 …NPS question @StartWithPrompt @BuildSurvey
+  -  55 …ale question @StartWithPrompt @BuildSurvey
+  -  56 …ale question @StartWithPrompt @BuildSurvey
+  -  57 …Build Survey @StartWithPrompt @BuildSurvey
+  -  58 …2, max 15 @StartWithPrompt @OptionBoundary
+  -  59 …urvey as draft @StartWithPrompt @SaveDraft
+  -  60 …endations @StartWithPrompt @ValidateSurvey
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git log origin/main --oneline -5 -- libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ git show origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html | grep -n -i "edit\|niqtooltip\|data-test-id\|iconname"
-13:        <div class="question-row" [class.editing]="editingIndex === i" cdkDrag (mouseenter)="setHoveredQuestion(i)" (mouseleave)="clearHoveredQuestion()"
-19:                [style.visibility]="hoveredQuestionIndex === i&& editingIndex !== i ? 'visible' : 'hidden'"
-20:                [style.pointerEvents]="hoveredQuestionIndex === i && editingIndex !== i ? 'auto' : 'none'"
-22:                <niq-icon iconName="drag-drop-circle" [useSprite]="true" size="small"></niq-icon>
-24:            <div class="question-header question-content" [class.px-0]="editingIndex === i">
-26:                    @let showSuggestionTags = hoveredQuestionIndex !== i && editingIndex !== i;
-27:                    <survey-question-editor [selectedType]="q.type" [mode]="editingIndex === i ? 'edit' : 'readonly'"
-30:                        (questionDataChange)="onQuestionEditorDataChange(i, $event)"
-32:                    </survey-question-editor>
-34:                    <div class="question-actions" [style.display]="(hoveredQuestionIndex === i || rephraseOpenIndex === i) && editingIndex !== i ? 'flex' : 'none'">
-39:                                [iconName]="rephraseOpenIndex === i ? 'chevron-down' : 'ai-sparkle'" size="small"
-55:                                    type="primary" [iconName]="'send'" size="small">
-61:                        <niq-icon-button class="question-action-button" (click)="editQuestion(i); $event.stopPropagation()"
-62:                            iconName="edit" size="small" mode="light" type="primary"
-63:                            state="default" [niqTooltip]="'SURVEYMOD_EDIT' | translate" [showTooltip]="true" niqTooltipPosition="top">
-67:                            iconName="duplicate" size="small" mode="light" type="primary"
-72:                            [niqTooltip]="(isAtMaxQuestions() ? 'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' : 'SURVEYMOD_DUPLICATE') |translate"
-74:                            niqTooltipPosition="top">
-78:                            (click)="deleteQuestion(i); $event.stopPropagation()" iconName="trash" size="small"
-79:                            mode="light" type="primary" state="default" [niqTooltip]="'SURVEYMOD_DELETE' | translate" [showTooltip]="true"
-80:                            niqTooltipPosition="top">
-98:                <niq-button data-test-id="add-question" [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
-103:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
-105:                    niqTooltipPosition="top"
-111:                <niq-button data-test-id="suggest-new-questions" size="small" 
-115:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
-117:                    iconName="ai-sparkle"
-119:                    niqTooltipPosition="top"
-123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
-127:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
-129:                    niqTooltipPosition="top"
-130:                    iconName="ai-sparkle"
-152:        <div #inlineEditorContainer class="inline-add-editor">
-153:            <survey-question-editor [selectedType]="pendingNewType()" [mode]="'edit'"
-155:                [isInlineAdd]="true" (questionDataChange)="onNewEditorDataChange($event)"
-157:            </survey-question-editor>
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
+    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+
+       at ..\page-objects\survey\start-with-prompt.page.ts:286
+
+      284 |       }
+      285 |     } catch (error) {
+    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      287 |     }
+      288 |   }
+      289 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+
+    attachment #1: screenshot (image/png) ─────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
+    ───────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) 
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-6be6a96e87c6f3d517d60a84281ddaf867098aaf.webm
+    ───────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+
+    ───────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  23 did not run
+  35 passed (6.1m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+------------
+TC_AI_10: Rephrase with AI clears the loading state and prompt
+survey/start-with-prompt.spec.ts:136
+15.3s
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+
+   at ..\page-objects\survey\start-with-prompt.page.ts:286
+
+  284 |       }
+  285 |     } catch (error) {
+> 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  287 |     }
+  288 |   }
+  289 |
+    at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+Filter steps
+Before Hooks
+14ms
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+139ms
+Wait for selector locator('[data-test-id=\'rephrase-with-ai-0\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+2.0s
+Worker Cleanup
