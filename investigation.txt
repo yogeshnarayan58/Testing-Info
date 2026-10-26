@@ -1,9 +1,10 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
+Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
 No auth state found - login required
 Starting login process...
@@ -15,83 +16,83 @@ Global setup completed. Auth state saved.
 
 Running 60 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-  ✓   1 …n the survey home page @StartFromScratch @LandStartFromScratch (21.3s)
+  ✓   1 …ey home page @StartFromScratch @LandStartFromScratch (22.8s)
 Auth state loaded from storage/auth.json
-  ✓   2 …the Choose a dataset screen @StartFromScratch @DatasetSelection (4.3s)
-  ✓   3 …sts after all 5 filters are set @StartFromScratch @DataSummary (44.0s)
-  ✓   4 …ter selecting a response count @StartFromScratch @ResponseCount (5.8s)
-  ✓   5 …age after proceeding @StartFromScratch @ProceedToSurveyBuilder (739ms)
-  ✓   6 …TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (648ms)
-  ✓   7 … Single Choice question @StartFromScratch @SingleChoiceQuestion (1.5s)
-  ✓   8 …tiple Choice question @StartFromScratch @MultipleChoiceQuestion (4.0s)
-  ✓   9 …BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.9s)
-  ✓  10 …› TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.9s)
-  ✓  11 …dd a Point Scale question @StartFromScratch @PointScaleQuestion (4.7s)
-  ✓  12 …dd a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.5s)
-  ✘  13 …when the Required toggle is on @StartFromScratch @RequiredStar (20.3s)
-  -  14 … the question text via the pencil icon @StartFromScratch @EditQuestion
-  -  15 …rd changes / Save changes on a question @StartFromScratch @DiscardSave
-  -  16 …aves the question count unchanged @StartFromScratch @CancelAddQuestion
-  -  17 …TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
-  -  18 …te a question via hover row actions @StartFromScratch @DeleteDuplicate
-  -  19 …04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
-  -  20 …ins data and back to Build Survey @StartFromScratch @StepperNavigation
-  -  21 …stion and Duplicate with limit message @StartFromScratch @MaxQuestions
-  -  22 … controls, select, delete selected, exit @StartFromScratch @ReviewMode
-  -  23 … scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
-  -  24 …dback when there are recommendations @StartFromScratch @ValidateSurvey
-  -  25 …h › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  26 …l, delete, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  27 …te shows Add Question options and 0 rows @StartFromScratch @EmptyState
-  -  28 …sabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+  ✓   2 … a dataset screen @StartFromScratch @DatasetSelection (5.3s)
+      3 …s after all 5 filters are set @StartFromScratch @DataSumm
+  ✓   3 …all 5 filters are set @StartFromScratch @DataSummary (50.      4 … selecting a response count @StartFromScratch @ResponseCo
+  ✓   4 …ing a response count @StartFromScratch @ResponseCount (5.      5 …e after proceeding @StartFromScratch @ProceedToSurveyBuil
+  ✓   5 …proceeding @StartFromScratch @ProceedToSurveyBuilder (575      6 …_BS_02: Edit survey title @StartFromScratch @EditSurveyTi
+  ✓   6 …Edit survey title @StartFromScratch @EditSurveyTitle (650      7 …ngle Choice question @StartFromScratch @SingleChoiceQuest
+  ✓   7 …oice question @StartFromScratch @SingleChoiceQuestion (1.      8 …le Choice question @StartFromScratch @MultipleChoiceQuest
+  ✓   8 …ce question @StartFromScratch @MultipleChoiceQuestion (4.      9 …03c: Add a Rating question @StartFromScratch @RatingQuest
+  ✓   9 …d a Rating question @StartFromScratch @RatingQuestion (2.     10 …C_BS_03d: Add an NPS question @StartFromScratch @NPSQuest
+  ✓  10 …d: Add an NPS question @StartFromScratch @NPSQuestion (3.     11 …a Point Scale question @StartFromScratch @PointScaleQuest
+  ✓  11 … Scale question @StartFromScratch @PointScaleQuestion (4.     12 …a Multi Scale question @StartFromScratch @MultiScaleQuest
+  ✓  12 … Scale question @StartFromScratch @MultiScaleQuestion (4.     13 …en the Required toggle is on @StartFromScratch @RequiredS
+  ✘  13 …equired toggle is on @StartFromScratch @RequiredStar (20.     14 …ion text via the pencil icon @StartFromScratch @EditQuest
+  -  14 …ion text via the pencil icon @StartFromScratch @EditQuest     15 … / Save changes on a question @StartFromScratch @DiscardS
+  -  15 … / Save changes on a question @StartFromScratch @DiscardS     16 …uestion count unchanged @StartFromScratch @CancelAddQuest
+  -  16 …uestion count unchanged @StartFromScratch @CancelAddQuest     17 …Drag and drop reorders questions @StartFromScratch @DragD
+  -  17 …Drag and drop reorders questions @StartFromScratch @DragD     18 …ion via hover row actions @StartFromScratch @DeleteDuplic
+  -  18 …ion via hover row actions @StartFromScratch @DeleteDuplic     19 …s boundary - min 2, max 15 @StartFromScratch @OptionBound
+  -  19 …s boundary - min 2, max 15 @StartFromScratch @OptionBound     20 …nd back to Build Survey @StartFromScratch @StepperNavigat
+  -  20 …nd back to Build Survey @StartFromScratch @StepperNavigat     21 …Duplicate with limit message @StartFromScratch @MaxQuesti
+  -  21 …Duplicate with limit message @StartFromScratch @MaxQuesti     22 … select, delete selected, exit @StartFromScratch @ReviewM
+  -  22 … select, delete selected, exit @StartFromScratch @ReviewM     23 … TC_BS_10: Save survey as draft @StartFromScratch @SaveDr
+  -  23 … TC_BS_10: Save survey as draft @StartFromScratch @SaveDr     24 … there are recommendations @StartFromScratch @ValidateSur
+  -  24 … there are recommendations @StartFromScratch @ValidateSur     25 …16/TC_BS_18: Publish survey @StartFromScratch @PublishSur
+  -  25 …16/TC_BS_18: Publish survey @StartFromScratch @PublishSur     26 … stay on Build Survey @StartFromScratch @ReviewModeDelete
+  -  26 … stay on Build Survey @StartFromScratch @ReviewModeDelete     27 …dd Question options and 0 rows @StartFromScratch @EmptySt
+  -  27 …dd Question options and 0 rows @StartFromScratch @EmptySt     28 …h fewer than 3 questions @StartFromScratch @ValidateDisab
+  -  28 …h fewer than 3 questions @StartFromScratch @ValidateDisab◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-  ✓  29 … with a prompt option on the survey home page @StartWithPrompt (17.0s)
-Auth state loaded from storage/auth.json
-  ✓  30 …the dataset type and dataset @StartWithPrompt @DatasetSelection (3.4s)
-  ✓  31 …ections and search for panelists @StartWithPrompt @DataSummary (16.2s)
-  ✓  32 … Should select a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓  33 …nd reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓  34 …the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.7s)
-  ✓  35 … increases the question count @StartWithPrompt @GenerateSurvey (29.4s)
-  ✓  36 …survey title after AI generation @StartWithPrompt @BuildSurvey (470ms)
-  ✘  37 … the loading state and prompt @StartWithPrompt @GenerateSurvey (15.2s)
-  -  38 …s: Should increase the question count @StartWithPrompt @GenerateSurvey
-  -  39 …s to add increases the question count @StartWithPrompt @GenerateSurvey
-  -  40 …bled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  41 …r appears when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  42 …te the question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  43 …ard changes / Save changes on a question @StartWithPrompt @DiscardSave
-  -  44 …plicate a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  45 …_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  46 …tion leaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  47 … controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  48 … is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  49 …select all, delete, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  50 …te shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  51 … TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  52 …C_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  53 …rompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  54 … prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  55 … › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  56 … › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  57 …ts retains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  58 …_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  59 … a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  60 …edback when there are recommendations @StartWithPrompt @ValidateSurvey
-
+     29 …ith a prompt option on the survey home page @StartWithPro
+  ✓  29 …ompt option on the survey home page @StartWithPrompt (20.0s)h state loaded from storage/auth.json
+     30 … dataset type and dataset @StartWithPrompt @DatasetSelect
+  ✓  30 …t type and dataset @StartWithPrompt @DatasetSelection (3.     31 …tions and search for panelists @StartWithPrompt @DataSumm
+  ✓  31 …d search for panelists @StartWithPrompt @DataSummary (17.     32 …ould select a response count @StartWithPrompt @ResponseCo
+  ✓  32 …lect a response count @StartWithPrompt @ResponseCount (3.     33 …reach the Build Survey page @StartWithPrompt @GenerateSur
+  ✓  33 …he Build Survey page @StartWithPrompt @GenerateSurvey (1.     34 … Customize Questions screen @StartWithPrompt @GenerateSur
+  ✓  34 …ize Questions screen @StartWithPrompt @GenerateSurvey (3.     35 …ncreases the question count @StartWithPrompt @GenerateSur
+  ✓  35 … the question count @StartWithPrompt @GenerateSurvey (16.     36 …rvey title after AI generation @StartWithPrompt @BuildSur
+  ✓  36 …le after AI generation @StartWithPrompt @BuildSurvey (438     37 …he loading state and prompt @StartWithPrompt @GenerateSur
+  ✓  37 …ing state and prompt @StartWithPrompt @GenerateSurvey (8.     38 …increase the question count @StartWithPrompt @GenerateSur
+  ✓  38 …e the question count @StartWithPrompt @GenerateSurvey (3.     39 …ncreases the question count @StartWithPrompt @GenerateSur
+  ✓  39 …s the question count @StartWithPrompt @GenerateSurvey (8.     40 … (max) questions @StartWithPrompt @BuildSurvey @MaxQuesti
+  ✓  40 …questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.     41 …when the Required toggle is on @StartWithPrompt @BuildSur
+  ✘  41 … Required toggle is on @StartWithPrompt @BuildSurvey (15.     42 …stion text via the pencil icon @StartWithPrompt @BuildSur
+  -  42 …stion text via the pencil icon @StartWithPrompt @BuildSur     43 …s / Save changes on a question @StartWithPrompt @DiscardS
+  -  43 …s / Save changes on a question @StartWithPrompt @DiscardS     44 …question via hover row actions @StartWithPrompt @BuildSur
+  -  44 …question via hover row actions @StartWithPrompt @BuildSur     45 …ag and drop reorders questions @StartWithPrompt @BuildSur
+  -  45 …ag and drop reorders questions @StartWithPrompt @BuildSur     46 …s the question count unchanged @StartWithPrompt @BuildSur
+  -  46 …s the question count unchanged @StartWithPrompt @BuildSur     47 … select, delete selected, exit @StartWithPrompt @BuildSur
+  -  47 … select, delete selected, exit @StartWithPrompt @BuildSur     48 …ed with fewer than 3 questions @StartWithPrompt @BuildSur
+  -  48 …ed with fewer than 3 questions @StartWithPrompt @BuildSur     49 …, delete, stay on Build Survey @StartWithPrompt @BuildSur
+  -  49 …, delete, stay on Build Survey @StartWithPrompt @BuildSur     50 …dd Question options and 0 rows @StartWithPrompt @BuildSur
+  -  50 …dd Question options and 0 rows @StartWithPrompt @BuildSur     51 …: Add a Single Choice question @StartWithPrompt @BuildSur
+  -  51 …: Add a Single Choice question @StartWithPrompt @BuildSur     52 …Add a Multiple Choice question @StartWithPrompt @BuildSur
+  -  52 …Add a Multiple Choice question @StartWithPrompt @BuildSur     53 …_BS_03c: Add a Rating question @StartWithPrompt @BuildSur
+  -  53 …_BS_03c: Add a Rating question @StartWithPrompt @BuildSur     54 …TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSur
+  -  54 …TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSur     55 …3e: Add a Point Scale question @StartWithPrompt @BuildSur
+  -  55 …3e: Add a Point Scale question @StartWithPrompt @BuildSur     56 …3f: Add a Multi Scale question @StartWithPrompt @BuildSur
+  -  56 …3f: Add a Multi Scale question @StartWithPrompt @BuildSur     57 … data and back to Build Survey @StartWithPrompt @BuildSur
+  -  57 … data and back to Build Survey @StartWithPrompt @BuildSur     58 …ns boundary - min 2, max 15 @StartWithPrompt @OptionBound
+  -  58 …ns boundary - min 2, max 15 @StartWithPrompt @OptionBound     59 …› TC_BS_10: Save survey as draft @StartWithPrompt @SaveDr
+  -  59 …› TC_BS_10: Save survey as draft @StartWithPrompt @SaveDr     60 …n there are recommendations @StartWithPrompt @ValidateSur
+  -  60 …n there are recommendations @StartWithPrompt @ValidateSurvey
 
   1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
 
-    Error: Failed to set Required (index 0) to true: Failed to open question 0for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
+    Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
 
        at ..\page-objects\common\survey-builder.page.ts:1205
 
       1203 |       }
       1204 |     } catch (error) {
-    > 1205 |       throw new Error(`Failed to set Required (index ${index}) to${desired}: ${error instanceof Error ? error.message : error}`);
+    > 1205 |       throw new Error(`Failed to set Required (index${index}) to ${desired}: ${error instanceof Error ? error.message: error}`);
            |             ^
       1206 |     }
       1207 |   }
@@ -99,68 +100,68 @@ Auth state loaded from storage/auth.json
         at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1205:13)
         at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────────
+    attachment #1: screenshot (image/png) ───────────────────────────
     test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) ──────────────────────
-    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\attachments\start-from-scratch-video-8aedc2c32903c7ec3711d781f1bc5ce9b0b4b1df.webm
-    ───────────────────────────────────────────────────────────────────────────
+    attachment #3: start-from-scratch-video (video/webm) ────────────
+    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\attachments\start-from-scratch-video-492404ba0d6a6c02cb0a8c6b4af893f9e4021cff.webm
+    ─────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ────────────────────────────────────
+    attachment #5: trace (application/zip) ──────────────────────────
     test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
     Usage:
 
         npx playwright show-trace test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────
 
-  2) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  2) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @BuildSurvey 
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+    Error: Failed to set Required (index 0) to false: Failed to open question 0 for editing: Edit question button (step: click editpencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
+       at ..\page-objects\common\survey-builder.page.ts:1205
 
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+      1203 |       }
+      1204 |     } catch (error) {
+    > 1205 |       throw new Error(`Failed to set Required (index${index}) to ${desired}: ${error instanceof Error ? error.message: error}`);
+           |             ^
+      1206 |     }
+      1207 |   }
+      1208 |
+        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1205:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:46:7
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) ───────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
 
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-189c7ac0b97a1d26601b1065bd05ead672043aee.webm
-    ───────────────────────────────────────────────────────────────────────────
+    attachment #3: start-with-prompt-video (video/webm) ─────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\attachments\start-with-prompt-video-ce6a01664b869cef2d9ed52c8c510f73dddf0ecf.webm
+    ─────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+    attachment #5: trace (application/zip) ──────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────
 
   2 failed
     [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
-    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @BuildSurvey 
   1 skipped
-  37 did not run
-  20 passed (4.4m)
+  33 did not run
+  24 passed (4.6m)
 
 To open last HTML report run:
 
@@ -169,69 +170,3 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
-----------------
-TC_BS_07: Required star appears when the Required toggle is on
-survey/common-test-cases/build-survey-common-test-cases.ts:36
-20.3s
-chromiumStartFromScratchRequiredStar
-serial
-Copy prompt
-Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
-
-   at ..\page-objects\common\survey-builder.page.ts:1205
-
-  1203 |       }
-  1204 |     } catch (error) {
-> 1205 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
-       |             ^
-  1206 |     }
-  1207 |   }
-  1208 |
-    at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1205:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
-Filter steps
-Before Hooks
-16ms
-Wait for selector locator('.question-row').first().locator('.question-text').locator('span:text-is("*")')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-5.1s
-Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-13ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-63ms
-Wait for selector locator('[niqtooltip=\'Edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-1.8s
-Worker Cleanup
-2ms
----------
-TC_AI_10: Rephrase with AI clears the loading state and prompt
-survey/start-with-prompt.spec.ts:136
-15.2s
-chromiumStartWithPromptGenerateSurvey
-serial
-Copy prompt
-Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
-
-   at ..\page-objects\survey\start-with-prompt.page.ts:286
-
-  284 |       }
-  285 |     } catch (error) {
-> 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  287 |     }
-  288 |   }
-  289 |
-    at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
-Filter steps
-Before Hooks
-22ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-115ms
-Wait for selector locator('[data-test-id=\'rephrase-with-ai-0\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-2.4s
-Worker Cleanup
-2ms
