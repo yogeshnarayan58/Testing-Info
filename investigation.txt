@@ -1,14 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ npx playwright test tests/survey --project=chromium --workers=1 
 ◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents[www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -22,77 +16,77 @@ Global setup completed. Auth state saved.
 
 Running 62 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-  ✓   1 …on on the survey home page @LandStartFromScratch (19.8s)
+  ✓   1 …he survey home page @LandStartFromScratch (26.7s)
 Auth state loaded from storage/auth.json
-  ✓   2 …irm the Choose a dataset screen @DatasetSelection (5.2s)
-  ✓   3 …nelists after all 5 filters are set @DataSummary (49.1s)
-  ✓   4 …r after selecting a response count @ResponseCount (5.4s)
-  ✓   5 …ey page after proceeding @ProceedToSurveyBuilder (815ms)
-  ✓   6 …ch › TC_BS_02: Edit survey title @EditSurveyTitle (1.4s)
-  ✓   7 …dd a Single Choice question @SingleChoiceQuestion (3.0s)
-  ✓   8 … Multiple Choice question @MultipleChoiceQuestion (5.1s)
-  ✓   9 …› TC_BS_05: Add a Rating question @RatingQuestion (3.7s)
-  ✓  10 …atch › TC_BS_07: Add an NPS question @NPSQuestion (3.5s)
-  ✓  11 …8: Add a Point Scale question @PointScaleQuestion (6.8s)
-  ✓  12 …9: Add a Multi Scale question @MultiScaleQuestion (5.6s)
-  ✓  13 …ars when the Required toggle is on @RequiredStar (30.2s)
-  ✓  14 …e question text via the pencil icon @EditQuestion (6.3s)
-  ✓  15 …hanges / Save changes on a question @DiscardSave (27.6s)
-  ✓  16 …s the question count unchanged @CancelAddQuestion (3.3s)
-  ✓  17 …BS_15: Drag and drop reorders questions @DragDrop (2.8s)
-  ✓  18 …a question via hover row actions @DeleteDuplicate (2.6s)
-  ✓  19 …Options boundary - min 2, max 15 @OptionBoundary (35.3s)
-  ✓  20 …data and back to Build Survey @StepperNavigation (20.5s)
-  ✓  21 …n and Duplicate with limit message @MaxQuestions (22.5s)
-  ✓  22 …estion checkboxes are visible @ReviewModeControls (2.5s)
-  ✓  23 …lete, and exit keeps deletions @ReviewModeActions (4.1s)
-  ✓  24 …elect all, expand/collapse all, exit @ReviewMode (22.3s)
-  ✓  25 …TC_BS_SAVE_DRAFT: Save survey as draft @SaveDraft (4.9s)
-  ✓  26 …ndations and Optiq feedback link @ValidateSurvey (21.1s)
-  -  27 …m scratch › TC_BS_PUBLISH: Publish survey @PublishSurvey
-  ✓  28 …delete, stay on Build Survey @ReviewModeDeleteAll (2.7s)
-  ✓  29 …hows Add Question options and 0 rows @EmptyState (194ms)
-  ✓  30 …led with fewer than 3 questions @ValidateDisabled (5.6s)
-  ✓  31 …rvey home page @StartWithPrompt @StartWithPrompt (20.6s)
+  ✓   2 … Choose a dataset screen @DatasetSelection (5.2s)
+  ✓   3 … after all 5 filters are set @DataSummary (51.3s)
+  ✓   4 … selecting a response count @ResponseCount (5.8s)
+  ✓   5 … after proceeding @ProceedToSurveyBuilder (579ms)
+  ✓   6 …BS_02: Edit survey title @EditSurveyTitle (755ms)
+  ✓   7 …ngle Choice question @SingleChoiceQuestion (1.7s)
+  ✓   8 …le Choice question @MultipleChoiceQuestion (4.1s)
+  ✓   9 …_05: Add a Rating question @RatingQuestion (3.3s)
+  ✓  10 …TC_BS_07: Add an NPS question @NPSQuestion (2.6s)
+  ✓  11 …a Point Scale question @PointScaleQuestion (4.4s)
+  ✓  12 …a Multi Scale question @MultiScaleQuestion (4.2s)
+  ✓  13 …n the Required toggle is on @RequiredStar (29.1s)
+  ✓  14 …ion text via the pencil icon @EditQuestion (5.9s)
+  ✓  15 …/ Save changes on a question @DiscardSave (26.8s)
+  ✓  16 …uestion count unchanged @CancelAddQuestion (2.8s)
+  ✓  17 …Drag and drop reorders questions @DragDrop (2.0s)
+  ✓  18 …ion via hover row actions @DeleteDuplicate (1.7s)
+  ✓  19 … boundary - min 2, max 15 @OptionBoundary (31.9s)
+  ✓  20 …d back to Build Survey @StepperNavigation (19.0s)
+  ✓  21 …uplicate with limit message @MaxQuestions (18.7s)
+  ✓  22 …checkboxes are visible @ReviewModeControls (1.3s)
+  ✓  23 …nd exit keeps deletions @ReviewModeActions (3.5s)
+  ✓  24 …ll, expand/collapse all, exit @ReviewMode (19.2s)
+  ✓  25 …AVE_DRAFT: Save survey as draft @SaveDraft (3.9s)
+  ✓  26 …s and Optiq feedback link @ValidateSurvey (15.1s)
+  -  27 …ch › TC_BS_PUBLISH: Publish survey @PublishSurvey
+  ✓  28 … stay on Build Survey @ReviewModeDeleteAll (1.8s)
+  ✓  29 …dd Question options and 0 rows @EmptyState (96ms)
+  ✓  30 …h fewer than 3 questions @ValidateDisabled (5.3s)
+  ✓  31 …me page @StartWithPrompt @StartWithPrompt (17.2s)
 Auth state loaded from storage/auth.json
-  ✓  32 …pe and dataset @StartWithPrompt @DatasetSelection (3.1s)
-  ✓  33 …arch for panelists @StartWithPrompt @DataSummary (18.8s)
-  ✓  34 … a response count @StartWithPrompt @ResponseCount (4.4s)
-  ✓  35 …uild Survey page @StartWithPrompt @GenerateSurvey (2.4s)
-  ✓  36 …Questions screen @StartWithPrompt @GenerateSurvey (6.8s)
-  ✓  37 …e question count @StartWithPrompt @GenerateSurvey (1.6s)
-  ✓  38 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (1.7s)
-  ✓  39 …pt after submit @StartWithPrompt @GenerateSurvey (12.8s)
-  ✓  40 …e question count @StartWithPrompt @GenerateSurvey (6.5s)
-  ✓  41 … close the panel @StartWithPrompt @GenerateSurvey (8.7s)
-  ✓  42 …rompt @StartWithPrompt @BuildSurvey @MaxQuestions (3.3s)
-  ✓  43 …n @StartWithPrompt @StartWithPrompt @BuildSurvey (20.3s)
-  ✓  44 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (7.1s)
-  ✓  45 …n @StartWithPrompt @StartWithPrompt @DiscardSave (29.2s)
-  ✓  46 …ns @StartWithPrompt @StartWithPrompt @BuildSurvey (3.7s)
-  ✓  47 …ns @StartWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
-  ✓  48 …ed @StartWithPrompt @StartWithPrompt @BuildSurvey (5.1s)
-  ✓  49 …it @StartWithPrompt @StartWithPrompt @BuildSurvey (7.3s)
-  ✓  50 …ns @StartWithPrompt @StartWithPrompt @BuildSurvey (5.3s)
-  ✓  51 …ey @StartWithPrompt @StartWithPrompt @BuildSurvey (1.5s)
-  ✓  52 …s @StartWithPrompt @StartWithPrompt @BuildSurvey (238ms)
-  ✓  53 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (1.8s)
-  ✓  54 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (4.4s)
-  ✓  55 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (3.2s)
-  ✓  56 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (3.1s)
-  ✓  57 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (5.6s)
-  ✓  58 …on @StartWithPrompt @StartWithPrompt @BuildSurvey (5.4s)
-  ✓  59 …y @StartWithPrompt @StartWithPrompt @BuildSurvey (27.0s)
-  ✓  60 …StartWithPrompt @StartWithPrompt @OptionBoundary (38.5s)
-  ✓  61 …raft @StartWithPrompt @StartWithPrompt @SaveDraft (5.2s)
-  ✓  62 …StartWithPrompt @StartWithPrompt @ValidateSurvey (10.5s)
+  ✓  32 …dataset @StartWithPrompt @DatasetSelection (3.3s)
+  ✓  33 …r panelists @StartWithPrompt @DataSummary (16.6s)
+  ✓  34 …onse count @StartWithPrompt @ResponseCount (3.4s)
+  ✓  35 …rvey page @StartWithPrompt @GenerateSurvey (2.4s)
+  ✓  36 …ns screen @StartWithPrompt @GenerateSurvey (4.4s)
+  ✓  37 …on count @StartWithPrompt @GenerateSurvey (16.7s)
+  ✓  38 …tWithPrompt @StartWithPrompt @BuildSurvey (654ms)
+  ✓  39 …er submit @StartWithPrompt @GenerateSurvey (6.8s)
+  ✓  40 …ion count @StartWithPrompt @GenerateSurvey (1.1s)
+  ✓  41 …the panel @StartWithPrompt @GenerateSurvey (7.3s)
+  ✓  42 …StartWithPrompt @BuildSurvey @MaxQuestions (2.5s)
+  ✓  43 …tWithPrompt @StartWithPrompt @BuildSurvey (18.2s)
+  ✓  44 …rtWithPrompt @StartWithPrompt @BuildSurvey (6.1s)
+  ✓  45 …tWithPrompt @StartWithPrompt @DiscardSave (27.1s)
+  ✓  46 …rtWithPrompt @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  47 …rtWithPrompt @StartWithPrompt @BuildSurvey (2.7s)
+  ✓  48 …rtWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
+  ✓  49 …rtWithPrompt @StartWithPrompt @BuildSurvey (5.3s)
+  ✓  50 …rtWithPrompt @StartWithPrompt @BuildSurvey (3.8s)
+  ✓  51 …rtWithPrompt @StartWithPrompt @BuildSurvey (1.2s)
+  ✓  52 …tWithPrompt @StartWithPrompt @BuildSurvey (136ms)
+  ✓  53 …rtWithPrompt @StartWithPrompt @BuildSurvey (1.2s)
+  ✓  54 …rtWithPrompt @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  55 …rtWithPrompt @StartWithPrompt @BuildSurvey (2.7s)
+  ✓  56 …rtWithPrompt @StartWithPrompt @BuildSurvey (2.8s)
+  ✓  57 …rtWithPrompt @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  58 …rtWithPrompt @StartWithPrompt @BuildSurvey (4.2s)
+  ✓  59 …tWithPrompt @StartWithPrompt @BuildSurvey (25.1s)
+  ✓  60 …thPrompt @StartWithPrompt @OptionBoundary (34.8s)
+  ✓  61 …tartWithPrompt @StartWithPrompt @SaveDraft (4.6s)
+  ✓  62 …thPrompt @StartWithPrompt @ValidateSurvey (17.1s)
 
-  Slow test file: [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts (6.3m)
+  Slow test file: [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts (5.6m)
   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
   1 skipped
-  61 passed (11.2m)
+  61 passed (10.3m)
 
 To open last HTML report run:
 
