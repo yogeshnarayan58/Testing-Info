@@ -259,3 +259,6 @@ Each item below is additional to its locator-JSON entry and is counted once per 
 - The app binds `question-text-input-${questionNumber()}` to the `niq-text-field` host. Whether the external field implementation adds the locator's trailing `-input` suffix on its inner input could not be verified from this source tree.
 - The max-options/max-questions messages are produced via tooltip directives; whether their overlay elements can receive an app-bound test ID could not be confirmed. The directive-rendered overlay owner/API was not established.
 - Several stable IDs listed for dataset picker/data-summary/save-copy elements are visible in e2e selectors or component usage, but the external implementation is absent; their exact library owners cannot be independently confirmed beyond the explicit `@nielsen/crf-data-summary` and `@nielsen/crf-ui-components` references above.
+
+
+
