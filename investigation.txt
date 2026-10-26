@@ -1,85 +1,190 @@
-PR #178 Lead #4: use stable data-test-ids for rephrase/reprompt. Do not run any commands.
-1. start-with-prompt.locator.json — change only these entries (selectorType "css"):
-   - rephraseWithAiButton → "[data-test-id='<RENDERED rephrase-with-ai-${text}>']"
-   - rephraseInput → "[data-test-id='<RENDERED rephrase-input-${text}>']"
-   - rephraseSendButton → "[data-test-id='<RENDERED rephrase-send-${text}>']"
-   - repromptInput → "[data-test-id='<RENDERED reprompt-input>']"
-   - repromptSubmitButton → "[data-test-id='<RENDERED reprompt-submit>']"
-2. start-with-prompt.page.ts rephraseQuestion(): rephraseInput and rephraseSendButton now take the question index, so resolve them with this.resourceManager.getDynamicResource(name, String(index), this.componentName) instead of this.getResource(name). Change nothing else (keep the inline .rephrase-send-loading as is).
-3. Append "## Phase 3" to e2e/PR178_REVIEW_FIXES.md: table Locator | Old | New, and "Test results: _pending_".
-List files changed, one line each. Do not echo code.
-----------------------------------------------------------
-# PR #178 Review Fixes
+I’ll make only the requested comment/title edits in the permitted test and page-object files, preserve the specified behavioral comments, and avoid terminal commands and protected directories.
 
-Running log of review-driven cleanup. Later phases append new sections below; earlier sections are never rewritten.
+Comment-line counts are original comment lines removed, including originals replaced by shorter comments.
 
-## Phase 1a
+start-from-scratch.spec.ts — 2
+start-with-prompt.spec.ts — 1
+build-survey-common-test-cases.ts — 0
+select-panelist.page.ts — 21
+dataset-selection.helper.ts — 9
+common-page.ts — 15
+login.page.ts — 5
+No commands or tests were run.
+--------------------------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git diff --stat
+warning: in the working copy of 'e2e/locators/survey/start-with-prompt.locator.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/common-page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/login.page.ts', LF will bereplaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/select-panelist.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/survey/start-with-prompt.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-from-scratch.spec.ts', LF wi
+ll be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-with-prompt.spec.ts', LF wil
+l be replaced by CRLF the next time Git touches it
+ e2e/locators/survey/start-with-prompt.locator.json | 10 ++++----
+ e2e/page-objects/common/common-page.ts             | 13 ++---------
+ .../common/dataset-selection.helper.ts             | 10 +-------
+ e2e/page-objects/common/login.page.ts              |  6 +----
+ e2e/page-objects/common/select-panelist.page.ts    | 27 ++++++++--------------
+ e2e/page-objects/survey/start-with-prompt.page.ts  |  8 +++++--
+ .../build-survey-common-test-cases.ts              |  2 +-
+ e2e/tests/survey/start-from-scratch.spec.ts        |  3 +--
+ e2e/tests/survey/start-with-prompt.spec.ts         |  1 -
+ 9 files changed, 26 insertions(+), 54 deletions(-)
+(END)
+warning: in the working copy of 'e2e/tests/survey/start-with-prompt.spec.ts', LF will be replaced by CRLF the next time Git touches it
+ e2e/locators/survey/start-with-prompt.locator.json | 10 ++++----
+ e2e/page-objects/common/common-page.ts             | 13 ++---------
+ .../common/dataset-selection.helper.ts             | 10 +-------
+ e2e/page-objects/common/login.page.ts              |  6 +----
+ e2e/page-objects/common/select-panelist.page.ts    | 27 ++++++++--------------
+ e2e/page-objects/survey/start-with-prompt.page.ts  |  8 +++++--
+ .../build-survey-common-test-cases.ts              |  2 +-
+ e2e/tests/survey/start-from-scratch.spec.ts        |  3 +--
+ e2e/tests/survey/start-with-prompt.spec.ts         |  1 -
+ 9 files changed, 26 insertions(+), 54 deletions(-)
 
-| File | Change (one line) | Review comment fixed |
-|---|---|---|
-| page-objects/common/common-page.ts | Made abstract; added shared withTimeout, waitUntilVisible, clickWhenVisible, fillWhenVisible, getResource, getCurrentUrl, abstract componentName | Manager withTimeout |
-| page-objects/common/login.page.ts | Added `componentName = LOGIN_PAGE_COMPONENT_NAME` | Lead #5 |
-| page-objects/survey/start-from-scratch.page.ts | Added `componentName = START_FROM_SCRATCH_PAGE_COMPONENT_NAME` | Lead #5 |
-| page-objects/survey/start-with-prompt.page.ts | Added `componentName`; removed duplicate withTimeout/waitUntilVisible/getResource; dropped unused WebActions import | Lead #5 |
-| page-objects/common/survey-builder.page.ts | Added `componentName`; removed duplicate withTimeout/waitUntilVisible/getResource/clickWhenVisible/fillWhenVisible/getCurrentUrl | Lead #5 |
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git diff -U0 -- '*.ts' | grep -E "^[-+]" | grep -vE "^(\+\+\+|---)" | grep -vE "^[-+]\s*(//|\*|/\*\*|\*/)"
+warning: in the working copy of 'e2e/page-objects/common/common-page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/login.page.ts', LF will bereplaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/select-panelist.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/survey/start-with-prompt.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-from-scratch.spec.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-with-prompt.spec.ts', LF will be replaced by CRLF the next time Git touches it
+-      const rephraseInput = this.webActionHandler.getWebElement(this.getResource('rephraseInput'));
++      const rephraseInput = this.webActionHandler.getWebElement(
++        this.resourceManager.getDynamicResource('rephraseInput', String(index), this.componentName)
++      );
+-      const rephraseSendButton = this.webActionHandler.getWebElement(this.getResource('rephraseSendButton'));
++      const rephraseSendButton = this.webActionHandler.getWebElement(
++        this.resourceManager.getDynamicResource('rephraseSendButton', String(index), this.componentName)
++      );
+-    options?.title ?? 'TC_BS_13/TC_BS_14a: Review Mode controls, delete selected, exit',
++    options?.title ?? 'TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit',
 
-No public method names, signatures, timeout values, or error/step messages changed.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ grep -rn "JIRA-ID\|TICKET-ID" tests page-objects
 
-Test results: _pending_
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx tsc --noEmit
 
-## Phase 3
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx prettier --write $(git diff --name-only --relative -- '*.ts')
+warning: in the working copy of 'e2e/page-objects/common/common-page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/login.page.ts', LF will bereplaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/common/select-panelist.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/page-objects/survey/start-with-prompt.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-from-scratch.spec.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/tests/survey/start-with-prompt.spec.ts', LF will be replaced by CRLF the next time Git touches it
+page-objects/common/common-page.ts 67ms (unchanged)
+page-objects/common/dataset-selection.helper.ts 11ms
+page-objects/common/login.page.ts 14ms (unchanged)
+page-objects/common/select-panelist.page.ts 51ms (unchanged)
+page-objects/survey/start-with-prompt.page.ts 37ms (unchanged)
+tests/survey/common-test-cases/build-survey-common-test-cases.ts 42ms (unchanged)
+tests/survey/start-from-scratch.spec.ts 16ms
+tests/survey/start-with-prompt.spec.ts 16ms
 
-| Locator | Old | New |
-|---|---|---|
-| rephraseWithAiButton | `.rephrase-action >> nth=${text}` | `[data-test-id='rephrase-with-ai-${text}']` |
-| rephraseInput | `.rephrase-input` | `[data-test-id='rephrase-input-${text}']` |
-| rephraseSendButton | `.rephrase-send` | `[data-test-id='rephrase-send-${text}']` |
-| repromptInput | `.reprompt-input` | `[data-test-id='reprompt-input']` |
-| repromptSubmitButton | `role=button[name="Submit"]` | `[data-test-id='reprompt-submit']` |
-| rephraseQuestion() dynamic selectors | `getResource(name)` for input and send button | `getDynamicResource(name, String(index), this.componentName)` |
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ 
+--------------------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ npx playwright test tests/survey --project=chromium --workers=1 --grep @StartWithPrompt
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Test results: _pending_
+Running 32 tests using 1 worker
 
-## Phase 1b
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …Start with a prompt option on the survey home page @StartWithPrompt (20.3s)
+Auth state loaded from storage/auth.json
+  ✓   2 …lect the dataset type and dataset @StartWithPrompt @DatasetSelection (3.7s)
+  ✓   3 …n selections and search for panelists @StartWithPrompt @DataSummary (44.9s)
+  ✓   4 …ount: Should select a response count @StartWithPrompt @ResponseCount (3.8s)
+  ✓   5 …mpt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   6 …s on the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.8s)
+  ✓   7 …stions increases the question count @StartWithPrompt @GenerateSurvey (3.4s)
+  ✓   8 … the survey title after AI generation @StartWithPrompt @BuildSurvey (376ms)
+  ✘   9 …lears the loading state and prompt @StartWithPrompt @GenerateSurvey (15.3s)
+  -  10 …stions: Should increase the question count @StartWithPrompt @GenerateSurvey
+  -  11 …stions to add increases the question count @StartWithPrompt @GenerateSurvey
+  -  12 … disabled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  13 …d star appears when the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  14 … update the question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  15 … Discard changes / Save changes on a question @StartWithPrompt @DiscardSave
+  -  16 …nd duplicate a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  17 … › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  18 … Question leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  19 … Mode controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  20 …urvey is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  21 …Mode select all, delete, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  22 …y state shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  23 …mpt › TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  24 …t › TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  25 …h a prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  26 …ith a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  27 …rompt › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  28 …rompt › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  29 …nelists retains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  30 …TC_BS_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  31 … with a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  32 …iq feedback when there are recommendations @StartWithPrompt @ValidateSurvey
 
-| File | Change (one line) | Review comment fixed |
-|---|---|---|
-| page-objects/common/survey-builder.page.ts | Merged getPublishDisabledState/getValidateDisabledState into private getButtonDisabledState | Lead #7 |
-| page-objects/common/survey-builder.page.ts | Merged addPointScaleQuestion/addMultiScaleQuestion into private addScaleQuestion | Lead #7 |
-| page-objects/common/survey-builder.page.ts | Reformatted line-3 compressed import to one per line | Lead #8 |
-| tests/survey/start-from-scratch.spec.ts | Reformatted compressed register...Test import to one per line | Lead #8 |
-| tests/survey/start-with-prompt.spec.ts | Reformatted compressed register...Test import to one per line | Lead #8 |
-| locators/survey/*.locator.json (5 files) | Removed confirmed-unreferenced entries | related cleanup: duplication |
 
-Deleted: clickBackButton, waitForQuestionEditorClosed, isSurveyVisibleInMyAssets; locator entries optionInput, loggedInLandmark, selectPanelistsTab, buildSurveyButton, firstDataset, entireDatasetOption, selectPanelistsHeading, questionCountSlider, questionCountError, repromptCloseButton.
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
 
-Kept on purpose: isChangesRecommendedToastVisible (needed in Phase 2); all *NoDataPrompt locator entries (referenced from test-data JSON).
+    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
 
-Not deleted: page-objects/common/panelist-flow.helper.ts — user declined the terminal delete command; needs manual removal.
+       at ..\page-objects\survey\start-with-prompt.page.ts:286
 
-Test results: _pending_
+      284 |       }
+      285 |     } catch (error) {
+    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      287 |     }
+      288 |   }
+      289 |
+        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
 
-## Phase 2
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────
 
-| File | Change | Review comment fixed |
-|---|---|---|
-| page-objects/common/survey-builder.page.ts | Added getValidationOutcome(); kept isValidationResultToastVisible | Lead #2 |
-| tests/.../build-survey-common-test-cases.ts | registerValidateSurveyTest asserts outcome, conditional tag/link checks | Lead #2 |
-| tests/.../build-survey-common-test-cases.ts | registerReviewModeTest: added re-select-0 and sequential-renumber checks | Lead #10 |
-| start-from-scratch.spec.ts | Quarantine comment/title reworded; inline Review Mode tests replaced by registerReviewModeTest | Lead #3, #10 |
-| start-with-prompt.spec.ts | registerReviewModeTest title aligned; duplicate @StartWithPrompt tags removed | Lead #10, #1 |
-| start-from-scratch.spec.ts, start-with-prompt.spec.ts | Unique TC IDs; describe.serial tagged/commented as stateful | Lead #9, #1 |
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
 
-TC ID renames: TC_BS_03→03a (Single Choice), TC_BS_04→03b (Multiple Choice), TC_BS_05→03c (Rating), TC_BS_07→03d (NPS), TC_BS_08→03e (Point Scale), TC_BS_09→03f (Multi Scale), TC_BS_MAX_QUESTIONS→TC_BS_08, TC_BS_SAVE_DRAFT→TC_BS_10, TC_BS_PUBLISH→TC_BS_16/TC_BS_18, "Generate more questions"→TC_AI_08, "Describe questions to add"→TC_AI_09, "Rephrase with AI"→TC_AI_10.
+    attachment #3: start-with-prompt-video (video/webm) ────────────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-a6d9701f51ce545da4f3041b4151dad09b9a41ce.webm
+    ────────────────────────────────────────────────────────────────────────────────
 
-Fix: review-mode step order (Unselect All needs full selection).
+    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
 
-Fix: validation toasts checked in parallel (toast auto-hides).
+    attachment #5: trace (application/zip) ─────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+    Usage:
 
-Fix: "Validating" toast is transient; test passes if it or a result is seen.
+        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
 
-Fix: validation asserted on persistent UI state (button change, recommendation tag, Optiq link) instead of transient toasts.
+    ────────────────────────────────────────────────────────────────────────────────
 
-Test results: _pending_
-
-Test results: _pending_
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt› TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  23 did not run
+  8 passed (2.6m)
