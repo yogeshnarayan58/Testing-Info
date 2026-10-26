@@ -1,100 +1,61 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e ((7f82e8b0...))
-$ npx playwright test tests/survey --project=chromium --workers=1 --grep @StartFromScratch
-◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git fetch origin
+remote: Enumerating objects: 864, done.
+remote: Counting objects: 100% (280/280), done.
+remote: Compressing objects: 100% (44/44), done.
+remote: Total 864 (delta 246), reused 249 (delta 230), pack-reused 584 (from 1)
+Receiving objects: 100% (864/864), 596.74 KiB | 2.80 MiB/s, done.
+Resolving deltas: 100% (444/444), completed with 44 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * [new branch]        RBOC-220773/Grid-and-Heat-grid-integration-> origin/RBOC-220773/Grid-and-Heat-grid-integration
+   7bbb218b..e6cee0a5  cache-mechanism-implementatiion -> origin/cache-mechanism-implementatiion
+ * [new branch]        feature/RBOC-219620 -> origin/feature/RBOC-219620
+ * [new branch]        feature/RBOC-229276-intermittent-breadcrumb-duplication-fix -> origin/feature/RBOC-229276-intermittent-breadcrumb-duplication-fix
+ * [new branch]        feature/vulnerability-fixes -> origin/feature/vulnerability-fixes
+   9efc9faa..0ed721cf  gh-pages            -> origin/gh-pages
+   619df2ce..efd89ab1  main                -> origin/main
 
-Running 28 tests using 1 worker
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git log origin/main --oneline -5 -- libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 …home page @StartFromScratch @LandStartFromScratch (17.3s)
-Auth state loaded from storage/auth.json
-  ✓   2 …dataset screen @StartFromScratch @DatasetSelection (4.1s)
-  ✓   3 … 5 filters are set @StartFromScratch @DataSummary (43.0s)
-  ✓   4 … a response count @StartFromScratch @ResponseCount (4.7s)
-  ✓   5 …ceeding @StartFromScratch @ProceedToSurveyBuilder (617ms)
-  ✓   6 …t survey title @StartFromScratch @EditSurveyTitle (821ms)
-  ✓   7 …e question @StartFromScratch @SingleChoiceQuestion (2.4s)
-  ✓   8 …question @StartFromScratch @MultipleChoiceQuestion (3.6s)
-  ✓   9 … Rating question @StartFromScratch @RatingQuestion (2.7s)
-  ✓  10 …Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
-  ✓  11 …ale question @StartFromScratch @PointScaleQuestion (4.2s)
-  ✓  12 …ale question @StartFromScratch @MultiScaleQuestion (4.2s)
-  ✘  13 …ired toggle is on @StartFromScratch @RequiredStar (20.3s)
-  -  14 … text via the pencil icon @StartFromScratch @EditQuestion
-  -  15 …Save changes on a question @StartFromScratch @DiscardSave
-  -  16 …tion count unchanged @StartFromScratch @CancelAddQuestion
-  -  17 …g and drop reorders questions @StartFromScratch @DragDrop
-  -  18 … via hover row actions @StartFromScratch @DeleteDuplicate
-  -  19 …oundary - min 2, max 15 @StartFromScratch @OptionBoundary
-  -  20 …back to Build Survey @StartFromScratch @StepperNavigation
-  -  21 …licate with limit message @StartFromScratch @MaxQuestions
-  -  22 …lect, delete selected, exit @StartFromScratch @ReviewMode
-  -  23 …_BS_10: Save survey as draft @StartFromScratch @SaveDraft
-  -  24 …ere are recommendations @StartFromScratch @ValidateSurvey
-  -  25 …TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  26 …ay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  27 …Question options and 0 rows @StartFromScratch @EmptyState
-  -  28 …ewer than 3 questions @StartFromScratch @ValidateDisabled
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
+$ git show origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html | grep -n -i "edit\|niqtooltip\|data-test-id\|iconname"
+13:        <div class="question-row" [class.editing]="editingIndex === i" cdkDrag (mouseenter)="setHoveredQuestion(i)" (mouseleave)="clearHoveredQuestion()"
+19:                [style.visibility]="hoveredQuestionIndex === i&& editingIndex !== i ? 'visible' : 'hidden'"
+20:                [style.pointerEvents]="hoveredQuestionIndex === i && editingIndex !== i ? 'auto' : 'none'"
+22:                <niq-icon iconName="drag-drop-circle" [useSprite]="true" size="small"></niq-icon>
+24:            <div class="question-header question-content" [class.px-0]="editingIndex === i">
+26:                    @let showSuggestionTags = hoveredQuestionIndex !== i && editingIndex !== i;
+27:                    <survey-question-editor [selectedType]="q.type" [mode]="editingIndex === i ? 'edit' : 'readonly'"
+30:                        (questionDataChange)="onQuestionEditorDataChange(i, $event)"
+32:                    </survey-question-editor>
+34:                    <div class="question-actions" [style.display]="(hoveredQuestionIndex === i || rephraseOpenIndex === i) && editingIndex !== i ? 'flex' : 'none'">
+39:                                [iconName]="rephraseOpenIndex === i ? 'chevron-down' : 'ai-sparkle'" size="small"
+55:                                    type="primary" [iconName]="'send'" size="small">
+61:                        <niq-icon-button class="question-action-button" (click)="editQuestion(i); $event.stopPropagation()"
+62:                            iconName="edit" size="small" mode="light" type="primary"
+63:                            state="default" [niqTooltip]="'SURVEYMOD_EDIT' | translate" [showTooltip]="true" niqTooltipPosition="top">
+67:                            iconName="duplicate" size="small" mode="light" type="primary"
+72:                            [niqTooltip]="(isAtMaxQuestions() ? 'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' : 'SURVEYMOD_DUPLICATE') |translate"
+74:                            niqTooltipPosition="top">
+78:                            (click)="deleteQuestion(i); $event.stopPropagation()" iconName="trash" size="small"
+79:                            mode="light" type="primary" state="default" [niqTooltip]="'SURVEYMOD_DELETE' | translate" [showTooltip]="true"
+80:                            niqTooltipPosition="top">
+98:                <niq-button data-test-id="add-question" [iconName]="showQuestionTypeList ? 'close' : 'add-large'" size="small" 
+103:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
+105:                    niqTooltipPosition="top"
+111:                <niq-button data-test-id="suggest-new-questions" size="small" 
+115:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
+117:                    iconName="ai-sparkle"
+119:                    niqTooltipPosition="top"
+123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
+127:                    [niqTooltip]="'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' | translate"
+129:                    niqTooltipPosition="top"
+130:                    iconName="ai-sparkle"
+152:        <div #inlineEditorContainer class="inline-add-editor">
+153:            <survey-question-editor [selectedType]="pendingNewType()" [mode]="'edit'"
+155:                [isInlineAdd]="true" (questionDataChange)="onNewEditorDataChange($event)"
+157:            </survey-question-editor>
 
-
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
-
-    Error: Failed to set Required (index 0) to true: Failed to open question 0 for editing: Edit question button (step: click edit pencil, index 0, locator: [niqtooltip='Edit'] >> nth=0) not visible after 15000ms
-
-       at ..\page-objects\common\survey-builder.page.ts:1262
-
-      1260 |       }
-      1261 |     } catch (error) {
-    > 1262 |       throw new Error(`Failed to set Required (index${index}) to ${desired}: ${error instanceof Error ? error.message: error}`);
-           |             ^
-      1263 |     }
-      1264 |   }
-      1265 |
-        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1262:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:43:7
-
-    attachment #1: screenshot (image/png) ────────────────────────
-    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ─────────
-    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\attachments\start-from-scratch-video-37df8da6901182541716b0c04e72c124208fa928.webm
-    ──────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ───────────────────────
-    test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--d8182-n-the-Required-toggle-is-on-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:36:7 › Start from scratch › TC_BS_07: Required star appears when the Required toggle is on @StartFromScratch @RequiredStar 
-  1 skipped
-  14 did not run
-  12 passed (2.8m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e ((7f82e8b0...))
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
 $ 
