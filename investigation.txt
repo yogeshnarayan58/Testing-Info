@@ -1,78 +1,25 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1 -g "Start with a Prompt:|Dataset Selection|Panelist Filters|Response Count|Generate Survey:|Validate survey"
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 7 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-  ✓  1 …urvey home page @StartWithPrompt @StartWithPrompt (18.6s)
-Auth state loaded from storage/auth.json
-  ✓  2 …ype and dataset @StartWithPrompt @DatasetSelection (4.8s)
-  ✓  3 …earch for panelists @StartWithPrompt @DataSummary (47.6s)
-  ✓  4 …t a response count @StartWithPrompt @ResponseCount (4.0s)
-  ✓  5 …Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✘  6 …ns @StartWithPrompt @StartWithPrompt @BuildSurvey (20.3s)
-  -  7 …ck link @StartWithPrompt @StartWithPrompt @ValidateSurvey
-
-
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:360:7 › Start with a prompt › TC_BS_09: Validate survey is disabled with fewer than 3 questions @StartWithPrompt @StartWithPrompt @BuildSurvey 
-
-    Error: Failed to get publish disabled state: Get publish survey button text timed out after 15000ms
-
-       at ..\page-objects\common\survey-builder.page.ts:862
-
-      860 |       };
-      861 |     } catch (error) {
-    > 862 |       throw new Error(`Failed to get publish disabled state: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      863 |     }
-      864 |   }
-      865 |
-        at SurveyBuilderPage.getPublishDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:862:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:371:9
-
-    attachment #1: screenshot (image/png) ───────────────────────
-    test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ─────────
-    test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\attachments\start-with-prompt-video-1653bbad78ea00fea3e9b17201b2ca0a343cbd3e.webm
-    ─────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────
-    test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-b4d99-with-fewer-than-3-questions-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:360:7 › Start with a prompt › TC_BS_09: Validate survey is disabled with fewer than 3 questions @StartWithPrompt@StartWithPrompt @BuildSurvey 
-  1 did not run
-  5 passed (2.5m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
+Attaching Codex review for this PR. please check once
+ 
+I found three issues I’d correct before merging, plus several maintainability cleanups.
+Findings
+[P2] Tagged tests cannot run independently.
+Both serial suites create basePage inside the first test. Running a focused tag such as @ValidateSurvey, @SaveDraft, or @ReviewModeActions excludes that setup test, leaving basePage undefined. Some review-mode tests also depend on the previous test leaving the page in review mode. Move environment setup into fixtures/hooks and make tagged cases establish their own required state—or consolidate them into one explicitly stateful scenario.
+Start-with-prompt setup · Start-from-scratch setup · Dependent review test
+[P2] The validation test accepts outcomes that contradict its following assertions.
+It accepts “complete,” “recommended,” or “needed,” but then always requires a recommendation tag and Optiq feedback link. A successful “Validation complete” response with no recommendations will fail. Return an outcome enum and assert recommendation controls only for outcomes that provide recommendations.
+Validation assertions
+[P2] Publish coverage is removed without a traceable defect.
+The previously active publish case is now test.fixme, and its Jira reference is still <defect ID to be added>. That permits publishing regressions indefinitely while CI remains green. Restore the test or add a real defect reference, owner, and removal condition for the quarantine.
+Disabled publish test
+[P3] Newly added stable test IDs are not used.
+Rephrase and reprompt controls receive data-test-id attributes, but the locator file continues using CSS classes, global role selectors, and nth. Use the new IDs, including the question index, to reduce selector ambiguity.
+Fragile locators
+Duplication and standards cleanup
+waitUntilVisible and withTimeout are effectively duplicated in both page objects. Move them to CommonPage as protected utilities.
+Survey builder copy · Prompt copy
+SurveyBuilderPage is now 1,419 lines and combines editing, review mode, validation, persistence, and publishing. Splitting these concerns would make future changes safer.
+Static inspection found unused additions: waitForQuestionEditorClosed, clickBackButton, isSurveyVisibleInMyAssets, isChangesRecommendedToastVisible, and the optionInput locator.
+Several new imports are not Prettier-compliant, particularly the compressed imports at line 3/9. The E2E package has no lint/format script, while the root ESLint configuration disables unused-variable checking—explaining why these pass CI.
+Test identifiers are reused for unrelated behavior, such as TC_BS_05, TC_BS_07, TC_BS_08, and TC_BS_09. Assign unique IDs so reports remain traceable.
+The three start-from-scratch review-mode cases overlap substantially; consolidate them or isolate their setup and assertions.
+This was a read-only review of PR #178 at cb5e201. I did not modify the branch or post GitHub comments. The visible CI gates do not execute these Playwright scenarios.
