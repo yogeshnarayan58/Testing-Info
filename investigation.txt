@@ -1,264 +1,85 @@
-# E2E locator test-ID investigation
+PR #178 Lead #4: use stable data-test-ids for rephrase/reprompt. Do not run any commands.
+1. start-with-prompt.locator.json — change only these entries (selectorType "css"):
+   - rephraseWithAiButton → "[data-test-id='<RENDERED rephrase-with-ai-${text}>']"
+   - rephraseInput → "[data-test-id='<RENDERED rephrase-input-${text}>']"
+   - rephraseSendButton → "[data-test-id='<RENDERED rephrase-send-${text}>']"
+   - repromptInput → "[data-test-id='<RENDERED reprompt-input>']"
+   - repromptSubmitButton → "[data-test-id='<RENDERED reprompt-submit>']"
+2. start-with-prompt.page.ts rephraseQuestion(): rephraseInput and rephraseSendButton now take the question index, so resolve them with this.resourceManager.getDynamicResource(name, String(index), this.componentName) instead of this.getResource(name). Change nothing else (keep the inline .rephrase-send-loading as is).
+3. Append "## Phase 3" to e2e/PR178_REVIEW_FIXES.md: table Locator | Old | New, and "Test results: _pending_".
+List files changed, one line each. Do not echo code.
+----------------------------------------------------------
+# PR #178 Review Fixes
 
-Inventory covers the five JSON locator files under `e2e/locators/survey/` and the non-JSON selectors found in `e2e/page-objects/**/*.ts`. Categories count locator entries and distinct inline selector constructions, not repeated executions of the same selector.
+Running log of review-driven cleanup. Later phases append new sections below; earlier sections are never rewritten.
 
-## Summary
+## Phase 1a
 
-| Category | Count |
-|---|---:|
-| A — already uses a stable test attribute | 59 |
-| B — fragile selector; a stable app ID exists | 12 |
-| C — fragile selector; no app ID found | 69 |
-| D — broken or ambiguous ID | 7 |
-| **Total inventory items** | **147** |
+| File | Change (one line) | Review comment fixed |
+|---|---|---|
+| page-objects/common/common-page.ts | Made abstract; added shared withTimeout, waitUntilVisible, clickWhenVisible, fillWhenVisible, getResource, getCurrentUrl, abstract componentName | Manager withTimeout |
+| page-objects/common/login.page.ts | Added `componentName = LOGIN_PAGE_COMPONENT_NAME` | Lead #5 |
+| page-objects/survey/start-from-scratch.page.ts | Added `componentName = START_FROM_SCRATCH_PAGE_COMPONENT_NAME` | Lead #5 |
+| page-objects/survey/start-with-prompt.page.ts | Added `componentName`; removed duplicate withTimeout/waitUntilVisible/getResource; dropped unused WebActions import | Lead #5 |
+| page-objects/common/survey-builder.page.ts | Added `componentName`; removed duplicate withTimeout/waitUntilVisible/getResource/clickWhenVisible/fillWhenVisible/getCurrentUrl | Lead #5 |
 
-## Login
+No public method names, signatures, timeout values, or error/step messages changed.
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| userName | playwrights `[data-id='username-input']` | A | Stable `data-id`, but not the app's `data-test-id`/`data-testid` convention. Login is not rendered by this Angular library. | Not in app source |
-| nextButton | playwrights `role=button[name="Next"]` | C | Add a `data-test-id` to the Next button if the OAuth page is maintained by the product team; this Angular repo cannot set it. | Not in app source |
-| password | playwrights `[data-id='password-input']` | A | Stable `data-id`, but not the app's `data-test-id`/`data-testid` convention. Login is not rendered by this Angular library. | Not in app source |
-| verifyButton | playwrights `role=button[name="Verify"]` | C | Add a `data-test-id` to the Verify button if the OAuth page is maintained by the product team; this Angular repo cannot set it. | Not in app source |
-| termsAcceptCheckbox | tag `[data-test-id='terms-agree-reminder-checkbox-icon']` | A | Already uses a stable test ID; rendered outside this app source. | Not in app source |
-| termsAcceptButton | tag `[data-test-id='terms-submit-button']` | A | Already uses a stable test ID; rendered outside this app source. | Not in app source |
+Test results: _pending_
 
-## Survey home / Start pages
+## Phase 3
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| startFromScratch | css `[data-testid='quick-survey-quick-2']` | A | Keep; Angular binds `quick-survey-` + `card.id`. | `libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:67` |
-| startWithPrompt | css `[data-testid='quick-survey-quick-1']` | A | Keep; Angular binds `quick-survey-` + `card.id`. | `libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:67` |
-| productOfferingHeading | playwrights `role=heading[name="Product Offering"]` | C | Add a `data-test-id` to the heading if it is owned by this app; otherwise ask the dataset-picker owner. Exact rendering owner/source is not present here. | Could not locate in app templates |
+| Locator | Old | New |
+|---|---|---|
+| rephraseWithAiButton | `.rephrase-action >> nth=${text}` | `[data-test-id='rephrase-with-ai-${text}']` |
+| rephraseInput | `.rephrase-input` | `[data-test-id='rephrase-input-${text}']` |
+| rephraseSendButton | `.rephrase-send` | `[data-test-id='rephrase-send-${text}']` |
+| repromptInput | `.reprompt-input` | `[data-test-id='reprompt-input']` |
+| repromptSubmitButton | `role=button[name="Submit"]` | `[data-test-id='reprompt-submit']` |
+| rephraseQuestion() dynamic selectors | `getResource(name)` for input and send button | `getDynamicResource(name, String(index), this.componentName)` |
 
-## Dataset picker
+Test results: _pending_
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| start-from-scratch `nextButton`; start-with-prompt `nextDatasetButton` | css `[data-test-id='btn-next-dataset']` | A | Keep; stable ID is supplied by the dataset picker, not an Angular template in this repo. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:4` (picker host only) |
-| start-from-scratch `searchToggle`; start-with-prompt `datasetSearchToggle` | css `[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']` | A | Keep; stable ID is supplied by the dataset picker. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:4` (picker host only) |
-| start-from-scratch `searchInput`; start-with-prompt `datasetSearchInput` | css `[data-test-id='dataset-picker-search-bar-input']` | A | Keep; stable ID is supplied by the dataset picker. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:4` (picker host only) |
-| start-from-scratch `datasetByLabel` | tag `[data-test-id^='rv-dataset-id-selector']:has-text('${text}')` | A | Stable test-ID prefix is present. `${text}` is the dataset label; the ID does not include that value in the selector. | External picker; exact source/library not determined |
-| start-with-prompt `datasetTypeSelector` | css `[data-test-id='rv-dataset-type-selector${text}']` | A | Keep if `${text}` is the selector's numeric suffix. The ID includes this value; no app-template binding was found. | External picker; exact source/library not determined |
-| start-with-prompt `omnishopperOfferingTile` | css `[data-test-id='${text}']` | A | Keep only for known test-ID values passed as `${text}`; app-side ID binding not found. | External picker; exact source/library not determined |
-| start-with-prompt `datasetByText` | text `${text}` | C | Add a stable ID to each dataset option, preferably including its dataset identifier, in the picker that renders the option. The picker is mounted as `<re-dataset-picker>`; its owning package/source could not be established here. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:4` |
-| start-from-scratch `dialogElement`; start-with-prompt `dialogElement` | css `[data-test-id='title-second-dialog']` | A | Keep; stable ID is supplied by the dataset picker. | External picker; exact source/library not determined |
-| start-from-scratch `applyButton`; start-with-prompt `applyButton` | css `[data-test-id='apply-dataset-btn']` | A | Keep; stable ID is supplied by the dataset picker. | External picker; exact source/library not determined |
-| start-from-scratch `defaultDataset`; start-with-prompt `defaultDataset` | css `[data-test-id='rv-default-dataset']` | A | Keep; stable ID is supplied by the dataset picker. | External picker; exact source/library not determined |
-| start-from-scratch `chooseDatasetBreadcrumb`; start-with-prompt `chooseDatasetBreadcrumb` | css `[data-test-id='dataset-picker-title']` | A | Keep; stable ID is supplied by the dataset picker. | External picker; exact source/library not determined |
-| start-from-scratch `chooseDataviewBreadcrumb`; start-with-prompt `chooseDataviewBreadcrumb` | css `[data-test-id='breadcrumb-and-search-container']` | A | Keep; stable ID is supplied by the dataset picker. | External picker; exact source/library not determined |
+## Phase 1b
 
-## Select Panelist
+| File | Change (one line) | Review comment fixed |
+|---|---|---|
+| page-objects/common/survey-builder.page.ts | Merged getPublishDisabledState/getValidateDisabledState into private getButtonDisabledState | Lead #7 |
+| page-objects/common/survey-builder.page.ts | Merged addPointScaleQuestion/addMultiScaleQuestion into private addScaleQuestion | Lead #7 |
+| page-objects/common/survey-builder.page.ts | Reformatted line-3 compressed import to one per line | Lead #8 |
+| tests/survey/start-from-scratch.spec.ts | Reformatted compressed register...Test import to one per line | Lead #8 |
+| tests/survey/start-with-prompt.spec.ts | Reformatted compressed register...Test import to one per line | Lead #8 |
+| locators/survey/*.locator.json (5 files) | Removed confirmed-unreferenced entries | related cleanup: duplication |
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| productNoDataPrompt; retailerNoDataPrompt; geographyNoDataPrompt; demographicNoDataPrompt; periodNoDataPrompt | tag `[data-test-id='ds-noDataPrompt_${text}']` (five dimension-specific IDs) | A | Keep. `${text}` is the dimension label; the ID includes the value. These are rendered by `@nielsen/crf-data-summary`, not this app template. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:19` |
-| searchIcon | playwrights `[data-test-id='ds-filterIcon-icon']:visible >> nth=0` | B | Remove `:visible >> nth=0` if unique in the rendered state; otherwise the data-summary library needs a dimension-specific ID. ID is library-rendered. | Same external component: `@nielsen/crf-data-summary` |
-| dsSearchBarInput | tag `[data-test-id='ds-searchBar-input']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| dsSelectionsViewPort | tag `[data-test-id='ds-virtualScrollViewport']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| checkboxLabel | playwrights `div.item-container:has-text('${text}') niq-checkbox >> nth=0` | C | Add a stable ID to each selectable item/checkbox in the renderer; `${text}` is the displayed label and is not encoded in an ID. This selection UI is external to app templates. | `@nielsen/crf-data-summary` |
-| removeIcon | tag `[data-test-id='ds-removeIcon']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| filledDimensionTile | tag `[data-test-id='ds-${text}_Dimension']` | A | Keep; `${text}` is the dimension label and is included in the ID. | `@nielsen/crf-data-summary` |
-| addButton | tag `[data-test-id='ds-addButton']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| selectedOption | tag `[data-cy='Selected-option']` | A | Stable `data-cy` is present; app source does not render this element. | `@nielsen/crf-data-summary` |
-| deleteMenuIcon | tag `[data-test-id='ds-selectionMenu_Delete-icon']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| categoryItem | tag `[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0` | B | Keep the dynamic label ID, but remove `>> nth=0` if labels are unique; `${text}` is included in the ID, no index is. Renderer is external. | `@nielsen/crf-data-summary` |
-| doneIcon | tag `[data-test-id='ds-breadcrumbDoneButton']` | A | Keep; library-rendered stable ID. | `@nielsen/crf-data-summary` |
-| searchForPanelistsButton | tag `[id='report-btn-run']` | D | Fix the locator to `[data-cy='report-btn-run']` or change the app binding to the attribute the test expects. Current app markup has `data-cy`, not `id`. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:39` |
-| 250ResponsesButton | text `250 Responses` | B | Use `[data-test-id='select-response-count-250']`; the app ID includes the response-count value. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:37` |
-| proceedToSurveyBuilderButton | tag `[data-test-id='proceed-to-survey']` | A | Keep. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:71` |
-| selectedResponseCountButton | css `.responses button.selected` | B | Use the selected count's `[data-test-id='select-response-count-${count}']`; ID includes `count`, not selection state. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:37` |
-| buildSurveyPageHeading | text `text= Build Survey >>nth=0` | C | Add a stable ID to the rendered Build Survey heading. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html` (heading is not present in this template; exact owner not determined) |
+Deleted: clickBackButton, waitForQuestionEditorClosed, isSurveyVisibleInMyAssets; locator entries optionInput, loggedInLandmark, selectPanelistsTab, buildSurveyButton, firstDataset, entireDatasetOption, selectPanelistsHeading, questionCountSlider, questionCountError, repromptCloseButton.
 
-## Build Survey
+Kept on purpose: isChangesRecommendedToastVisible (needed in Phase 2); all *NoDataPrompt locator entries (referenced from test-data JSON).
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| questionTypeSingleChoice; questionTypeMultipleChoice; questionTypeRating; questionTypeNPS; questionTypePointScale; questionTypeMultiScale | css `[data-test-id='question-type-${value}']` (six concrete values) | A | Keep; the ID binding uses each question-type value. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html:3` |
-| questionTextInput | css `[data-test-id='question-text-input-${text}-input']` | A | Stable dynamic ID family exists. `${text}` must be the editor's question number, not a zero-based array index; app ID is `question-text-input-${questionNumber()}` and the text-field library may suffix its inner input with `-input`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:10`; `nps-editor/nps-editor.component.html:8`; `scale-editor/scale-editor.component.html:7` |
-| ratingQuestionTextInput | playwrights `[data-test-id='-input']:visible` | D | Empty prefix is ambiguous/broken. Add/use the question-number-based ID `question-text-input-${questionNumber()}` for Rating's editor too; do not target the empty `-input`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.html` (no test ID found) |
-| optionInputByLabel | playwrights `role=textbox[name="${text}"] >> nth=0` | C | Add per-field IDs, e.g. `question-option-${questionNumber()}-${optionIndex}`; `${text}` is a label, not part of an app ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:16` (and scale editor option fields) |
-| addOptionButton | playwrights `niq-button:has-text('Add option'):visible` | C | Add `data-test-id="add-option"` to the button. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:38` |
-| optionRow | css `.option-row` | C | Add per-option IDs, e.g. `question-option-row-${questionNumber()}-${optionIndex}`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:16` |
-| removeOptionIcon | css `.option-row niq-icon.close-icon` | C | Add a per-option ID, e.g. `remove-option-${questionNumber()}-${optionIndex}`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:23` |
-| maxOptionsMessageText | playwrights `text="You have already reached the maximum number of options." >> nth=0` | C | Add a stable ID to the max-options message/tooltip in the choice editor. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:35` |
-| addRowButton; addColumnButton | playwrights `niq-button:has-text('Row')`; `niq-button:has-text('Column')` | C | Add `data-test-id="add-scale-row"` and `data-test-id="add-scale-column"` to the respective controls. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html:80`; `:90` |
-| scaleAddMenuTrigger | playwrights `.matrix-action-area:has(niq-icon-button[iconname='add-large']):visible` | C | Add `data-test-id="scale-add-menu-trigger"` to the add-menu trigger. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html:65` |
-| requiredToggle | css `[data-test-id='-input-checkbox']` | D | Empty prefix is ambiguous/broken. Set an explicit question-number-based test ID on the toggle (and ensure the rendered checkbox inherits it). | `choice-editor/choice-editor.component.html:45`; `nps-editor/nps-editor.component.html:36`; `rating-editor/rating-editor.component.html:20`; `scale-editor/scale-editor.component.html:131`; `text-editor/text-editor.component.html:17` |
-| editQuestionButton | css `[niqtooltip='Edit']` | C | Add `data-test-id="edit-question-${questionNumber}"`; `${questionNumber}` must be present because one edit action exists per row. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` (question actions) |
-| inlineAddEditor | css `.inline-add-editor` | C | Add an explicit stable ID to the inline-add editor host. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:152` |
-| questionRow | css `.question-row` | C | Add `data-test-id="question-row-${questionNumber}"`; current row class has no test ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| addQuestionLink | css `[data-test-id='add-question']` | A | Keep. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:98` |
-| duplicateQuestionButton | css `niq-icon-button[iconname='duplicate']` | C | Add `data-test-id="duplicate-question-${questionNumber}"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:67` |
-| deleteQuestionButton | css `.delete-action` | C | Add `data-test-id="delete-question-${questionNumber}"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:77` |
-| maxQuestionsMessageText | text `You have already reached the maximum number of questions.` | C | Add a stable ID to the max-questions tooltip/message. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html` |
-| questionNumberMarker | css `.question-number` | C | Add `data-test-id="question-number-${questionNumber}"` to the marker in the question editor templates. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:52`; `nps-editor/nps-editor.component.html:42`; `rating-editor/rating-editor.component.html:26`; `text-editor/text-editor.component.html:24`; `scale-editor/scale-editor.component.html:138` |
-| backButton | text `Back` | C | Add `data-test-id="back-to-panelist-selection"` to the Back control. | `libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html:1` |
-| select-panelists-step-circle | playwrights `.niq-step-circle >> nth=0` | C | Add an explicit step ID if this step is owned by the app; rendered step internals are from the UI component library. | `libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.scss:92`; internal element is library-rendered |
-| surveyTitleInput | playwrights `role=textbox[name="Survey Title"]` | C | Add `data-test-id="survey-title-input"` to the title field. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| editSurveyNameIcon | css `.edit-icon` | C | Add `data-test-id="edit-survey-title"` to the title edit icon. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| surveyTitleDisplay | css `.survey-title` | C | Add `data-test-id="survey-title"` to the title display. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| questionTextDisplay | css `.question-text` | C | Add `data-test-id="question-text-${questionNumber}"` to the readonly question text in each editor template. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:55`; `nps-editor/nps-editor.component.html:45`; `rating-editor/rating-editor.component.html:29`; `text-editor/text-editor.component.html:27`; `scale-editor/scale-editor.component.html:141` |
-| saveDraftButton; reviewSurveyButton | css `[data-test-id='save-draft']`; `[data-test-id='review-survey']` | A | Keep. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:53`; `:57` |
-| saveCopyTitleInput; savePendingChangesButton | css `[data-test-id='save-a-copy-title-input']`; `[data-test-id='save-pending-changes-button']` | A | Keep; emitted by `crf-uic-save-a-copy` rather than this Angular template. | External `@nielsen/crf-ui-components`; used by the survey-header dialog host |
-| savedAssetGridcellByTitle | playwrights `role=gridcell[name="${text}"]` | C | Add a stable ID to each save-location grid cell, including its folder/asset value. The `crf-uic-save-a-copy` internals are external. | External `@nielsen/crf-ui-components` |
+Not deleted: page-objects/common/panelist-flow.helper.ts — user declined the terminal delete command; needs manual removal.
 
-## Review Mode
+Test results: _pending_
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| selectQuestionByIndex | css `[data-test-id='select-question-${text}-icon']` | D | App emits `select-question-${$index}`, not `select-question-${text}-icon`. Fix locator to the emitted ID or change the binding consistently; confirm whether index is zero-based. | `libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html:8` |
-| selectQuestionCheckboxContainer | css `[data-test-id='select-question-${text}'] .checkbox-container` | A | Root ID matches the app binding; `${text}` is the zero-based index. The descendant class is used only to read checked state. | `libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html:8` |
-| deleteQuestionsButton | playwrights `niq-button:has-text('Delete')` | C | Add `data-test-id="review-delete-questions"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| selectAllButton; unselectAllButton | playwrights `niq-button:has-text('Select All')`; text `Unselect All` | C | Add a constant `data-test-id="review-select-all"` to the same toggle button; text changes with selection state. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| expandAllButton; collapseAllButton | playwrights `niq-button:has-text('Expand All')`; `niq-button:has-text('Collapse All')` | C | Add `data-test-id="review-expand-all"` and `data-test-id="review-collapse-all"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| exitReviewModeButton | text `Exit Review Mode` | C | Add `data-test-id="exit-review-mode"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html` |
-| drag-handle inline (`survey-builder.page.ts:707`) | `${rowResource.selectorValue} >> nth=${fromIndex} >> .drag-handle` | C | Add `data-test-id="drag-handle-${questionIndex}"`; index is currently positional and is not part of an app ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html:13` |
+## Phase 2
 
-## Save / Publish dialogs
+| File | Change | Review comment fixed |
+|---|---|---|
+| page-objects/common/survey-builder.page.ts | Added getValidationOutcome(); kept isValidationResultToastVisible | Lead #2 |
+| tests/.../build-survey-common-test-cases.ts | registerValidateSurveyTest asserts outcome, conditional tag/link checks | Lead #2 |
+| tests/.../build-survey-common-test-cases.ts | registerReviewModeTest: added re-select-0 and sequential-renumber checks | Lead #10 |
+| start-from-scratch.spec.ts | Quarantine comment/title reworded; inline Review Mode tests replaced by registerReviewModeTest | Lead #3, #10 |
+| start-with-prompt.spec.ts | registerReviewModeTest title aligned; duplicate @StartWithPrompt tags removed | Lead #10, #1 |
+| start-from-scratch.spec.ts, start-with-prompt.spec.ts | Unique TC IDs; describe.serial tagged/commented as stateful | Lead #9, #1 |
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| myAssetsTreeItem | playwrights `role=treeitem[name*="My Assets"]` | C | Add a stable ID to the My Assets tree item. This element is within the external save-copy UI. | External `@nielsen/crf-ui-components` |
-| confirmPublishDialogText | text `Review survey details` | C | Add `data-test-id="publish-dialog-title"`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:2` |
-| validateSurveyButton; publishSurveyButton | css `[data-test-id='validate-survey']`; `[data-test-id='publish-survey']` | A | Keep; the footer switches the ID based on validation state. | `libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html:13` |
-| toastCloseButton | css `[data-test-id='-close-button']` | D | Empty prefix is ambiguous/broken. Assign a non-empty ID at the toast/dialog host or remove this locator if the test does not need the close control. | No matching app binding found; toast UI is library-rendered |
-| validatingSurveyToastText; changesRecommendedToastText; validationCompleteToastText; changesNeededToastText; recommendationTagText | role/text selectors (exact strings; recommendation uses `text=/\\d+ recommendation/i >> nth=0`) | C | Add stable IDs to validation status/result messages and the recommendation tag. These are not separately identified in app templates. | `libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html:31` (loading status only); result-toast owner not determined |
-| viewOptiqFeedbackLink | text `View Optiq feedback` | B | Use `[data-test-id='ai-suggestions']`. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:48` |
-| saveDraftSuccessToast; publish-success-toast; survey-action-toast | text `Survey saved as draft successfully`; text `Survey published successfully`; css `.survey-action-toast` | C | Give each notification a stable test ID (or a stable notification type attribute). The service sets `containerClass`; no app-template test ID is present. | `libs/survey-mod-lib/src/lib/shared/services/survey-common.service.ts:402`; `libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts:1027` |
-| publishingSurveyStatus | playwrights `role=status[name="Publishing survey"]` | C | Add a stable test ID to the publish loader/status; role/name is not a test ID. Verify this locator is intended for the popup (the footer has a separate validation loader). | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:34` |
-| confirmPublishButton | playwrights `[data-test-id='-footer'] >> role=button[name="Publish survey"]` | D | Empty prefix is ambiguous/broken. Add a non-empty ID to the Publish button in the dialog footer and target that ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:25` |
-| publish-dialog-dimension-by-index | playwrights `.publish-review-details [data-test-id$='_Dimension'] >> nth=${text}` | B | Target the data-summary dimension ID by its dimension label rather than relying on a positional index. `${text}` is an index; the ID contains a dimension label, not the index. | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:10`; child IDs are from `@nielsen/crf-data-summary` |
-| publish-response-count-text | css `.publish-review-details` | C | Add a dedicated ID to the response-summary paragraph (suggested `publish-response-count`). | `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:17` |
-| saveQuestionChangesButton | playwrights `survey-question-editor .save-changes-action:visible` | C | Add `data-test-id="save-question-changes"` to the Save changes button. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html:43` |
-| discardChangesButton | playwrights `.question-row .edit-actions >> text="Discard changes" >> nth=0` | C | Add `data-test-id="discard-question-changes"` to the Discard button. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html:41` |
+TC ID renames: TC_BS_03→03a (Single Choice), TC_BS_04→03b (Multiple Choice), TC_BS_05→03c (Rating), TC_BS_07→03d (NPS), TC_BS_08→03e (Point Scale), TC_BS_09→03f (Multi Scale), TC_BS_MAX_QUESTIONS→TC_BS_08, TC_BS_SAVE_DRAFT→TC_BS_10, TC_BS_PUBLISH→TC_BS_16/TC_BS_18, "Generate more questions"→TC_AI_08, "Describe questions to add"→TC_AI_09, "Rephrase with AI"→TC_AI_10.
 
-## Start with Prompt / AI
+Fix: review-mode step order (Unselect All needs full selection).
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| promptTextarea | css `textarea.prompt-input` | C | Add `data-test-id="survey-generation-prompt"` to the AI prompt textarea. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:55` |
-| generateSurveyButton | css `[data-test-id='proceed-to-survey']` | A | Keep; app emits this ID for Generate Survey / Proceed. | `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:71` |
-| questionTypeOption | css `[data-test-id='question-type-${text}']` | A | Keep; `${text}` is the question-type value and is included in the ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-type-list/question-type-list.component.html:3` |
-| generateQuestionsButton | css `[data-test-id='generate-questions']` | A | Keep. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html:42` |
-| questionNumberMarker; questionRow | css `.question-number`; `.question-row` | C | Add dynamic IDs using question number/index; current app markup has classes only. See Build Survey section for component locations and suggested patterns. | `question-editor/*-editor.component.html`; `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| rephraseWithAiButton | playwrights `.rephrase-action >> nth=${text}` | B | Use `[data-test-id='rephrase-with-ai-${index}']`; app ID includes the zero-based question index. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:38` |
-| rephraseInput | css `.rephrase-input` | B | Use `[data-test-id='rephrase-input-${index}']`; app ID includes the zero-based question index. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:46` |
-| rephraseSendButton | css `.rephrase-send` | B | Use `[data-test-id='rephrase-send-${index}']`; app ID includes the zero-based question index. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:51` |
-| suggestNewQuestionsButton; repromptNewQuestionsButton | css `[data-test-id='suggest-new-questions']`; `[data-test-id='reprompt-new-questions']` | A | Keep. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:111`; `:123` |
-| repromptInput | css `.reprompt-input` | B | Use `[data-test-id='reprompt-input']`. | `libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html:5` |
-| repromptSubmitButton | playwrights `role=button[name="Submit"]` | B | Use `[data-test-id='reprompt-submit']`. | `libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actions.component.html:27` |
+Fix: validation toasts checked in parallel (toast auto-hides).
 
-## Inline page-object selectors
+Fix: "Validating" toast is transient; test passes if it or a result is seen.
 
-Each item below is additional to its locator-JSON entry and is counted once per distinct inline selector construction.
+Fix: validation asserted on persistent UI state (button change, recommendation tag, Optiq link) instead of transient toasts.
 
-| Locator | Current selector | Category | Recommended selector or dev action | App file:line |
-|---|---|---|---|---|
-| inline `start-with-prompt.page.ts:223` | `${rowResource.selectorValue} >> nth=${index}` | C | Use a per-question row ID; the underlying `.question-row` currently has no ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| inline `start-with-prompt.page.ts:263` | `.rephrase-send-loading` | C | Add `data-test-id="rephrase-send-loading-${index}"` to the loading indicator. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html` |
-| inline `survey-builder.page.ts:85` | `${editButtonResource.selectorValue} >> nth=${Math.max(questionCount - 1, 0)}` | C | Use per-question Edit IDs rather than the tooltip selector and positional index. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| inline `survey-builder.page.ts:137` | `${removeResource.selectorValue} >> nth=${count - 1}` | C | Add per-option remove IDs; current option icon has no app test ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html` |
-| inline `survey-builder.page.ts:235` | `${rowResource.selectorValue} >> nth=${index} >> ${toggleResource.selectorValue}` | D | Same empty `-input-checkbox` binding as `requiredToggle`; add an explicit per-question ID and stop relying on the broken suffix. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/*-editor.component.html` |
-| inline `survey-builder.page.ts:570` | `getByRole('treeitem', { name: 'My Assets' })` | C | Add a stable tree-item ID in the save-copy UI; external `@nielsen/crf-ui-components`. | External component; host usage is `survey-header.component.html:69` |
-| inline `survey-builder.page.ts:571` | `myAssetsRow.locator('.arrow')` | C | Add a stable ID to the row expand control; external `@nielsen/crf-ui-components`. | External component; host usage is `survey-header.component.html:69` |
-| inline `survey-builder.page.ts:573` | `getByRole('treeitem').filter({ hasNotText: 'My Assets' }).first()` | C | Add a stable ID to save-location tree rows; `${text}`/index is not represented by an app ID. External `@nielsen/crf-ui-components`. | External component; host usage is `survey-header.component.html:69` |
-| inline `survey-builder.page.ts:642` | `${duplicateResource.selectorValue} >> nth=${questionIndex}` | C | Add `duplicate-question-${questionIndex}`; no stable ID exists on the action today. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:67` |
-| inline `survey-builder.page.ts:652` | `${deleteResource.selectorValue} >> nth=${questionIndex}` | C | Add `delete-question-${questionIndex}`; no stable ID exists on the action today. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:77` |
-| inline `survey-builder.page.ts:662` | `${rowResource.selectorValue} >> nth=${questionIndex}` | C | Use `question-row-${questionIndex}` after adding the row ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| inline `survey-builder.page.ts:707` | `${rowResource.selectorValue} >> nth=${fromIndex} >> .drag-handle` | C | Add per-question drag-handle ID; see Review Mode section. | `libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html:13` |
-| inline `survey-builder.page.ts:936` | `nativePage.locator(duplicateResource.selectorValue).first()` | C | Use the per-question Duplicate ID instead of `.first()` on the CSS selector. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:67` |
-| inline `survey-builder.page.ts:979` | `.footer-page-loader` | C | Add `data-test-id="survey-validation-loader"` to the loader. | `libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html:31` |
-| inline `survey-builder.page.ts:1212` | `${rowResource.selectorValue} >> nth=${index} >> ${resource.selectorValue}` | C | Add stable question-row and question-text IDs; see Build Survey. | `question-editor/*-editor.component.html` |
-| inline `survey-builder.page.ts:1223` | `${rowResource.selectorValue} >> nth=${index} >> ${textResource.selectorValue} >> span:text-is("*")` | C | Add a per-question required-marker ID rather than finding a star by text. | `question-editor/*-editor.component.html` |
-| inline `survey-builder.page.ts:1282` | `${rowResource.selectorValue} >> nth=${index}` | C | Use `question-row-${index}` after adding the row ID. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| inline `survey-builder.page.ts:1287` | `${editButtonResource.selectorValue} >> nth=${index}` | C | Use the per-question Edit ID recommended above. | `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:13` |
-| inline `survey-builder.page.ts:1329` | `${rowResource.selectorValue} >> nth=${index} >> .save-changes-action:visible` | C | Add a per-question Save changes ID and remove the visibility/class selector. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html:43` |
-| inline `survey-builder.page.ts:1385` | `${rowResource.selectorValue} >> nth=${index} >> survey-question-editor input:is([data-test-id$='-input'], [data-test-id^='question-text-input']):visible >> nth=0` | B | Target the exact question-number ID (`question-text-input-${questionNumber()}` / its generated input suffix); app ID includes question number, not the zero-based index used here. | `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:10`; `nps-editor/nps-editor.component.html:8`; `scale-editor/scale-editor.component.html:7` |
+Test results: _pending_
 
-## Developer request list
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html`
-
-- Add `question-row-${questionNumber}` and `question-number-${questionNumber}` IDs for row/marker interactions.
-- Add IDs for the Edit, Duplicate, Delete, max-question message, and rephrase loading elements.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/`
-
-- Add per-question IDs to the Required toggle and repair its empty `-input-checkbox` ID prefix.
-- Add stable IDs for question text displays, option fields/rows/remove controls, Add option, max-option message, Save changes, and Discard changes. Keep the existing question-text input ID dynamic by question number; add that binding for Rating.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html`
-
-- Add stable IDs for row/column creation and the matrix add-menu trigger.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html`
-
-- Align emitted checkbox IDs with `selectQuestionByIndex` (the app emits `select-question-${$index}`; the locator requests an extra `-icon` suffix).
-- Add an ID to the drag handle; `reorder-question-${$index}` already exists but is not the drag-handle target.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html`
-
-- Add IDs for survey title input/display/edit and review-mode Delete, Select/Unselect All, Expand All, Collapse All, and Exit Review Mode controls.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html`
-
-- Add IDs to the dialog title, confirm Publish button, and response-count summary; avoid the empty `-footer` selector.
-
-### `libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html`
-
-- Add a stable ID to the validation loader and, if tests need it, the status notification.
-
-### `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html`
-
-- Add a stable ID to the AI prompt textarea. Fix the `report-btn-run` test to select `data-cy`, not `id`.
-
-### External OAuth login page
-
-- Add test IDs to the Next and Verify controls if the product team owns this page; this repository contains no login template to update.
-
-### External component owners
-
-- `@nielsen/crf-data-summary`: add an ID to each selectable checkbox/item. Current dimension IDs are already stable and used.
-- `@nielsen/crf-ui-components` (`crf-uic-save-a-copy`): add stable IDs to My Assets/folder tree items, expand controls, and save-location grid cells. The test cannot set IDs on these internal elements from the app host.
-- `<re-dataset-picker>`: add/confirm stable option IDs for dataset rows and the Product Offering heading. Its package owner could not be identified from this repo.
-
-## Switch now
-
-- `250ResponsesButton` and `selectedResponseCountButton` → `[data-test-id='select-response-count-250']` / the matching count ID.
-- `rephraseWithAiButton`, `rephraseInput`, and `rephraseSendButton` → their existing dynamic IDs `rephrase-with-ai-${index}`, `rephrase-input-${index}`, and `rephrase-send-${index}`.
-- `viewOptiqFeedbackLink` → `[data-test-id='ai-suggestions']`.
-- `repromptInput` and `repromptSubmitButton` → `[data-test-id='reprompt-input']` and `[data-test-id='reprompt-submit']`.
-- `searchIcon` and `categoryItem` → use the existing data-summary IDs without `:visible`/`nth=0` where unique; where multiple matches exist, ask `@nielsen/crf-data-summary` for dimension-specific IDs.
-- `publish-dialog-dimension-by-index` → select the existing dimension ID by dimension label instead of index. Its ID encodes the label, not the index.
-- `survey-builder.page.ts:1385` → use the existing question-number-based test ID directly; do not select the first visible matching input.
-
-## Unused IDs
-
-- `select-response-count-${count}` — used only indirectly through text/class selectors; tests should switch to this ID.
-- `toggle-more-response-options` — no scoped locator uses it.
-- `build-survey-with-ai-optiq-image` — no scoped locator uses it.
-- `ai-suggestions` — `viewOptiqFeedbackLink` currently uses text instead.
-- `delete-survey` — no scoped locator uses it.
-- `question-count-slider` — no scoped locator uses it.
-- `reorder-question-${$index}` — review-mode row ID is not used to locate the row/drag handle.
-- `rephrase-with-ai-${i}`, `rephrase-input-${i}`, `rephrase-send-${i}` — locators use classes and an ordinal instead of these existing per-question IDs.
-- `reprompt-input`, `reprompt-submit`, `reprompt-close` — input/submit use class/role locators; close has no scoped locator.
-- `survey-side-panel` — no scoped locator uses it (`libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.html:1`).
-- `survey-side-panel-title` — no scoped locator uses it (`libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.html:2`).
-- `survey-side-panel-close` — no scoped locator uses it (`libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.html:6`).
-- `survey-side-panel-content` — no scoped locator uses it (`libs/survey-mod-lib/src/lib/shared/components/common-side-panel/common-side-panel.component.html:11`).
-
-## Could not determine
-
-- The OAuth/login screen is not in this Angular source tree; the login locators' `data-id` attributes cannot be traced to an app template or external package here.
-- `<re-dataset-picker>` is present in the app host template, and current JSON selectors show test IDs, but this repository does not include the picker implementation/package source. Ownership and whether its internal IDs can be bound by the host are unverified.
-- The Product Offering heading and Build Survey heading may be rendered by a host or external UI component; no matching heading was found in the relevant app templates.
-- Exact source locations for validation-result toast messages and the toast close control could not be established. The toast service sets `containerClass`, but no matching test-ID binding was found.
-- The `.niq-step-circle` selector targets a UI-library internal element; the repository contains only style references to the generated class. Its public test-ID API was not established.
-- The app binds `question-text-input-${questionNumber()}` to the `niq-text-field` host. Whether the external field implementation adds the locator's trailing `-input` suffix on its inner input could not be verified from this source tree.
-- The max-options/max-questions messages are produced via tooltip directives; whether their overlay elements can receive an app-bound test ID could not be confirmed. The directive-rendered overlay owner/API was not established.
-- Several stable IDs listed for dataset picker/data-summary/save-copy elements are visible in e2e selectors or component usage, but the external implementation is absent; their exact library owners cannot be independently confirmed beyond the explicit `@nielsen/crf-data-summary` and `@nielsen/crf-ui-components` references above.
-
-
-
+Test results: _pending_
