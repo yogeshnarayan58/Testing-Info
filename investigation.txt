@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ npx playwright test tests --grep @StartFromScratch --project=Chromium
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -18,228 +18,78 @@ Running 32 tests using 1 worker
 
 ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 isLambdaTest = false
-  ✓   1 … home page @StartFromScratch @LandStartFromScratch (15.6s)
+  ✓   1 … home page @StartFromScratch @LandStartFromScratch (13.8s)
 Auth state loaded from storage/auth.json
-  ✓   2 … dataset screen @StartFromScratch @DatasetSelection (2.9s)
-  ✓   3 …l 5 filters are set @StartFromScratch @DataSummary (43.0s)
-  ✓   4 …g a response count @StartFromScratch @ResponseCount (4.6s)
-  ✓   5 …oceeding @StartFromScratch @ProceedToSurveyBuilder (523ms)
-  ✓   6 …e Add question panel @StartFromScratch @EmptyState (104ms)
-  ✓   7 …it survey title @StartFromScratch @EditSurveyTitle (543ms)
-  ✓   8 …e question @StartFromScratch @SingleChoiceQuestion (769ms)
-  ✓   9 … question @StartFromScratch @MultipleChoiceQuestion (3.5s)
-  ✓  10 …a Rating question @StartFromScratch @RatingQuestion (3.3s)
+  ✓   2 … dataset screen @StartFromScratch @DatasetSelection (3.0s)
+  ✓   3 …l 5 filters are set @StartFromScratch @DataSummary (43.2s)
+  ✓   4 …g a response count @StartFromScratch @ResponseCount (4.0s)
+  ✓   5 …oceeding @StartFromScratch @ProceedToSurveyBuilder (639ms)
+  ✓   6 …he Add question panel @StartFromScratch @EmptyState (93ms)
+  ✓   7 …it survey title @StartFromScratch @EditSurveyTitle (569ms)
+  ✓   8 …e question @StartFromScratch @SingleChoiceQuestion (845ms)
+  ✓   9 … question @StartFromScratch @MultipleChoiceQuestion (4.0s)
+  ✓  10 …a Rating question @StartFromScratch @RatingQuestion (2.8s)
   ✓  11 … Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
-  ✓  12 …cale question @StartFromScratch @PointScaleQuestion (4.0s)
+  ✓  12 …cale question @StartFromScratch @PointScaleQuestion (4.2s)
   ✓  13 …cale question @StartFromScratch @MultiScaleQuestion (4.4s)
-  ✓  14 …uired toggle is on @StartFromScratch @RequiredStar (28.6s)
-  ✓  15 …via the pencil icon @StartFromScratch @EditQuestion (5.6s)
-  ✓  16 …n existing question @StartFromScratch @DiscardSave (26.4s)
-  ✓  17 …ount unchanged @StartFromScratch @CancelAddQuestion (2.6s)
-  ✓  18 …drop reorders questions @StartFromScratch @DragDrop (1.8s)
+  ✓  14 …uired toggle is on @StartFromScratch @RequiredStar (28.9s)
+  ✓  15 …via the pencil icon @StartFromScratch @EditQuestion (6.8s)
+  ✓  16 …n existing question @StartFromScratch @DiscardSave (27.7s)
+  ✓  17 …ount unchanged @StartFromScratch @CancelAddQuestion (3.9s)
+  ✓  18 …drop reorders questions @StartFromScratch @DragDrop (2.7s)
   ✓  19 …over row actions @StartFromScratch @DeleteDuplicate (1.6s)
-  ✓  20 … - min 2, max 15 @StartFromScratch @OptionBoundary (31.1s)
-  ✓  21 … Build Survey @StartFromScratch @StepperNavigation (18.5s)
-  ✓  22 …with limit message @StartFromScratch @MaxQuestions (18.2s)
-  ✓  23 …delete selected, exit @StartFromScratch @ReviewMode (5.8s)
-  ✓  24 …: Save survey as draft @StartFromScratch @SaveDraft (4.0s)
-  ✓  25 …e recommendations @StartFromScratch @ValidateSurvey (5.9s)
+  ✓  20 … - min 2, max 15 @StartFromScratch @OptionBoundary (34.4s)
+  ✓  21 … Build Survey @StartFromScratch @StepperNavigation (18.7s)
+  ✓  22 …with limit message @StartFromScratch @MaxQuestions (18.3s)
+  ✓  23 …delete selected, exit @StartFromScratch @ReviewMode (6.0s)
+  ✓  24 …: Save survey as draft @StartFromScratch @SaveDraft (4.4s)
+  ✓  25 …e recommendations @StartFromScratch @ValidateSurvey (7.2s)
   ✓  26 …d and save one @StartFromScratch @CancelAddQuestion (6.0s)
-  ✘  27 …me type as last @StartFromScratch @DeleteDuplicate (15.2s)
+  ✓  27 …ame type as last @StartFromScratch @DeleteDuplicate (8.0s)
   -  28 …/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  29 …tay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  30 …fewer than 3 questions @StartFromScratch @ValidateDisabled
-  -  31 …t From Scratch builder @StartFromScratch @StartFromScratch
-  -  32 …evious step from the builder @StartFromScratch @BackButton
+  ✓  29 …Build Survey @StartFromScratch @ReviewModeDeleteAll (1.8s)
+  ✓  30 …an 3 questions @StartFromScratch @ValidateDisabled (218ms)
+  ✓  31 …Scratch builder @StartFromScratch @StartFromScratch (61ms)
+  ✘  32 …tep from the builder @StartFromScratch @BackButton (132ms)
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:257:7 › Start from scratch › TC_BS_20: Delete the last question then re-addthe same type as last @StartFromScratch @DeleteDuplicate 
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:332:7 › Start from scratch › TC_BS_12: Back button returns to the previous step from the builder @StartFromScratch @BackButton 
 
-    Error: Failed to click add question: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('[data-test-id=\'add-question\']')
-        - locator resolved to <niq-button size="small" tabindex="-1" role="button" colortheme="light" iconposition="left" aria-disabled="true" niqtooltipposition="top" _nghost-ng-c653818712="" _ngcontent-ng-c512961613="" data-test-id="add-question" class="ng-tns-c653818712-326 ng-trigger ng-trigger-clickAnimation light secondary small text-neutral icon-left ng-star-inserted disabled">…</niq-button>
-      - attempting click action
-        2 × waiting for element to be visible, enabled and stable
-          - element is not enabled
-        - retrying click action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is not enabled
-        - retrying click action
-          - waiting 100ms
-        29 × waiting for element to be visible, enabled and stable
-           - element is not enabled
-         - retrying click action
-           - waiting 500ms
+    Error: Failed to click Back button: Back button not visible after 15000ms
 
+       at ..\page-objects\common\survey-builder.page.ts:244
 
-       at ..\page-objects\common\survey-builder.page.ts:253
-
-      251 |       await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
-      252 |     } catch (error) {
-    > 253 |       throw new Error(`Failed to click add question: ${error instanceof Error ? error.message : error}`);
+      242 |       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      243 |     } catch (error) {
+    > 244 |       throw new Error(`Failed to click Back button: ${error instanceof Error ? error.message : error}`);
           |             ^
-      254 |     }
-      255 |   }
-      256 |
-        at SurveyBuilderPage.clickAddQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:253:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:263:5
+      245 |     }
+      246 |   }
+      247 |
+        at SurveyBuilderPage.clickBackButton (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:244:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:334:5
 
     attachment #1: screenshot (image/png) ─────────────────────────
-    test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\test-failed-1.png
+    test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\test-failed-1.png
     ───────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\error-context.md
 
     attachment #3: start-from-scratch-video (video/webm) ──────────
-    test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\attachments\start-from-scratch-video-8018b7d5ee1411b653aefecbc5ed26cb1356cab3.webm
+    test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\attachments\start-from-scratch-video-1889eecfd644a09bec6c72d293e0b638f67f59f4.webm
     ───────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\error-context.md
 
     attachment #5: trace (application/zip) ────────────────────────
-    test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\trace.zip
+    test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--d80d6-e-add-the-same-type-as-last-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--c3878-vious-step-from-the-builder-chromium\trace.zip
 
     ───────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:257:7 › Start from scratch › TC_BS_20: Delete the last question then re-add the same type as last @StartFromScratch @DeleteDuplicate 
+    [chromium] › tests\survey\start-from-scratch.spec.ts:332:7 › Start from scratch › TC_BS_12: Back button returns to the previous step from the builder @StartFromScratch @BackButton 
   1 skipped
-  4 did not run
-  26 passed (5.0m)
---------------------------
-TC_BS_20: Delete the last question then re-add the same type as last
-survey/start-from-scratch.spec.ts:257
-15.2s
-chromiumStartFromScratchDeleteDuplicate
-serial
-Copy prompt
-Error: Failed to click add question: locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('[data-test-id=\'add-question\']')
-    - locator resolved to <niq-button size="small" tabindex="-1" role="button" colortheme="light" iconposition="left" aria-disabled="true" niqtooltipposition="top" _nghost-ng-c653818712="" _ngcontent-ng-c512961613="" data-test-id="add-question" class="ng-tns-c653818712-326 ng-trigger ng-trigger-clickAnimation light secondary small text-neutral icon-left ng-star-inserted disabled">…</niq-button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-      - waiting 100ms
-    29 × waiting for element to be visible, enabled and stable
-       - element is not enabled
-     - retrying click action
-       - waiting 500ms
-
-
-   at ..\page-objects\common\survey-builder.page.ts:253
-
-  251 |       await this.webActionHandler.delay(PANEL_TRANSITION_DELAY);
-  252 |     } catch (error) {
-> 253 |       throw new Error(`Failed to click add question: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  254 |     }
-  255 |   }
-  256 |
-    at SurveyBuilderPage.clickAddQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:253:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:263:5
-Filter steps
-Before Hooks
-6ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-69ms
-Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-16ms
-Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-15.0s
-After Hooks
-2.2s
-
------------
-survey/start-from-scratch.spec.ts
-Start from scratch › TC_BS_20: Delete the last question then re-add the same type as lastchromiumStartFromScratchDeleteDuplicate
-15.2s
-survey/start-from-scratch.spec.ts:257
-Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home pagechromiumStartFromScratchLandStartFromScratch
-15.6s
-survey/start-from-scratch.spec.ts:61
-Start from scratch › Dataset Selection: Should select the dataset and confirm the Choose a dataset screenchromiumStartFromScratchDatasetSelection
-2.9s
-survey/start-from-scratch.spec.ts:77
-Start from scratch › Panelist Filters: Should enable Search for Panelists after all 5 filters are setchromiumStartFromScratchDataSummary
-43.0s
-survey/start-from-scratch.spec.ts:87
-Start from scratch › Response Count: Should enable Proceed to survey builder after selecting a response countchromiumStartFromScratchResponseCount
-4.6s
-survey/start-from-scratch.spec.ts:95
-Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceedingchromiumStartFromScratchProceedToSurveyBuilder
-523ms
-survey/start-from-scratch.spec.ts:103
-Start from scratch › TC_BS_01: First landing shows "Untitled Survey" and the Add question panelchromiumStartFromScratchEmptyState
-104ms
-survey/start-from-scratch.spec.ts:109
-Start from scratch › TC_BS_02: Edit survey titlechromiumStartFromScratchEditSurveyTitle
-543ms
-survey/common-test-cases/build-survey-common-test-cases.ts:26
-Start from scratch › TC_BS_03a: Add a Single Choice questionchromiumStartFromScratchSingleChoiceQuestion
-769ms
-survey/common-test-cases/build-survey-common-test-cases.ts:328
-Start from scratch › TC_BS_03b: Add a Multiple Choice questionchromiumStartFromScratchMultipleChoiceQuestion
-3.5s
-survey/common-test-cases/build-survey-common-test-cases.ts:337
-Start from scratch › TC_BS_03c: Add a Rating questionchromiumStartFromScratchRatingQuestion
-3.3s
-survey/common-test-cases/build-survey-common-test-cases.ts:348
-Start from scratch › TC_BS_03d: Add an NPS questionchromiumStartFromScratchNPSQuestion
-2.8s
-survey/common-test-cases/build-survey-common-test-cases.ts:359
-Start from scratch › TC_BS_03e: Add a Point Scale questionchromiumStartFromScratchPointScaleQuestion
-4.0s
-survey/common-test-cases/build-survey-common-test-cases.ts:370
-Start from scratch › TC_BS_03f: Add a Multi Scale questionchromiumStartFromScratchMultiScaleQuestion
-4.4s
-survey/common-test-cases/build-survey-common-test-cases.ts:381
-Start from scratch › TC_BS_07: Required star appears when the Required toggle is onchromiumStartFromScratchRequiredStar
-28.6s
-survey/common-test-cases/build-survey-common-test-cases.ts:48
-Start from scratch › TC_BS_25: Edit question text via the pencil iconchromiumStartFromScratchEditQuestion
-5.6s
-survey/common-test-cases/build-survey-common-test-cases.ts:71
-Start from scratch › TC_BS_26: Discard / Save changes on an existing questionchromiumStartFromScratchDiscardSave
-26.4s
-survey/common-test-cases/build-survey-common-test-cases.ts:87
-Start from scratch › TC_BS_05: Cancelling Add Question leaves the question count unchangedchromiumStartFromScratchCancelAddQuestion
-2.6s
-survey/common-test-cases/build-survey-common-test-cases.ts:184
-Start from scratch › TC_BS_15: Drag and drop reorders questionschromiumStartFromScratchDragDrop
-1.8s
-survey/common-test-cases/build-survey-common-test-cases.ts:163
-Start from scratch › TC_BS_06: Delete and duplicate a question via hover row actionschromiumStartFromScratchDeleteDuplicate
-1.6s
-survey/common-test-cases/build-survey-common-test-cases.ts:110
-Start from scratch › TC_BS_04: Options boundary - min 2, max 15chromiumStartFromScratchOptionBoundary
-31.1s
-survey/common-test-cases/build-survey-common-test-cases.ts:506
-Start from scratch › TC_BS_12: Stepper navigation to Select Panelists retains data and back to Build SurveychromiumStartFromScratchStepperNavigation
-18.5s
-survey/common-test-cases/build-survey-common-test-cases.ts:396
-Start from scratch › TC_BS_08: Max questions (10) disables Add question and Duplicate with limit messagechromiumStartFromScratchMaxQuestions
-18.2s
-survey/start-from-scratch.spec.ts:187
-Start from scratch › TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exitchromiumStartFromScratchReviewMode
-5.8s
-survey/common-test-cases/build-survey-common-test-cases.ts:207
-Start from scratch › TC_BS_10: Save survey as draftchromiumStartFromScratchSaveDraft
-4.0s
-survey/common-test-cases/build-survey-common-test-cases.ts:468
-Start from scratch › TC_BS_23: Validate survey: Completes and shows Optiq feedback when there are recommendationschromiumStartFromScratchValidateSurvey
-5.9s
-survey/common-test-cases/build-survey-common-test-cases.ts:478
-Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add and save onechromiumStartFromScratchCancelAddQuestion
-6.0s
-survey/start-from-scratch.spec.ts:232
+  30 passed (5.1m)
