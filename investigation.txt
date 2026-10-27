@@ -1,168 +1,113 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright test tests --grep @StartWithPrompt
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
+Running 32 tests using 1 worker
+
 ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 64 tests using 2 workers
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-  ✓   1 … with a prompt option on the survey home page @StartWithPrompt (25.1s)
-  ✓   2 … with a prompt option on the survey home page @StartWithPrompt (23.3s)
+  ✓   1 …n the survey home page @StartFromScratch @LandStartFromScratch (15.9s)
 Auth state loaded from storage/auth.json
-Auth state loaded from storage/auth.json
-  ✓   3 …the dataset type and dataset @StartWithPrompt @DatasetSelection (4.7s)
-  ✓   4 …the dataset type and dataset @StartWithPrompt @DatasetSelection (7.8s)
-  ✓   5 …ections and search for panelists @StartWithPrompt @DataSummary (48.0s)
-  ✓   6 …ections and search for panelists @StartWithPrompt @DataSummary (52.2s)
-  ✓   7 … Should select a response count @StartWithPrompt @ResponseCount (2.9s)
-  ✓   8 …nd reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.1s)
-  ✓   9 …the Customize Questions screen @StartWithPrompt @GenerateSurvey (4.9s)
-  ✓  10 … Should select a response count @StartWithPrompt @ResponseCount (2.8s)
-  ✓  11 …questions creates AI questions @StartWithPrompt @GenerateSurvey (1.5s)
-  ✓  12 … survey title after AI generation @StartWithPrompt @BuildSurvey (1.5s)
-  ✓  13 …nd reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.3s)
-  ✘  14 … the loading state and prompt @StartWithPrompt @GenerateSurvey (15.4s)
-  ✓  15 …the Customize Questions screen @StartWithPrompt @GenerateSurvey (5.3s)
-  ✓  16 …questions creates AI questions @StartWithPrompt @GenerateSurvey (1.1s)
-  ✓  17 …survey title after AI generation @StartWithPrompt @BuildSurvey (446ms)
-  ✘  18 … the loading state and prompt @StartWithPrompt @GenerateSurvey (15.4s)
-  -  19 …uestions increases the question count @StartWithPrompt @GenerateSurvey
-  -  20 …s to add increases the question count @StartWithPrompt @GenerateSurvey
-  -  21 …bled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  22 …r appears when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  23 …: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  24 …d / Save changes on an existing question @StartWithPrompt @DiscardSave
-  -  25 …plicate a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  26 …_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  27 …tion leaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  28 … controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  29 … is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  30 …ct all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  31 …te shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  32 … TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  33 …C_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  34 …rompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  35 … prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  36 … › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  37 … › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  38 …ts retains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  39 …_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  40 … a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  41 …edback when there are recommendations @StartWithPrompt @ValidateSurvey
-  -  42 …uestions increases the question count @StartWithPrompt @GenerateSurvey
-  -  43 …s to add increases the question count @StartWithPrompt @GenerateSurvey
-  -  44 …bled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  45 …r appears when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  46 …: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  47 …d / Save changes on an existing question @StartWithPrompt @DiscardSave
-  -  48 …plicate a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  49 …_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  50 …tion leaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  51 … controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  52 … is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  53 …ct all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  54 …te shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  55 … TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  56 …C_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  57 …rompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  58 … prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  59 … › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  60 … › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  61 …ts retains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  62 …_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  63 … a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  64 …edback when there are recommendations @StartWithPrompt @ValidateSurvey
+  ✓   2 …the Choose a dataset screen @StartFromScratch @DatasetSelection (2.8s)
+  ✓   3 …sts after all 5 filters are set @StartFromScratch @DataSummary (41.8s)
+  ✓   4 …ter selecting a response count @StartFromScratch @ResponseCount (4.6s)
+  ✓   5 …age after proceeding @StartFromScratch @ProceedToSurveyBuilder (523ms)
+  ✓   6 …urvey" and the Add question panel @StartFromScratch @EmptyState (88ms)
+  ✓   7 …TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (630ms)
+  ✓   8 … Single Choice question @StartFromScratch @SingleChoiceQuestion (1.2s)
+  ✓   9 …tiple Choice question @StartFromScratch @MultipleChoiceQuestion (3.5s)
+  ✓  10 …BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.6s)
+  ✓  11 …› TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
+  ✓  12 …dd a Point Scale question @StartFromScratch @PointScaleQuestion (3.9s)
+  ✓  13 …dd a Multi Scale question @StartFromScratch @MultiScaleQuestion (3.8s)
+  ✓  14 …when the Required toggle is on @StartFromScratch @RequiredStar (28.7s)
+  ✓  15 …estion text via the pencil icon @StartFromScratch @EditQuestion (5.6s)
+  ✓  16 …changes on an existing question @StartFromScratch @DiscardSave (26.5s)
+  ✓  17 …e question count unchanged @StartFromScratch @CancelAddQuestion (2.7s)
+  ✓  18 …5: Drag and drop reorders questions @StartFromScratch @DragDrop (1.7s)
+  ✓  19 …estion via hover row actions @StartFromScratch @DeleteDuplicate (1.7s)
+  ✓  20 …ons boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.4s)
+  ✓  21 … and back to Build Survey @StartFromScratch @StepperNavigation (18.5s)
+  ✓  22 …d Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
+  ✓  23 …ls, select, delete selected, exit @StartFromScratch @ReviewMode (5.2s)
+  ✓  24 …h › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (4.4s)
+  ✓  25 …hen there are recommendations @StartFromScratch @ValidateSurvey (6.5s)
+  -  26 …h › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  ✓  27 …ll, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (2.0s)
+  ✓  28 …with fewer than 3 questions @StartFromScratch @ValidateDisabled (5.2s)
+  ✓  29 … Start From Scratch builder @StartFromScratch @StartFromScratch (65ms)
+  ✘  30 …el, then add and save one @StartFromScratch @CancelAddQuestion (15.2s)
+  -  31 …n then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  -  32 …ns to the previous step from the builder @StartFromScratch @BackButton
 
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:267:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add andsave one @StartFromScratch @CancelAddQuestion 
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+    Error: Failed to get add-question disabled state: locator.getAttribute: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('[data-test-id=\'add-question\']')
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
 
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
+       at ..\page-objects\common\survey-builder.page.ts:601
+
+      599 |       return { disabled: classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true', classAttr, outerHtml };
+      600 |     } catch (error) {
+    > 601 |       throw new Error(`Failed to get add-question disabled state: ${error instanceof Error ? error.message : error}`);
           |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:144:5
+      602 |     }
+      603 |   }
+      604 |
+        at SurveyBuilderPage.getAddQuestionDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:601:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:269:30
 
     attachment #1: screenshot (image/png) ─────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
+    test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\test-failed-1.png
     ───────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\error-context.md
 
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-e4e3d2b809a7f5bcfb5c37ed6fc428b2d735e84f.webm
+    attachment #3: start-from-scratch-video (video/webm) ──────────────────────
+    test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\attachments\start-from-scratch-video-70f6aecd81c7930be9982515106ba3f5367c47b7.webm
     ───────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\error-context.md
 
     attachment #5: trace (application/zip) ────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+    test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\trace.zip
 
     ───────────────────────────────────────────────────────────────────────────
 
-  2) [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:267:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add and save one @StartFromScratch @CancelAddQuestion 
+  1 skipped
+  2 did not run
+  28 passed (5.0m)
+---------------------------
+TC_BS_22: Discard a new question via Add Question cancel, then add and save one
+survey/start-from-scratch.spec.ts:267
+15.2s
+chromiumStartFromScratchCancelAddQuestion
+serial
+Copy prompt
+Error: Failed to get add-question disabled state: locator.getAttribute: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator('[data-test-id=\'add-question\']')
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
+   at ..\page-objects\common\survey-builder.page.ts:601
 
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:144:5
-
-    attachment #1: screenshot (image/png) ─────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\attachments\start-with-prompt-video-0d5353cd9d3ed002c99319b3962ab6476ce0d7f6.webm
-    ───────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-Microsoft-Edge\trace.zip
-
-    ───────────────────────────────────────────────────────────────────────────
-
-  2 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-    [Microsoft Edge] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-  46 did not run
-  16 passed (2.6m)
--------------------------------------
+  599 |       return { disabled: classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true', classAttr, outerHtml };
+  600 |     } catch (error) {
+> 601 |       throw new Error(`Failed to get add-question disabled state: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  602 |     }
+  603 |   }
+  604 |
+    at SurveyBuilderPage.getAddQuestionDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:601:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:269:30
+Filter steps
+Before Hooks
+10ms
+After Hooks
+2.6s
+Worker Cleanup
+1ms
