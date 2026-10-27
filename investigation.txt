@@ -1,113 +1,130 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ npx playwright test tests --grep @StartFromScratch --project=Chromium
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
 Running 32 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-  ✓   1 …n the survey home page @StartFromScratch @LandStartFromScratch (15.9s)
+  ✓   1 …ey home page @StartFromScratch @LandStartFromScratch (15.0s)
 Auth state loaded from storage/auth.json
-  ✓   2 …the Choose a dataset screen @StartFromScratch @DatasetSelection (2.8s)
-  ✓   3 …sts after all 5 filters are set @StartFromScratch @DataSummary (41.8s)
-  ✓   4 …ter selecting a response count @StartFromScratch @ResponseCount (4.6s)
-  ✓   5 …age after proceeding @StartFromScratch @ProceedToSurveyBuilder (523ms)
-  ✓   6 …urvey" and the Add question panel @StartFromScratch @EmptyState (88ms)
-  ✓   7 …TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (630ms)
-  ✓   8 … Single Choice question @StartFromScratch @SingleChoiceQuestion (1.2s)
-  ✓   9 …tiple Choice question @StartFromScratch @MultipleChoiceQuestion (3.5s)
-  ✓  10 …BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.6s)
-  ✓  11 …› TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
-  ✓  12 …dd a Point Scale question @StartFromScratch @PointScaleQuestion (3.9s)
-  ✓  13 …dd a Multi Scale question @StartFromScratch @MultiScaleQuestion (3.8s)
-  ✓  14 …when the Required toggle is on @StartFromScratch @RequiredStar (28.7s)
-  ✓  15 …estion text via the pencil icon @StartFromScratch @EditQuestion (5.6s)
-  ✓  16 …changes on an existing question @StartFromScratch @DiscardSave (26.5s)
-  ✓  17 …e question count unchanged @StartFromScratch @CancelAddQuestion (2.7s)
-  ✓  18 …5: Drag and drop reorders questions @StartFromScratch @DragDrop (1.7s)
-  ✓  19 …estion via hover row actions @StartFromScratch @DeleteDuplicate (1.7s)
-  ✓  20 …ons boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.4s)
-  ✓  21 … and back to Build Survey @StartFromScratch @StepperNavigation (18.5s)
-  ✓  22 …d Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
-  ✓  23 …ls, select, delete selected, exit @StartFromScratch @ReviewMode (5.2s)
-  ✓  24 …h › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (4.4s)
-  ✓  25 …hen there are recommendations @StartFromScratch @ValidateSurvey (6.5s)
-  -  26 …h › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  ✓  27 …ll, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (2.0s)
-  ✓  28 …with fewer than 3 questions @StartFromScratch @ValidateDisabled (5.2s)
-  ✓  29 … Start From Scratch builder @StartFromScratch @StartFromScratch (65ms)
-  ✘  30 …el, then add and save one @StartFromScratch @CancelAddQuestion (15.2s)
-  -  31 …n then re-add the same type as last @StartFromScratch @DeleteDuplicate
-  -  32 …ns to the previous step from the builder @StartFromScratch @BackButton
+  ✓   2 … a dataset screen @StartFromScratch @DatasetSelection (2.7s)
+  ✓   3 …all 5 filters are set @StartFromScratch @DataSummary (41.6s)
+  ✓   4 …ing a response count @StartFromScratch @ResponseCount (4.3s)
+  ✓   5 …proceeding @StartFromScratch @ProceedToSurveyBuilder (492ms)
+  ✓   6 …the Add question panel @StartFromScratch @EmptyState (117ms)
+  ✓   7 …Edit survey title @StartFromScratch @EditSurveyTitle (568ms)
+  ✓   8 …oice question @StartFromScratch @SingleChoiceQuestion (1.0s)
+  ✓   9 …ce question @StartFromScratch @MultipleChoiceQuestion (3.3s)
+  ✓  10 …d a Rating question @StartFromScratch @RatingQuestion (2.7s)
+  ✓  11 …d: Add an NPS question @StartFromScratch @NPSQuestion (2.7s)
+  ✓  12 … Scale question @StartFromScratch @PointScaleQuestion (4.2s)
+  ✓  13 … Scale question @StartFromScratch @MultiScaleQuestion (3.8s)
+  ✓  14 …equired toggle is on @StartFromScratch @RequiredStar (28.9s)
+  ✓  15 …t via the pencil icon @StartFromScratch @EditQuestion (5.8s)
+  ✓  16 … an existing question @StartFromScratch @DiscardSave (26.5s)
+  ✓  17 … count unchanged @StartFromScratch @CancelAddQuestion (2.6s)
+  ✓  18 …d drop reorders questions @StartFromScratch @DragDrop (1.6s)
+  ✓  19 … hover row actions @StartFromScratch @DeleteDuplicate (1.6s)
+  ✓  20 …ry - min 2, max 15 @StartFromScratch @OptionBoundary (31.3s)
+  ✓  21 …to Build Survey @StartFromScratch @StepperNavigation (18.5s)
+  ✓  22 …e with limit message @StartFromScratch @MaxQuestions (18.6s)
+  ✓  23 …, delete selected, exit @StartFromScratch @ReviewMode (5.6s)
+  ✓  24 …10: Save survey as draft @StartFromScratch @SaveDraft (3.5s)
+  ✓  25 …are recommendations @StartFromScratch @ValidateSurvey (6.8s)
+  -  26 …16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  ✓  27 …n Build Survey @StartFromScratch @ReviewModeDeleteAll (1.9s)
+  ✓  28 … than 3 questions @StartFromScratch @ValidateDisabled (5.2s)
+  ✓  29 …m Scratch builder @StartFromScratch @StartFromScratch (55ms)
+  ✘  30 …dd and save one @StartFromScratch @CancelAddQuestion (15.3s)
+  -  31 …add the same type as last @StartFromScratch @DeleteDuplicate
+  -  32 …previous step from the builder @StartFromScratch @BackButton
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:267:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add andsave one @StartFromScratch @CancelAddQuestion 
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:275:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add and save one @StartFromScratch @CancelAddQuestion 
 
-    Error: Failed to get add-question disabled state: locator.getAttribute: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('[data-test-id=\'add-question\']')
+    Error: Failed to add Single Choice question: Question text inputnot visible after 15000ms
 
+       at ..\page-objects\common\survey-builder.page.ts:278
 
-       at ..\page-objects\common\survey-builder.page.ts:601
-
-      599 |       return { disabled: classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true', classAttr, outerHtml };
-      600 |     } catch (error) {
-    > 601 |       throw new Error(`Failed to get add-question disabled state: ${error instanceof Error ? error.message : error}`);
+      276 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
+      277 |     } catch (error) {
+    > 278 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
           |             ^
-      602 |     }
-      603 |   }
-      604 |
-        at SurveyBuilderPage.getAddQuestionDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:601:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:269:30
+      279 |     }
+      280 |   }
+      281 |
+        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:278:13)
+        at ensureAtLeastOneQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:44:5)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:277:5
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────────
+    attachment #1: screenshot (image/png) ───────────────────────────
     test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) ──────────────────────
-    test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\attachments\start-from-scratch-video-70f6aecd81c7930be9982515106ba3f5367c47b7.webm
-    ───────────────────────────────────────────────────────────────────────────
+    attachment #3: start-from-scratch-video (video/webm) ────────────
+    test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\attachments\start-from-scratch-video-323e4c5847fe32947936ebd7e4411e4e802e9716.webm
+    ─────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ────────────────────────────────────
+    attachment #5: trace (application/zip) ──────────────────────────
     test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\trace.zip
     Usage:
 
         npx playwright show-trace test-results\survey-start-from-scratch--14e39-ancel-then-add-and-save-one-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:267:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add and save one @StartFromScratch @CancelAddQuestion 
+    [chromium] › tests\survey\start-from-scratch.spec.ts:275:7 › Start from scratch › TC_BS_22: Discard a new question via Add Question cancel, then add and save one @StartFromScratch @CancelAddQuestion 
   1 skipped
   2 did not run
-  28 passed (5.0m)
----------------------------
-TC_BS_22: Discard a new question via Add Question cancel, then add and save one
-survey/start-from-scratch.spec.ts:267
-15.2s
-chromiumStartFromScratchCancelAddQuestion
+  28 passed (4.9m)
+
 serial
 Copy prompt
-Error: Failed to get add-question disabled state: locator.getAttribute: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('[data-test-id=\'add-question\']')
+Error: Failed to add Single Choice question: Question text input not visible after 15000ms
 
+   at ..\page-objects\common\survey-builder.page.ts:278
 
-   at ..\page-objects\common\survey-builder.page.ts:601
-
-  599 |       return { disabled: classAttr.split(/\s+/).includes('disabled') || ariaDisabled === 'true', classAttr, outerHtml };
-  600 |     } catch (error) {
-> 601 |       throw new Error(`Failed to get add-question disabled state: ${error instanceof Error ? error.message : error}`);
+  276 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
+  277 |     } catch (error) {
+> 278 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
       |             ^
-  602 |     }
-  603 |   }
-  604 |
-    at SurveyBuilderPage.getAddQuestionDisabledState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:601:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:269:30
+  279 |     }
+  280 |   }
+  281 |
+    at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:278:13)
+    at ensureAtLeastOneQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:44:5)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:277:5
 Filter steps
 Before Hooks
-10ms
+6ms
+Evaluate locator('.question-number') ✕ 2— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+101ms
+Wait for selector locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+24ms
+Click locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+87ms
+Wait for selector locator('[data-test-id=\'question-text-input-1-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
 After Hooks
-2.6s
+1.9s
 Worker Cleanup
-1ms
+2ms
+
