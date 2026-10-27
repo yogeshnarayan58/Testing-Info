@@ -1,103 +1,78 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ npx playwright test tests/survey --project=chromium --workers=1 --grep @StartWithPrompt
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+All points are motioned below are tested on Dev and working as expected.
 
-Running 32 tests using 1 worker
+1. AI-generated survey title in Optiq flow-Working
+Fix: In AI flow, the survey title is now taken from the title returned by the generate-questions API. Scratch flow is unchanged.
+How to verify: Open survey/aiflow/build-survey, generate questions, and verify that the header displays the title from the API response instead of "Untitled Survey."
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-  ✓   1 …a prompt option on the survey home page @StartWithPrompt (19.7s)
-Auth state loaded from storage/auth.json
-  ✓   2 …taset type and dataset @StartWithPrompt @DatasetSelection (3.9s)
-  ✓   3 …s and search for panelists @StartWithPrompt @DataSummary (17.6s)
-  ✓   4 …d select a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 …ch the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   6 …stomize Questions screen @StartWithPrompt @GenerateSurvey (4.4s)
-  ✓   7 …eases the question count @StartWithPrompt @GenerateSurvey (1.3s)
-  ✓   8 … title after AI generation @StartWithPrompt @BuildSurvey (460ms)
-  ✘   9 …oading state and prompt @StartWithPrompt @GenerateSurvey (15.3s)
-  -  10 …uld increase the question count @StartWithPrompt @GenerateSurvey
-  -  11 …dd increases the question count @StartWithPrompt @GenerateSurvey
-  -  12 …t 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  13 …ars when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  14 … question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  15 …anges / Save changes on a question @StartWithPrompt @DiscardSave
-  -  16 …e a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  17 …: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  18 …eaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  19 …ols, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  20 …sabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  21 … all, delete, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  22 …ws Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  23 …_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  24 …3b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  25 …› TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  26 …t › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  27 …BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  28 …BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  29 …ains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  30 …ptions boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  31 …mpt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  32 … when there are recommendations @StartWithPrompt @ValidateSurvey
+2. "Last refreshed" date persists after reload-Working
+Fix: When a saved draft reloads, the app retrieves the selected dataset's refresh date and restores it in the footer.
+How to verify: Select a dataset, go to Build Survey, save a draft, refresh the page, and verify that the "Last refreshed" date is still displayed.
 
+QA Comment-we need to fix this as its for the scenario when user save the survey using save draft but if user reload without Save Draft then its showing issue. Happening in both SFS and SWP.
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
+3. Deleting all questions keeps the user in Build Survey-Working
+Fix: In AI flow, deleting all questions keeps the user on Build Survey and displays the Add Question options. It no longer returns the user to the generator screen.
+How to verify: Generate questions, delete all of them, and verify that the page remains on aiflow/build-survey with the Add Question options visible.
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index0) not visible after 15000ms
+4. Single question-count error with consistent color-Working
+Fix: The duplicate slider error has been removed, leaving a single message: "Please enter a value between 3 and 10." The error now uses the shared error color token (#680404).
+How to verify: In AI flow, enter an out-of-range value such as 1444 and verify that only one error message is displayed.
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
+5. Drag and drop in Build Survey-Working
+Fix: Question reordering works correctly, and the drag icon remains in its original position.
+How to verify: Add two or more questions, drag a question using the drag handle, and verify that the order updates correctly.
 
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}:${error instanceof Error ? error.message : error}`);
-          |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:137:5
+6. First Rating/NPS question loses focus while typing-Working
+Fix: The first question no longer loses focus, saves unexpectedly, or closes while the user is typing. It saves only after a valid outside click or save action.
+How to verify: Create a new survey, add a Rating or NPS question first, type into its fields, and verify that the editor remains active and editable.
 
-    attachment #1: screenshot (image/png) ───────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────
+7. Same question type can be selected again-Working
+Fix: Deleting the last question clears the previously selected question type.
+How to verify: Add a Single Choice question, delete it, and then select Single Choice again. A new question editor should open.
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+8. Duplicate survey cannot be saved without a title-Working
+Fix: Draft saves now reject empty or whitespace-only titles for both new and duplicated surveys. An error toast is displayed with the message: "Survey request validation failed: name is required."
+How to verify: Duplicate a survey from My Assets, clear the title, and click Save Draft. Verify that the error message is shown and the survey is not saved.
 
-    attachment #3: start-with-prompt-video (video/webm) ─────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-342f65ea19ed3a66ab2e81e8d84a24eae08dbf19.webm
-    ─────────────────────────────────────────────────────────────────────
+-----------------------------
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+1.      Limiting no.of options we can add in question as 15 and disabling the button and adding respective tooltips when maximum options reached.         
 
-    attachment #5: trace (application/zip) ──────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
-    Usage:
+2.      When adding new options, add auto focus.
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+3.      Selecting all question types as default types when creating an AI survey.
+------------------------------------------
 
-    ─────────────────────────────────────────────────────────────────────
+Validated that FMS survey page is loading successfully in dev environment and all the scenarios are working fine.
 
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:136:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-  23 did not run
-  8 passed (1.8m)
+Things to be checked as part of this ticket.
 
-To open last HTML report run:
+FMS survey page should be accessible in this path https://si.connect.nielseniq.io/reportexperience-dev/my-assets/survey/my-assets.
+Navigating to different tabs like Recently opened, Shared with me, Favorites, Trash should show the grid and load the respective survey assets.
+Hovering over any row should show favorite star icon on the Asset title row if its a survey(will not be visible for folder asset) and duplicate(not for folder) and info icon.
+Clicking on the favorite star icon should make that survey asset Favorite, update the favorite icon to filled one, should show appropriate toast message and that asset should be visible in the Favorite tab grid.
+Clicking again that filled star icon should remove it from the Favorite grid.
+Opening any survey asset should update its open date and that survey asset should be visible in Recently opened tab grid.
+----------------------------------------------
+Provide existing users with visibility of ongoing survey activities.
 
-  npx playwright show-report
+Welcome Back section.
 
+Recent survey status cards:
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/start-with-prompt-ai-automation)
-$ 
+Complete
+In Progress
+Draft
+Survey asset display.
+
+Survey history summary.
+
+Survey entry points with correct contents
+
+Build with optiq
+Start from scratch
+Import a survey(icon changes)
+-----------
+Validated all the changes and its working fine in devGrid updated and "Updated just now" text is visible on the right top.
+After few seconds, text is updated to Updated a few seconds ago and Refresh button is visible on click of which grid will refresh again.
+On click of info icon which appears on hovering the grid row, it is opening side info panel which is opening correctly from the top.
