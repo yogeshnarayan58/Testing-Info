@@ -1,8 +1,15 @@
+No locator changes needed — selectedResponseCountButton (.responses button.selected) already existed.
+
+Files/methods changed:
+
+select-panelist.page.ts — added isAnyResponseCountSelected(), using getCount() on the existing selectedResponseCountButton locator (no wait, no throw). getSelectedResponseCountDataTestId() left untouched since build-survey-common-test-cases.ts still uses it.
+select-panelist.spec.ts — TC_SP_10's reset check now asserts !isAnyResponseCountSelected() then isProceedToSurveyBuilderDisabledOrAbsent().
+-------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
 ◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -16,63 +23,20 @@ Global setup completed. Auth state saved.
 
 Running 8 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓  1 …duct Offering modal applies no dataset @SelectPanelist @SPModalCancel (22.2s)
+  ✓  1 …al applies no dataset @SelectPanelist @SPModalCancel (23.5s)
 Auth state loaded from storage/auth.json
-  ✓  2 … the survey home page and start from scratch @SelectPanelist @SPSetup (15.8s)
+  ✓  2 …page and start from scratch @SelectPanelist @SPSetup (14.7s)
 Auth state loaded from storage/auth.json
-  ✓  3 …fering and dataset and reach Select Panelists @SelectPanelist @SPSetup (4.6s)
-  ✓  4 …taset and view with a "Last refreshed" date @SelectPanelist @SPFooter (288ms)
-  ✓  5 … every filter has exactly 1 selection @SelectPanelist @SPSearchButton (28.0s)
-  ✓  6 …, response options and credit message @SelectPanelist @SPSearchResult (33.6s)
-  ✓  7 …shows additional response count choices @SelectPanelist @SPMoreOptions (1.1s)
-  ✘  8 …eed, and changing a filter resets it @SelectPanelist @SPResponseCount (48.2s)
+  ✓  3 …t and reach Select Panelists @SelectPanelist @SPSetup (6.7s)
+  ✓  4 …th a "Last refreshed" date @SelectPanelist @SPFooter (173ms)
+  ✓  5 … exactly 1 selection @SelectPanelist @SPSearchButton (32.7s)
+  ✓  6 …s and credit message @SelectPanelist @SPSearchResult (36.8s)
+  ✓  7 …response count choices @SelectPanelist @SPMoreOptions (1.2s)
+  ✓  8 … a filter resets it @SelectPanelist @SPResponseCount (24.7s)
 
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:175:7 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount 
-
-    TimeoutError: locator.getAttribute: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('.responses button.selected')
-
-
-       at ..\page-objects\common\select-panelist.page.ts:390
-
-      388 |     );
-      389 |     await selectedButton.waitFor(MEDIUM_TIMEOUT);
-    > 390 |     return selectedButton.getAttribute('data-test-id');
-          |                           ^
-      391 |   }
-      392 |
-      393 |   async isDimensionSelectionRetained(dimensionPromptResource: string, itemsToSelect: string[]): Promise<boolean> {
-        at WebElement.getAttribute (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:238:47)
-        at SelectPanelistPage.getSelectedResponseCountDataTestId (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:390:27)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:198:54
-
-    attachment #1: screenshot (image/png) ───────────────────────────────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ───────────────────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\attachments\select-panelist-video-046ed55c6d77f3a384522dfa1828ce42dbc0a1d8.webm
-    ─────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:175:7 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changinga filter resets it @SelectPanelist @SPResponseCount 
-  7 passed (3.3m)
+  8 passed (3.0m)
 
 To open last HTML report run:
 
@@ -81,94 +45,3 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ 
----------------------
-TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it
-survey/select-panelist.spec.ts:175
-48.2s
-chromiumSelectPanelistSPResponseCount
-serial
-Copy prompt
-TimeoutError: locator.getAttribute: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('.responses button.selected')
-
-
-   at ..\page-objects\common\select-panelist.page.ts:390
-
-  388 |     );
-  389 |     await selectedButton.waitFor(MEDIUM_TIMEOUT);
-> 390 |     return selectedButton.getAttribute('data-test-id');
-      |                           ^
-  391 |   }
-  392 |
-  393 |   async isDimensionSelectionRetained(dimensionPromptResource: string, itemsToSelect: string[]): Promise<boolean> {
-    at WebElement.getAttribute (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:238:47)
-    at SelectPanelistPage.getSelectedResponseCountDataTestId (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:390:27)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:198:54
-Filter steps
-Before Hooks
-15ms
-Mouse move— ../node_modules/@gfk/gta/core/web/webActions.ts:528
-65ms
-Wait for selector locator('[data-test-id=\'select-response-count-100\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-13ms
-Click locator('[data-test-id=\'select-response-count-100\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-50ms
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-12ms
-Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-91ms
-Wait for selector locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-13ms
-Click locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-90ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-16ms
-Click locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-179ms
-Wait for selector locator('[data-test-id=\'ds-filterIcon-icon\']:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-18ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-39ms
-Fill "#US LOC OMNI SUPER CATEGORY MA" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-32ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-19ms
-Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-23ms
-Click locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-102ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-223ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-40ms
-Fill "APPLIANCES" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-50ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-11ms
-Wait for selector locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-15ms
-Click locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-71ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-14ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-134ms
-Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-26ms
-Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-119ms
-Wait for selector locator('[id=\'report-btn-run\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-25ms
-Click locator('[id=\'report-btn-run\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-96ms
-Wait for selector locator('.responses button.selected')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-10.0s
-After Hooks
-5.0s
-Worker Cleanup
-------------------------
