@@ -1,24 +1,15 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git status
-On branch feature/survey-automation-both
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   locators/survey/select-panelist.locator.json
-        modified:   locators/survey/start-with-prompt.locator.json
-        modified:   page-objects/common/select-panelist.page.ts
-        modified:   page-objects/survey/start-from-scratch.page.ts
+File created: select-panelist.spec.ts. It has TC_SP_03 in its own describe, then a serial describe with two setup tests and TC_SP_04, TC_SP_07 and TC_SP_08. I haven't run anything or checked Prettier formatting, so a few lines may exceed 140 characters.
 
-no changes added to commit (use "git add" and/or "git commit -a")
+Reused:
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ grep -n "rephrase" locators/survey/start-with-prompt.locator.json
-95:      "elementName": "rephraseWithAiButton",
-97:      "selectorValue": ".rephrase-action >> nth=${text}"
-100:      "elementName": "rephraseInput",
-102:      "selectorValue": ".rephrase-input:not([data-tmp=\"${text}\"])"
-105:      "elementName": "rephraseSendButton",
-107:      "selectorValue": ".rephrase-send:not([data-tmp=\"${text}\"])"
+StartFromScratchPage: navigateToSurvey, clickStartFromScratch, isStartFromScratchVisible, selectProductOffering, searchAndSelectDataset, proceedToNextAfterDatasetSelection, applyEntireDataset, isProductOfferingModalVisible, cancelProductOfferingModal.
+SelectPanelistPage: setDimensionSelections, isSearchForPanelistsDisabledOrAbsent, isSearchForPanelistsEnabled, clickSearchForPanelists, getEligibleCount, isResponseCountOptionVisible, getResponsesCreditMessageText, getFooterParts, isFooterRefreshedVisible, getFooterRefreshedText.
+The same datasetConfig and dimensionSelections as the Scratch spec.
+Unsure:
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ 
+I added isMoreOptionsVisible() to select-panelist.page.ts, because no existing method checked "+ More options" without clicking it. It's an additive edit to a page object, not a spec.
+The view isn't in the test data, so TC_SP_04 only asserts that the view is non-empty. The dataset is asserted to equal the selected dataset name.
+The setup tests carry an extra @SPSetup tag, and I assume isHidden() is true when the element is absent. TC_SP_03 relies on that to check that Search for Panelists isn't shown.
+
++145
+-0
