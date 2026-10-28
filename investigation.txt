@@ -1,119 +1,116 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
-$ cd e2e
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 8 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+  ✓  1 …duct Offering modal applies no dataset @SelectPanelist @SPModalCancel (22.6s)
+Auth state loaded from storage/auth.json
+  ✓  2 … the survey home page and start from scratch @SelectPanelist @SPSetup (17.5s)
+Auth state loaded from storage/auth.json
+  ✓  3 …fering and dataset and reach Select Panelists @SelectPanelist @SPSetup (4.0s)
+  ✓  4 …ataset and view with a "Last refreshed" date @SelectPanelist @SPFooter (1.0s)
+  ✓  5 … every filter has exactly 1 selection @SelectPanelist @SPSearchButton (27.6s)
+  ✓  6 …, response options and credit message @SelectPanelist @SPSearchResult (35.3s)
+  ✓  7 …hows additional response count choices @SelectPanelist @SPMoreOptions (812ms)
+  ✘  8 …eed, and changing a filter resets it @SelectPanelist @SPResponseCount (260ms)
+
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:173:7 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount 
+
+    Error: Proceed to survey builder should be disabled before a response count is selected
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:179:17
+
+    attachment #1: screenshot (image/png) ───────────────────────────────────────────
+    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ───────────────────────────────
+    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\attachments\select-panelist-video-2df0c1ed45a929b162211e0db524af23a616cb6c.webm
+    ─────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────────────────────────────
+    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:173:7 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changinga filter resets it @SelectPanelist @SPResponseCount 
+  7 passed (2.5m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" -- libs
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ cd ..
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
-$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" -- libs
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:38:                            <niq-button class="rephrase-action" [attr.data-test-id]="'rephrase-with-ai-' + i"
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:46:                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:51:                                <niq-icon-buttonclass="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:52:                                    [class.rephrase-send-loading]="rephraseLoadingIndex === i"
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:176:.rephrase-input {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:194:.rephrase-input:focus,
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:195:.rephrase-input:focus-visible,
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:196:.rephrase-input:active {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:206:.rephrase-input:hover,
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:207:.rephrase-input:focus {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:212:.rephrase-input::-webkit-scrollbar {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:216:.rephrase-input::-webkit-scrollbar-thumb {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:221:.rephrase-send {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:237:.rephrase-send:hover {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:241:.rephrase-send.rephrase-send-loading {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:246::host ::ng-deep .rephrase-send.rephrase-send-loa
-ding .iconComponent {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:250:.rephrase-send.rephrase-send-loading::after {
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:258:    animation: rephrase-send-spin 0.8s linear in
-finite;
-libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
-view-mode.component.scss:261:@keyframes rephrase-send-spin {
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.html:2:  <div class="reprompt-input-row">
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.html:4:      class="reprompt-input"
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.html:5:      data-test-id="reprompt-input"
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.html:27:          data-test-id="reprompt-submit"
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.scss:22:.reprompt-input-row {
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.scss:27:.reprompt-input {
-libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
-ns.component.scss:46:.reprompt-input::placeholder {
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
-$ ^C
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
-$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" origin/main -- libs
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:38:                            <niq-button class="rephrase-action" [attr.data-test-id]="'rephrase-with-ai-' + i"
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:46:                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:51:                                <niq-icon-button class="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:52:                                    [class.rephrase-send-loading]="rephraseLoadingIndex === i"
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:176:.rephrase-input {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:194:.rephrase-input:focus,
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:195:.rephrase-input:focus-visible,
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:196:.rephrase-input:active {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:206:.rephrase-input:hover,
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:207:.rephrase-input:focus {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:212:.rephrase-input::-webkit-scrollbar {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:216:.rephrase-input::-webkit-scrollbar-t
-humb {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:221:.rephrase-send {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:237:.rephrase-send:hover {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:241:.rephrase-send.rephrase-send-loading
- {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:246::host ::ng-deep .rephrase-send.rephr
-ase-send-loading .iconComponent {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:250:.rephrase-send.rephrase-send-loading
-::after {
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:258:    animation: rephrase-send-spin 0.
-8s linear infinite;
-origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
-iew-mode/preview-mode.component.scss:261:@keyframes rephrase-send-spin {
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.html:2:  <div class="reprompt-input-row">
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.html:4:      class="reprompt-input"
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.html:5:      data-test-id="reprompt-input"
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.html:27:          data-test-id="reprompt-submit"
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.scss:22:.reprompt-input-row {
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.scss:27:.reprompt-input {
-origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
-prompt-actions.component.scss:46:.reprompt-input::placeholder {
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
 $ 
+-----------------
+TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it
+survey/select-panelist.spec.ts:173
+260ms
+chromiumSelectPanelistSPResponseCount
+serial
+Copy prompt
+Error: Proceed to survey builder should be disabled before a response count is selected
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:179:17
+Filter steps
+Before Hooks
+21ms
+After Hooks
+1.7s
+Worker Cleanup
+1ms
