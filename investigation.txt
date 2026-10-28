@@ -1,26 +1,23 @@
-indings are in e2e/investigation/SP_MEDIUM.md. That is the only file I created. The folder is already gitignored, I changed nothing else, and I ran no terminal commands.
+I added the locators and methods, and I didn't write any tests or run anything, so none of it has been compiled or run.
 
-Item	In e2e?	Selector in app	Notes
-Search for Panelists button	Partly: locator, click and visible check exist	#report-btn-run, a stable id on the niq-button host. data-cy="report-btn-run" is also set.	It is not in the DOM until a selection is made, then disabled until all prompts are valid, then removed again after the search. Disabled shows as the class report-btn-run-disabled plus [state]="disabled". I could not confirm a native disabled or aria-disabled attribute because that markup is in athena-core. The existing isVisible check is true even when disabled, and there is no enabled check.
-Product Offering modal root	No	.ds-picker-container.ds-picker-type-selection	It is a niq-dialog from @nielsen/crf-rv-common, not from this repo. It has no data-test-id, only a class.
-Product Offering Cancel	No	[data-test-id='cancel-dataset-btn'] (also id="cancel-dataset-btn")	Stable id from the external package. I did not check whether later picker steps reuse it, so scope it to the modal root.
-Eligibility message	No	.eligibility	Class only. The count has no element of its own, so it must be parsed from the text. It uses toLocaleString(), so expect commas. It appears only after the search completes and is not loading. If the count is 100 or less, it shows the failure text instead.
-Response counts 100–500	Partly: only 250 Responses (by text) and .selected	[data-test-id='select-response-count-<n>']	Stable. Only counts at or below the eligible count are rendered, and none if eligible is 100 or less. You need at least 500 eligible to see all seven.
-"+ More options"	No	[data-test-id='toggle-more-response-options']	Stable. It exists only in the Start from scratch flow, not the AI flow. It adds 600–1000 and toggles to "− Fewer options".
-"100 responses = 1 credit" line	No	.responses-frame .question	Class only, no test id. The text is built from an i18n key, so I couldn't check the exact wording.
-Footer source label	No	.dataset-footer .dataset-label	Class only.
-Footer dataset name and view	No	.dataset-footer .selected-value	One string: NielsenIQ <type> | <dataset> | <view>. It is not separate elements, so split on " | ". "Entire Dataset" is the third part. The #select-dataset id appears only when the footer is editable.
-Footer "Last refreshed"	No	[data-test-id='rb-report-refreshed-on-block'] (also #refreshedOnBlock)	Stable. It renders only when a date exists.
-How the modal is opened today	Yes, implicitly	[data-testid='quick-survey-quick-2']	Clicking Start from scratch opens it. selectProductOffering clicks Next (btn-next-dataset) if the heading is visible.
-How the modal is closed today	Only by progressing	apply-dataset-btn	Closing happens by moving on through Next and Apply. There is no cancel or close, and no "is modal open" check.
-setDimensionSelection for 4 of 5, then the 5th	Yes	–	Each call is independent and ends with Done. Pass dimensionSelections.slice(0, 4) first, then the 5th. The check-before-click guard makes repeat calls safe.
-Search button state with 4 of 5 filters set	Not testable yet	–	After the first selection the button is present but disabled. Don't use isSearchForPanelistsButtonVisible() for the "before" state, because it waits for an element that isn't there yet.
-completePanelistSelectionFlow helper	Defined, unused	–	It runs the full flow in one go. It has no hooks for partial or intermediate steps.
-Two other limits:
+Locators in select-panelist.locator.json: productOfferingModal, cancelDatasetButton, eligibilityMessage, responseCountOption (uses ${text}), moreOptionsButton, responsesCreditMessage, footerSelectedValue, footerRefreshedOn. cancelDatasetButton is nested under the modal root.
+select-panelist.page.ts:
+Button state: isSearchForPanelistsEnabled, isSearchForPanelistsDisabledOrAbsent.
+Eligible count: getEligibleCount.
+Response options: isResponseCountOptionVisible, clickMoreOptions.
+Messages: getResponsesCreditMessageText.
+Footer: getFooterSelectedValueText, getFooterParts, isFooterRefreshedVisible, getFooterRefreshedText.
+One private helper, getSelectPanelistElement.
+start-from-scratch.page.ts: isProductOfferingModalVisible, cancelProductOfferingModal. The constructor now also registers the select-panelist locators under the name selectPanelistPage. That is the only change to existing code.
+Unsure:
+Cancel scope: I assumed the modal root class .ds-picker-container wraps the Cancel button. It comes from another package, so check it at runtime and drop the prefix if it fails.
+Absent button: isSearchForPanelistsEnabled uses isHidden(), which returns at once when the button is absent. It reads the report-btn-run-disabled class on the host.
+Waits: isResponseCountOptionVisible and isFooterRefreshedVisible wait up to 10s, so they are slow when the element is absent. isProductOfferingModalVisible waits up to 5s.
 
-Missing text: the translation files are not in this repo, so I could not check the exact English wording of any message.
-Locators to add: the Cancel button, modal root, eligibility message, "+ More options", credit line and footer elements. The file also lists suggested methods and a data dependency for the response-count options.
++142
+-0
 
+-----------
 # Select Panelists — MEDIUM test cases: investigation
 
 Scope: read-only investigation. Only this file was written (e2e/investigation/ is gitignored via e2e/.gitignore).
