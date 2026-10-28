@@ -1,171 +1,142 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright test tests/survey --project=chromium --headed --workers=1
-◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-Starting global setup...
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+indings are in e2e/investigation/SP_MEDIUM.md. That is the only file I created. The folder is already gitignored, I changed nothing else, and I ran no terminal commands.
 
-Running 64 tests using 1 worker
+Item	In e2e?	Selector in app	Notes
+Search for Panelists button	Partly: locator, click and visible check exist	#report-btn-run, a stable id on the niq-button host. data-cy="report-btn-run" is also set.	It is not in the DOM until a selection is made, then disabled until all prompts are valid, then removed again after the search. Disabled shows as the class report-btn-run-disabled plus [state]="disabled". I could not confirm a native disabled or aria-disabled attribute because that markup is in athena-core. The existing isVisible check is true even when disabled, and there is no enabled check.
+Product Offering modal root	No	.ds-picker-container.ds-picker-type-selection	It is a niq-dialog from @nielsen/crf-rv-common, not from this repo. It has no data-test-id, only a class.
+Product Offering Cancel	No	[data-test-id='cancel-dataset-btn'] (also id="cancel-dataset-btn")	Stable id from the external package. I did not check whether later picker steps reuse it, so scope it to the modal root.
+Eligibility message	No	.eligibility	Class only. The count has no element of its own, so it must be parsed from the text. It uses toLocaleString(), so expect commas. It appears only after the search completes and is not loading. If the count is 100 or less, it shows the failure text instead.
+Response counts 100–500	Partly: only 250 Responses (by text) and .selected	[data-test-id='select-response-count-<n>']	Stable. Only counts at or below the eligible count are rendered, and none if eligible is 100 or less. You need at least 500 eligible to see all seven.
+"+ More options"	No	[data-test-id='toggle-more-response-options']	Stable. It exists only in the Start from scratch flow, not the AI flow. It adds 600–1000 and toggles to "− Fewer options".
+"100 responses = 1 credit" line	No	.responses-frame .question	Class only, no test id. The text is built from an i18n key, so I couldn't check the exact wording.
+Footer source label	No	.dataset-footer .dataset-label	Class only.
+Footer dataset name and view	No	.dataset-footer .selected-value	One string: NielsenIQ <type> | <dataset> | <view>. It is not separate elements, so split on " | ". "Entire Dataset" is the third part. The #select-dataset id appears only when the footer is editable.
+Footer "Last refreshed"	No	[data-test-id='rb-report-refreshed-on-block'] (also #refreshedOnBlock)	Stable. It renders only when a date exists.
+How the modal is opened today	Yes, implicitly	[data-testid='quick-survey-quick-2']	Clicking Start from scratch opens it. selectProductOffering clicks Next (btn-next-dataset) if the heading is visible.
+How the modal is closed today	Only by progressing	apply-dataset-btn	Closing happens by moving on through Next and Apply. There is no cancel or close, and no "is modal open" check.
+setDimensionSelection for 4 of 5, then the 5th	Yes	–	Each call is independent and ends with Done. Pass dimensionSelections.slice(0, 4) first, then the 5th. The check-before-click guard makes repeat calls safe.
+Search button state with 4 of 5 filters set	Not testable yet	–	After the first selection the button is present but disabled. Don't use isSearchForPanelistsButtonVisible() for the "before" state, because it waits for an element that isn't there yet.
+completePanelistSelectionFlow helper	Defined, unused	–	It runs the full flow in one go. It has no hooks for partial or intermediate steps.
+Two other limits:
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-  ✓   1 …e survey home page @StartFromScratch @LandStartFromScratch (14.1s)
-Auth state loaded from storage/auth.json
-  ✓   2 …Choose a dataset screen @StartFromScratch @DatasetSelection (4.7s)
-  ✓   3 …after all 5 filters are set @StartFromScratch @DataSummary (44.0s)
-  ✓   4 …selecting a response count @StartFromScratch @ResponseCount (5.2s)
-  ✓   5 …after proceeding @StartFromScratch @ProceedToSurveyBuilder (647ms)
-  ✓   6 …" and the Add question panel @StartFromScratch @EmptyState (181ms)
-  ✓   7 …S_02: Edit survey title @StartFromScratch @EditSurveyTitle (889ms)
-  ✓   8 …gle Choice question @StartFromScratch @SingleChoiceQuestion (1.8s)
-  ✓   9 …e Choice question @StartFromScratch @MultipleChoiceQuestion (4.0s)
-  ✓  10 …3c: Add a Rating question @StartFromScratch @RatingQuestion (3.0s)
-  ✓  11 …_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (3.0s)
-  ✓  12 … Point Scale question @StartFromScratch @PointScaleQuestion (4.2s)
-  ✓  13 … Multi Scale question @StartFromScratch @MultiScaleQuestion (4.4s)
-  ✓  14 … the Required toggle is on @StartFromScratch @RequiredStar (28.8s)
-  ✓  15 …on text via the pencil icon @StartFromScratch @EditQuestion (5.8s)
-  ✓  16 …ges on an existing question @StartFromScratch @DiscardSave (26.6s)
-  ✓  17 …estion count unchanged @StartFromScratch @CancelAddQuestion (2.8s)
-  ✓  18 …rag and drop reorders questions @StartFromScratch @DragDrop (2.2s)
-  ✓  19 …on via hover row actions @StartFromScratch @DeleteDuplicate (1.9s)
-  ✓  20 …boundary - min 2, max 15 @StartFromScratch @OptionBoundary (32.7s)
-  ✓  21 … back to Build Survey @StartFromScratch @StepperNavigation (22.3s)
-  ✓  22 …plicate with limit message @StartFromScratch @MaxQuestions (22.2s)
-  ✓  23 …select, delete selected, exit @StartFromScratch @ReviewMode (8.7s)
-  ✓  24 …TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (4.3s)
-  ✓  25 …there are recommendations @StartFromScratch @ValidateSurvey (6.7s)
-  ✓  26 … then add and save one @StartFromScratch @CancelAddQuestion (7.0s)
-  ✓  27 …d the same type as last @StartFromScratch @DeleteDuplicate (12.1s)
-  -  28 …TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  ✓  29 …stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (5.0s)
-  ✓  30 …fewer than 3 questions @StartFromScratch @ValidateDisabled (469ms)
-  ✓  31 …t From Scratch builder @StartFromScratch @StartFromScratch (168ms)
-  ✓  32 …revious step from the builder @StartFromScratch @BackButton (1.2s)
-  ✓  33 …h a prompt option on the survey home page @StartWithPrompt (15.9s)
-Auth state loaded from storage/auth.json
-  ✓  34 …dataset type and dataset @StartWithPrompt @DatasetSelection (2.4s)
-  ✓  35 …ons and search for panelists @StartWithPrompt @DataSummary (16.8s)
-  ✓  36 …uld select a response count @StartWithPrompt @ResponseCount (3.5s)
-  ✓  37 …each the Build Survey page @StartWithPrompt @GenerateSurvey (4.1s)
-  ✓  38 …Customize Questions screen @StartWithPrompt @GenerateSurvey (9.0s)
-  ✓  39 …tions creates AI questions @StartWithPrompt @GenerateSurvey (4.4s)
-  ✓  40 …vey title after AI generation @StartWithPrompt @BuildSurvey (1.4s)
-  ✘  41 … loading state and prompt @StartWithPrompt @GenerateSurvey (16.0s)
-  -  42 …ions increases the question count @StartWithPrompt @GenerateSurvey
-  -  43 … add increases the question count @StartWithPrompt @GenerateSurvey
-  -  44 … at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  45 …pears when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  46 …it question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  47 …Save changes on an existing question @StartWithPrompt @DiscardSave
-  -  48 …ate a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  49 …15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  50 … leaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  51 …trols, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  52 …disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  53 …ll, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  54 …hows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  55 …BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  56 …_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  57 …t › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  58 …mpt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  59 …C_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  60 …C_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  61 …etains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  62 … Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  63 …rompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  64 …ck when there are recommendations @StartWithPrompt @ValidateSurvey
+Missing text: the translation files are not in this repo, so I could not check the exact English wording of any message.
+Locators to add: the Cancel button, modal root, eligibility message, "+ More options", credit line and footer elements. The file also lists suggested methods and a data dependency for the response-count options.
 
+# Select Panelists — MEDIUM test cases: investigation
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt@StartWithPrompt @GenerateSurvey 
+Scope: read-only investigation. Only this file was written (e2e/investigation/ is gitignored via e2e/.gitignore).
 
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+Source files inspected
+- App: `libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.{html,ts}`,
+  `.../panelist-dataselector/panelist-dataselector.component.{html,ts}`,
+  `libs/survey-mod-lib/src/lib/shared/components/dataset-footer/dataset-footer.component.html`,
+  `.../crf-survey-wrapper/crf-survey-wrapper.component.html`, `.../shared/utils/survey-dataset-display.util.ts`
+- External (node_modules, read only): `@nielsen/crf-rv-common` dataset-selector (Product Offering modal), `@nielseniq/athena-core` niq-button
+- e2e: `page-objects/common/select-panelist.page.ts`, `panelist-flow.helper.ts`, `dataset-selection.helper.ts`,
+  `page-objects/survey/start-from-scratch.page.ts`, `locators/survey/select-panelist.locator.json`, `locators/survey/start-from-scratch.locator.json`,
+  `tests/survey/start-from-scratch.spec.ts`, `test-data/dev-test-data.json`
 
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
+Caveat: i18n strings (`SURVEYMOD_*`) are NOT in this repo (provided by the host), so the exact English text could not be verified here.
 
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:129:5
+---
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────
+## A) App source
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+### A1. "Search for Panelists" button — `panelist-dataselector.component.html`
+- Element: `<niq-button id="report-btn-run" data-cy="report-btn-run" class="primary-btn run-btn" ...>` (the niq-button HOST element).
+- Selector: `#report-btn-run` (existing e2e locator `[id='report-btn-run']`). **Stable id** (hard-coded in template). No `data-test-id`; `data-cy` is also present.
+- Rendering rule (`runButtonState`, default `'hidden'`):
+  - `hidden` -> element is NOT in the DOM (`@if (!hasCompletedPanelistSearch() && runButtonState !== 'hidden')`). It is hidden before any selection is made and again after the search report completes (`reportCompleted$` -> `'hidden'`).
+  - `disabled` -> set after every selection change (`updateDataSelections`, ts ~L382), after dataset change (~L252), or when the prompt-validation event says not `VALID` / no selections (~L146-152).
+  - `default` (enabled) -> prompt validation `promptStatus === 'VALID'`.
+  - `loading` -> after click.
+- How DISABLED is shown (confirmed in app template):
+  1. CSS class on the host: `report-btn-run-disabled` (`[ngClass]`).
+  2. niq-button input `[state]="'disabled'"` -> niq-button `classes` getter = `${size} ${state} ${mode} ${variant}`, so a `disabled` class token lands on its inner element; `disabled` getter = `super.disabled || state() === 'disabled'`.
+  - NOT confirmed (niq-button template is a huge inline string in athena-core): whether a native `disabled` attribute or `aria-disabled` is rendered on the inner `<button>`. Existing e2e code for other niq-buttons checks aria-disabled / `state` attr / class token / inner `.disabled` property (see `survey-builder.page.ts` getAddQuestionDisabledState / Publish). **Recommended assertion:** `#report-btn-run.report-btn-run-disabled` (stable, from our own template) and, for "enabled", `:not(.report-btn-run-disabled)`.
+- Gotcha: because the host stays in the DOM while disabled, `isVisible()` is true for disabled AND enabled states.
 
-    attachment #3: start-with-prompt-video (video/webm) ───────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-48dc3d75a01a7e901779a8ba06792e08db334d77.webm
-    ───────────────────────────────────────────────────────────────────────
+### A2. "Cancel" on the "Product Offering" modal — NOT in this repo's source
+- The modal is rendered by `<re-dataset-picker>` / `crf-dataset-selector` from `@nielsen/crf-rv-common` (node_modules), opened with `openDialog()` (starts at `DialogStep.PRODUCT_OFFERING`), closed with `closeDialog()` / `datasetTypeSelection.close()`.
+- Cancel button: `data-test-id="cancel-dataset-btn"` and `id="cancel-dataset-btn"` (found in the compiled template; `cancelDataSetTypeDialog(isCancel)` handler). **Stable id**. Not verified at runtime whether the same id is reused on later steps (Dataset / Data view) — the id looks step-agnostic, so scope it inside the Product Offering container.
+- Modal root: `<niq-dialog>` whose container class comes from `getDialogContainerClass()`:
+  `ds-picker-container ds-picker-type-selection ds-picker-(new|old)-width`. For the Product Offering step use `.ds-picker-container.ds-picker-type-selection`. **Class-based, no data-test-id on the root found** (`data-test-id="ds-picker-container"` does not exist). Moderately stable (semantic class, but owned by another package).
+- Heading: existing e2e locator uses `role=heading[name="Product Offering"]` (text based).
+- Next button on that step: `[data-test-id='btn-next-dataset']` (already in e2e).
 
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
+### A3. "Congratulations there are <count> people eligible for your criteria" — `select-panelist.component.html`
+- Container: `<div class="eligibility">` (inside `<panelist-dataselector>` content projection). **No data-test-id** -> class selector `.eligibility` (unstable-ish, styling class).
+- Text = `SURVEYMOD_CONGRATULATIONS_THERE_ARE` + ` {{ householdCount }} ` + `SURVEYMOD_PEOPLE_ELIGIBLE_FOR_YOUR_CRITERIA` as plain text nodes in one div. **The count has NO own element** — it must be parsed from `.eligibility` text (regex on digits; value is `eligibleCount.toLocaleString()`, so it can contain thousands separators, e.g. `12,345`).
+- Not rendered while `surveyCommonService.dataSelectorLoading()` is true. When `isUnhappyPath` (`eligibleCount <= 100`) the same `.eligibility` div shows `SURVEYMOD_CRITERIA.FAILED` instead (text differs).
+- Only rendered when `reportData` is true (after Search for Panelists completes).
 
-    attachment #5: trace (application/zip) ────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
-    Usage:
+### A4. Response-count options and "+ More options" — `select-panelist.component.html`
+- Count buttons: `<button [attr.data-test-id]="'select-response-count-' + count">` inside `.responses`; label `"<count> Responses"`. **Stable data-test-id**: `select-response-count-100|150|200|250|300|400|500` (base list `[100,150,200,250,300,400,500]`).
+- Extra options after More: 600, 700, 800, 900, 1000 -> `select-response-count-600..1000`.
+- Filtering: `filteredResponseCounts` only renders counts `<= eligibleCount`; renders none when `isUnhappyPath` (eligibleCount <= 100). So the full 100..500 list only appears when eligible count >= 500.
+- Selected state: class `selected` on the button (`.responses button.selected`).
+- "+ More options" button: `<button class="more-options" data-test-id="toggle-more-response-options">`. **Stable data-test-id**. Rendered ONLY when `flowType().scratch` (Start from scratch flow; not in the AI/prompt flow). Text toggles `+ More options` <-> `− Fewer options` (the +/− is in a `<span aria-hidden="true">`).
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
+### A5. "More responses takes longer and also affects metering. 100 responses = 1 credit"
+- `<div class="question">` inside `<div class="responses-frame">` — text from `SURVEYMOD_EXPECTED_RESPONSES_MESSAGE` with params `{response: 100, credit: 1}`. **No data-test-id**; use `.responses-frame .question` (class) or text match.
+- Rendered only when `!isUnhappyPath && !dataSelectorLoading()` (and `reportData`).
 
-    ───────────────────────────────────────────────────────────────────────
+### A6. Footer — `survey-dataset-footer` (`dataset-footer.component.html`), hosted in `crf-survey-wrapper`
+- Visibility: `surveyCommonService.datasetFooterVisible()`; `select-panelist.component.ts` ngOnInit sets it to true. Wrapper div: `.dataset-footer` (gets `read-only` class when not editable).
+- Source label: `<span class="dataset-label">` (text `SURVEYMOD_SOURCE`, "Source"). No test id.
+- Value: `<span class="selected-value">` — ONE string built by `buildDatasetDisplay()`: `NielsenIQ <datasetTypeName> | <datasetTitle> | <dataViewName>` (parts joined with `" | "`, empties dropped). So **source name, dataset name and view are NOT separate elements**; "Entire Dataset" is the `dataView.dataViewName` (3rd segment) — split on `" | "`. The span has `id="select-dataset"` ONLY when the footer is editable (`isEditable()`); otherwise no id. Click on it triggers `onDatasetFooterClick()` (re-opens the dataset picker).
+- Last refreshed: `<div id="refreshedOnBlock" data-test-id="rb-report-refreshed-on-block"><span>Last refreshed: {{ refreshedDate() }}</span></div>`. **Stable data-test-id + id**. Rendered only `@if (refreshedDate())` (absent when no date).
+- Date format is whatever `surveyCommonService.getRefreshedDate()` provides (not formatted in the template).
 
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start witha prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-  1 skipped
-  23 did not run
-  39 passed (6.8m)
+### Other relevant Select Panelist elements (found while investigating)
+- Page "Cancel" button: `<button class="cancel">` in `.footer` of select-panelist.component.html — NO test id and no click handler; unrelated to the Product Offering modal's Cancel.
+- "Proceed to survey builder" / "Generate survey": `[data-test-id='proceed-to-survey']`, `[disabled]` native attribute when no response count selected (a true native `disabled` attribute).
+- Dimension tiles: `ds-noDataPrompt_<Label>` (empty) / `ds-<Label>_Dimension` (filled) from `@nielsen/crf-data-summary`.
 
-To open last HTML report run:
+---
 
-  npx playwright show-report
+## B) e2e today
 
+### B1. Coverage by item
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ 
---------------
-TC_AI_10: Rephrase with AI clears the loading state and prompt
-survey/start-with-prompt.spec.ts:121
-16.0s
-chromiumStartWithPromptGenerateSurvey
-serial
-Copy prompt
-Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
+| Item | Locator (select-panelist.locator.json / start-from-scratch.locator.json) | Method | Verdict |
+|---|---|---|---|
+| Search for Panelists button | `searchForPanelistsButton` = `[id='report-btn-run']` | `clickSearchForPanelists()`, `isSearchForPanelistsButtonVisible()` | Exists, but **no disabled/enabled check** (visible is true when disabled). Note `waitFor()` will time out if the button is still `hidden` (before any selection). |
+| Product Offering modal root / Cancel | none (only `productOfferingHeading` role=heading and `nextButton` `btn-next-dataset`) | `StartFromScratchPage.selectProductOffering()` (Next only) | **Missing**: no Cancel locator, no modal root, no "is modal open" check. |
+| Eligibility message / count | none | none | **Missing** |
+| Response-count options | `250ResponsesButton` (text `250 Responses`), `selectedResponseCountButton` (`.responses button.selected`) | `click250Responses()`, `getSelectedResponseCountDataTestId()` | Partial: only 250 is clickable; no generic `select-response-count-<n>`, no list of rendered options. `selectedResponseCountButton` returns data-test-id. |
+| "+ More options" button | none | none | **Missing** |
+| "100 responses = 1 credit" message | none | none | **Missing** |
+| Footer (source / dataset / view) | none | none | **Missing** |
+| Footer "Last refreshed" | none | none | **Missing** |
+| Proceed button | `proceedToSurveyBuilderButton` | `clickProceedToSurveyBuilder()`, `isProceedToSurveyBuilderVisible()` | Exists (visible only; no disabled check) |
+| Dimension tiles / filled tiles | `*NoDataPrompt`, `filledDimensionTile`, `addButton`, `removeIcon`, ... | `setDimensionSelection(s)`, `isDimensionSelectionRetained()` | Exists |
+| Dataset-picker helpers | start-from-scratch.locator.json: `searchToggle`, `searchInput`, `datasetByLabel`, `defaultDataset`, `chooseDatasetBreadcrumb` (`dataset-picker-title`), `chooseDataviewBreadcrumb`, `dialogElement` (`title-second-dialog`), `applyButton` | `searchAndSelectDataset()` (dataset-selection.helper.ts), `applyEntireDataset()`, `proceedToNextAfterDatasetSelection()` | Exists |
 
-   at ..\page-objects\survey\start-with-prompt.page.ts:286
+Other facts:
+- `panelist-flow.helper.ts` exports `completePanelistSelectionFlow(basePage, dimensionSelections)` = setDimensionSelections -> clickSearchForPanelists -> click250Responses -> clickProceedToSurveyBuilder -> isBuildSurveyPageLoaded. It is only defined; no references found in `e2e/**/*.ts`. It has NO partial/intermediate hooks.
+- `dataset-selection.helper.ts` has no Cancel/close logic; it ends by clicking a dataset item. It handles "already on dataview screen" by returning true.
 
-  284 |       }
-  285 |     } catch (error) {
-> 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  287 |     }
-  288 |   }
-  289 |
-    at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:129:5
-Filter steps
-Before Hooks
-100ms
-Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-173ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-53ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-116ms
-Wait for selector locator('[data-test-id=\'rephrase-with-ai-0\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.1s
-After Hooks
-8.8s
-Worker Cleanup
-4ms
+### B2. How the Product Offering modal is opened/closed today
+- **Opened implicitly**: `StartFromScratchPage.clickStartFromScratch()` clicks `[data-testid='quick-survey-quick-2']`; the app then opens the picker at Product Offering (`openDialog()`).
+- `selectProductOffering(_productOffering)` (argument ignored): if heading `role=heading[name="Product Offering"]` is visible, waits for it and clicks `[data-test-id='btn-next-dataset']` (Next). If the heading isn't shown it silently returns.
+- **Closed implicitly only by progressing**: Next -> dataset step -> `searchAndSelectDataset` -> `proceedToNextAfterDatasetSelection()` clicks `[data-test-id='apply-dataset-btn']` -> `applyEntireDataset()` waits for `[data-test-id='title-second-dialog']` and clicks `apply-dataset-btn` again. There is NO explicit close/cancel and no assertion that the modal is closed or open.
+- To automate the Cancel case you need new locators: `[data-test-id='cancel-dataset-btn']` and root `.ds-picker-container.ds-picker-type-selection`, plus visibility waits; and decide what is expected after Cancel (the app-side `cancelDataSetTypeDialog(isCancel=true)` -> `emitDatasetOnCancel` — behaviour not exercised in e2e).
+
+### B3. Can `setDimensionSelection` be called for 4 of 5 filters only, then the 5th later?
+**Yes.** 
+- `setDimensionSelections(selections[])` is just a for-loop over `setDimensionSelection(...)`, each call is independent and ends by clicking Done (panel closes, `PANEL_TRANSITION_DELAY`). It holds no cross-call state, and there is no "all 5 required" check.
+- `dev-test-data.json -> datasets[<name>].dimensionSelections` is an array of 5 entries (productNoDataPrompt, retailerNoDataPrompt, geographyNoDataPrompt, demographicNoDataPrompt, periodNoDataPrompt). Test can pass `selections.slice(0, 4)` first and later call `setDimensionSelection(...)` (or `setDimensionSelections([fifth])`) with the 5th entry's fields. Order is irrelevant to the code; the existing array order is product, retailer, geography, demographic, period.
+- Check-before-click guard: each call first reads the current dimension value (via `FILLED_TILE_DIMENSION_LABELS` for all 5); if already matching it returns early, if a different value it removes then re-selects. So re-calling is idempotent.
+- Caveats for the "disabled until all 5 set" test:
+  - After the 1st selection the Search button appears in `disabled` state (not hidden); it becomes enabled only when prompt validation reports `VALID` (after the 5th). Before any selection it is not in the DOM, so `isSearchForPanelistsButtonVisible()` (which does `waitFor()`) will throw/timeout — don't use it for the "before" state.
+  - Need new method(s) e.g. `isSearchForPanelistsEnabled()` using `#report-btn-run` class `report-btn-run-disabled` (+ optionally inner button disabled).
+  - `setDimensionSelection` parameters are positional (dimensionTab, items, parentItems, requiresFilterIconClick, filterIconClickAfterParent, skipParentSearch); `DimensionSelection` interface is not exported, but `Parameters<SelectPanelistPage['setDimensionSelections']>[0]` works (used in panelist-flow.helper.ts).
+  - The existing spec test "Should enable Search for Panelists after all 5 filters are set" only asserts visibility — it never proves enabled.
+  - Period uses `skipParentSearch` / `filterIconClickAfterParent`; these are data-driven, no code change needed.
+
+---
+
+## Summary of gaps to build (suggested)
+1. Locators: `cancelDatasetButton` `[data-test-id='cancel-dataset-btn']`, `productOfferingDialog` `.ds-picker-container.ds-picker-type-selection`, `eligibilityMessage` `.eligibility`, `responseCountByValue` `[data-test-id='select-response-count-${text}']`, `responseCountOptions` `[data-test-id^='select-response-count-']`, `moreResponseOptionsButton` `[data-test-id='toggle-more-response-options']`, `responsesCreditMessage` `.responses-frame .question`, `footerSelectedValue` `.dataset-footer .selected-value`, `footerSourceLabel` `.dataset-footer .dataset-label`, `footerLastRefreshed` `[data-test-id='rb-report-refreshed-on-block']`.
+2. Methods: `isSearchForPanelistsEnabled/Disabled()`, `isSearchForPanelistsPresent()`, `getEligibleCount()`, `getResponseCountOptions()`, `clickResponseCount(n)`, `clickMoreOptions()`, `getResponsesCreditMessage()`, `getFooterDetails()` (split by " | "), `getLastRefreshedText()`, `cancelProductOffering()`, `isProductOfferingModalOpen()`.
+3. Data dependency: the response-count list depends on eligible count (needs >= 500 for 100..500 all present) and More options exists only in the Start-from-scratch flow; test data must give a high-eligibility criteria set.
