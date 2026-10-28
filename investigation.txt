@@ -354,3 +354,74 @@ After Hooks
 3.5s
 Worker Cleanup
 3ms
+-------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ grep -n -B1 -A5 "cancelDatasetButton" locators/survey/select-panelist.locator.json
+114-    {
+115:      "elementName": "cancelDatasetButton",
+116-      "selectorType": "css",
+117-      "selectorValue": "[data-test-id='cancel-dataset-btn']"
+118-    },
+119-    {
+120-      "elementName": "eligibilityMessage",
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ sed -n 125,150p page-objects/survey/start-from-scratch.page.ts
+      await applyButton.click();
+    } catch (error) {
+      throw new Error(`Failed to apply entire dataset: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+
+  async isProductOfferingModalVisible(): Promise<boolean> {
+    const modal = this.webActionHandler.getWebElement(
+      this.resourceManager.getResource('productOfferingModal', SELECT_PANELIST_RESOURCES_COMPONENT_NAME)
+    );
+    return modal.isVisible(SMALL_TIMEOUT);
+  }
+
+  /** Clicks Cancel scoped inside the Product Offering modal (thelocator itself is nested under the modal root). */
+  async cancelProductOfferingModal(): Promise<void> {
+    try {
+      const cancelButton = this.webActionHandler.getWebElement(
+        this.resourceManager.getResource('cancelDatasetButton', SELECT_PANELIST_RESOURCES_COMPONENT_NAME)
+      );
+      await this.waitUntilVisible(cancelButton, 'Product OfferingCancel button', SMALL_TIMEOUT);
+      await cancelButton.click();
+    } catch (error) {
+      throw new Error(`Failed to cancel Product Offering modal: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+}
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ sed -n 95,120p tests/survey/select-panelist.spec.ts
+    assertTrue(refreshedText.startsWith(REFRESHED_PREFIX), `Expected footer text to start with "${REFRESHED_PREFIX}", got "${refreshedText}"`);
+  });
+
+  test(
+    'TC_SP_07: Search for Panelists is enabled once the required filters are set',
+    { tag: '@SPSearchButton' },
+    async () => {
+      // Manual TC_SP_07 expects "disabled until all 5 are set", but app source (generateEmptyDimensions in
+      // @nielsen/crf-data-summary) only requires visible promptswithout selections to be empty, and some
+      // dimensions arrive with backend-provided defaults depending on the dataset, so the exact fill at which
+      // the button enables is dataset-driven and can't be asserted deterministically between individual fills.
+      assertTrue(await selectPanelistPage.isSearchForPanelistsDisabledOrAbsent(), 'Search for Panelists should be disabled or absent with 0 filters');
+
+      for (const selection of datasetConfig.dimensionSelections) {
+        await selectPanelistPage.setDimensionSelections([selection]);
+      }
+
+      assertTrue(await selectPanelistPage.isSearchForPanelistsEnabled(), 'Search for Panelists should be enabled after all filters are set');
+    }
+  );
+
+  test('TC_SP_08: Search result shows eligible count, response options and credit message', { tag: '@SPSearchResult' }, async () =>{
+    await selectPanelistPage.clickSearchForPanelists();
+
+    const eligibleCount = await selectPanelistPage.getEligibleCount();
+    assertTrue(eligibleCount >= MIN_ELIGIBLE_COUNT, `Expected eligible count >= ${MIN_ELIGIBLE_COUNT}, got ${eligibleCount}`);
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ 
