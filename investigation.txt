@@ -184,5 +184,3 @@ After Hooks
 1.4s
 Worker Cleanup
 1ms
-
-screenshot
