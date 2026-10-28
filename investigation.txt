@@ -1,6 +1,12 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ npx playwright show-report
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
@@ -16,67 +22,18 @@ Global setup completed. Auth state saved.
 
 Running 6 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓  1 …ering modal applies no dataset @SelectPanelist @SPModalCancel (25.4s)
+  ✓  1 …ering modal applies no dataset @SelectPanelist @SPModalCancel (26.5s)
 Auth state loaded from storage/auth.json
-  ✓  2 …vey home page and start from scratch @SelectPanelist @SPSetup (15.4s)
+  ✓  2 …vey home page and start from scratch @SelectPanelist @SPSetup (19.5s)
 Auth state loaded from storage/auth.json
-  ✓  3 …nd dataset and reach Select Panelists @SelectPanelist @SPSetup (4.3s)
-  ✓  4 …d view with a "Last refreshed" date @SelectPanelist @SPFooter (144ms)
-  ✘  5 …filter has exactly 1 selection @SelectPanelist @SPSearchButton (1.4m)
-setDimensionSelection failed for 'productNoDataPrompt': locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('div.item-container:has-text(\'GROCERY\') niq-checkbox').first()
+  ✓  3 …nd dataset and reach Select Panelists @SelectPanelist @SPSetup (4.6s)
+  ✓  4 …d view with a "Last refreshed" date @SelectPanelist @SPFooter (184ms)
+  ✓  5 …ilter has exactly 1 selection @SelectPanelist @SPSearchButton (28.1s)
+  ✓  6 …se options and credit message @SelectPanelist @SPSearchResult (36.9s)
 
-  -  6 …, response options and credit message @SelectPanelist @SPSearchResult
-
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:105:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled only when every filter has exactly 1 selection @SelectPanelist @SPSearchButton 
-
-    TimeoutError: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('div.item-container:has-text(\'GROCERY\') niq-checkbox').first()
-
-
-       at ..\page-objects\common\select-panelist.page.ts:381
-
-      379 |         );
-      380 |         await checkbox.waitFor();
-    > 381 |         await checkbox.click();
-          |                        ^
-      382 |         await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      383 |       }
-      384 |
-        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:381:24)
-        at SelectPanelistPage.addDimensionSelectionItem (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:180:5)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:119:7
-
-    attachment #1: screenshot (image/png) ───────────────────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ───────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\attachments\select-panelist-video-ab8e32c4d685b7ec36f6906a68d8848125ecfca0.webm
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:105:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled only whenevery filter has exactly 1 selection @SelectPanelist @SPSearchButton 
-  1 did not run
-  4 passed (2.8m)
+  6 passed (2.6m)
 
 To open last HTML report run:
 
@@ -85,118 +42,3 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ 
----------------
-Select Panelists - filters and search
-TC_SP_07: Search for Panelists is enabled only when every filter has exactly 1 selection
-survey/select-panelist.spec.ts:105
-1.4m
-chromiumSelectPanelistSPSearchButton
-serial
-Copy prompt
-TimeoutError: locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('div.item-container:has-text(\'GROCERY\') niq-checkbox').first()
-
-
-   at ..\page-objects\common\select-panelist.page.ts:381
-
-  379 |         );
-  380 |         await checkbox.waitFor();
-> 381 |         await checkbox.click();
-      |                        ^
-  382 |         await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-  383 |       }
-  384 |
-    at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
-    at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:381:24)
-    at SelectPanelistPage.addDimensionSelectionItem (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:180:5)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:119:7
-Filter steps
-Before Hooks
-15ms
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-31ms
-Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-172ms
-Wait for selector locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-708ms
-Click locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-230ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-15ms
-Click locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-132ms
-Wait for selector locator('[data-test-id=\'ds-filterIcon-icon\']:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.3s
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-27ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-64ms
-Fill "#US LOC OMNI SUPER CATEGORY MA" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-59ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-35ms
-Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-50ms
-Click locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-276ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-303ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-49ms
-Fill "APPLIANCES" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-67ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-25ms
-Wait for selector locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-21ms
-Click locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-89ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-22ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-143ms
-Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-23ms
-Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-476ms
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-25ms
-Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-110ms
-Wait for selector locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-42ms
-Click locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-560ms
-Wait for selector locator('[data-test-id=\'ds-filterIcon-icon\']:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-32ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-84ms
-Fill "#US LOC OMNI SUPER CATEGORY MA" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-76ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-64ms
-Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-52ms
-Click locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-244ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-221ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-29ms
-Fill "GROCERY" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-71ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-15.0s
-Wait for selector locator('div.item-container:has-text(\'GROCERY\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-15.0s
-Click locator('div.item-container:has-text(\'GROCERY\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-15.0s
-After Hooks
-2.3s
-Worker Cleanup
-1ms
