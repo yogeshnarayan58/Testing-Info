@@ -13,3 +13,302 @@ The setup tests carry an extra @SPSetup tag, and I assume isHidden() is true whe
 
 +145
 -0
+----------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 6 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✘  1 …age @SelectPanelist @SelectPanelist @SPModalCancel (22.9s)
+Auth state loaded from storage/auth.json
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+  ✓  2 …m scratch @SelectPanelist @SelectPanelist @SPSetup (16.6s)
+Auth state loaded from storage/auth.json
+  ✓  3 … Panelists @SelectPanelist @SelectPanelist @SPSetup (4.7s)
+  ✓  4 …ed" date @SelectPanelist @SelectPanelist @SPFooter (350ms)
+  ✘  5 …et @SelectPanelist @SelectPanelist @SPSearchButton (29.6s)
+  -  6 …it message @SelectPanelist @SelectPanelist @SPSearchResult
+
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:31:7 › Select Panelists - Product Offering modal › TC_SP_03: Cancelling the Product Offering modal returns to the survey home page @SelectPanelist @SelectPanelist @SPModalCancel 
+
+    Error: Failed to cancel Product Offering modal: Product Offering Cancel button not visible after 5000ms
+
+       at ..\page-objects\survey\start-from-scratch.page.ts:147
+
+      145 |       await cancelButton.click();
+      146 |     } catch (error) {
+    > 147 |       throw new Error(`Failed to cancel Product Offering modal: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      148 |     }
+      149 |   }
+      150 | }
+        at StartFromScratchPage.cancelProductOfferingModal (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-from-scratch.page.ts:147:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:43:7
+
+    attachment #1: screenshot (image/png) ────────────────────────
+    test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\error-context.md
+
+    attachment #3: select-panelist-modal-video (video/webm) ──────
+    test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\attachments\select-panelist-modal-video-74363ae955f3456db40f1936a0a9d1a6fdfc8e67.webm
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────
+    test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-29a61-rns-to-the-survey-home-page-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\select-panelist.spec.ts:98:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled only after all filters are set @SelectPanelist @SelectPanelist @SPSearchButton 
+
+    Error: Search for Panelists should still be disabled or absent after 3 of 5 filters
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:109:19
+
+    attachment #1: screenshot (image/png) ────────────────────────
+    test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ────────────
+    test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\attachments\select-panelist-video-9cf468fa3cd8c0ed90a001c2a6966aa8d32160aa.webm
+    ──────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────
+    test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-68999-y-after-all-filters-are-set-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:31:7 › Select Panelists - Product Offering modal › TC_SP_03: Cancelling the Product Offering modal returns to the survey home page @SelectPanelist @SelectPanelist @SPModalCancel 
+    [chromium] › tests\survey\select-panelist.spec.ts:98:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelistsis enabled only after all filters are set @SelectPanelist @SelectPanelist @SPSearchButton 
+  1 did not run
+  3 passed (2.0m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ =
+------------------
+
+s:failed 
+Select Panelists - Product Offering modal
+next »
+TC_SP_03: Cancelling the Product Offering modal returns to the survey home page
+survey/select-panelist.spec.ts:31
+22.9s
+chromiumSelectPanelistSPModalCancel
+Copy prompt
+Error: Failed to cancel Product Offering modal: Product Offering Cancel button not visible after 5000ms
+
+   at ..\page-objects\survey\start-from-scratch.page.ts:147
+
+  145 |       await cancelButton.click();
+  146 |     } catch (error) {
+> 147 |       throw new Error(`Failed to cancel Product Offering modal: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  148 |     }
+  149 |   }
+  150 | }
+    at StartFromScratchPage.cancelProductOfferingModal (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-from-scratch.page.ts:147:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:43:7
+Filter steps
+Before Hooks
+16ms
+Launch browser— ../node_modules/@gfk/gta/core/web/basePage.ts:59
+914ms
+Create context— ../node_modules/@gfk/gta/core/web/basePage.ts:70
+1.6s
+Create page— ../node_modules/@gfk/gta/core/web/basePage.ts:71
+794ms
+Navigate si.connect.nielseniq.io/reportexperience-dev/survey— ../node_modules/@gfk/gta/core/web/webActions.ts:627
+3.2s
+Wait for selector locator('[data-testid=\'quick-survey-quick-2\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+5.0s
+Click locator('[data-testid=\'quick-survey-quick-2\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+5.0s
+Wait for selector locator('.ds-picker-container.ds-picker-type-selection')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+841ms
+Wait for selector locator('.ds-picker-container.ds-picker-type-selection [data-test-id=\'cancel-dataset-btn\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+After Hooks
+1.5s
+Worker Cleanup
+---------------------
+TC_SP_07: Search for Panelists is enabled only after all filters are set
+survey/select-panelist.spec.ts:98
+29.6s
+chromiumSelectPanelistSPSearchButton
+serial
+Copy prompt
+Error: Search for Panelists should still be disabled or absent after 3 of 5 filters
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:109:19
+Filter steps
+Before Hooks
+21ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.3s
+Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+35ms
+Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+124ms
+Wait for selector locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+16ms
+Click locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+542ms
+Wait for selector locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+20ms
+Click locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+88ms
+Wait for selector locator('[data-test-id=\'ds-filterIcon-icon\']:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.2s
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+63ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+131ms
+Fill "#US LOC OMNI SUPER CATEGORY MA" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+79ms
+Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+20ms
+Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+42ms
+Click locator('[data-test-id=\'ds-navigationItemLabel_#US LOC OMNI SUPER CATEGORY MA\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+224ms
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+420ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+55ms
+Fill "APPLIANCES" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+90ms
+Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+27ms
+Wait for selector locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+21ms
+Click locator('div.item-container:has-text(\'APPLIANCES\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+88ms
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+17ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+149ms
+Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+37ms
+Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+120ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Retailer\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Retailer_Dimension\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+46ms
+Click locator('[data-test-id=\'ds-Retailer_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+123ms
+Wait for selector locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+12ms
+Click locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+435ms
+Wait for selector locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+21ms
+Click locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+80ms
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+51ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+35ms
+Fill "Channel" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+42ms
+Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+261ms
+Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+33ms
+Click locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+305ms
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+539ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+72ms
+Fill "Dollar Store" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+69ms
+Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+33ms
+Wait for selector locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+21ms
+Click locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+78ms
+Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+17ms
+Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+67ms
+Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+15ms
+Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+113ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Geography\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Geography_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+44ms
+After Hooks
+2.7s
+Worker Cleanup
+------------------------
+
