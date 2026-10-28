@@ -1,187 +1,33 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright test --project=chromium --headed --workers=1
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+$ git fetch origin
+remote: Enumerating objects: 330, done.
+remote: Counting objects: 100% (226/226), done.
+remote: Compressing objects: 100% (51/51), done.
+remote: Total 146 (delta 92), reused 134 (delta 84), pack-reused 0 (from 0)
+Receiving objects: 100% (146/146), 39.54 KiB | 306.00 KiB/s, done.
+Resolving deltas: 100% (92/92), completed with 48 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+   72a7b020..16309d5f  codex/extract-validation-service -> origin/codex/extract-validation-service
+   077574bb..adc6b698  feature/RBOC-219620   -> origin/feature/RBOC-219620
+ * [new branch]        feature/RBOC-221464-2 -> origin/feature/RBOC-221464-2
+   7a2b98a2..dec5f164  main                  -> origin/main
 
-Running 70 tests using 1 worker
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ git show origin/main:e2e/locators/survey/start-with-prompt.locator.json | grep -n "rephrase\|reprompt"
+30:    { "elementName": "rephraseWithAiButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-with-ai-${text}']" },
+31:    { "elementName": "rephraseInput", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-input-${text}']" },
+32:    { "elementName": "rephraseSendButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-send-${text}']" },
+34:    { "elementName": "repromptNewQuestionsButton", "selectorType": "css","selectorValue": "[data-test-id='reprompt-new-questions']" },
+35:    { "elementName": "repromptInput", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-input']" },
+36:    { "elementName": "repromptSubmitButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-submit']" }
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-isLambdaTest = false
-  ✓   1 …ring modal applies no dataset @SelectPanelist @SPModalCancel (28.0s)
-Auth state loaded from storage/auth.json
-  ✓   2 …ey home page and start from scratch @SelectPanelist @SPSetup (20.2s)
-Auth state loaded from storage/auth.json
-  ✓   3 …d dataset and reach Select Panelists @SelectPanelist @SPSetup (6.2s)
-  ✓   4 … view with a "Last refreshed" date @SelectPanelist @SPFooter (321ms)
-  ✓   5 …lter has exactly 1 selection @SelectPanelist @SPSearchButton (32.1s)
-  ✓   6 …e options and credit message @SelectPanelist @SPSearchResult (40.8s)
-  ✓   7 …the survey home page @StartFromScratch @LandStartFromScratch (17.8s)
-Auth state loaded from storage/auth.json
-  ✓   8 …e Choose a dataset screen @StartFromScratch @DatasetSelection (4.2s)
-  ✓   9 …s after all 5 filters are set @StartFromScratch @DataSummary (16.5s)
-  ✓  10 …r selecting a response count @StartFromScratch @ResponseCount (4.1s)
-  ✓  11 …e after proceeding @StartFromScratch @ProceedToSurveyBuilder (823ms)
-  ✓  12 …ey" and the Add question panel @StartFromScratch @EmptyState (235ms)
-  ✓  13 …C_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (1.7s)
-  ✓  14 …ingle Choice question @StartFromScratch @SingleChoiceQuestion (2.6s)
-  ✓  15 …ple Choice question @StartFromScratch @MultipleChoiceQuestion (5.3s)
-  ✓  16 …_03c: Add a Rating question @StartFromScratch @RatingQuestion (3.4s)
-  ✓  17 …TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (3.5s)
-  ✓  18 … a Point Scale question @StartFromScratch @PointScaleQuestion (6.3s)
-  ✓  19 … a Multi Scale question @StartFromScratch @MultiScaleQuestion (6.6s)
-  ✓  20 …en the Required toggle is on @StartFromScratch @RequiredStar (31.1s)
-  ✓  21 …tion text via the pencil icon @StartFromScratch @EditQuestion (6.1s)
-  ✓  22 …anges on an existing question @StartFromScratch @DiscardSave (27.3s)
-  ✓  23 …question count unchanged @StartFromScratch @CancelAddQuestion (3.3s)
-  ✓  24 … Drag and drop reorders questions @StartFromScratch @DragDrop (2.7s)
-  ✓  25 …tion via hover row actions @StartFromScratch @DeleteDuplicate (2.0s)
-  ✓  26 …s boundary - min 2, max 15 @StartFromScratch @OptionBoundary (33.8s)
-  ✓  27 …nd back to Build Survey @StartFromScratch @StepperNavigation (19.5s)
-  ✓  28 …Duplicate with limit message @StartFromScratch @MaxQuestions (20.0s)
-  ✓  29 …, select, delete selected, exit @StartFromScratch @ReviewMode (9.0s)
-  ✓  30 …› TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (5.9s)
-  ✓  31 …n there are recommendations @StartFromScratch @ValidateSurvey (7.4s)
-  ✓  32 …l, then add and save one @StartFromScratch @CancelAddQuestion (8.4s)
-  ✓  33 …add the same type as last @StartFromScratch @DeleteDuplicate (10.1s)
-  -  34 …› TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  ✓  35 …, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (2.5s)
-  ✓  36 …h fewer than 3 questions @StartFromScratch @ValidateDisabled (398ms)
-  ✓  37 …art From Scratch builder @StartFromScratch @StartFromScratch (106ms)
-  ✓  38 …previous step from the builder @StartFromScratch @BackButton (760ms)
-  ✓  39 …ith a prompt option on the survey home page @StartWithPrompt (20.4s)
-Auth state loaded from storage/auth.json
-  ✓  40 …e dataset type and dataset @StartWithPrompt @DatasetSelection (4.1s)
-  ✓  41 …tions and search for panelists @StartWithPrompt @DataSummary (16.4s)
-  ✓  42 …hould select a response count @StartWithPrompt @ResponseCount (3.8s)
-  ✓  43 … reach the Build Survey page @StartWithPrompt @GenerateSurvey (3.1s)
-  ✓  44 …e Customize Questions screen @StartWithPrompt @GenerateSurvey (7.0s)
-  ✓  45 …estions creates AI questions @StartWithPrompt @GenerateSurvey (6.2s)
-  ✓  46 …urvey title after AI generation @StartWithPrompt @BuildSurvey (1.2s)
-  ✘  47 …he loading state and prompt @StartWithPrompt @GenerateSurvey (15.9s)
-  -  48 …stions increases the question count @StartWithPrompt @GenerateSurvey
-  -  49 …to add increases the question count @StartWithPrompt @GenerateSurvey
-  -  50 …ed at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  51 …appears when the Required toggle is on @StartWithPrompt @BuildSurvey
-  -  52 …Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
-  -  53 …/ Save changes on an existing question @StartWithPrompt @DiscardSave
-  -  54 …icate a question via hover row actions @StartWithPrompt @BuildSurvey
-  -  55 …S_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
-  -  56 …on leaves the question count unchanged @StartWithPrompt @BuildSurvey
-  -  57 …ontrols, select, delete selected, exit @StartWithPrompt @BuildSurvey
-  -  58 …s disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
-  -  59 … all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
-  -  60 … shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
-  -  61 …C_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
-  -  62 …BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
-  -  63 …mpt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
-  -  64 …rompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
-  -  65 … TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
-  -  66 … TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
-  -  67 … retains data and back to Build Survey @StartWithPrompt @BuildSurvey
-  -  68 …4: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
-  -  69 … prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  70 …back when there are recommendations @StartWithPrompt @ValidateSurvey
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ git grep -n "rephrase-with-ai" origin/main -- . ":!e2e"
+bash: !e2e: event not found
 
-
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with a prompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-
-    Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
-
-       at ..\page-objects\survey\start-with-prompt.page.ts:286
-
-      284 |       }
-      285 |     } catch (error) {
-    > 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      287 |     }
-      288 |   }
-      289 |
-        at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:129:5
-
-    attachment #1: screenshot (image/png) ───────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ─────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\attachments\start-with-prompt-video-49616606781ea4bbd44b53c97f6ec12af19711a3.webm
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────────
-    test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-1c458-he-loading-state-and-prompt-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-with-prompt.spec.ts:121:7 › Start with aprompt › TC_AI_10: Rephrase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey 
-  1 skipped
-  23 did not run
-  45 passed (8.8m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ git grep -n "reprompt-submit" origin/main -- . ":!e2e"
+bash: !e2e: event not found
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ 
---------------
-TC_AI_10: Rephrase with AI clears the loading state and prompt
-survey/start-with-prompt.spec.ts:121
-15.9s
-chromiumStartWithPromptGenerateSurvey
-serial
-Copy prompt
-Error: Failed to rephrase question 0: Rephrase with AI button (index 0) not visible after 15000ms
-
-   at ..\page-objects\survey\start-with-prompt.page.ts:286
-
-  284 |       }
-  285 |     } catch (error) {
-> 286 |       throw new Error(`Failed to rephrase question ${index}: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  287 |     }
-  288 |   }
-  289 |
-    at StartWithPromptPage.rephraseQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:286:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:129:5
-Filter steps
-Before Hooks
-50ms
-Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-274ms
-Wait for selector locator('.question-row').nth(1).locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-71ms
-Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
-132ms
-Wait for selector locator('[data-test-id=\'rephrase-with-ai-0\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-5.0s
-Worker Cleanup
-4ms
-
-screenshot
-
-trace
-start-with-prompt-video
-error-context
-error-context
