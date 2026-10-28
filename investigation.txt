@@ -1,44 +1,28 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
-
+$ npx prettier --write tests/survey/select-panelist.spec.ts page-objects/common/select-panelist.page.ts page-objects/survey/start-from-scratch.page.ts locators/survey/select-panelist.locator.json
+tests/survey/select-panelist.spec.ts 73ms
+page-objects/common/select-panelist.page.ts 73ms
+page-objects/survey/start-from-scratch.page.ts 18ms (unchanged)
+locators/survey/select-panelist.locator.json 18ms (unchanged)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
+$ npx tsc --noEmit
 
-Running 6 tests using 1 worker
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+$ git status
+On branch feature/survey-automation-both
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/select-panelist.locator.json
+        modified:   page-objects/common/select-panelist.page.ts
+        modified:   page-objects/survey/start-from-scratch.page.ts
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓  1 …ering modal applies no dataset @SelectPanelist @SPModalCancel (26.5s)
-Auth state loaded from storage/auth.json
-  ✓  2 …vey home page and start from scratch @SelectPanelist @SPSetup (19.5s)
-Auth state loaded from storage/auth.json
-  ✓  3 …nd dataset and reach Select Panelists @SelectPanelist @SPSetup (4.6s)
-  ✓  4 …d view with a "Last refreshed" date @SelectPanelist @SPFooter (184ms)
-  ✓  5 …ilter has exactly 1 selection @SelectPanelist @SPSearchButton (28.1s)
-  ✓  6 …se options and credit message @SelectPanelist @SPSearchResult (36.9s)
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        tests/survey/select-panelist.spec.ts
 
-  6 passed (2.6m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
+no changes added to commit (use "git add" and/or "git commit -a")
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
 $ 
