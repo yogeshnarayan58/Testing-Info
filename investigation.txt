@@ -1,33 +1,119 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git fetch origin
-remote: Enumerating objects: 330, done.
-remote: Counting objects: 100% (226/226), done.
-remote: Compressing objects: 100% (51/51), done.
-remote: Total 146 (delta 92), reused 134 (delta 84), pack-reused 0 (from 0)
-Receiving objects: 100% (146/146), 39.54 KiB | 306.00 KiB/s, done.
-Resolving deltas: 100% (92/92), completed with 48 local objects.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
-   72a7b020..16309d5f  codex/extract-validation-service -> origin/codex/extract-validation-service
-   077574bb..adc6b698  feature/RBOC-219620   -> origin/feature/RBOC-219620
- * [new branch]        feature/RBOC-221464-2 -> origin/feature/RBOC-221464-2
-   7a2b98a2..dec5f164  main                  -> origin/main
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
+$ cd e2e
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git show origin/main:e2e/locators/survey/start-with-prompt.locator.json | grep -n "rephrase\|reprompt"
-30:    { "elementName": "rephraseWithAiButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-with-ai-${text}']" },
-31:    { "elementName": "rephraseInput", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-input-${text}']" },
-32:    { "elementName": "rephraseSendButton", "selectorType": "css", "selectorValue": "[data-test-id='rephrase-send-${text}']" },
-34:    { "elementName": "repromptNewQuestionsButton", "selectorType": "css","selectorValue": "[data-test-id='reprompt-new-questions']" },
-35:    { "elementName": "repromptInput", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-input']" },
-36:    { "elementName": "repromptSubmitButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-submit']" }
+$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" -- libs
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git grep -n "rephrase-with-ai" origin/main -- . ":!e2e"
-bash: !e2e: event not found
+$ cd ..
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ git grep -n "reprompt-submit" origin/main -- . ":!e2e"
-bash: !e2e: event not found
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
+$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" -- libs
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:38:                            <niq-button class="rephrase-action" [attr.data-test-id]="'rephrase-with-ai-' + i"
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:46:                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:51:                                <niq-icon-buttonclass="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:52:                                    [class.rephrase-send-loading]="rephraseLoadingIndex === i"
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:176:.rephrase-input {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:194:.rephrase-input:focus,
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:195:.rephrase-input:focus-visible,
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:196:.rephrase-input:active {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:206:.rephrase-input:hover,
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:207:.rephrase-input:focus {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:212:.rephrase-input::-webkit-scrollbar {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:216:.rephrase-input::-webkit-scrollbar-thumb {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:221:.rephrase-send {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:237:.rephrase-send:hover {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:241:.rephrase-send.rephrase-send-loading {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:246::host ::ng-deep .rephrase-send.rephrase-send-loa
+ding .iconComponent {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:250:.rephrase-send.rephrase-send-loading::after {
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:258:    animation: rephrase-send-spin 0.8s linear in
+finite;
+libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/pre
+view-mode.component.scss:261:@keyframes rephrase-send-spin {
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.html:2:  <div class="reprompt-input-row">
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.html:4:      class="reprompt-input"
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.html:5:      data-test-id="reprompt-input"
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.html:27:          data-test-id="reprompt-submit"
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.scss:22:.reprompt-input-row {
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.scss:27:.reprompt-input {
+libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/reprompt-actio
+ns.component.scss:46:.reprompt-input::placeholder {
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
+$ ^C
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
+$ git grep -n -E "rephrase-with-ai|rephrase-input|rephrase-send|reprompt-input|reprompt-submit|reprompt-new-questions" origin/main -- libs
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:38:                            <niq-button class="rephrase-action" [attr.data-test-id]="'rephrase-with-ai-' + i"
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:46:                                <textarea class="rephrase-input" [attr.data-test-id]="'rephrase-input-' + i" rows="4" placeholder="Type your prompt..."
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:51:                                <niq-icon-button class="rephrase-send" [attr.data-test-id]="'rephrase-send-' + i"
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:52:                                    [class.rephrase-send-loading]="rephraseLoadingIndex === i"
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:123:                <niq-button data-test-id="reprompt-new-questions" size="small" 
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:176:.rephrase-input {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:194:.rephrase-input:focus,
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.scss:195:.rephrase-input:focus-visible,
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:196:.rephrase-input:active {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:206:.rephrase-input:hover,
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:207:.rephrase-input:focus {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:212:.rephrase-input::-webkit-scrollbar {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:216:.rephrase-input::-webkit-scrollbar-t
+humb {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:221:.rephrase-send {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:237:.rephrase-send:hover {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:241:.rephrase-send.rephrase-send-loading
+ {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:246::host ::ng-deep .rephrase-send.rephr
+ase-send-loading .iconComponent {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:250:.rephrase-send.rephrase-send-loading
+::after {
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:258:    animation: rephrase-send-spin 0.
+8s linear infinite;
+origin/main:libs/survey-mod-lib/src/lib/features/build-survey/components/prev
+iew-mode/preview-mode.component.scss:261:@keyframes rephrase-send-spin {
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.html:2:  <div class="reprompt-input-row">
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.html:4:      class="reprompt-input"
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.html:5:      data-test-id="reprompt-input"
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.html:27:          data-test-id="reprompt-submit"
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.scss:22:.reprompt-input-row {
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.scss:27:.reprompt-input {
+origin/main:libs/survey-mod-lib/src/lib/shared/components/reprompt-actions/re
+prompt-actions.component.scss:46:.reprompt-input::placeholder {
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/survey-automation-both)
 $ 
