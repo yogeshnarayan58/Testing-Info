@@ -1,32 +1,5 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ echo "-----DIFF-----" >> investigation.txt
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ git diff -- tests/survey/start-from-scratch.spec.ts >> investigation.txt
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ echo "-----OTHER FILES NOT IN libs-----" >> investigation.txt
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ git status --short | grep -v "libs/survey-mod-lib" >> investigation.txt
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ cat investigation.txt
- M tests/survey/start-from-scratch.spec.ts
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
- M ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html
- M ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
-?? investigation.txt
------DIFF-----
+$ git diff -- tests/survey/start-from-scratch.spec.ts
 diff --git a/e2e/tests/survey/start-from-scratch.spec.ts b/e2e/tests/survey/start-from-scratch.spec.ts
 index 140cf174..79d2a57f 100644
 --- a/e2e/tests/survey/start-from-scratch.spec.ts
@@ -37,28 +10,32 @@ index 140cf174..79d2a57f 100644
  
 -// Clears the max-questions limit (if hit) so 'Add question' is clickable again.
  async function ensureAddQuestionEnabled(surveyBuilderPage: SurveyBuilderPage): Promise<void> {
-   const addQuestionState = await surveyBuilderPage.getAddQuestionDisabledState();
+   const addQuestionState = await surveyBuilderPage.getAddQuestionDi
+sabledState();
    if (addQuestionState.disabled) {
-@@ -32,7 +31,6 @@ async function ensureAddQuestionEnabled(surveyBuilderPage: SurveyBuilderPage): P
+@@ -32,7 +31,6 @@ async function ensureAddQuestionEnabled(surveyBuil
+derPage: SurveyBuilderPage): P
    }
  }
  
--// Empty state has no 'Add question' link - adds via the same type-tile flow TC_BS_03a uses, only when the survey has 0 questions.
- async function ensureAtLeastOneQuestion(surveyBuilderPage: SurveyBuilderPage): Promise<void> {
+-// Empty state has no 'Add question' link - adds via the same type-
+tile flow TC_BS_03a uses, only when the survey has 0 questions.
+ async function ensureAtLeastOneQuestion(surveyBuilderPage: SurveyBu
+ilderPage): Promise<void> {
    if ((await surveyBuilderPage.getQuestionCount()) === 0) {
-     const { questionText, options } = testData.surveyQuestions.singleChoice;
-@@ -40,8 +38,6 @@ async function ensureAtLeastOneQuestion(surveyBuilderPage: SurveyBuilderPage): P
+     const { questionText, options } = testData.surveyQuestions.sing
+leChoice;
+@@ -40,8 +38,6 @@ async function ensureAtLeastOneQuestion(surveyBuil
+derPage: SurveyBuilderPage): P
    }
  }
  
--// Stateful end-to-end scenario: tests share one browser session and run in order, each building on the previous state.
--// Run the whole flow by its tag (e.g. --grep @StartFromScratch). Running a single feature tag alone is not supported.
- test.describe.serial('Start from scratch', { tag: '@StartFromScratch' }, () => {
+-// Stateful end-to-end scenario: tests share one browser session an
+d run in order, each building on the previous state.
+-// Run the whole flow by its tag (e.g. --grep @StartFromScratch). R
+unning a single feature tag alone is not supported.
+ test.describe.serial('Start from scratch', { tag: '@StartFromScratc
+h' }, () => {
    let basePage: BasePage;
    let surveyPage: StartFromScratchPage;
------OTHER FILES NOT IN libs-----
- M tests/survey/start-from-scratch.spec.ts
-?? investigation.txt
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
-$ 
+(END)
