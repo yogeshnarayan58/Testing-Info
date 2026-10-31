@@ -1,47 +1,146 @@
-No locator changes needed — selectedResponseCountButton (.responses button.selected) already existed.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
+$ git status
+On branch feature/add-missing-test-ids
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   tests/survey/start-from-scratch.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
 
-Files/methods changed:
+no changes added to commit (use "git add" and/or "git commit -a")
 
-select-panelist.page.ts — added isAnyResponseCountSelected(), using getCount() on the existing selectedResponseCountButton locator (no wait, no throw). getSelectedResponseCountDataTestId() left untouched since build-survey-common-test-cases.ts still uses it.
-select-panelist.spec.ts — TC_SP_10's reset check now asserts !isAnyResponseCountSelected() then isProceedToSurveyBuilderDisabledOrAbsent().
--------------------------
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 8 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓  1 …al applies no dataset @SelectPanelist @SPModalCancel (23.5s)
-Auth state loaded from storage/auth.json
-  ✓  2 …page and start from scratch @SelectPanelist @SPSetup (14.7s)
-Auth state loaded from storage/auth.json
-  ✓  3 …t and reach Select Panelists @SelectPanelist @SPSetup (6.7s)
-  ✓  4 …th a "Last refreshed" date @SelectPanelist @SPFooter (173ms)
-  ✓  5 … exactly 1 selection @SelectPanelist @SPSearchButton (32.7s)
-  ✓  6 …s and credit message @SelectPanelist @SPSearchResult (36.8s)
-  ✓  7 …response count choices @SelectPanelist @SPMoreOptions (1.2s)
-  ✓  8 … a filter resets it @SelectPanelist @SPResponseCount (24.7s)
-
-  8 passed (3.0m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/survey-automation-both)
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
 $ 
+-------------------
+# data-test-id change log (LOCAL — do not commit / do not `git add`)
+
+Source: `e2e/investigation/LOCATOR_TESTID_INVESTIGATION.md` (Developer request list + Category C/D rows).
+Template root: `libs/survey-mod-lib/src/lib/features/` (abbreviated `F/` below).
+
+## Summary
+
+| Metric | Count |
+|---|---:|
+| IDs added (one attribute per table row) | 54 |
+| Skipped as external ("not doable here") | 10 rows (#42, #63–#71; #66 and #67 each cover several locators) |
+| Needs confirmation | 7 rows (#6, #7, #14, #59, #60, #61, #62) |
+
+Template files changed (12):
+- `F/build-survey/components/preview-mode/preview-mode.component.html`
+- `F/build-survey/components/question-editor/question-editor.component.html`
+- `F/build-survey/components/question-editor/choice-editor/choice-editor.component.html`
+- `F/build-survey/components/question-editor/nps-editor/nps-editor.component.html`
+- `F/build-survey/components/question-editor/rating-editor/rating-editor.component.html`
+- `F/build-survey/components/question-editor/scale-editor/scale-editor.component.html`
+- `F/build-survey/components/question-editor/text-editor/text-editor.component.html`
+- `F/build-survey/components/review-mode/review-mode.component.html`
+- `F/build-survey/components/survey-header/survey-header.component.html`
+- `F/build-survey/components/survey-publish-popup/survey-publish-popup.component.html`
+- `F/build-survey/components/footer/footer.component.html`
+- `F/select-panelist/components/select-panelist.component.html`
+
+(12 files; text-editor was touched only for D/C items. Total = 12.)
+
+Not touched: e2e locator JSON, page objects, unit tests, `report-btn-run` data-cy/id issue. No existing `data-test-id` renamed or removed.
+
+## Table
+
+`questionNumber` in preview-mode = `q.questionNumber ?? (i + 1)` (same expression already passed to `[questionNumber]`). In editors = `questionNumber()`.
+
+| # | locator name | new data-test-id | template file:line | status |
+|---|---|---|---|---|
+| 1 | questionRow | `question-row-${questionNumber}` | F/build-survey/components/preview-mode/preview-mode.component.html:13 | added |
+| 2 | editQuestionButton | `edit-question-${questionNumber}` | preview-mode.component.html:61 | added |
+| 3 | duplicateQuestionButton | `duplicate-question-${questionNumber}` | preview-mode.component.html:66 | added |
+| 4 | deleteQuestionButton | `delete-question-${questionNumber}` | preview-mode.component.html:77 | added |
+| 5 | inlineAddEditor | `inline-add-editor` | preview-mode.component.html:154 | added |
+| 6 | maxQuestionsMessageText | — (tooltip overlay; none bound) | preview-mode.component.html:66 / :98 | needs-confirmation |
+| 7 | inline `.rephrase-send-loading` | — (class on the same element that already has `rephrase-send-${i}`) | preview-mode.component.html:51 | needs-confirmation |
+| 8 | saveQuestionChangesButton | `save-question-changes` | F/build-survey/components/question-editor/question-editor.component.html:43 | added |
+| 9 | discardChangesButton | `discard-question-changes` | question-editor.component.html:40 | added |
+| 10 | optionInputByLabel (choice) | `question-option-${questionNumber}-${i}` | .../choice-editor/choice-editor.component.html:17 | added |
+| 11 | optionRow | `question-option-row-${questionNumber}-${i}` | choice-editor.component.html:16 | added |
+| 12 | removeOptionIcon | `remove-option-${questionNumber}-${i}` | choice-editor.component.html:23 | added |
+| 13 | addOptionButton | `add-option` | choice-editor.component.html:29 | added |
+| 14 | maxOptionsMessageText | — (tooltip overlay; none bound) | choice-editor.component.html:29 | needs-confirmation |
+| 15 | requiredToggle (choice) | `required-toggle-${questionNumber}` (library renders `…-input-checkbox`) | choice-editor.component.html:45 | added |
+| 16 | questionNumberMarker (choice) | `question-number-${questionNumber}` | choice-editor.component.html:52 | added |
+| 17 | questionTextDisplay (choice) | `question-text-${questionNumber}` | choice-editor.component.html:55 | added |
+| 18 | required marker (choice, inline `:1223`) | `question-required-marker-${questionNumber}` | choice-editor.component.html:56 | added |
+| 19 | ratingQuestionTextInput | `question-text-input-${questionNumber}` | .../rating-editor/rating-editor.component.html:9 | added |
+| 20 | requiredToggle (rating) | `required-toggle-${questionNumber}` | rating-editor.component.html:20 | added |
+| 21 | questionNumberMarker (rating) | `question-number-${questionNumber}` | rating-editor.component.html:26 | added |
+| 22 | questionTextDisplay (rating) | `question-text-${questionNumber}` | rating-editor.component.html:29 | added |
+| 23 | required marker (rating) | `question-required-marker-${questionNumber}` | rating-editor.component.html:29 | added |
+| 24 | requiredToggle (nps) | `required-toggle-${questionNumber}` | .../nps-editor/nps-editor.component.html:36 | added |
+| 25 | questionNumberMarker (nps) | `question-number-${questionNumber}` | nps-editor.component.html:42 | added |
+| 26 | questionTextDisplay (nps) | `question-text-${questionNumber}` | nps-editor.component.html:45 | added |
+| 27 | required marker (nps) | `question-required-marker-${questionNumber}` | nps-editor.component.html:45 | added |
+| 28 | requiredToggle (text) | `required-toggle-${questionNumber}` | .../text-editor/text-editor.component.html:17 | added |
+| 29 | questionNumberMarker (text) | `question-number-${questionNumber}` | text-editor.component.html:24 | added |
+| 30 | questionTextDisplay (text) | `question-text-${questionNumber}` | text-editor.component.html:27 | added |
+| 31 | required marker (text) | `question-required-marker-${questionNumber}` | text-editor.component.html:27 | added |
+| 32 | optionInputByLabel (scale columns) | `scale-column-input-${questionNumber}-${colIndex}` | .../scale-editor/scale-editor.component.html:21 | added |
+| 33 | optionInputByLabel (scale rows) | `scale-row-input-${questionNumber}-${rowIndex}` | scale-editor.component.html:37 | added |
+| 34 | scaleAddMenuTrigger | `scale-add-menu-trigger` (on `.matrix-action-area`, the element the old locator resolved to and the hover target) | scale-editor.component.html:65 | added |
+| 35 | addRowButton | `add-scale-row` | scale-editor.component.html:72 | added |
+| 36 | addColumnButton | `add-scale-column` | scale-editor.component.html:82 | added |
+| 37 | requiredToggle (scale) | `required-toggle-${questionNumber}` | scale-editor.component.html:131 | added |
+| 38 | questionNumberMarker (scale) | `question-number-${questionNumber}` | scale-editor.component.html:138 | added |
+| 39 | questionTextDisplay (scale) | `question-text-${questionNumber}` | scale-editor.component.html:141 | added |
+| 40 | required marker (scale) | `question-required-marker-${questionNumber}` | scale-editor.component.html:142 | added |
+| 41 | drag-handle (review mode) | `drag-handle-${$index}` (on the `.drag-handle` div, not the `reorder-question-${$index}` row) | F/build-survey/components/review-mode/review-mode.component.html:17 | added |
+| 42 | selectQuestionByIndex (`select-question-${i}-icon`) | none needed — `niq-checkbox` already renders `${host id}-icon`; existing `select-question-${$index}` unchanged | review-mode.component.html:8 | skipped-external (niq library derives it) |
+| 43 | surveyTitleDisplay | `survey-title` | F/build-survey/components/survey-header/survey-header.component.html:7 | added |
+| 44 | editSurveyNameIcon | `edit-survey-title` | survey-header.component.html:9 | added |
+| 45 | surveyTitleInput | `survey-title-input` (inner input rendered by niq-text-field) | survey-header.component.html:16 | added |
+| 46 | deleteQuestionsButton | `review-delete-questions` | survey-header.component.html:26 | added |
+| 47 | selectAllButton / unselectAllButton | `review-select-all` (same button, text toggles) | survey-header.component.html:31 | added |
+| 48 | expandAllButton | `review-expand-all` | survey-header.component.html:35 | added |
+| 49 | collapseAllButton | `review-collapse-all` | survey-header.component.html:39 | added |
+| 50 | exitReviewModeButton | `exit-review-mode` | survey-header.component.html:43 | added |
+| 51 | confirmPublishDialogText | `publish-dialog-title` | F/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:2 | added |
+| 52 | publish-response-count-text | `publish-response-count` | survey-publish-popup.component.html:19 | added |
+| 53 | confirmPublishButton | `confirm-publish` | survey-publish-popup.component.html:27 | added |
+| 54 | confirmPublishButton (empty `-footer` prefix) | `publish-survey-dialog` on `niq-dialog` → library renders `publish-survey-dialog-footer`, `-close-button`, `-title`… | survey-publish-popup.component.html:1 | added |
+| 55 | publishingSurveyStatus | `publishing-survey-loader` | survey-publish-popup.component.html:35 | added |
+| 56 | backButton | `back-to-panelist-selection` | F/build-survey/components/footer/footer.component.html:4 | added |
+| 57 | inline `.footer-page-loader` | `survey-validation-loader` | footer.component.html:38 | added |
+| 58 | promptTextarea | `survey-generation-prompt` | F/select-panelist/components/select-panelist.component.html:52 | added |
+| 59 | validating/changesRecommended/validationComplete/changesNeeded toast texts, recommendationTagText | — (rendered by toast service, not in a template here) | n/a | needs-confirmation |
+| 60 | toastCloseButton (`-close-button`) | — (library-rendered toast) | n/a | needs-confirmation |
+| 61 | saveDraftSuccessToast / publish-success-toast / survey-action-toast | — (service-set `containerClass`; `survey-common.service.ts:402`, `survey.service.ts:1027`) | n/a | needs-confirmation |
+| 62 | buildSurveyPageHeading | — (heading not in `select-panelist.component.html`; owner unknown) | n/a | needs-confirmation |
+| 63 | publish-dialog-dimension-by-index | — (children from `@nielsen/crf-data-summary`) | survey-publish-popup.component.html:13 | skipped-external |
+| 64 | select-panelists-step-circle (`.niq-step-circle`) | — (library-internal element) | crf-survey-wrapper (scss only) | skipped-external |
+| 65 | savedAssetGridcellByTitle | — (`@nielsen/crf-ui-components`) | survey-header.component.html:69 | skipped-external |
+| 66 | myAssetsTreeItem / inline `:570`, `:571`, `:573` | — (`@nielsen/crf-ui-components` save-a-copy tree) | survey-header.component.html:69 | skipped-external |
+| 67 | nextButton, verifyButton (OAuth login) | — (not in this repo) | n/a | skipped-external |
+| 68 | productOfferingHeading | — (`re-dataset-picker` / host) | n/a | skipped-external |
+| 69 | datasetByText | — (`re-dataset-picker`) | n/a | skipped-external |
+| 70 | checkboxLabel | — (`@nielsen/crf-data-summary`) | n/a | skipped-external |
+| 71 | recommended: report-btn-run (`searchForPanelistsButton`) | untouched by request (e2e fix, later) | panelist-dataselector.component.html:39 | skipped-external (out of scope) |
+
+Rows 42–71 collectively hold the 17 skipped-external and 8 needs-confirmation counts (rows 59–62 + 6, 7, 14 = needs-confirmation 8 after counting #6, #7, #14, #59, #60, #61, #62 and #54-related tooltip notes — see Notes).
+
+## Notes / decisions
+
+- Tooltip overlays (#6, #14): `niq-tooltip` supports an `niqTooltipDataTestId` input (renders `<id>-content` in the overlay). That is a different attribute from `data-test-id`, so I did not add it. Decide whether to allow it.
+- #7: `rephrase-send-loading-${i}` cannot be added as a second `data-test-id` on the same element; making the ID conditional would change the existing `rephrase-send-${i}`. Locator can keep using `.rephrase-send-loading` or `rephrase-send-${i}` + class.
+- #54: `niq-dialog` builds `${id}-title`, so the host ID is `publish-survey-dialog` to avoid colliding with the `publish-dialog-title` ID on the title div.
+- #15 etc.: `niq-toggle` renders its checkbox as `${host data-test-id}-input-checkbox` (verified in `@nielseniq/athena-core`), so the Required toggle now resolves to `required-toggle-${questionNumber}-input-checkbox`.
+- Editors: text-editor's question text field has no `question-text-input-*` ID (only Rating was requested).
+- `question-option-*` inner inputs render as `…-input`, which matches `[data-test-id$='-input']` used by `survey-builder.page.ts:1385`; first match is still the question text field (earlier in DOM), but the locator should move to the exact ID.
+- Save/Discard (#8, #9) are static IDs per the doc; scope with the question row / `inline-add-editor`.
+- `select-question-${i}-icon` is already emitted by `niq-checkbox`; the locator may already be correct.
