@@ -214,3 +214,197 @@ Custom reporter: - Test result created: 11921957
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
 $ 
+-------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
+$ npx playwright test tests/survey --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true}
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 72 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✘   1 …l applies no dataset @SelectPanelist @SPModalCancel (24.8s)
+Auth state loaded from storage/auth.json
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓   2 …age and start from scratch @SelectPanelist @SPSetup (15.0s)
+Auth state loaded from storage/auth.json
+  ✓   3 … and reach Select Panelists @SelectPanelist @SPSetup (4.2s)
+  ✓   4 …h a "Last refreshed" date @SelectPanelist @SPFooter (934ms)
+  ✓   5 …exactly 1 selection @SelectPanelist @SPSearchButton (27.6s)
+  ✓   6 … and credit message @SelectPanelist @SPSearchResult (34.7s)
+  ✓   7 …sponse count choices @SelectPanelist @SPMoreOptions (986ms)
+  ✓   8 …a filter resets it @SelectPanelist @SPResponseCount (39.3s)
+  ✓   9 …y home page @StartFromScratch @LandStartFromScratch (16.2s)
+Auth state loaded from storage/auth.json
+  ✓  10 …a dataset screen @StartFromScratch @DatasetSelection (2.7s)
+  ✓  11 …ll 5 filters are set @StartFromScratch @DataSummary (17.0s)
+  ✓  12 …ng a response count @StartFromScratch @ResponseCount (4.3s)
+  ✓  13 …roceeding @StartFromScratch @ProceedToSurveyBuilder (822ms)
+  ✓  14 …he Add question panel @StartFromScratch @EmptyState (108ms)
+  ✓  15 …dit survey title @StartFromScratch @EditSurveyTitle (762ms)
+  ✓  16 …ce question @StartFromScratch @SingleChoiceQuestion (979ms)
+  ✓  17 …e question @StartFromScratch @MultipleChoiceQuestion (4.4s)
+  ✓  18 … a Rating question @StartFromScratch @RatingQuestion (2.7s)
+  ✓  19 …: Add an NPS question @StartFromScratch @NPSQuestion (2.9s)
+  ✓  20 …Scale question @StartFromScratch @PointScaleQuestion (4.2s)
+  ✓  21 …Scale question @StartFromScratch @MultiScaleQuestion (4.2s)
+  ✓  22 …quired toggle is on @StartFromScratch @RequiredStar (28.8s)
+  ✓  23 … via the pencil icon @StartFromScratch @EditQuestion (5.7s)
+  ✓  24 …an existing question @StartFromScratch @DiscardSave (26.3s)
+  ✓  25 …count unchanged @StartFromScratch @CancelAddQuestion (2.6s)
+  ✓  26 … drop reorders questions @StartFromScratch @DragDrop (1.7s)
+  ✓  27 …hover row actions @StartFromScratch @DeleteDuplicate (1.7s)
+  ✓  28 …y - min 2, max 15 @StartFromScratch @OptionBoundary (31.6s)
+  ✓  29 …o Build Survey @StartFromScratch @StepperNavigation (18.4s)
+  ✓  30 … with limit message @StartFromScratch @MaxQuestions (18.1s)
+  ✓  31 … delete selected, exit @StartFromScratch @ReviewMode (5.5s)
+  ✓  32 …0: Save survey as draft @StartFromScratch @SaveDraft (5.2s)
+  ✓  33 …re recommendations @StartFromScratch @ValidateSurvey (8.2s)
+  ✓  34 …Scratch builder @StartFromScratch @StartFromScratch (229ms)
+  ✓  35 …dd and save one @StartFromScratch @CancelAddQuestion (6.4s)
+  ✓  36 …same type as last @StartFromScratch @DeleteDuplicate (7.1s)
+  -  37 …6/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  ✓  38 … Build Survey @StartFromScratch @ReviewModeDeleteAll (1.4s)
+  ✓  39 …han 3 questions @StartFromScratch @ValidateDisabled (262ms)
+  ✓  40 …step from the builder @StartFromScratch @BackButton (612ms)
+  ✓  41 …mpt option on the survey home page @StartWithPrompt (16.9s)
+Auth state loaded from storage/auth.json
+  ✓  42 … type and dataset @StartWithPrompt @DatasetSelection (3.6s)
+  ✓  43 … search for panelists @StartWithPrompt @DataSummary (16.4s)
+  ✘  44 …ct a response count @StartWithPrompt @ResponseCount (30.2s)
+  -  45 …each the Build Survey page @StartWithPrompt @GenerateSurvey
+  -  46 …Customize Questions screen @StartWithPrompt @GenerateSurvey
+  -  47 …tions creates AI questions @StartWithPrompt @GenerateSurvey
+  -  48 …vey title after AI generation @StartWithPrompt @BuildSurvey
+  -  49 …e loading state and prompt @StartWithPrompt @GenerateSurvey
+  -  50 …creases the question count @StartWithPrompt @GenerateSurvey
+  -  51 …creases the question count @StartWithPrompt @GenerateSurvey
+  -  52 …(max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  53 …hen the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  54 …tion text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  55 …anges on an existing question @StartWithPrompt @DiscardSave
+  -  56 …uestion via hover row actions @StartWithPrompt @BuildSurvey
+  -  57 …g and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  58 … the question count unchanged @StartWithPrompt @BuildSurvey
+  -  59 …select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  60 …d with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  61 …ete all, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  62 …d Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  63 … Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  64 …dd a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  65 …BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  66 …C_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  67 …e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  68 …f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  69 …data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  70 …s boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  71 … TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  72 … there are recommendations @StartWithPrompt @ValidateSurvey
+
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:31:7 › Select Panelists - Product Offering modal › TC_SP_03: Cancelling the Product Offering modal applies no dataset @SelectPanelist @SPModalCancel 
+
+    Error: Failed to click Start from scratch: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid=\'quick-survey-quick-2\']')
+
+
+       at ..\page-objects\survey\start-from-scratch.page.ts:29
+
+      27 |       await startFromScratch.click();
+      28 |     } catch (error) {
+    > 29 |       throw new Error(`Failed to click Start from scratch: ${error instanceof Error ? error.message : error}`);
+         |             ^
+      30 |     }
+      31 |   }
+      32 |
+        at StartFromScratchPage.clickStartFromScratch (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-from-scratch.page.ts:29:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:37:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────
+    test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\error-context.md
+
+    attachment #3: select-panelist-modal-video (video/webm) ────────
+    test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\attachments\select-panelist-modal-video-0151166e21dd396b59b5a181973207989af64fed.webm
+    ────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────
+    test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-5f986-ng-modal-applies-no-dataset-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\start-with-prompt.spec.ts:66:7 › Start with a prompt › Response Count: Should select a response count @StartWithPrompt @ResponseCount 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('text=250 Responses')
+
+
+       at ..\page-objects\common\select-panelist.page.ts:318
+
+      316 |     );
+      317 |     await button250.waitFor();
+    > 318 |     await button250.click();
+          |                     ^
+      319 |     await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      320 |   }
+      321 |
+        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
+        at SelectPanelistPage.click250Responses (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:318:21)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:67:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────
+    test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ────────────
+    test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\attachments\start-with-prompt-video-c73bc68ef527f104b321e1b2e846e6db1bd45b88.webm
+    ────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────
+    test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-0f735-uld-select-a-response-count-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:31:7 › SelectPanelists - Product Offering modal › TC_SP_03: Cancelling the Product Offering modal applies no dataset @SelectPanelist @SPModalCancel 
+    [chromium] › tests\survey\start-with-prompt.spec.ts:66:7 › Start with a prompt › Response Count: Should select a response count @StartWithPrompt @ResponseCount 
+  1 skipped
+  28 did not run
+  41 passed (8.3m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/add-missing-test-ids)
+$ 
