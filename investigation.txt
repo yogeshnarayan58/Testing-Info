@@ -1,14 +1,59 @@
-No compile errors. No terminal commands were run (git status/commit was skipped per your denial).
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Diff summary:
+Running 36 tests using 1 worker
 
-start-with-prompt.locator.json: added optiqHeading (text selector, "Let's get you started with Optiq!" — no data-test-id exists in the app template, so this is a text-based locator per plan).
-start-with-prompt.page.ts: added isOptiqHeadingVisible(), isPromptTextareaVisible(), isGenerateSurveyEnabled(), setPromptText(text), waitForGenerateSurveyEnabled(timeoutMs?) — all reuse the existing promptTextarea/generateSurveyButton locators.
-start-with-prompt.spec.ts: new test added between 'Response Count: ...' and 'Generate Survey: ...'; also imported and registered registerEmptyQuestionTextBlocksSaveTest right after registerDiscardSaveChangesTest.
-start-from-scratch.spec.ts: imported and registered registerEmptyQuestionTextBlocksSaveTest right after registerDiscardSaveChangesTest.
-build-survey-common-test-cases.ts: added registerEmptyQuestionTextBlocksSaveTest.
-survey-builder.page.ts: extracted getSaveChangesButtonElement(index?) (shared by saveQuestionChanges and the new method, no behavior change) and added clickSaveChangesOnce(index?), which clicks Save without the outside-click/Discard fallback — needed because empty text must leave the editor open, not get silently discarded by that fallback.
-Test titles added:
-"TC_AI_01: Select Panelists shows the Optiq heading, prompt textbox, and disables Generate Survey until prompt is entered" (start-with-prompt.spec.ts)
-"Empty question text blocks Save changes" (registered in both start-from-scratch.spec.ts and start-with-prompt.spec.ts)
-Note: I denied my own attempt to run git status/commit since you rejected that tool call — Batch 1 and this batch are both still uncommitted; let me know if you'd like me to retry the commit or if you'll handle it.
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …he Start with a prompt option on the survey home page @StartWithPrompt (18.0s)
+Auth state loaded from storage/auth.json
+  ✓   2 … select the dataset type and dataset @StartWithPrompt @DatasetSelection (3.9s)
+  ✓   3 …sion selections and search for panelists @StartWithPrompt @DataSummary (47.1s)
+  ✓   4 …e Count: Should select a response count @StartWithPrompt @ResponseCount (3.1s)
+  ✓   5 …enerate Survey until prompt is entered @StartWithPrompt @GenerateSurvey (2.2s)
+  ✓   6 …prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.3s)
+  ✓   7 …ypes on the Customize Questions screen @StartWithPrompt @GenerateSurvey (6.2s)
+  ✓   8 …enerate questions creates AI questions @StartWithPrompt @GenerateSurvey (2.6s)
+  ✓   9 …dit the survey title after AI generation @StartWithPrompt @BuildSurvey (753ms)
+  ✓  10 …AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey (7.7s)
+  ✓  11 …questions increases the question count @StartWithPrompt @GenerateSurvey (1.1s)
+  ✓  12 …ns to add increases the question count @StartWithPrompt @GenerateSurvey (8.3s)
+  ✓  13 …abled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.9s)
+  ✓  14 …r appears when the Required toggle is on @StartWithPrompt @BuildSurvey (20.3s)
+  ✓  15 …5: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey (6.9s)
+  ✓  16 …d / Save changes on an existing question @StartWithPrompt @DiscardSave (29.1s)
+  ✓  17 … Empty question text blocks Save changes @StartWithPrompt @DiscardSave (17.6s)
+  ✓  18 …uplicate a question via hover row actions @StartWithPrompt @BuildSurvey (2.9s)
+  ✓  19 …C_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey (2.7s)
+  ✓  20 …stion leaves the question count unchanged @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  21 …stion cancel, then add and save one @StartWithPrompt @CancelAddQuestion (6.3s)
+  ✓  22 …ion then re-add the same type as last @StartWithPrompt @DeleteDuplicate (8.2s)
+  ✓  23 …e controls, select, delete selected, exit @StartWithPrompt @BuildSurvey (8.3s)
+  ✓  24 …y is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey (5.2s)
+  ✓  25 …ect all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey (1.4s)
+  ✓  26 …te shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey (178ms)
+  ✓  27 …› TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey (1.6s)
+  ✓  28 …TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey (4.1s)
+  ✓  29 …prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey (3.0s)
+  ✓  30 …a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey (3.1s)
+  ✓  31 …t › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey (5.1s)
+  ✓  32 …t › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey (5.3s)
+  ✓  33 …ts retains data and back to Build Survey @StartWithPrompt @BuildSurvey (26.0s)
+  ✓  34 …_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary (37.4s)
+  ✓  35 …h a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft (5.7s)
+  ✓  36 …eedback when there are recommendations @StartWithPrompt @ValidateSurvey (3.2s)
+
+  36 passed (5.9m)
