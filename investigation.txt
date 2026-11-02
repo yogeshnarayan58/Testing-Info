@@ -1,21 +1,408 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git status --short
- M locators/survey/start-with-prompt.locator.json
- M locators/survey/survey-builder.locator.json
- M page-objects/common/survey-builder.page.ts
- M page-objects/survey/start-with-prompt.page.ts
-?? investigation.txt
+$ npx playwright test tests/survey --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 77 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✓   1 …oduct Offering modal applies no dataset @SelectPanelist @SPModalCancel (25.7s)
+Auth state loaded from storage/auth.json
+  ✓   2 …n the survey home page and start from scratch @SelectPanelist @SPSetup (20.2s)
+Auth state loaded from storage/auth.json
+  ✓   3 …ffering and dataset and reach Select Panelists @SelectPanelist @SPSetup (4.7s)
+  ✓   4 …ataset and view with a "Last refreshed" date @SelectPanelist @SPFooter (122ms)
+  ✓   5 …n every filter has exactly 1 selection @SelectPanelist @SPSearchButton (31.3s)
+  ✓   6 …t, response options and credit message @SelectPanelist @SPSearchResult (51.1s)
+  ✓   7 … shows additional response count choices @SelectPanelist @SPMoreOptions (1.3s)
+  ✓   8 …ceed, and changing a filter resets it @SelectPanelist @SPResponseCount (36.0s)
+  ✓   9 …option on the survey home page @StartFromScratch @LandStartFromScratch (21.0s)
+Auth state loaded from storage/auth.json
+  ✓  10 …confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (3.0s)
+  ✓  11 …r Panelists after all 5 filters are set @StartFromScratch @DataSummary (16.6s)
+  ✓  12 …ilder after selecting a response count @StartFromScratch @ResponseCount (3.7s)
+  ✓  13 …Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (841ms)
+  ✘  14 …itled Survey" and the Add question panel @StartFromScratch @EmptyState (15.1s)
+  -  15 … from scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle
+  -  16 …C_BS_03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion
+  -  17 …_03b: Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion
+  -  18 …m scratch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion
+  -  19 …t from scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion
+  -  20 … › TC_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion
+  -  21 … › TC_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion
+  -  22 …ed star appears when the Required toggle is on @StartFromScratch @RequiredStar
+  -  23 …_BS_25: Edit question text via the pencil icon @StartFromScratch @EditQuestion
+  -  24 … Discard / Save changes on an existing question @StartFromScratch @DiscardSave
+  -  25 …ratch › Empty question text blocks Save changes @StartFromScratch @DiscardSave
+  -  26 …stion leaves the question count unchanged @StartFromScratch @CancelAddQuestion
+  -  27 …ratch › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
+  -  28 … duplicate a question via hover row actions @StartFromScratch @DeleteDuplicate
+  -  29 …› TC_BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  30 …sts retains data and back to Build Survey @StartFromScratch @StepperNavigation
+  -  31 … Add question and Duplicate with limit message @StartFromScratch @MaxQuestions
+  -  32 …iew Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode
+  -  33 …art from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
+  -  34 …ptiq feedback when there are recommendations @StartFromScratch @ValidateSurvey
+  -  35 … visible in the Start From Scratch builder @StartFromScratch @StartFromScratch
+  -  36 …dd Question cancel, then add and save one @StartFromScratch @CancelAddQuestion
+  -  37 … question then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  -  38 …m scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  39 …t all, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  40 …ey is disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
+  -  41 …on returns to the previous step from the builder @StartFromScratch @BackButton
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✓  42 …he Start with a prompt option on the survey home page @StartWithPrompt (20.6s)
+Auth state loaded from storage/auth.json
+  ✓  43 … select the dataset type and dataset @StartWithPrompt @DatasetSelection (4.4s)
+  ✓  44 …sion selections and search for panelists @StartWithPrompt @DataSummary (20.3s)
+  ✓  45 …e Count: Should select a response count @StartWithPrompt @ResponseCount (5.8s)
+  ✘  46 …enerate Survey until prompt is entered @StartWithPrompt @GenerateSurvey (5.5s)
+  -  47 …ll the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+  -  48 …stion types on the Customize Questions screen @StartWithPrompt @GenerateSurvey
+  -  49 …I_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey
+  -  50 …AI_07: Edit the survey title after AI generation @StartWithPrompt @BuildSurvey
+  -  51 …e with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey
+  -  52 …e more questions increases the question count @StartWithPrompt @GenerateSurvey
+  -  53 …questions to add increases the question count @StartWithPrompt @GenerateSurvey
+  -  54 …are disabled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  55 …ired star appears when the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  56 …TC_BS_25: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  57 …: Discard / Save changes on an existing question @StartWithPrompt @DiscardSave
+  -  58 …prompt › Empty question text blocks Save changes @StartWithPrompt @DiscardSave
+  -  59 …e and duplicate a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  60 …mpt › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  61 …Add Question leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  62 …Add Question cancel, then add and save one @StartWithPrompt @CancelAddQuestion
+  -  63 …t question then re-add the same type as last @StartWithPrompt @DeleteDuplicate
+  -  64 …iew Mode controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  65 …e survey is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  66 …ode select all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  67 …rvey state shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  68 …prompt › TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  69 …ompt › TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  70 …with a prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  71 …t with a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  72 …a prompt › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  73 …a prompt › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  74 … Panelists retains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  75 … › TC_BS_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  76 …art with a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  77 …Optiq feedback when there are recommendations @StartWithPrompt @ValidateSurvey
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:90:7 › Start from scratch › TC_BS_01: First landing shows "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState 
+
+    Error: Failed to read survey title display: Survey title display not visible after15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:1124
+
+      1122 |       return (await title.getText()).trim();
+      1123 |     } catch (error) {
+    > 1124 |       throw new Error(`Failed to read survey title display: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1125 |     }
+      1126 |   }
+      1127 |
+        at SurveyBuilderPage.getSurveyTitleDisplay (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1124:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:96:28
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ──────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\attachments\start-from-scratch-video-19c57ab6bfe7d1e0c0d437c93025c8c9906d4e82.webm
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\start-with-prompt.spec.ts:72:7 › Start with a prompt › TC_AI_01: Select Panelists shows the Optiq heading, prompt textbox, and disables Generate Survey until prompt is entered @StartWithPrompt @GenerateSurvey 
+
+    Error: Expected the AI prompt textarea visible below the response counts
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:77:17
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\attachments\start-with-prompt-video-2dfe75fa9cfc74ef52526656f59ee0aab67dfe29.webm
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:90:7 › Start from scratch › TC_BS_01: First landing shows "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState 
+    [chromium] › tests\survey\start-with-prompt.spec.ts:72:7 › Start with a prompt › TC_AI_01: Select Panelists shows the Optiq heading, prompt textbox, and disables Generate Survey until prompt is entered @StartWithPrompt @GenerateSurvey 
+  1 skipped
+  57 did not run
+  17 passed (5.5m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git diff --stat
- e2e/locators/survey/start-with-prompt.locator.json |  10 +-
- e2e/locators/survey/survey-builder.locator.json    |  63 +++---
- e2e/page-objects/common/survey-builder.page.ts     | 223 ++++++++-------------
- e2e/page-objects/survey/start-with-prompt.page.ts  |  18 +-
- 4 files changed, 122 insertions(+), 192 deletions(-)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 36 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …he Start with a prompt option on the survey home page @StartWithPrompt (20.2s)
+Auth state loaded from storage/auth.json
+  ✓   2 … select the dataset type and dataset @StartWithPrompt @DatasetSelection (5.8s)
+  ✓   3 …sion selections and search for panelists @StartWithPrompt @DataSummary (44.5s)
+  ✓   4 …e Count: Should select a response count @StartWithPrompt @ResponseCount (2.8s)
+  ✘   5 …enerate Survey until prompt is entered @StartWithPrompt @GenerateSurvey (5.2s)
+  -   6 …ll the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey
+  -   7 …stion types on the Customize Questions screen @StartWithPrompt @GenerateSurvey
+  -   8 …I_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey
+  -   9 …AI_07: Edit the survey title after AI generation @StartWithPrompt @BuildSurvey
+  -  10 …e with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey
+  -  11 …e more questions increases the question count @StartWithPrompt @GenerateSurvey
+  -  12 …questions to add increases the question count @StartWithPrompt @GenerateSurvey
+  -  13 …are disabled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  14 …ired star appears when the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  15 …TC_BS_25: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  16 …: Discard / Save changes on an existing question @StartWithPrompt @DiscardSave
+  -  17 …prompt › Empty question text blocks Save changes @StartWithPrompt @DiscardSave
+  -  18 …e and duplicate a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  19 …mpt › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  20 …Add Question leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  21 …Add Question cancel, then add and save one @StartWithPrompt @CancelAddQuestion
+  -  22 …t question then re-add the same type as last @StartWithPrompt @DeleteDuplicate
+  -  23 …iew Mode controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  24 …e survey is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  25 …ode select all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  26 …rvey state shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  27 …prompt › TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  28 …ompt › TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  29 …with a prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  30 …t with a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  31 …a prompt › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  32 …a prompt › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  33 … Panelists retains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  34 … › TC_BS_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  35 …art with a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  36 …Optiq feedback when there are recommendations @StartWithPrompt @ValidateSurvey
+
+
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:72:7 › Start with a prompt › TC_AI_01: Select Panelists shows the Optiq heading, prompt textbox, and disables Generate Survey until prompt is entered @StartWithPrompt @GenerateSurvey 
+
+    Error: Expected the AI prompt textarea visible below the response counts
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:77:17
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\attachments\start-with-prompt-video-37aa05edd03b371307fb308bd4d36b144f1ded4d.webm
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-1c4ce-vey-until-prompt-is-entered-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-with-prompt.spec.ts:72:7 › Start with a prompt › TC_AI_01: Select Panelists shows the Optiq heading, prompt textbox, and disables Generate Survey until prompt is entered @StartWithPrompt @GenerateSurvey 
+  31 did not run
+  4 passed (1.9m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx tsc --noEmit
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 33 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …option on the survey home page @StartFromScratch @LandStartFromScratch (22.5s)
+Auth state loaded from storage/auth.json
+  ✓   2 …confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (5.4s)
+  ✓   3 …r Panelists after all 5 filters are set @StartFromScratch @DataSummary (55.3s)
+  ✓   4 …ilder after selecting a response count @StartFromScratch @ResponseCount (5.0s)
+  ✓   5 …Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (781ms)
+  ✘   6 …itled Survey" and the Add question panel @StartFromScratch @EmptyState (15.3s)
+  -   7 … from scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle
+  -   8 …C_BS_03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion
+  -   9 …_03b: Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion
+  -  10 …m scratch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion
+  -  11 …t from scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion
+  -  12 … › TC_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion
+  -  13 … › TC_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion
+  -  14 …ed star appears when the Required toggle is on @StartFromScratch @RequiredStar
+  -  15 …_BS_25: Edit question text via the pencil icon @StartFromScratch @EditQuestion
+  -  16 … Discard / Save changes on an existing question @StartFromScratch @DiscardSave
+  -  17 …ratch › Empty question text blocks Save changes @StartFromScratch @DiscardSave
+  -  18 …stion leaves the question count unchanged @StartFromScratch @CancelAddQuestion
+  -  19 …ratch › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
+  -  20 … duplicate a question via hover row actions @StartFromScratch @DeleteDuplicate
+  -  21 …› TC_BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  22 …sts retains data and back to Build Survey @StartFromScratch @StepperNavigation
+  -  23 … Add question and Duplicate with limit message @StartFromScratch @MaxQuestions
+  -  24 …iew Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode
+  -  25 …art from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
+  -  26 …ptiq feedback when there are recommendations @StartFromScratch @ValidateSurvey
+  -  27 … visible in the Start From Scratch builder @StartFromScratch @StartFromScratch
+  -  28 …dd Question cancel, then add and save one @StartFromScratch @CancelAddQuestion
+  -  29 … question then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  -  30 …m scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  31 …t all, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  32 …ey is disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
+  -  33 …on returns to the previous step from the builder @StartFromScratch @BackButton
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:90:7 › Start from scratch › TC_BS_01: First landing shows "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState 
+
+    Error: Failed to read survey title display: Survey title display not visible after15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:1124
+
+      1122 |       return (await title.getText()).trim();
+      1123 |     } catch (error) {
+    > 1124 |       throw new Error(`Failed to read survey title display: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1125 |     }
+      1126 |   }
+      1127 |
+        at SurveyBuilderPage.getSurveyTitleDisplay (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1124:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:96:28
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ──────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\attachments\start-from-scratch-video-f1addd5d17f7aab1734840789281fc445ec96803.webm
+    ───────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────
+    test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--fe919--and-the-Add-question-panel-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:90:7 › Start from scratch › TC_BS_01: First landing shows "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState 
+  1 skipped
+  26 did not run
+  5 passed (2.4m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ 
