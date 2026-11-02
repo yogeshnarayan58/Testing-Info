@@ -57,3 +57,61 @@ Auth state loaded from storage/auth.json
   ✓  36 …eedback when there are recommendations @StartWithPrompt @ValidateSurvey (3.2s)
 
   36 passed (5.9m)
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 33 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …option on the survey home page @StartFromScratch @LandStartFromScratch (17.9s)
+Auth state loaded from storage/auth.json
+  ✓   2 …confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (2.6s)
+  ✓   3 …r Panelists after all 5 filters are set @StartFromScratch @DataSummary (42.5s)
+  ✓   4 …ilder after selecting a response count @StartFromScratch @ResponseCount (5.3s)
+  ✓   5 …Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (519ms)
+  ✓   6 …itled Survey" and the Add question panel @StartFromScratch @EmptyState (164ms)
+  ✓   7 …ratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (730ms)
+  ✓   8 …: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion (851ms)
+  ✓   9 …dd a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion (4.0s)
+  ✓  10 …ch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.8s)
+  ✓  11 …scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
+  ✓  12 …S_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion (4.0s)
+  ✓  13 …S_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.3s)
+  ✓  14 …appears when the Required toggle is on @StartFromScratch @RequiredStar (29.5s)
+  ✓  15 … Edit question text via the pencil icon @StartFromScratch @EditQuestion (6.1s)
+  ✓  16 … / Save changes on an existing question @StartFromScratch @DiscardSave (26.6s)
+  ✓  17 …Empty question text blocks Save changes @StartFromScratch @DiscardSave (11.4s)
+  ✓  18 …eaves the question count unchanged @StartFromScratch @CancelAddQuestion (2.8s)
+  ✓  19 … TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop (2.0s)
+  ✓  20 …ate a question via hover row actions @StartFromScratch @DeleteDuplicate (1.7s)
+  ✓  21 …04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.4s)
+  ✓  22 …ins data and back to Build Survey @StartFromScratch @StepperNavigation (18.9s)
+  ✓  23 …stion and Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
+  ✓  24 …e controls, select, delete selected, exit @StartFromScratch @ReviewMode (5.9s)
+  ✓  25 …m scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (4.5s)
+  ✓  26 …edback when there are recommendations @StartFromScratch @ValidateSurvey (5.3s)
+  ✓  27 … in the Start From Scratch builder @StartFromScratch @StartFromScratch (181ms)
+  ✓  28 …tion cancel, then add and save one @StartFromScratch @CancelAddQuestion (6.5s)
+  ✓  29 …on then re-add the same type as last @StartFromScratch @DeleteDuplicate (7.3s)
+  -  30 …m scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  ✓  31 …delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.7s)
+  ✓  32 …sabled with fewer than 3 questions @StartFromScratch @ValidateDisabled (197ms)
+  ✓  33 …ns to the previous step from the builder @StartFromScratch @BackButton (555ms)
+
+  1 skipped
+  32 passed (5.1m)
