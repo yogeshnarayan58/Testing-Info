@@ -1,22 +1,61 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git fetch origin
-remote: Enumerating objects: 2, done.
-remote: Counting objects: 100% (1/1), done.
-remote: Total 2 (delta 0), reused 0 (delta 0), pack-reused 1 (from 1)
-Unpacking objects: 100% (2/2), 1.07 KiB | 99.00 KiB/s, done.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
-   118395f2..7459225f  feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue -> origin/feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue
- * [new branch]        feature/hi-sca-vul-fix -> origin/feature/hi-sca-vul-fix
-   0ba7152c..a5fee230  main                   -> origin/main
+{
+  "name": "Optiq AI Page",
+  "webElements": [
+    { "elementName": "startWithPrompt", "selectorType": "css", "selectorValue": "[data-testid='quick-survey-quick-1']" },
+    { "elementName": "datasetTypeSelector", "selectorType": "css", "selectorValue": "[data-test-id='rv-dataset-type-selector${text}']" },
+    { "elementName": "omnishopperOfferingTile", "selectorType": "css", "selectorValue": "[data-test-id='${text}']" },
+    { "elementName": "nextDatasetButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
+    {"elementName": "datasetSearchToggle","selectorType": "css","selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']"},
+    { "elementName": "datasetSearchInput", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-search-bar-input']" },
+    { "elementName": "datasetByText", "selectorType": "text", "selectorValue": "${text}" },
+    { "elementName": "dialogElement", "selectorType": "css", "selectorValue": "[data-test-id='title-second-dialog']" },
+    { "elementName": "applyButton", "selectorType": "css", "selectorValue": "[data-test-id='apply-dataset-btn']" },
+    { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='dataset-picker-title']" },
+    { "elementName": "chooseDataviewBreadcrumb","selectorType": "css","selectorValue": "[data-test-id='breadcrumb-and-search-container']"},
+    { "elementName": "defaultDataset", "selectorType": "css", "selectorValue": "[data-test-id='rv-default-dataset']" },
+    { "elementName": "promptTextarea", "selectorType": "css", "selectorValue": "textarea.prompt-input" },
+    { "elementName": "generateSurveyButton", "selectorType": "css", "selectorValue": "[data-test-id='proceed-to-survey']" },
+    { "elementName": "questionTypeOption", "selectorType": "css", "selectorValue": "[data-test-id='question-type-${text}']" },
+    { "elementName": "generateQuestionsButton", "selectorType": "css", "selectorValue": "[data-test-id='generate-questions']" },
+    { "elementName": "questionNumberMarker", "selectorType": "css", "selectorValue": ".question-number" },
+    { "elementName": "questionRow", "selectorType": "css", "selectorValue": ".question-row" },
+    { "elementName": "rephraseWithAiButton", "selectorType": "playwrights", "selectorValue": ".rephrase-action >> nth=${text}" },
+    { "elementName": "rephraseInput", "selectorType": "css", "selectorValue": ".rephrase-input:not([data-tmp='${text}'])" },
+    { "elementName": "rephraseSendButton", "selectorType": "css", "selectorValue": ".rephrase-send:not([data-tmp='${text}'])" },
+    { "elementName": "suggestNewQuestionsButton", "selectorType": "css", "selectorValue": "[data-test-id='suggest-new-questions']" },
+    { "elementName": "repromptNewQuestionsButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-new-questions']" },
+    { "elementName": "repromptInput", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-input']" },
+    { "elementName": "repromptSubmitButton", "selectorType": "css", "selectorValue": "[data-test-id='reprompt-submit']" },
+    { "elementName": "optiqHeading", "selectorType": "text", "selectorValue": "Let's get you started with Optiq!" }
+  ]
+}
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git status --short
+--------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
+$ git status
+On branch feature/automation-remaining-and-stability-part_1
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git merge origin/main
-Auto-merging e2e/locators/survey/start-with-prompt.locator.json
-CONFLICT (content): Merge conflict in e2e/locators/survey/start-with-prompt.locator.json
-Automatic merge failed; fix conflicts and then commit the result.
+Changes to be committed:
+        modified:   locators/survey/start-with-prompt.locator.json
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/footer/footer.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/nps-editor/nps-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/question-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/rating-editor/rating-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/scale-editor/scale-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/text-editor/text-editor.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        investigation.txt
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
 $ 
