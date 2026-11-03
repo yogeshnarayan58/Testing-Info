@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1 -g "Start from Scratch:|Dataset Selection|Panelist Filters|Response Count|Survey Builder:|TC_BS_10a"
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+$ npx playwright test tests/survey/select-panelist.spec.ts tests/survey/start-with-prompt.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -14,81 +14,112 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 6 tests using 1 worker
+Running 48 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-  ✓  1 …e @StartFromScratch @LandStartFromScratch (20.5s)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …ataset @SelectPanelist @SPModalCancel (29.3s)
 Auth state loaded from storage/auth.json
-  ✓  2 …screen @StartFromScratch @DatasetSelection (3.8s)
-  ✓  3 …rs are set @StartFromScratch @DataSummary (43.8s)
-  ✓  4 …nse count @StartFromScratch @ResponseCount (4.8s)
-  ✓  5 …@StartFromScratch @ProceedToSurveyBuilder (552ms)
-  ✘  6 …y name @StartFromScratch @SaveDraftDialog (15.2s)
+  ✓   2 …the survey home page @StartWithPrompt (20.1s)
+Auth state loaded from storage/auth.json
+  ✓   3 …set @StartWithPrompt @DatasetSelection (6.1s)
+  ✓   4 …nelists @StartWithPrompt @DataSummary (47.3s)
+  ✓   5 …from scratch @SelectPanelist @SPSetup (21.4s)
+Auth state loaded from storage/auth.json
+  ✓   6 …ect Panelists @SelectPanelist @SPSetup (3.8s)
+  ✓   7 …ry sentence @SelectPanelist @SPSummary (1.0m)
+  ✓   8 … count @StartWithPrompt @ResponseCount (3.4s)
+  ✓   9 …tered @StartWithPrompt @GenerateSurvey (2.3s)
+  ✓  10 … page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓  11 …creen @StartWithPrompt @GenerateSurvey (3.9s)
+  ✘  12 …tions @StartWithPrompt @GenerateSurvey (1.0m)
+  ✓  13 …eshed" date @SelectPanelist @SPFooter (277ms)
+  ✓  14 …ction @SelectPanelist @SPSearchButton (24.4s)
+  ✓  15 …ssage @SelectPanelist @SPSearchResult (21.4s)
+  ✓  16 …choices @SelectPanelist @SPMoreOptions (2.4s)
+     17 …er resets it @SelectPanelist @SPResponseCount
+  -  18 …r AI generation @StartWithPrompt @BuildSurvey
+  -  19 …e and prompt @StartWithPrompt @GenerateSurvey
+  -  20 …estion count @StartWithPrompt @GenerateSurvey
+  -  21 …estion count @StartWithPrompt @GenerateSurvey
+  -  22 …s @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  23 …ed toggle is on @StartWithPrompt @BuildSurvey
+  -  24 …the pencil icon @StartWithPrompt @BuildSurvey
+  -  25 …isting question @StartWithPrompt @DiscardSave
+  -  26 …ks Save changes @StartWithPrompt @DiscardSave
+  -  27 …ver row actions @StartWithPrompt @BuildSurvey
+  -  28 …rders questions @StartWithPrompt @BuildSurvey
+  -  29 …count unchanged @StartWithPrompt @BuildSurvey
+  -  30 … save one @StartWithPrompt @CancelAddQuestion
+  -  31 …ype as last @StartWithPrompt @DeleteDuplicate
+  -  32 … selected, exit @StartWithPrompt @BuildSurvey
+  -  33 …han 3 questions @StartWithPrompt @BuildSurvey
+  -  34 …on Build Survey @StartWithPrompt @BuildSurvey
+  -  35 …ions and 0 rows @StartWithPrompt @BuildSurvey
+  -  36 …Choice question @StartWithPrompt @BuildSurvey
+  -  37 …Choice question @StartWithPrompt @BuildSurvey
+  -  38 …Rating question @StartWithPrompt @BuildSurvey
+  -  39 …an NPS question @StartWithPrompt @BuildSurvey
+  -  40 … Scale question @StartWithPrompt @BuildSurvey
+  -  41 … Scale question @StartWithPrompt @BuildSurvey
+  -  42 …to Build Survey @StartWithPrompt @BuildSurvey
+  -  43 …in 2, max 15 @StartWithPrompt @OptionBoundary
+  -  44 …e survey as draft @StartWithPrompt @SaveDraft
+  -  45 …survey name @StartWithPrompt @SaveDraftDialog
+  -  46 …ommendations @StartWithPrompt @ValidateSurvey
+  -  47 …ey unpublished @StartWithPrompt @PublishPopup
+  -  48 … Publish popup @StartWithPrompt @PublishPopup
+  ✓  17 …s it @SelectPanelist @SPResponseCount (35.9s)
 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:573:7 › Start from scratch › TC_BS_10a: Save draft with empty title requires a survey name @StartFromScratch @SaveDraftDialog 
+  1) [chromium] › tests\survey\start-with-prompt.spec.ts:125:7 › Start with a prompt › TC_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey 
 
-    Error: Failed to click Save draft button: Save draftbutton not visible after 15000ms
+    Error: Failed to get generated question count: Timed out waiting for question count to reach 1 (current: 0)
 
-       at ..\page-objects\common\survey-builder.page.ts:596
+       at ..\page-objects\survey\start-with-prompt.page.ts:264
 
-      594 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-      595 |     } catch (error) {
-    > 596 |       throw new Error(`Failed to click Save draft button: ${error instanceof Error ? error.message : error}`);
+      262 |       return count;
+      263 |     } catch (error) {
+    > 264 |       throw new Error(`Failed to get generated question count: ${error instanceof Error ? error.message : error}`);
           |             ^
-      597 |     }
-      598 |   }
-      599 |
-        at SurveyBuilderPage.clickSaveDraftButton (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:596:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:585:7
+      265 |     }
+      266 |   }
+      267 |
+        at StartWithPromptPage.getGeneratedQuestionCount (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:264:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:19
 
-    attachment #1: screenshot (image/png) ───────────────
-    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) ────────────
+    test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) 
-    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\attachments\start-from-scratch-video-6970ff8a1b4f468da8d02ff3572860bfb8e23db6.webm
-    ─────────────────────────────────────────────────────
+    attachment #3: start-with-prompt-video (video/webm) 
+    test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\attachments\start-with-prompt-video-404d40ad1cc0b66b2079d6e482745c6e24943e53.webm
+    ──────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ──────────────
-    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\trace.zip
+    attachment #5: trace (application/zip) ───────────
+    test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\trace.zip
 
-    ─────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:573:7 › Start from scratch › TC_BS_10a: Save draft with empty title requires a survey name @StartFromScratch @SaveDraftDialog 
-  5 passed (2.1m)
--------------------------------
-serial
-Copy prompt
-Error: Failed to click Save draft button: Save draft button not visible after 15000ms
+    [chromium] › tests\survey\start-with-prompt.spec.ts:125:7 › Start with a prompt › TC_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey 
+  2 skipped
+  29 did not run
+  16 passed (4.0m)
 
-   at ..\page-objects\common\survey-builder.page.ts:596
+To open last HTML report run:
 
-  594 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-  595 |     } catch (error) {
-> 596 |       throw new Error(`Failed to click Save draft button: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  597 |     }
-  598 |   }
-  599 |
-    at SurveyBuilderPage.clickSaveDraftButton (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:596:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:585:7
-Filter steps
-Before Hooks
-11ms
-Wait for selector locator('.survey-title')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-46ms
-Wait for selector locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-2.5s
-Worker Cleanup
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ 
