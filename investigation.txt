@@ -1,8 +1,9 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/select-panelist.spec.ts tests/survey/start-with-prompt.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+$ npx playwright test tests/survey/select-panelist.spec.ts tests/survey --project
+=chromium
+◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -14,67 +15,139 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 48 tests using 2 workers
+Running 84 tests using 2 workers
 
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓   1 …ataset @SelectPanelist @SPModalCancel (29.3s)
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …Offering modal applies no dataset @SelectPanelist @SPModalCancel (31.8s)
+  ✓   2 … on the survey home page @StartFromScratch @LandStartFromScratch (19.5s)
 Auth state loaded from storage/auth.json
-  ✓   2 …the survey home page @StartWithPrompt (20.1s)
 Auth state loaded from storage/auth.json
-  ✓   3 …set @StartWithPrompt @DatasetSelection (6.1s)
-  ✓   4 …nelists @StartWithPrompt @DataSummary (47.3s)
-  ✓   5 …from scratch @SelectPanelist @SPSetup (21.4s)
+  ✓   3 …m the Choose a dataset screen @StartFromScratch @DatasetSelection (5.0s)
+  ✓   4 …lists after all 5 filters are set @StartFromScratch @DataSummary (50.3s)
+  ✓   5 …survey home page and start from scratch @SelectPanelist @SPSetup (23.5s)
 Auth state loaded from storage/auth.json
-  ✓   6 …ect Panelists @SelectPanelist @SPSetup (3.8s)
-  ✓   7 …ry sentence @SelectPanelist @SPSummary (1.0m)
-  ✓   8 … count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   9 …tered @StartWithPrompt @GenerateSurvey (2.3s)
-  ✓  10 … page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓  11 …creen @StartWithPrompt @GenerateSurvey (3.9s)
-  ✘  12 …tions @StartWithPrompt @GenerateSurvey (1.0m)
-  ✓  13 …eshed" date @SelectPanelist @SPFooter (277ms)
-  ✓  14 …ction @SelectPanelist @SPSearchButton (24.4s)
-  ✓  15 …ssage @SelectPanelist @SPSearchResult (21.4s)
-  ✓  16 …choices @SelectPanelist @SPMoreOptions (2.4s)
-     17 …er resets it @SelectPanelist @SPResponseCount
-  -  18 …r AI generation @StartWithPrompt @BuildSurvey
-  -  19 …e and prompt @StartWithPrompt @GenerateSurvey
-  -  20 …estion count @StartWithPrompt @GenerateSurvey
-  -  21 …estion count @StartWithPrompt @GenerateSurvey
-  -  22 …s @StartWithPrompt @BuildSurvey @MaxQuestions
-  -  23 …ed toggle is on @StartWithPrompt @BuildSurvey
-  -  24 …the pencil icon @StartWithPrompt @BuildSurvey
-  -  25 …isting question @StartWithPrompt @DiscardSave
-  -  26 …ks Save changes @StartWithPrompt @DiscardSave
-  -  27 …ver row actions @StartWithPrompt @BuildSurvey
-  -  28 …rders questions @StartWithPrompt @BuildSurvey
-  -  29 …count unchanged @StartWithPrompt @BuildSurvey
-  -  30 … save one @StartWithPrompt @CancelAddQuestion
-  -  31 …ype as last @StartWithPrompt @DeleteDuplicate
-  -  32 … selected, exit @StartWithPrompt @BuildSurvey
-  -  33 …han 3 questions @StartWithPrompt @BuildSurvey
-  -  34 …on Build Survey @StartWithPrompt @BuildSurvey
-  -  35 …ions and 0 rows @StartWithPrompt @BuildSurvey
-  -  36 …Choice question @StartWithPrompt @BuildSurvey
-  -  37 …Choice question @StartWithPrompt @BuildSurvey
-  -  38 …Rating question @StartWithPrompt @BuildSurvey
-  -  39 …an NPS question @StartWithPrompt @BuildSurvey
-  -  40 … Scale question @StartWithPrompt @BuildSurvey
-  -  41 … Scale question @StartWithPrompt @BuildSurvey
-  -  42 …to Build Survey @StartWithPrompt @BuildSurvey
-  -  43 …in 2, max 15 @StartWithPrompt @OptionBoundary
-  -  44 …e survey as draft @StartWithPrompt @SaveDraft
-  -  45 …survey name @StartWithPrompt @SaveDraftDialog
-  -  46 …ommendations @StartWithPrompt @ValidateSurvey
-  -  47 …ey unpublished @StartWithPrompt @PublishPopup
-  -  48 … Publish popup @StartWithPrompt @PublishPopup
-  ✓  17 …s it @SelectPanelist @SPResponseCount (35.9s)
+  ✓   6 …g and dataset and reach Select Panelists @SelectPanelist @SPSetup (5.5s)
+  ✓   7 …hown correctly in the summary sentence @SelectPanelist @SPSummary (1.2m)
+  ✓   8 …after selecting a response count @StartFromScratch @ResponseCount (6.4s)
+  ✓   9 …y page after proceeding @StartFromScratch @ProceedToSurveyBuilder (1.2s)
+  ✓  10 …Survey" and the Add question panel @StartFromScratch @EmptyState (409ms)
+  ✓  11 …y title requires a survey name @StartFromScratch @SaveDraftDialog (7.7s)
+  ✓  12 …› TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (400ms)
+  ✓  13 … a Single Choice question @StartFromScratch @SingleChoiceQuestion (1.9s)
+  ✓  14 …ultiple Choice question @StartFromScratch @MultipleChoiceQuestion (5.1s)
+  ✓  15 …C_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.7s)
+  ✓  16 …h › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
+  ✓  17 … Add a Point Scale question @StartFromScratch @PointScaleQuestion (3.9s)
+  ✓  18 … Add a Multi Scale question @StartFromScratch @MultiScaleQuestion (6.2s)
+  ✓  19 …s when the Required toggle is on @StartFromScratch @RequiredStar (18.7s)
+  ✓  20 …t and view with a "Last refreshed" date @SelectPanelist @SPFooter (99ms)
+  ✓  21 …y filter has exactly 1 selection @SelectPanelist @SPSearchButton (22.3s)
+  ✓  22 …question text via the pencil icon @StartFromScratch @EditQuestion (6.0s)
+  ✓  23 …e changes on an existing question @StartFromScratch @DiscardSave (27.2s)
+  ✓  24 …ponse options and credit message @SelectPanelist @SPSearchResult (19.2s)
+  ✓  25 …question text blocks Save changes @StartFromScratch @DiscardSave (11.2s)
+  ✓  26 … additional response count choices @SelectPanelist @SPMoreOptions (1.2s)
+  ✓  27 …and changing a filter resets it @SelectPanelist @SPResponseCount (36.9s)
+  ✓  28 …the question count unchanged @StartFromScratch @CancelAddQuestion (2.9s)
+  ✓  29 …_15: Drag and drop reorders questions @StartFromScratch @DragDrop (2.5s)
+  ✓  30 …question via hover row actions @StartFromScratch @DeleteDuplicate (2.0s)
+  ✓  31 …tions boundary - min 2, max 15 @StartFromScratch @OptionBoundary (35.6s)
+  ✓  32 …rt with a prompt option on the survey home page @StartWithPrompt (20.6s)
+Auth state loaded from storage/auth.json
+  ✓  33 …ta and back to Build Survey @StartFromScratch @StepperNavigation (22.7s)
+  ✓  34 …t the dataset type and dataset @StartWithPrompt @DatasetSelection (6.8s)
+  ✓  35 …and Duplicate with limit message @StartFromScratch @MaxQuestions (20.1s)
+  ✓  36 …elections and search for panelists @StartWithPrompt @DataSummary (24.3s)
+  ✓  37 …ols, select, delete selected, exit @StartFromScratch @ReviewMode (11.4s)
+  ✓  38 …t: Should select a response count @StartWithPrompt @ResponseCount (3.2s)
+  ✓  39 …e Survey until prompt is entered @StartWithPrompt @GenerateSurvey (2.5s)
+  ✘  40 …ch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (16.0s)
+  ✓  41 … and reach the Build Survey page @StartWithPrompt @GenerateSurvey (2.6s)
+  ✓  42 …n the Customize Questions screen @StartWithPrompt @GenerateSurvey (7.8s)
+  ✘  43 …e questions creates AI questions @StartWithPrompt @GenerateSurvey (1.0m)
+  -  44 …eedback when there are recommendations @StartFromScratch @ValidateSurvey
+  -  45 …le in the Start From Scratch builder @StartFromScratch @StartFromScratch
+  -  46 …stion cancel, then add and save one @StartFromScratch @CancelAddQuestion
+  -  47 …ion then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  -  48 …pup Cancel leaves the survey unpublished @StartFromScratch @PublishPopup
+  -  49 …eate a new folder from the Publish popup @StartFromScratch @PublishPopup
+  -  50 …tch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  51 … delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  52 …disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
+  -  53 …urns to the previous step from the builder @StartFromScratch @BackButton
+  -  54 … Edit the survey title after AI generation @StartWithPrompt @BuildSurvey
+  -  55 … AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey
+  -  56 … questions increases the question count @StartWithPrompt @GenerateSurvey
+  -  57 …ons to add increases the question count @StartWithPrompt @GenerateSurvey
+  -  58 …sabled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  59 …tar appears when the Required toggle is on @StartWithPrompt @BuildSurvey
+  -  60 …25: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  61 …ard / Save changes on an existing question @StartWithPrompt @DiscardSave
+  -  62 …8: Empty question text blocks Save changes @StartWithPrompt @DiscardSave
+  -  63 …duplicate a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  64 …TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  65 …estion leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  66 …estion cancel, then add and save one @StartWithPrompt @CancelAddQuestion
+  -  67 …tion then re-add the same type as last @StartWithPrompt @DeleteDuplicate
+  -  68 …de controls, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  69 …ey is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  70 …lect all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  71 …tate shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  72 … › TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  73 … TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  74 … prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  75 … a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  76 …pt › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  77 …pt › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  78 …ists retains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  79 …BS_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  80 …th a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  81 …ith empty title requires a survey name @StartWithPrompt @SaveDraftDialog
+  -  82 …feedback when there are recommendations @StartWithPrompt @ValidateSurvey
+  -  83 …opup Cancel leaves the survey unpublished @StartWithPrompt @PublishPopup
+  -  84 …reate a new folder from the Publish popup @StartWithPrompt @PublishPopup
 
 
-  1) [chromium] › tests\survey\start-with-prompt.spec.ts:125:7 › Start with a prompt › TC_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:646:7 › Start from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft 
+
+    Error: Failed to save draft: Save-copy title input not visible after 15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:579
+
+      577 |       await this.fillSaveCopyDialog(title);
+      578 |     } catch (error) {
+    > 579 |       throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      580 |     }
+      581 |   }
+      582 |
+        at SurveyBuilderPage.saveDraft (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:579:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:649:5
+
+    attachment #1: screenshot (image/png) ───────────────────────────────────────
+    test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ────────────────────────
+    test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\attachments\start-from-scratch-video-0fd2f1432fa7f391163267c5fc5113115d8ce12e.webm
+    ─────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────────────────────────
+    test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--6e600--BS-10-Save-survey-as-draft-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\start-with-prompt.spec.ts:125:7 › Start with a prompt › TC_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey 
 
     Error: Failed to get generated question count: Timed out waiting for question count to reach 1 (current: 0)
 
@@ -90,31 +163,32 @@ Auth state loaded from storage/auth.json
         at StartWithPromptPage.getGeneratedQuestionCount (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:264:13)
         at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:19
 
-    attachment #1: screenshot (image/png) ────────────
+    attachment #1: screenshot (image/png) ───────────────────────────────────────
     test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\error-context.md
 
-    attachment #3: start-with-prompt-video (video/webm) 
-    test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\attachments\start-with-prompt-video-404d40ad1cc0b66b2079d6e482745c6e24943e53.webm
-    ──────────────────────────────────────────────────
+    attachment #3: start-with-prompt-video (video/webm) ─────────────────────────
+    test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\attachments\start-with-prompt-video-d5cfe4a487c54f6ab7eb04ec2e037c0cad4303b7.webm
+    ─────────────────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ───────────
+    attachment #5: trace (application/zip) ──────────────────────────────────────
     test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\trace.zip
     Usage:
 
         npx playwright show-trace test-results\survey-start-with-prompt-S-23258-stions-creates-AI-questions-chromium\trace.zip
 
-    ──────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────────────────────────────
 
-  1 failed
+  2 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:646:7 › Start from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft 
     [chromium] › tests\survey\start-with-prompt.spec.ts:125:7 › Start with a prompt › TC_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey 
-  2 skipped
-  29 did not run
-  16 passed (4.0m)
+  5 skipped
+  36 did not run
+  41 passed (7.2m)
 
 To open last HTML report run:
 
