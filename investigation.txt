@@ -197,3 +197,72 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ 
+-----------------------
+TC_AI_05: Generate questions creates AI questions
+survey/start-with-prompt.spec.ts:125
+1.0m
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Failed to get generated question count: Timed out waiting for question count to reach 1 (current: 0)
+
+   at ..\page-objects\survey\start-with-prompt.page.ts:264
+
+  262 |       return count;
+  263 |     } catch (error) {
+> 264 |       throw new Error(`Failed to get generated question count: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  265 |     }
+  266 |   }
+  267 |
+    at StartWithPromptPage.getGeneratedQuestionCount (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:264:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:19
+Filter steps
+Before Hooks
+22ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+174ms
+Wait for selector locator('[data-test-id=\'generate-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'generate-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+106ms
+Evaluate locator('.question-number') ✕ 139— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+17.4s
+After Hooks
+29.4s
+Worker Cleanup
+------------------------------
+TC_AI_05: Generate questions creates AI questions
+survey/start-with-prompt.spec.ts:125
+1.0m
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Failed to get generated question count: Timed out waiting for question count to reach 1 (current: 0)
+
+   at ..\page-objects\survey\start-with-prompt.page.ts:264
+
+  262 |       return count;
+  263 |     } catch (error) {
+> 264 |       throw new Error(`Failed to get generated question count: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  265 |     }
+  266 |   }
+  267 |
+    at StartWithPromptPage.getGeneratedQuestionCount (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:264:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:128:19
+Filter steps
+Before Hooks
+22ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+174ms
+Wait for selector locator('[data-test-id=\'generate-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'generate-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+106ms
+Evaluate locator('.question-number') ✕ 139— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+17.4s
+After Hooks
+29.4s
+Worker Cleanup
+5ms
