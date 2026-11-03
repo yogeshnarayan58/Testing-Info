@@ -1,6 +1,6 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1 -g "Start from Scratch:|Dataset Selection|Panelist Filters|Response Count|Survey Builder:|TC_BS_21"
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1 -g "Start from Scratch:|Dataset Selection|Panelist Filters|Response Count|Survey Builder:|TC_BS_10a"
+◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 Starting global setup...
@@ -16,231 +16,79 @@ Global setup completed. Auth state saved.
 
 Running 6 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-isLambdaTest = false
-  ✓  1 …ey home page @StartFromScratch @LandStartFromScratch (49.2s)
-Auth state loaded from storage/auth.json
-  ✓  2 … a dataset screen @StartFromScratch @DatasetSelection (3.2s)
-  ✓  3 …all 5 filters are set @StartFromScratch @DataSummary (47.0s)
-  ✓  4 …ing a response count @StartFromScratch @ResponseCount (5.5s)
-  ✓  5 …proceeding @StartFromScratch @ProceedToSurveyBuilder (655ms)
-     6 …fter reloading Build Survey @StartFromScratch @LastRefreshed
-Page reload failed TypeError: this.basePage.getNativePage is not a function
-    at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1655:9
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1135:11
-    at TimeoutManager.withRunnable (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:403:14)
-    at TestInfoImpl._runWithTimeout (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1133:7)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1653:7
-    at WorkerMain._runTest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1626:5)
-    at WorkerMain.runTestGroup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1521:9)
-    at process.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:1941:25)
-  ✘  6 …oading Build Survey @StartFromScratch @LastRefreshed (294ms)
-
-
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:647:7 › Start from scratch › TC_BS_21: Last refreshed date is unchanged after reloading Build Survey @StartFromScratch @LastRefreshed 
-
-    TypeError: this.basePage.getNativePage is not a function
-
-       at ..\page-objects\common\common-page.ts:78
-
-      76 |   public async reloadPage(timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-      77 |     try {
-    > 78 |       const nativePage = this.basePage.getNativePage();
-         |                                        ^
-      79 |       await nativePage.reload({ waitUntil: 'domcontentloaded', timeout });
-      80 |     } catch (reloadError) {
-      81 |       console.error('Page reload failed', reloadError);
-        at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
-
-    attachment #1: screenshot (image/png) ──────────────────────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ───────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\attachments\start-from-scratch-video-84d735d8596432315db1db89ca1e3e76e11a92a5.webm
-    ────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ─────────────────────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:647:7 › Start from scratch › TC_BS_21: Last refresheddate is unchanged after reloading Build Survey @StartFromScratch @LastRefreshed 
-  5 passed (2.5m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 34 tests using 1 worker
-
 ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-  ✓   1 …y home page @StartFromScratch @LandStartFromScratch (24.6s)
+  ✓  1 …e @StartFromScratch @LandStartFromScratch (20.5s)
 Auth state loaded from storage/auth.json
-  ✓   2 …a dataset screen @StartFromScratch @DatasetSelection (4.3s)
-  ✓   3 …ll 5 filters are set @StartFromScratch @DataSummary (46.4s)
-  ✓   4 …ng a response count @StartFromScratch @ResponseCount (5.1s)
-  ✓   5 …roceeding @StartFromScratch @ProceedToSurveyBuilder (687ms)
-  ✓   6 …he Add question panel @StartFromScratch @EmptyState (193ms)
-  ✓   7 …Edit survey title @StartFromScratch @EditSurveyTitle (1.0s)
-  ✓   8 …ice question @StartFromScratch @SingleChoiceQuestion (2.5s)
-  ✓   9 …e question @StartFromScratch @MultipleChoiceQuestion (6.4s)
-  ✓  10 … a Rating question @StartFromScratch @RatingQuestion (5.4s)
-  ✓  11 …: Add an NPS question @StartFromScratch @NPSQuestion (3.9s)
-  ✓  12 …Scale question @StartFromScratch @PointScaleQuestion (6.7s)
-  ✓  13 …Scale question @StartFromScratch @MultiScaleQuestion (6.4s)
-  ✓  14 …quired toggle is on @StartFromScratch @RequiredStar (20.5s)
-  ✓  15 … via the pencil icon @StartFromScratch @EditQuestion (6.7s)
-  ✓  16 …an existing question @StartFromScratch @DiscardSave (28.0s)
-  ✓  17 … blocks Save changes @StartFromScratch @DiscardSave (12.0s)
-  ✓  18 …count unchanged @StartFromScratch @CancelAddQuestion (3.8s)
-  ✓  19 … drop reorders questions @StartFromScratch @DragDrop (3.4s)
-  ✓  20 …hover row actions @StartFromScratch @DeleteDuplicate (2.5s)
-  ✓  21 …y - min 2, max 15 @StartFromScratch @OptionBoundary (36.0s)
-  ✓  22 …o Build Survey @StartFromScratch @StepperNavigation (20.0s)
-  ✓  23 … with limit message @StartFromScratch @MaxQuestions (19.9s)
-  ✓  24 … delete selected, exit @StartFromScratch @ReviewMode (9.4s)
-  ✓  25 …0: Save survey as draft @StartFromScratch @SaveDraft (4.6s)
-  ✓  26 …re recommendations @StartFromScratch @ValidateSurvey (6.3s)
-  ✓  27 …Scratch builder @StartFromScratch @StartFromScratch (436ms)
-  ✓  28 …dd and save one @StartFromScratch @CancelAddQuestion (7.8s)
-  ✓  29 …ame type as last @StartFromScratch @DeleteDuplicate (10.3s)
-  -  30 …6/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  ✓  31 … Build Survey @StartFromScratch @ReviewModeDeleteAll (2.0s)
-  ✓  32 …han 3 questions @StartFromScratch @ValidateDisabled (771ms)
-  ✓  33 … step from the builder @StartFromScratch @BackButton (1.2s)
-     34 …ter reloading Build Survey @StartFromScratch @LastRefreshed
-Page reload failed TypeError: this.basePage.getNativePage is not a function
-    at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1655:9
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1135:11
-    at TimeoutManager.withRunnable (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:403:14)
-    at TestInfoImpl._runWithTimeout (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1133:7)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1653:7
-    at WorkerMain._runTest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1626:5)
-    at WorkerMain.runTestGroup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\worker\workerProcessEntry.js:1521:9)
-    at process.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\common\index.js:1941:25)
-  ✘  34 …ading Build Survey @StartFromScratch @LastRefreshed (375ms)
+  ✓  2 …screen @StartFromScratch @DatasetSelection (3.8s)
+  ✓  3 …rs are set @StartFromScratch @DataSummary (43.8s)
+  ✓  4 …nse count @StartFromScratch @ResponseCount (4.8s)
+  ✓  5 …@StartFromScratch @ProceedToSurveyBuilder (552ms)
+  ✘  6 …y name @StartFromScratch @SaveDraftDialog (15.2s)
 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:647:7 › Start from scratch › TC_BS_21: Last refreshed date is unchanged after reloading Build Survey @StartFromScratch @LastRefreshed 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:573:7 › Start from scratch › TC_BS_10a: Save draft with empty title requires a survey name @StartFromScratch @SaveDraftDialog 
 
-    TypeError: this.basePage.getNativePage is not a function
+    Error: Failed to click Save draft button: Save draftbutton not visible after 15000ms
 
-       at ..\page-objects\common\common-page.ts:78
+       at ..\page-objects\common\survey-builder.page.ts:596
 
-      76 |   public async reloadPage(timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-      77 |     try {
-    > 78 |       const nativePage = this.basePage.getNativePage();
-         |                                        ^
-      79 |       await nativePage.reload({ waitUntil: 'domcontentloaded', timeout });
-      80 |     } catch (reloadError) {
-      81 |       console.error('Page reload failed', reloadError);
-        at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
+      594 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
+      595 |     } catch (error) {
+    > 596 |       throw new Error(`Failed to click Save draft button: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      597 |     }
+      598 |   }
+      599 |
+        at SurveyBuilderPage.clickSaveDraftButton (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:596:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:585:7
 
-    attachment #1: screenshot (image/png) ──────────────────────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) ───────────────
+    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) ───────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\attachments\start-from-scratch-video-211a45d67b48006e722913fae8a255dda1b587c8.webm
-    ────────────────────────────────────────────────────────────────
+    attachment #3: start-from-scratch-video (video/webm) 
+    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\attachments\start-from-scratch-video-6970ff8a1b4f468da8d02ff3572860bfb8e23db6.webm
+    ─────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ─────────────────────────
-    test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\trace.zip
+    attachment #5: trace (application/zip) ──────────────
+    test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--7398b-fter-reloading-Build-Survey-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--81752-itle-requires-a-survey-name-chromium\trace.zip
 
-    ────────────────────────────────────────────────────────────────
+    ─────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:647:7 › Start from scratch › TC_BS_21: Last refresheddate is unchanged after reloading Build Survey @StartFromScratch @LastRefreshed 
-  1 skipped
-  32 passed (5.9m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ 
------------
-Copy prompt
-TypeError: this.basePage.getNativePage is not a function
-
-   at ..\page-objects\common\common-page.ts:78
-
-  76 |   public async reloadPage(timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-  77 |     try {
-> 78 |       const nativePage = this.basePage.getNativePage();
-     |                                        ^
-  79 |       await nativePage.reload({ waitUntil: 'domcontentloaded', timeout });
-  80 |     } catch (reloadError) {
-  81 |       console.error('Page reload failed', reloadError);
-    at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
-------------------
-TC_BS_21: Last refreshed date is unchanged after reloading Build Survey
-survey/common-test-cases/build-survey-common-test-cases.ts:647
-375ms
-chromiumStartFromScratchLastRefreshed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:573:7 › Start from scratch › TC_BS_10a: Save draft with empty title requires a survey name @StartFromScratch @SaveDraftDialog 
+  5 passed (2.1m)
+-------------------------------
 serial
 Copy prompt
-TypeError: this.basePage.getNativePage is not a function
+Error: Failed to click Save draft button: Save draft button not visible after 15000ms
 
-   at ..\page-objects\common\common-page.ts:78
+   at ..\page-objects\common\survey-builder.page.ts:596
 
-  76 |   public async reloadPage(timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
-  77 |     try {
-> 78 |       const nativePage = this.basePage.getNativePage();
-     |                                        ^
-  79 |       await nativePage.reload({ waitUntil: 'domcontentloaded', timeout });
-  80 |     } catch (reloadError) {
-  81 |       console.error('Page reload failed', reloadError);
-    at SurveyBuilderPage.reloadPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:78:40)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:656:31
+  594 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
+  595 |     } catch (error) {
+> 596 |       throw new Error(`Failed to click Save draft button: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  597 |     }
+  598 |   }
+  599 |
+    at SurveyBuilderPage.clickSaveDraftButton (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:596:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:585:7
 Filter steps
 Before Hooks
-13ms
-Wait for selector locator('[data-test-id=\'rb-report-refreshed-on-block\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-93ms
+11ms
+Wait for selector locator('.survey-title')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Wait for selector locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
 After Hooks
-2.9s
+2.5s
 Worker Cleanup
