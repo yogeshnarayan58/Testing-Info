@@ -1,25 +1,79 @@
-I made all three changes. I did not run any tests or terminal commands.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ npx playwright show-report
 
-Number field:
-
-questionCountInput in start-with-prompt.locator.json is now [data-test-id='question-count-slider'] input:not([type='range']). I had to edit that JSON file for this, even though you only listed the page object.
-getQuestionCountInput() in start-with-prompt.page.ts now builds the element from that entry plus >> visible=true >> nth=0, so there is no inline selector string.
-The // TODO test-id comment is kept. nudgeQuestionCountSliderRight() still targets the range input, so the ArrowRight helper is unchanged.
-Product banner and counter:
-
-filterValidationMessage and filterCounter in select-panelist.locator.json are now scoped to crf-data-selector-panel-v2. The regex matchers and visible=true >> nth=0 are unchanged.
-The TODO comments on getFilterValidationMessage() and getFilterCounterText() in select-panelist.page.ts now say "banner and counter come from the crf-data-selector-panel-v2 component".
-TC_AI_03: In start-with-prompt.spec.ts the steps are wrapped in try, and finally always runs setQuestionCount(5). The assertions are unchanged. If a failed run left the field in an invalid state, that finally call could itself throw and replace the original failure message.
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
 
 
-+11
--7
----------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 40 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …pt option on the survey home page @StartWithPrompt (22.2s)
+Auth state loaded from storage/auth.json
+  ✓   2 …type and dataset @StartWithPrompt @DatasetSelection (2.8s)
+  ✓   3 …search for panelists @StartWithPrompt @DataSummary (43.3s)
+  ✓   4 …ct a response count @StartWithPrompt @ResponseCount (3.4s)
+  ✓   5 … prompt is entered @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   6 … Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   7 …e Questions screen @StartWithPrompt @GenerateSurvey (3.4s)
+  ✓   8 …r and number field @StartWithPrompt @GenerateSurvey (5.3s)
+  ✓   9 …eates AI questions @StartWithPrompt @GenerateSurvey (4.9s)
+  ✓  10 … after AI generation @StartWithPrompt @BuildSurvey (321ms)
+  ✓  11 …g state and prompt @StartWithPrompt @GenerateSurvey (8.2s)
+  ✓  12 …the question count @StartWithPrompt @GenerateSurvey (3.9s)
+  ✓  13 …the question count @StartWithPrompt @GenerateSurvey (8.2s)
+  ✓  14 …estions @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
+  ✓  15 …equired toggle is on @StartWithPrompt @BuildSurvey (18.1s)
+  ✓  16 …t via the pencil icon @StartWithPrompt @BuildSurvey (5.9s)
+  ✓  17 …an existing question @StartWithPrompt @DiscardSave (26.8s)
+  ✓  18 … blocks Save changes @StartWithPrompt @DiscardSave (16.6s)
+  ✓  19 …via hover row actions @StartWithPrompt @BuildSurvey (2.3s)
+  ✓  20 …op reorders questions @StartWithPrompt @BuildSurvey (2.1s)
+  ✓  21 …stion count unchanged @StartWithPrompt @BuildSurvey (3.2s)
+  ✓  22 …dd and save one @StartWithPrompt @CancelAddQuestion (5.3s)
+  ✓  23 …same type as last @StartWithPrompt @DeleteDuplicate (6.5s)
+  ✓  24 …delete selected, exit @StartWithPrompt @BuildSurvey (4.7s)
+  ✓  25 …ewer than 3 questions @StartWithPrompt @BuildSurvey (3.9s)
+  ✓  26 … stay on Build Survey @StartWithPrompt @BuildSurvey (1.1s)
+  ✓  27 …on options and 0 rows @StartWithPrompt @BuildSurvey (84ms)
+  ✓  28 …ngle Choice question @StartWithPrompt @BuildSurvey (764ms)
+  ✓  29 …tiple Choice question @StartWithPrompt @BuildSurvey (3.4s)
+  ✓  30 …Add a Rating question @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  31 …: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  32 … Point Scale question @StartWithPrompt @BuildSurvey (3.4s)
+  ✓  33 … Multi Scale question @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  34 …back to Build Survey @StartWithPrompt @BuildSurvey (24.5s)
+  ✓  35 …y - min 2, max 15 @StartWithPrompt @OptionBoundary (32.2s)
+  ✓  36 …res a survey name @StartWithPrompt @SaveDraftDialog (5.1s)
+  ✓  37 …0: Save survey as draft @StartWithPrompt @SaveDraft (3.8s)
+  ✓  38 …re recommendations @StartWithPrompt @ValidateSurvey (4.3s)
+  -  39 …aves the survey unpublished @StartWithPrompt @PublishPopup
+  -  40 …lder from the Publish popup @StartWithPrompt @PublishPopup
+
+  2 skipped
+  38 passed (5.6m)
+--------------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -33,179 +87,19 @@ Global setup completed. Auth state saved.
 
 Running 10 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-  ✓   1 …e Product Offering modal applies no dataset @SelectPanelist @SPModalCancel (25.5s)
+  ✓   1 … applies no dataset @SelectPanelist @SPModalCancel (28.7s)
 Auth state loaded from storage/auth.json
-  ✓   2 …nd on the survey home page and start from scratch @SelectPanelist @SPSetup (22.5s)
+  ✓   2 …ge and start from scratch @SelectPanelist @SPSetup (19.2s)
 Auth state loaded from storage/auth.json
-  ✓   3 …ct offering and dataset and reach Select Panelists @SelectPanelist @SPSetup (3.8s)
-  ✓   4 …ers are shown correctly in the summary sentence @SelectPanelist @SPSummary (59.4s)
-  ✓   5 …e, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter (169ms)
-  ✓   6 … when every filter has exactly 1 selection @SelectPanelist @SPSearchButton (22.8s)
-  ✘   7 …er reflect the number of selected items @SelectPanelist @SPFilterValidation (1.8s)
-  -   8 …ligible count, response options and credit message @SelectPanelist @SPSearchResult
-  -   9 …ore options shows additional response count choices @SelectPanelist @SPMoreOptions
-  -  10 … enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount
+  ✓   3 …and reach Select Panelists @SelectPanelist @SPSetup (4.7s)
+  ✓   4 …in the summary sentence @SelectPanelist @SPSummary (55.9s)
+  ✓   5 … a "Last refreshed" date @SelectPanelist @SPFooter (118ms)
+  ✓   6 …xactly 1 selection @SelectPanelist @SPSearchButton (22.3s)
+  ✓   7 …selected items @SelectPanelist @SPFilterValidation (42.4s)
+  ✓   8 …and credit message @SelectPanelist @SPSearchResult (19.2s)
+  ✓   9 …sponse count choices @SelectPanelist @SPMoreOptions (1.0s)
+  ✓  10 … filter resets it @SelectPanelist @SPResponseCount (35.6s)
 
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:137:7 › Select Panelists - filters and search › TC_SP_06: Filter validation banner and counter reflect the number of selected items @SelectPanelist @SPFilterValidation 
-
-    Error: With 0 Product items: expected message "Please select 1", got "Looking good!"
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at expectState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:141:17)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:147:5
-
-    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
-    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ─────────────────────────────────────
-    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\attachments\select-panelist-video-a25f9fae74a6ea6390a242dfea551608db032f35.webm
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────────────────────
-    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:137:7 › Select Panelists - filters and search › TC_SP_06: Filter validation banner and counter reflect the number of selected items @SelectPanelist @SPFilterValidation 
-  3 did not run
-  6 passed (2.9m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ 
--------------------
-
-TC_SP_06: Filter validation banner and counter reflect the number of selected items
-survey/select-panelist.spec.ts:137
-1.8s
-chromiumSelectPanelistSPFilterValidation
-serial
-Copy prompt
-Error: With 0 Product items: expected message "Please select 1", got "Looking good!"
-expect(received).toBeTruthy()
-
-Received: false
-
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-  16 |
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at expectState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:141:17)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:147:5
-Filter steps
-Before Hooks
-9ms
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-62ms
-Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-88ms
-Wait for selector locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-21ms
-Click locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-108ms
-Wait for selector locator('crf-data-selector-panel-v2').locator('text=/Please select 1|Looking good!|Please remove 1/').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-23ms
-After Hooks
-1.4s
-Worker Cleanup
-
------------------
-TC_AI_03: Question count slider and number field
-survey/start-with-prompt.spec.ts:125
-4.5s
-chromiumStartWithPromptGenerateSurvey
-serial
-Copy prompt
-Error: Expected "Please enter a value between 3 and 10." for 0
-expect(received).toBeTruthy()
-
-Received: false
-
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-  16 |
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:138:19
-Filter steps
-Before Hooks
-28ms
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-157ms
-Wait for selector locator('[data-test-id=\'question-count-slider\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-71ms
-Query count locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:230
-65ms
-Focus locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:231
-198ms
-Press "ArrowRight"— ../page-objects/survey/start-with-prompt.page.ts:232
-51ms
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-65ms
-Fill "7" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-129ms
-Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-106ms
-Wait for selector locator('[role=\'alert\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-1.0s
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-50ms
-Fill "0" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-108ms
-Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-102ms
-Wait for selector locator('[role=\'alert\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-42ms
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-51ms
-Fill "5" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-127ms
-Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-93ms
-After Hooks
-4.5s
+  10 passed (4.4m)
