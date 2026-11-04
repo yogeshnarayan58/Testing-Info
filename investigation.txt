@@ -1,3 +1,25 @@
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ git pull origin main
+remote: Enumerating objects: 87, done.
+remote: Counting objects: 100% (76/76), done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 53 (delta 29), reused 45 (delta 24), pack-reused 0 (from 0)
+Unpacking objects: 100% (53/53), 6.67 KiB | 27.00 KiB/s, done.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * branch              main       -> FETCH_HEAD
+   a5fee230..cf2ecfd5  main       -> origin/main
+hint: Waiting for your editor to close the file... Vim: Error reading input, exiting...
+Vim: Finished.
+
+error: there was a problem with the editor 'vi'
+Not committing merge; use 'git commit' to complete the merge.
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
+$ git pull origin main
+error: You have not concluded your merge (MERGE_HEAD exists).
+hint: Please, commit your changes before merging.
+fatal: Exiting because of unfinished merge.
+
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
 $ git status
 On branch feature/automation-remaining-and-stability-part_1
@@ -27,3 +49,75 @@ Untracked files:
   (use "git add <file>..." to include in what will be committed)
         tests/survey/common-test-cases/scratch-setup.ts
         tests/survey/publish-popup.spec.ts
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
+$ git diff --cached --stat
+ libs/survey-mod-lib/package.json                   |  2 +-
+ .../survey-homepage/survey-homepage.component.html | 19 +++++--
+ .../survey-homepage/survey-homepage.component.scss | 58 +++++++++++++++-------
+ .../survey-homepage.component.spec.ts              |  4 +-
+ .../survey-homepage/survey-homepage.component.ts   |  8 ++-
+ .../lib/features/survey-home/models/survey-home.ts | 12 ++++-
+ package.json                                       |  2 +-
+ 7 files changed, 76 insertions(+), 29 deletions(-)
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
+$ git commit -m "Merge origin/main"
+[feature/automation-remaining-and-stability-part_1 eb45f629] Merge origin/main
+ Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ git status
+On branch feature/automation-remaining-and-stability-part_1
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/survey-builder.locator.json
+        modified:   page-objects/common/survey-builder.page.ts
+        modified:   test-data/dev-test-data.json
+        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
+        modified:   tests/survey/start-from-scratch.spec.ts
+        modified:   tests/survey/start-with-prompt.spec.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        tests/survey/common-test-cases/scratch-setup.ts
+        tests/survey/publish-popup.spec.ts
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ git status
+On branch feature/automation-remaining-and-stability-part_1
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/survey-builder.locator.json
+        modified:   page-objects/common/survey-builder.page.ts
+        modified:   test-data/dev-test-data.json
+        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
+        modified:   tests/survey/start-from-scratch.spec.ts
+        modified:   tests/survey/start-with-prompt.spec.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        tests/survey/common-test-cases/scratch-setup.ts
+        tests/survey/publish-popup.spec.ts
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ 
