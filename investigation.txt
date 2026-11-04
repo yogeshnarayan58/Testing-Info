@@ -1,79 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 40 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓   1 …pt option on the survey home page @StartWithPrompt (22.2s)
-Auth state loaded from storage/auth.json
-  ✓   2 …type and dataset @StartWithPrompt @DatasetSelection (2.8s)
-  ✓   3 …search for panelists @StartWithPrompt @DataSummary (43.3s)
-  ✓   4 …ct a response count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 … prompt is entered @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   6 … Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   7 …e Questions screen @StartWithPrompt @GenerateSurvey (3.4s)
-  ✓   8 …r and number field @StartWithPrompt @GenerateSurvey (5.3s)
-  ✓   9 …eates AI questions @StartWithPrompt @GenerateSurvey (4.9s)
-  ✓  10 … after AI generation @StartWithPrompt @BuildSurvey (321ms)
-  ✓  11 …g state and prompt @StartWithPrompt @GenerateSurvey (8.2s)
-  ✓  12 …the question count @StartWithPrompt @GenerateSurvey (3.9s)
-  ✓  13 …the question count @StartWithPrompt @GenerateSurvey (8.2s)
-  ✓  14 …estions @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
-  ✓  15 …equired toggle is on @StartWithPrompt @BuildSurvey (18.1s)
-  ✓  16 …t via the pencil icon @StartWithPrompt @BuildSurvey (5.9s)
-  ✓  17 …an existing question @StartWithPrompt @DiscardSave (26.8s)
-  ✓  18 … blocks Save changes @StartWithPrompt @DiscardSave (16.6s)
-  ✓  19 …via hover row actions @StartWithPrompt @BuildSurvey (2.3s)
-  ✓  20 …op reorders questions @StartWithPrompt @BuildSurvey (2.1s)
-  ✓  21 …stion count unchanged @StartWithPrompt @BuildSurvey (3.2s)
-  ✓  22 …dd and save one @StartWithPrompt @CancelAddQuestion (5.3s)
-  ✓  23 …same type as last @StartWithPrompt @DeleteDuplicate (6.5s)
-  ✓  24 …delete selected, exit @StartWithPrompt @BuildSurvey (4.7s)
-  ✓  25 …ewer than 3 questions @StartWithPrompt @BuildSurvey (3.9s)
-  ✓  26 … stay on Build Survey @StartWithPrompt @BuildSurvey (1.1s)
-  ✓  27 …on options and 0 rows @StartWithPrompt @BuildSurvey (84ms)
-  ✓  28 …ngle Choice question @StartWithPrompt @BuildSurvey (764ms)
-  ✓  29 …tiple Choice question @StartWithPrompt @BuildSurvey (3.4s)
-  ✓  30 …Add a Rating question @StartWithPrompt @BuildSurvey (2.5s)
-  ✓  31 …: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  32 … Point Scale question @StartWithPrompt @BuildSurvey (3.4s)
-  ✓  33 … Multi Scale question @StartWithPrompt @BuildSurvey (3.7s)
-  ✓  34 …back to Build Survey @StartWithPrompt @BuildSurvey (24.5s)
-  ✓  35 …y - min 2, max 15 @StartWithPrompt @OptionBoundary (32.2s)
-  ✓  36 …res a survey name @StartWithPrompt @SaveDraftDialog (5.1s)
-  ✓  37 …0: Save survey as draft @StartWithPrompt @SaveDraft (3.8s)
-  ✓  38 …re recommendations @StartWithPrompt @ValidateSurvey (4.3s)
-  -  39 …aves the survey unpublished @StartWithPrompt @PublishPopup
-  -  40 …lder from the Publish popup @StartWithPrompt @PublishPopup
-
-  2 skipped
-  38 passed (5.6m)
---------------------------------
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true}
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -85,21 +14,21 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 10 tests using 1 worker
+Running 11 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-  ✓   1 … applies no dataset @SelectPanelist @SPModalCancel (28.7s)
+  ✓   1 …applies no dataset @SelectPanelist @SPModalCancel (31.2s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ge and start from scratch @SelectPanelist @SPSetup (19.2s)
+  ✓   2 …e and start from scratch @SelectPanelist @SPSetup (22.0s)
 Auth state loaded from storage/auth.json
-  ✓   3 …and reach Select Panelists @SelectPanelist @SPSetup (4.7s)
-  ✓   4 …in the summary sentence @SelectPanelist @SPSummary (55.9s)
-  ✓   5 … a "Last refreshed" date @SelectPanelist @SPFooter (118ms)
-  ✓   6 …xactly 1 selection @SelectPanelist @SPSearchButton (22.3s)
-  ✓   7 …selected items @SelectPanelist @SPFilterValidation (42.4s)
-  ✓   8 …and credit message @SelectPanelist @SPSearchResult (19.2s)
-  ✓   9 …sponse count choices @SelectPanelist @SPMoreOptions (1.0s)
-  ✓  10 … filter resets it @SelectPanelist @SPResponseCount (35.6s)
-
-  10 passed (4.4m)
+  ✓   3 …nd reach Select Panelists @SelectPanelist @SPSetup (4.3s)
+  ✓   4 …n the summary sentence @SelectPanelist @SPSummary (58.4s)
+  ✓   5 …a "Last refreshed" date @SelectPanelist @SPFooter (196ms)
+  ✓   6 …actly 1 selection @SelectPanelist @SPSearchButton (22.6s)
+  ✓   7 …elected items @SelectPanelist @SPFilterValidation (42.7s)
+  ✓   8 …nd credit message @SelectPanelist @SPSearchResult (19.7s)
+  ✓   9 …ponse count choices @SelectPanelist @SPMoreOptions (1.2s)
+  ✓  10 …filter resets it @SelectPanelist @SPResponseCount (37.2s)
+  ✓  11 … proceeding @SelectPanelist @SPTooFewParticipants (57.9s)
+  11 passed (5.7m)
