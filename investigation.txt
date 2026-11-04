@@ -1,123 +1,173 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git pull origin main
-remote: Enumerating objects: 87, done.
-remote: Counting objects: 100% (76/76), done.
-remote: Compressing objects: 100% (20/20), done.
-remote: Total 53 (delta 29), reused 45 (delta 24), pack-reused 0 (from 0)
-Unpacking objects: 100% (53/53), 6.67 KiB | 27.00 KiB/s, done.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * branch              main       -> FETCH_HEAD
-   a5fee230..cf2ecfd5  main       -> origin/main
-hint: Waiting for your editor to close the file... Vim: Error reading input, exiting...
-Vim: Finished.
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-error: there was a problem with the editor 'vi'
-Not committing merge; use 'git commit' to complete the merge.
+Running 40 tests using 1 worker
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
-$ git pull origin main
-error: You have not concluded your merge (MERGE_HEAD exists).
-hint: Please, commit your changes before merging.
-fatal: Exiting because of unfinished merge.
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
-$ git status
-On branch feature/automation-remaining-and-stability-part_1
-All conflicts fixed but you are still merging.
-  (use "git commit" to conclude merge)
-
-Changes to be committed:
-        modified:   ../libs/survey-mod-lib/package.json
-        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html
-        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.scss
-        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.spec.ts
-        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.ts
-        modified:   ../libs/survey-mod-lib/src/lib/features/survey-home/models/survey-home.ts
-        modified:   ../package.json
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   locators/survey/survey-builder.locator.json
-        modified:   page-objects/common/survey-builder.page.ts
-        modified:   test-data/dev-test-data.json
-        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
-        modified:   tests/survey/start-from-scratch.spec.ts
-        modified:   tests/survey/start-with-prompt.spec.ts
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        tests/survey/common-test-cases/scratch-setup.ts
-        tests/survey/publish-popup.spec.ts
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
-$ git diff --cached --stat
- libs/survey-mod-lib/package.json                   |  2 +-
- .../survey-homepage/survey-homepage.component.html | 19 +++++--
- .../survey-homepage/survey-homepage.component.scss | 58 +++++++++++++++-------
- .../survey-homepage.component.spec.ts              |  4 +-
- .../survey-homepage/survey-homepage.component.ts   |  8 ++-
- .../lib/features/survey-home/models/survey-home.ts | 12 ++++-
- package.json                                       |  2 +-
- 7 files changed, 76 insertions(+), 29 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1|MERGING)
-$ git commit -m "Merge origin/main"
-[feature/automation-remaining-and-stability-part_1 eb45f629] Merge origin/main
- Committer: Yogesh Upadhyay <yogesh.upadhyay@coforge.com>
-Your name and email address were configured automatically based
-on your username and hostname. Please check that they are accurate.
-You can suppress this message by setting them explicitly. Run the
-following command and follow the instructions in your editor to edit
-your configuration file:
-
-    git config --global --edit
-
-After doing this, you may fix the identity used for this commit with:
-
-    git commit --amend --reset-author
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …rt with a prompt option on the survey home page @StartWithPrompt (21.9s)
+Auth state loaded from storage/auth.json
+  ✓   2 …t the dataset type and dataset @StartWithPrompt @DatasetSelection (4.1s)
+  ✓   3 …elections and search for panelists @StartWithPrompt @DataSummary (44.5s)
+  ✓   4 …t: Should select a response count @StartWithPrompt @ResponseCount (3.9s)
+  ✓   5 …e Survey until prompt is entered @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   6 … and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   7 …n the Customize Questions screen @StartWithPrompt @GenerateSurvey (3.9s)
+  ✓   8 …on count slider and number field @StartWithPrompt @GenerateSurvey (5.2s)
+  ✓   9 …e questions creates AI questions @StartWithPrompt @GenerateSurvey (4.3s)
+  ✓  10 …e survey title after AI generation @StartWithPrompt @BuildSurvey (458ms)
+  ✓  11 …ars the loading state and prompt @StartWithPrompt @GenerateSurvey (8.3s)
+  ✓  12 …ons increases the question count @StartWithPrompt @GenerateSurvey (2.7s)
+  ✓  13 …add increases the question count @StartWithPrompt @GenerateSurvey (8.0s)
+  ✓  14 …at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
+  ✓  15 …ars when the Required toggle is on @StartWithPrompt @BuildSurvey (18.0s)
+  ✓  16 …t question text via the pencil icon @StartWithPrompt @BuildSurvey (5.8s)
+  ✓  17 …ve changes on an existing question @StartWithPrompt @DiscardSave (27.0s)
+  ✓  18 … question text blocks Save changes @StartWithPrompt @DiscardSave (16.4s)
+  ✓  19 …te a question via hover row actions @StartWithPrompt @BuildSurvey (2.1s)
+  ✓  20 …5: Drag and drop reorders questions @StartWithPrompt @BuildSurvey (2.0s)
+  ✓  21 …leaves the question count unchanged @StartWithPrompt @BuildSurvey (3.1s)
+  ✓  22 …cancel, then add and save one @StartWithPrompt @CancelAddQuestion (5.1s)
+  ✓  23 …en re-add the same type as last @StartWithPrompt @DeleteDuplicate (6.5s)
+  ✓  24 …rols, select, delete selected, exit @StartWithPrompt @BuildSurvey (5.5s)
+  ✓  25 …isabled with fewer than 3 questions @StartWithPrompt @BuildSurvey (4.1s)
+  ✓  26 …l, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey (1.1s)
+  ✓  27 …ows Add Question options and 0 rows @StartWithPrompt @BuildSurvey (78ms)
+  ✓  28 …_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey (910ms)
+  ✓  29 …03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey (3.3s)
+  ✓  30 … › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  31 …pt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  32 …_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey (3.5s)
+  ✓  33 …_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey (3.9s)
+  ✓  34 …ains data and back to Build Survey @StartWithPrompt @BuildSurvey (24.7s)
+  ✓  35 …ptions boundary - min 2, max 15 @StartWithPrompt @OptionBoundary (31.9s)
+  ✘  36 …y title requires a survey name @StartWithPrompt @SaveDraftDialog (24.1s)
+  -  37 …th a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  38 …feedback when there are recommendations @StartWithPrompt @ValidateSurvey
+  -  39 …dit survey returns to Build Survey @StartWithPrompt @ReviewSurveyDetails
+  -  40 …ompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey
 
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git status
-On branch feature/automation-remaining-and-stability-part_1
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   locators/survey/survey-builder.locator.json
-        modified:   page-objects/common/survey-builder.page.ts
-        modified:   test-data/dev-test-data.json
-        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
-        modified:   tests/survey/start-from-scratch.spec.ts
-        modified:   tests/survey/start-with-prompt.spec.ts
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:736:7 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        tests/survey/common-test-cases/scratch-setup.ts
-        tests/survey/publish-popup.spec.ts
+    Error: Failed to fill Create new folder dialog Name input: Create new folderdialog Name input not visible after 15000ms
 
-no changes added to commit (use "git add" and/or "git commit -a")
+       at ..\page-objects\common\survey-builder.page.ts:988
 
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ git status
-On branch feature/automation-remaining-and-stability-part_1
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   locators/survey/survey-builder.locator.json
-        modified:   page-objects/common/survey-builder.page.ts
-        modified:   test-data/dev-test-data.json
-        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
-        modified:   tests/survey/start-from-scratch.spec.ts
-        modified:   tests/survey/start-with-prompt.spec.ts
+      986 |       await nameInput.enterText(name);
+      987 |     } catch (error) {
+    > 988 |       throw new Error(`Failed to fill Create new folder dialog Name input: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      989 |     }
+      990 |   }
+      991 |
+        at SurveyBuilderPage.fillCreateNewFolderDialogName (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:988:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:771:9
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        tests/survey/common-test-cases/scratch-setup.ts
-        tests/survey/publish-popup.spec.ts
+    attachment #1: screenshot (image/png) ───────────────────────────────────────
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────────────
 
-no changes added to commit (use "git add" and/or "git commit -a")
+    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ─────────────────────────
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\attachments\start-with-prompt-video-d83301cf677e711a2b1f8ec3276160c0e241fcb1.webm
+    ─────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────────────────────────
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:736:7 › Start with a prompt › TC_BS_10a: Save draft with empty title requires asurvey name @StartWithPrompt @SaveDraftDialog 
+  4 did not run
+  35 passed (5.8m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ 
+-----
+TC_BS_10a: Save draft with empty title requires a survey name
+survey/common-test-cases/build-survey-common-test-cases.ts:736
+24.1s
+chromiumStartWithPromptSaveDraftDialog
+serial
+Copy prompt
+Error: Failed to fill Create new folder dialog Name input: Create new folder dialog Name input not visible after 15000ms
+
+   at ..\page-objects\common\survey-builder.page.ts:988
+
+  986 |       await nameInput.enterText(name);
+  987 |     } catch (error) {
+> 988 |       throw new Error(`Failed to fill Create new folder dialog Name input: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  989 |     }
+  990 |   }
+  991 |
+    at SurveyBuilderPage.fillCreateNewFolderDialogName (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:988:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:771:9
+Filter steps
+Before Hooks
+15ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+79ms
+Wait for selector locator('.edit-icon')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+11ms
+Click locator('.edit-icon')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+58ms
+Wait for selector locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+24ms
+Fill "" locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+57ms
+Press "Tab" locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:681
+39ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+18ms
+Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+25ms
+Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+69ms
+Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+1.5s
+Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text="Survey name is required."').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+81ms
+Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="My Assets"]').first().locator('.arrow')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+64ms
+Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="Q4 Appliance Research"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text=/^Create new folder/').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+23ms
+Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text=/^Create new folder/').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+84ms
+Wait for selector locator('[role=\'dialog\']:has-text("Create new folder")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+100ms
+Wait for selector locator('[role=\'dialog\']:has-text("Create new folder")').first().locator('role=textbox[name="Name"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.4s
+After Hooks
+2.7s
+Worker Cleanup
+------------------------------------------------------------------------------------------------------------+
+
