@@ -1,139 +1,211 @@
-I added TC_AI_03 and the TC_AI_05 change. I did not run any tests or terminal commands, so none of it is verified against the app.
+I made all three changes. I did not run any tests or terminal commands.
 
-Locators (start-with-prompt.locator.json): I added questionCountSlider, questionCountInput and questionCountError exactly as you specified.
+Number field:
 
-Page object (start-with-prompt.page.ts):
+questionCountInput in start-with-prompt.locator.json is now [data-test-id='question-count-slider'] input:not([type='range']). I had to edit that JSON file for this, even though you only listed the page object.
+getQuestionCountInput() in start-with-prompt.page.ts now builds the element from that entry plus >> visible=true >> nth=0, so there is no inline selector string.
+The // TODO test-id comment is kept. nudgeQuestionCountSliderRight() still targets the range input, so the ArrowRight helper is unchanged.
+Product banner and counter:
 
-setQuestionCount(n): fills the number field, then presses Tab so it validates.
-getQuestionCountValue(): returns the field's value as a number.
-nudgeQuestionCountSliderRight(): focuses the slider thumb and presses ArrowRight once, with no mouse drag. It uses the native Playwright page for the key press, since the GTA wrapper doesn't expose it. The thumb is the first [role='slider'] or input[type='range'] inside the slider, falling back to the slider itself.
-isQuestionCountErrorVisible(timeoutMs?): true only if [role='alert'] is visible and contains "Please enter a value between 3 and 10.".
-isGenerateQuestionsDisabled(): true if the disabled attribute is set, aria-disabled="true", or the class contains "disabled".
-I did not use questionCountInput as written. The page object resolves the number field as the first visible input inside the slider ([data-test-id='question-count-slider'] input:visible >> nth=0). It has the // TODO test-id: number field has no data-test-id comment. The questionCountInput JSON entry is currently unused, and I can switch to it if you prefer.
-
-TC_AI_03 (start-with-prompt.spec.ts): it sits right after TC_AI_04 and before TC_AI_05, tagged @GenerateSurvey. The steps are:
-The value starts at 5.
-One ArrowRight on the slider makes it 6.
-Setting 7 shows no error.
-Setting 0 shows the error and disables Generate.
-Setting 11 does the same.
-Setting 5 clears the error and enables Generate.
-The "no error" checks use a 1 s timeout so they don't wait the full 5 s.
-
-TC_AI_05: all existing assertions are unchanged. It now reads requestedCount = getQuestionCountValue() before clicking Generate. After generation it asserts after === requestedCount. TC_AI_03 ends on 5, so that is the requested count.
-
-If [role='alert'] matches more than one element on the page (for example a toast), the error check could hit a  strict-mode violation. That would need a narrower locator.
-
------------------------------
-I added TC_SP_06, but its banner and counter locators are unverified. The strings "Please select 1", "Looking good!" and "Please remove 1" aren't in this repo. They come from @nielsen/crf-data-summary, which I can't read from node_modules. I built the locators from the exact text you gave me, so I couldn't confirm they match the real DOM. I did not run any tests or terminal commands.
-
-Locators (select-panelist.locator.json), both playwrights:
-
-filterValidationMessage is crf-data-summary >> text=/Please select 1|Looking good!|Please remove 1/ >> visible=true >> nth=0.
-filterCounter is crf-data-summary >> text=/\b\d+\/\d+\b/ >> visible=true >> nth=0.
-I scoped both to crf-data-summary because you said the ids aren't unique, so I didn't use #data-summary. That scope is an assumption. If the banner or counter renders outside that component, the locators won't match.
-
-Page object (select-panelist.page.ts): getFilterValidationMessage() and getFilterCounterText() each wait up to 5 s for the first visible match and return its trimmed text. They throw a clear error if nothing matches. Both carry the // TODO test-id: banner and counter come from @nielsen/crf-data-summary, no test-ids comment.
-Spec (select-panelist.spec.ts): TC_SP_06 (@SPFilterValidation) is inside the serial describe, right after TC_SP_07 and before TC_SP_08. It follows TC_SP_07's pattern with product = datasetConfig.dimensionSelections[0]:
-
-removeDimensionSelectionItem, then the message includes "Please select 1" and the counter matches /0\/1/.
-setDimensionSelections([product]), then "Looking good!" and /1\/1/.
-Items [product.items[0], 'Automotive'], then "Please remove 1" and /2\/1/.
-Restore with setDimensionSelections([product]).
-If the other four filters show their own 1/1 counters, nth=0 could pick the wrong one. It would need to be narrowed to the Product filter once you can see the real DOM.
--------------------------
-
-Error: Failed to set question count to 0: locator.fill: Error: Malformed value
-Call log:
-  - waiting for locator('[data-test-id=\'question-count-slider\'] input:visible').first()
-    - locator resolved to <input min="3" max="10" step="1" type="range" class="slider-bar" _ngcontent-ng-c1448345681="" aria-label="Single slider thumb"/>
-    - fill("0")
-  - attempting fill action
-    - waiting for element to be visible, enabled and editable
+filterValidationMessage and filterCounter in select-panelist.locator.json are now scoped to crf-data-selector-panel-v2. The regex matchers and visible=true >> nth=0 are unchanged.
+The TODO comments on getFilterValidationMessage() and getFilterCounterText() in select-panelist.page.ts now say "banner and counter come from the crf-data-selector-panel-v2 component".
+TC_AI_03: In start-with-prompt.spec.ts the steps are wrapped in try, and finally always runs setQuestionCount(5). The assertions are unchanged. If a failed run left the field in an invalid state, that finally call could itself throw and replace the original failure message.
 
 
-   at ..\page-objects\survey\start-with-prompt.page.ts:202
++11
+-7
+---------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
+◇ injected env (25) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-  200 |       await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-  201 |     } catch (error) {
-> 202 |       throw new Error(`Failed to set question count to ${count}: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  203 |     }
-  204 |   }
-  205 |
-    at StartWithPromptPage.setQuestionCount (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\survey\start-with-prompt.page.ts:202:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:136:7
-Filter steps
-Before Hooks
-18ms
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-115ms
-Wait for selector locator('[data-test-id=\'question-count-slider\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Query count locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:230
-11ms
-Focus locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:231
-20ms
-Press "ArrowRight"— ../page-objects/survey/start-with-prompt.page.ts:232
-50ms
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:visible').first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-36ms
-Fill "7" locator('[data-test-id=\'question-count-slider\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-29ms
-Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-40ms
-Wait for selector locator('[role=\'alert\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-1.0s
-Wait for selector locator('[data-test-id=\'question-count-slider\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-17ms
-Fill "0" locator('[data-test-id=\'question-count-slider\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-63ms
-After Hooks
-1.7s
-Worker Cleanup
-2ms
+Running 10 tests using 1 worker
 
-screenshot
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓   1 …e Product Offering modal applies no dataset @SelectPanelist @SPModalCancel (25.5s)
+Auth state loaded from storage/auth.json
+  ✓   2 …nd on the survey home page and start from scratch @SelectPanelist @SPSetup (22.5s)
+Auth state loaded from storage/auth.json
+  ✓   3 …ct offering and dataset and reach Select Panelists @SelectPanelist @SPSetup (3.8s)
+  ✓   4 …ers are shown correctly in the summary sentence @SelectPanelist @SPSummary (59.4s)
+  ✓   5 …e, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter (169ms)
+  ✓   6 … when every filter has exactly 1 selection @SelectPanelist @SPSearchButton (22.8s)
+  ✘   7 …er reflect the number of selected items @SelectPanelist @SPFilterValidation (1.8s)
+  -   8 …ligible count, response options and credit message @SelectPanelist @SPSearchResult
+  -   9 …ore options shows additional response count choices @SelectPanelist @SPMoreOptions
+  -  10 … enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount
 
-trace
-start-with-prompt-video
-------------------
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:137:7 › Select Panelists - filters and search › TC_SP_06: Filter validation banner and counter reflect the number of selected items @SelectPanelist @SPFilterValidation 
+
+    Error: With 0 Product items: expected message "Please select 1", got "Looking good!"
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at expectState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:141:17)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:147:5
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
+    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ─────────────────────────────────────
+    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\attachments\select-panelist-video-a25f9fae74a6ea6390a242dfea551608db032f35.webm
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────────
+    test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-56719-he-number-of-selected-items-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:137:7 › Select Panelists - filters and search › TC_SP_06: Filter validation banner and counter reflect the number of selected items @SelectPanelist @SPFilterValidation 
+  3 did not run
+  6 passed (2.9m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$ 
+-------------------
+
 TC_SP_06: Filter validation banner and counter reflect the number of selected items
 survey/select-panelist.spec.ts:137
-6.8s
+1.8s
 chromiumSelectPanelistSPFilterValidation
 serial
 Copy prompt
-Error: Filter validation message ("Please select 1" / "Looking good!" / "Please remove 1") not visible in the data summary
+Error: With 0 Product items: expected message "Please select 1", got "Looking good!"
+expect(received).toBeTruthy()
 
-   at ..\page-objects\common\select-panelist.page.ts:529
+Received: false
 
-  527 |     const message = this.getSelectPanelistElement('filterValidationMessage');
-  528 |     if (!(await message.isVisible(SMALL_TIMEOUT))) {
-> 529 |       throw new Error('Filter validation message ("Please select 1" / "Looking good!" / "Please remove 1") not visible in the data summary');
-      |             ^
-  530 |     }
-  531 |     return ((await message.getText()) ?? '').trim();
-  532 |   }
-    at SelectPanelistPage.getFilterValidationMessage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:529:13)
-    at expectState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:140:23)
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at expectState (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:141:17)
     at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:147:5
 Filter steps
 Before Hooks
-14ms
+9ms
 Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-85ms
+62ms
 Click locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-97ms
+88ms
 Wait for selector locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-25ms
+21ms
 Click locator('[data-test-id=\'ds-removeIcon\']').last()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-114ms
-Wait for selector locator('crf-data-summary').locator('text=/Please select 1|Looking good!|Please remove 1/').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-5.0s
+108ms
+Wait for selector locator('crf-data-selector-panel-v2').locator('text=/Please select 1|Looking good!|Please remove 1/').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+23ms
 After Hooks
 1.4s
 Worker Cleanup
-2ms
 
-screenshot
+-----------------
+TC_AI_03: Question count slider and number field
+survey/start-with-prompt.spec.ts:125
+4.5s
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Expected "Please enter a value between 3 and 10." for 0
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:138:19
+Filter steps
+Before Hooks
+28ms
+Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+157ms
+Wait for selector locator('[data-test-id=\'question-count-slider\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+71ms
+Query count locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:230
+65ms
+Focus locator('[data-test-id=\'question-count-slider\']').locator('[role=\'slider\'], input[type=\'range\']').first()— ../page-objects/survey/start-with-prompt.page.ts:231
+198ms
+Press "ArrowRight"— ../page-objects/survey/start-with-prompt.page.ts:232
+51ms
+Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+65ms
+Fill "7" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+129ms
+Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
+106ms
+Wait for selector locator('[role=\'alert\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+1.0s
+Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Fill "0" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+108ms
+Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
+102ms
+Wait for selector locator('[role=\'alert\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+42ms
+Wait for selector locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Fill "5" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+127ms
+Press "Tab" locator('[data-test-id=\'question-count-slider\'] input:not([type=\'range\'])').visible().first()— ../node_modules/@gfk/gta/core/web/webElement.ts:681
+93ms
+After Hooks
+4.5s
