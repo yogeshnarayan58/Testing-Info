@@ -1,33 +1,30 @@
-The FMS toggle helper is added and called from login(). I ran nothing, so none of it is verified.
+I added TC_BS_10c, "Saved folder and survey are listed in My assets", and registered it last in both start-with-prompt.spec.ts and start-from-scratch.spec.ts. I ran nothing, so none of it is verified.
 
 Files changed
 
-New feature-toggle.locator.json
-New feature-toggle.page.ts
-login.page.ts
-Locators: surveyModernizationFmsRow and surveyModernizationFmsSwitch use exactly the selectors you gave, with no generated ids or -input-checkbox. I added a third entry, surveyModernizationFmsSwitchLabel (tr:has(td:text-is("Enable Survey Modernization in FMS")) label.switch), for the click fallback you described. The locators use selector type playwrights.
+New my-assets.locator.json. No existing locator file fit, so I created one.
+New my-assets.page.ts
+build-survey-common-test-cases.ts
+start-with-prompt.spec.ts
+start-from-scratch.spec.ts
+Locators: surveyAssetsGrid, surveyGridTitle, myAssetsTab and folderBreadcrumb use only the data-test-id values you gave. I added one extra entry, surveyGridTitleByText ([data-test-id='survey-grid-title']:text-is("${text}") >> nth=0), so a title lookup takes the first exact match. I did not use the status tag or any -input-checkbox id.
+MyAssetsPage:
 
-FeatureTogglePage:
+openMyAssetsPage(): goes to my-assets/survey/my-assets with buildUrl and navigateToUrl, then waits up to NAVIGATION_TIMEOUT for the grid.
+isAssetVisibleByTitle(title): checks the first exact-title row, waiting up to ELEMENT_WAIT_TIMEOUT.
+openFolderByTitle(title): clicks the first matching row, then polls the breadcrumb until its text contains the title. It throws with the breadcrumb text if it never does.
+Constants: only existing ones are used.
+TC_BS_10c: it opens My assets, asserts folders.newFolder is listed, and opens it. It then asserts the survey is listed under surveyNames.saveDraftDialog, the name TC_BS_10a uses.
 
-Toggle name: SURVEY_MODERNIZATION_FMS_TOGGLE_NAME holds "Enable Survey Modernization in FMS" once and is used in every log and error message.
-openFeatureTogglePage(): goes to report/featuretoggle with buildUrl and navigateToUrl, then waits up to NAVIGATION_TIMEOUT for the row.
-isSurveyModernizationFmsEnabled(): returns true when the switch's aria-checked is "true".
-enableSurveyModernizationInFms():
-If the toggle is already on, it logs FMS toggle "<name>" is already ON, nothing to do and returns.
-Otherwise it clicks the switch with a SMALL_TIMEOUT timeout, and clicks the parent label if that click fails.
-It then polls aria-checked up to MEDIUM_TIMEOUT, reloads, and checks it is still on.
-On success it logs FMS toggle "<name>" was OFF, turned ON successfully. It never turns the toggle off.
-Base URL: both public methods take an optional baseURL, defaulting to envConfig.BASE_URL, and login() passes its own baseURL.
-Constants: only existing constants are used.
-login(): the call sits between the Terms step with its settle delay and the navigation to survey, inside a try/catch. On failure it logs console.warn('FMS toggle "<name>" step failed, continuing login', error) and carries on. The navigation to survey and the storage/auth.json save are unchanged.
+In the Scratch flow, TC_BS_02 renames the survey to "Automation Test Survey" after TC_BS_10a. TC_BS_10 then saves again, so the saved survey probably carries that title. I couldn't confirm this from the code. The test therefore passes if either surveyNames.saveDraftDialog or surveyQuestions.surveyTitle is listed in the folder. If you want a strict check on the TC_BS_10a name only, the || editedName branch is the one to remove.
 
-If the toggle page lives on a different path or host than report/featuretoggle under the base URL, the row won't be found and login will just log the warning and continue.
---------------------------------------------------------------------------
+Prompt flow position: the test runs right after the publish test, so it assumes the published survey still shows in the same folder under the same name.
+-------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -40,74 +37,95 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 11 tests using 1 worker
+Running 41 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-  ✓   1 … @SPModalCancel (40.9s)
-      1 …Panelist @SPModalCancel
-  ✓   2 …nelist @SPSetup (33.9s)
-  ✘   4 …elist @SPSummary (1.3m)
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …display the Start with a prompt option on the survey home page @StartWithPrompt (23.7s)
 Auth state loaded from storage/auth.json
-  ✓   3 …anelist @SPSetup (5.6s)
-      4 …lectPanelist @SPSummary
-setDimensionSelection failed for 'retailerNoDataPrompt': locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()
+  ✓   2 …n: Should select the dataset type and dataset @StartWithPrompt @DatasetSelection (2.7s)
+  ✓   3 …set dimension selections and search for panelists @StartWithPrompt @DataSummary (52.2s)
+  ✓   4 …› Response Count: Should select a response count @StartWithPrompt @ResponseCount (3.3s)
+  ✓   5 …, Generate Survey disabled until prompt entered @StartWithPrompt @GenerateSurvey (2.0s)
+  ✓   6 …fill the prompt and reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓   7 …uestion types on the Customize Questions screen @StartWithPrompt @GenerateSurvey (4.1s)
+  ✓   8 …C_AI_03: Question count slider and number field @StartWithPrompt @GenerateSurvey (5.4s)
+  ✓   9 …_AI_05: Generate questions creates AI questions @StartWithPrompt @GenerateSurvey (3.9s)
+  ✓  10 …_AI_07: Edit the survey title after AI generation @StartWithPrompt @BuildSurvey (552ms)
+  ✓  11 …ase with AI clears the loading state and prompt @StartWithPrompt @GenerateSurvey (7.9s)
+  ✓  12 …ate more questions increases the question count @StartWithPrompt @GenerateSurvey (2.2s)
+  ✓  13 …e questions to add increases the question count @StartWithPrompt @GenerateSurvey (7.7s)
+  ✓  14 …e are disabled at 10 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.4s)
+  ✓  15 …uired star appears when the Required toggle is on @StartWithPrompt @BuildSurvey (19.8s)
+  ✓  16 …› TC_BS_25: Edit question text via the pencil icon @StartWithPrompt @BuildSurvey (5.9s)
+  ✓  17 …6: Discard / Save changes on an existing question @StartWithPrompt @DiscardSave (27.5s)
+  ✓  18 …TC_BS_28: Empty question text blocks Save changes @StartWithPrompt @DiscardSave (16.3s)
+  ✓  19 …ete and duplicate a question via hover row actions @StartWithPrompt @BuildSurvey (2.7s)
+  ✓  20 …rompt › TC_BS_15: Drag and drop reorders questions @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  21 …g Add Question leaves the question count unchanged @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  22 …a Add Question cancel, then add and save one @StartWithPrompt @CancelAddQuestion (5.2s)
+  ✓  23 …ast question then re-add the same type as last @StartWithPrompt @DeleteDuplicate (7.1s)
+  ✓  24 …eview Mode controls, select, delete selected, exit @StartWithPrompt @BuildSurvey (5.4s)
+  ✓  25 …ate survey is disabled with fewer than 3 questions @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  26 … Mode select all, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey (1.2s)
+  ✓  27 …Survey state shows Add Question options and 0 rows @StartWithPrompt @BuildSurvey (93ms)
+  ✓  28 … prompt › TC_BS_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey (792ms)
+  ✓  29 …prompt › TC_BS_03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey (3.3s)
+  ✓  30 …t with a prompt › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  31 …art with a prompt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  32 …h a prompt › TC_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  33 …h a prompt › TC_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  34 …t Panelists retains data and back to Build Survey @StartWithPrompt @BuildSurvey (24.6s)
+  ✓  35 …t › TC_BS_04: Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary (32.8s)
+  ✓  36 …draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog (14.7s)
+  ✓  37 …tart with a prompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft (13.7s)
+  ✓  38 …s Optiq feedback when there are recommendations @StartWithPrompt @ValidateSurvey (4.8s)
+  ✓  39 …alog, Edit survey returns to Build Survey @StartWithPrompt @ReviewSurveyDetails (12.3s)
+  ✓  40 …th a prompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey (40.0s)
+  ✘  41 …_10c: Saved folder and survey are listed in My assets @StartWithPrompt @MyAssets (1.1m)
 
-  -   5 …electPanelist @SPFooter
-  -   6 …anelist @SPSearchButton
-  -   7 …ist @SPFilterValidation
-  -   8 …anelist @SPSearchResult
-  -   9 …Panelist @SPMoreOptions
-  -  10 …nelist @SPResponseCount
-  -  11 …t @SPTooFewParticipants
 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:493:7 › Start with a prompt › TC_BS_10c: Saved folder and survey are listed in My assets @StartWithPrompt @MyAssets 
 
-  1) [chromium] › tests\survey\select-panelist.spec.ts:91:7 › Select Panelists - filters and search › TC_SP_05: All 5 filters are shown correctlyin the summary sentence @SelectPanelist @SPSummary 
+    Error: Failed to open the My assets page: My assets surveys grid not visible after 60000ms
 
-    TimeoutError: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()
+       at ..\page-objects\common\my-assets.page.ts:24
 
+      22 |       await this.waitUntilVisible(grid, 'My assets surveys grid', NAVIGATION_TIMEOUT);
+      23 |     } catch (error) {
+    > 24 |       throw new Error(`Failed to open the My assets page: ${error instanceof Error ?error.message : error}`);
+         |             ^
+      25 |     }
+      26 |   }
+      27 |
+        at MyAssetsPage.openMyAssetsPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\my-assets.page.ts:24:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:503:7
 
-       at ..\page-objects\common\select-panelist.page.ts:279
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────
 
-      277 |         );
-      278 |         await checkbox.waitFor();
-    > 279 |         await checkbox.click();
-          |                        ^
-      280 |         await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      281 |       }
-      282 |
-        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:279:24)
-        at SelectPanelistPage.setDimensionSelections (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:29:7)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:96:5
+    Error Context: test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\error-context.md
 
-    attachment #1: screenshot (image/png) 
-    test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\test-failed-1.png
-    ────────────────────────────
+    attachment #3: start-with-prompt-video (video/webm) ────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\attachments\start-with-prompt-video-a6bd73de20ed5705f5de283ea0d5c4edc7d89206.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\error-context.md
 
-    attachment #3: select-panelist-video (video/webm) 
-    test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\attachments\select-panelist-video-69642b47a4754d49f45ae26c3b4c0b472089ff43.webm
-    ────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\error-context.md
-
-    attachment #5: trace (application/zip) 
-    test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\trace.zip
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────
+    test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-select-panelist-Sel-ff366-tly-in-the-summary-sentence-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-fc002-vey-are-listed-in-My-assets-chromium\trace.zip
 
-    ────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────────────
 
+  Slow test file: [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts(5.4m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
   1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:91:7 › Select Panelists - filters and search › TC_SP_05: All 5 filters are shown correctly in the summary sentence @SelectPanelist @SPSummary 
-  7 did not run
-  3 passed (4.6m)
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:493:7 › Startwith a prompt › TC_BS_10c: Saved folder and survey are listed in My assets @StartWithPrompt @MyAssets 
+  40 passed (9.0m)
 
 To open last HTML report run:
 
@@ -116,3 +134,36 @@ To open last HTML report run:
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ 
+---------------
+TC_BS_10c: Saved folder and survey are listed in My assets
+survey/common-test-cases/build-survey-common-test-cases.ts:493
+1.1m
+chromiumStartWithPromptMyAssets
+serial
+Copy prompt
+Error: Failed to open the My assets page: My assets surveys grid not visible after 60000ms
+
+   at ..\page-objects\common\my-assets.page.ts:24
+
+  22 |       await this.waitUntilVisible(grid, 'My assets surveys grid', NAVIGATION_TIMEOUT);
+  23 |     } catch (error) {
+> 24 |       throw new Error(`Failed to open the My assets page: ${error instanceof Error ? error.message : error}`);
+     |             ^
+  25 |     }
+  26 |   }
+  27 |
+    at MyAssetsPage.openMyAssetsPage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\my-assets.page.ts:24:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:503:7
+Filter steps
+Before Hooks
+38ms
+Navigate si.connect.nielseniq.io/reportexperience-dev/my-assets/survey/my-assets— ../node_modules/@gfk/gta/core/web/webActions.ts:627
+2.5s
+Wait for selector locator('[data-test-id=\'survey-assets-grid\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+1.0m
+After Hooks
+2.7s
+Worker Cleanup
+2ms
+
+screenshot
