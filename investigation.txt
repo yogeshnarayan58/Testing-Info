@@ -1,187 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local','.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 35 tests using 1 worker
-
 ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-  ✘   1 … the survey home page @StartFromScratch @LandStartFromScratch (1.1m)
-Auth state loaded from storage/auth.json
-  -   2 …firm the Choose a dataset screen @StartFromScratch @DatasetSelection
-  -   3 …Panelists after all 5 filters are set @StartFromScratch @DataSummary
-  -   4 …er after selecting a response count @StartFromScratch @ResponseCount
-  -   5 …rvey page after proceeding @StartFromScratch @ProceedToSurveyBuilder
-  -   6 …led Survey" and the Add question panel @StartFromScratch @EmptyState
-  -   7 …mpty title requires a survey name @StartFromScratch @SaveDraftDialog
-  -   8 …tch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle
-  -   9 …Add a Single Choice question @StartFromScratch @SingleChoiceQuestion
-  -  10 …a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion
-  -  11 …› TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion
-  -  12 …atch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion
-  -  13 …3e: Add a Point Scale question @StartFromScratch @PointScaleQuestion
-  -  14 …3f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion
-  -  15 …pears when the Required toggle is on @StartFromScratch @RequiredStar
-  -  16 …it question text via the pencil icon @StartFromScratch @EditQuestion
-  -  17 … Save changes on an existing question @StartFromScratch @DiscardSave
-  -  18 …pty question text blocks Save changes @StartFromScratch @DiscardSave
-  -  19 …es the question count unchanged @StartFromScratch @CancelAddQuestion
-  -  20 …_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
-  -  21 … a question via hover row actions @StartFromScratch @DeleteDuplicate
-  -  22 …: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
-  -  23 …s data and back to Build Survey @StartFromScratch @StepperNavigation
-  -  24 …ion and Duplicate with limit message @StartFromScratch @MaxQuestions
-  -  25 …ontrols, select, delete selected, exit @StartFromScratch @ReviewMode
-  -  26 …cratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
-  -  27 …ack when there are recommendations @StartFromScratch @ValidateSurvey
-  -  28 …n the Start From Scratch builder @StartFromScratch @StartFromScratch
-  -  29 …n cancel, then add and save one @StartFromScratch @CancelAddQuestion
-  -  30 …then re-add the same type as last @StartFromScratch @DeleteDuplicate
-  -  31 …Cancel leaves the survey unpublished @StartFromScratch @PublishPopup
-  -  32 …› TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  33 …ete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  34 …bled with fewer than 3 questions @StartFromScratch @ValidateDisabled
-  -  35 … to the previous step from the builder @StartFromScratch @BackButton
-
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:41:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option onthe survey home page @StartFromScratch @LandStartFromScratch 
-
-    Error: "Start from scratch" option not visible after navigating to survey
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:51:17
-
-    attachment #1: screenshot (image/png) ───────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\attachments\start-from-scratch-video-0abb21523856b76f36fc31c1c14bee419b10b19c.webm
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:41:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @StartFromScratch @LandStartFromScratch 
-  2 skipped
-  32 did not run
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 40 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local','.env'] }
-isLambdaTest = false
-  ✓   1 …ith a prompt option on the survey home page @StartWithPrompt (17.3s)
-Auth state loaded from storage/auth.json
-  ✓   2 …e dataset type and dataset @StartWithPrompt @DatasetSelection (2.5s)
-  ✓   3 …tions and search for panelists @StartWithPrompt @DataSummary (29.2s)
-  ✓   4 …hould select a response count @StartWithPrompt @ResponseCount (3.9s)
-  ✓   5 …rvey until prompt is entered @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   6 … reach the Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   7 …e Customize Questions screen @StartWithPrompt @GenerateSurvey (4.0s)
-  ✓   8 …ount slider and number field @StartWithPrompt @GenerateSurvey (5.4s)
-  ✓   9 …estions creates AI questions @StartWithPrompt @GenerateSurvey (1.5s)
-  ✓  10 …urvey title after AI generation @StartWithPrompt @BuildSurvey (1.0s)
-  ✓  11 …the loading state and prompt @StartWithPrompt @GenerateSurvey (6.9s)
-  ✓  12 …increases the question count @StartWithPrompt @GenerateSurvey (1.5s)
-  ✓  13 …increases the question count @StartWithPrompt @GenerateSurvey (6.7s)
-  ✓  14 …0 (max) questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
-  ✓  15 …when the Required toggle is on @StartWithPrompt @BuildSurvey (18.1s)
-  ✓  16 …estion text via the pencil icon @StartWithPrompt @BuildSurvey (5.7s)
-  ✓  17 …hanges on an existing question @StartWithPrompt @DiscardSave (26.8s)
-  ✓  18 …stion text blocks Save changes @StartWithPrompt @DiscardSave (16.2s)
-  ✓  19 … question via hover row actions @StartWithPrompt @BuildSurvey (2.1s)
-  ✓  20 …rag and drop reorders questions @StartWithPrompt @BuildSurvey (2.0s)
-  ✓  21 …es the question count unchanged @StartWithPrompt @BuildSurvey (3.3s)
-  ✓  22 …el, then add and save one @StartWithPrompt @CancelAddQuestion (5.3s)
-  ✓  23 …e-add the same type as last @StartWithPrompt @DeleteDuplicate (6.4s)
-  ✓  24 …, select, delete selected, exit @StartWithPrompt @BuildSurvey (4.9s)
-  ✓  25 …led with fewer than 3 questions @StartWithPrompt @BuildSurvey (3.8s)
-  ✓  26 …elete all, stay on Build Survey @StartWithPrompt @BuildSurvey (1.1s)
-  ✓  27 …Add Question options and 0 rows @StartWithPrompt @BuildSurvey (78ms)
-  ✓  28 …: Add a Single Choice question @StartWithPrompt @BuildSurvey (768ms)
-  ✓  29 … Add a Multiple Choice question @StartWithPrompt @BuildSurvey (3.2s)
-  ✓  30 …C_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey (2.7s)
-  ✓  31 … TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  32 …03e: Add a Point Scale question @StartWithPrompt @BuildSurvey (3.6s)
-  ✓  33 …03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey (3.5s)
-  ✓  34 … data and back to Build Survey @StartWithPrompt @BuildSurvey (24.7s)
-  ✓  35 …ns boundary - min 2, max 15 @StartWithPrompt @OptionBoundary (32.1s)
-  ✓  36 …itle requires a survey name @StartWithPrompt @SaveDraftDialog (6.2s)
-  ✓  37 … › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft (6.7s)
-  ✓  38 …en there are recommendations @StartWithPrompt @ValidateSurvey (1.4s)
-  ✓  39 …eturns to Build Survey @StartWithPrompt @ReviewSurveyDetails (12.3s)
-  ✓  40 …_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey (41.4s)
-
-  40 passed (6.1m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chrom
-ium
-◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -195,91 +16,47 @@ Global setup completed. Auth state saved.
 
 Running 35 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 isLambdaTest = false
-  ✘   1 … the survey home page @StartFromScratch @LandStartFromScratch (1.2m)
+  ✓   1 …the survey home page @StartFromScratch @LandStartFromScratch (18.9s)
 Auth state loaded from storage/auth.json
-  -   2 …firm the Choose a dataset screen @StartFromScratch @DatasetSelection
-  -   3 …Panelists after all 5 filters are set @StartFromScratch @DataSummary
-  -   4 …er after selecting a response count @StartFromScratch @ResponseCount
-  -   5 …rvey page after proceeding @StartFromScratch @ProceedToSurveyBuilder
-  -   6 …led Survey" and the Add question panel @StartFromScratch @EmptyState
-  -   7 …mpty title requires a survey name @StartFromScratch @SaveDraftDialog
-  -   8 …tch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle
-  -   9 …Add a Single Choice question @StartFromScratch @SingleChoiceQuestion
-  -  10 …a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion
-  -  11 …› TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion
-  -  12 …atch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion
-  -  13 …3e: Add a Point Scale question @StartFromScratch @PointScaleQuestion
-  -  14 …3f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion
-  -  15 …pears when the Required toggle is on @StartFromScratch @RequiredStar
-  -  16 …it question text via the pencil icon @StartFromScratch @EditQuestion
-  -  17 … Save changes on an existing question @StartFromScratch @DiscardSave
-  -  18 …pty question text blocks Save changes @StartFromScratch @DiscardSave
-  -  19 …es the question count unchanged @StartFromScratch @CancelAddQuestion
-  -  20 …_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
-  -  21 … a question via hover row actions @StartFromScratch @DeleteDuplicate
-  -  22 …: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
-  -  23 …s data and back to Build Survey @StartFromScratch @StepperNavigation
-  -  24 …ion and Duplicate with limit message @StartFromScratch @MaxQuestions
-  -  25 …ontrols, select, delete selected, exit @StartFromScratch @ReviewMode
-  -  26 …cratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
-  -  27 …ack when there are recommendations @StartFromScratch @ValidateSurvey
-  -  28 …n the Start From Scratch builder @StartFromScratch @StartFromScratch
-  -  29 …n cancel, then add and save one @StartFromScratch @CancelAddQuestion
-  -  30 …then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  ✓   2 …e Choose a dataset screen @StartFromScratch @DatasetSelection (3.9s)
+  ✓   3 …s after all 5 filters are set @StartFromScratch @DataSummary (40.7s)
+  ✓   4 …r selecting a response count @StartFromScratch @ResponseCount (4.6s)
+  ✓   5 …e after proceeding @StartFromScratch @ProceedToSurveyBuilder (621ms)
+  ✓   6 …vey" and the Add question panel @StartFromScratch @EmptyState (99ms)
+  ✓   7 …tle requires a survey name @StartFromScratch @SaveDraftDialog (7.3s)
+  ✓   8 …_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (841ms)
+  ✓   9 …ingle Choice question @StartFromScratch @SingleChoiceQuestion (1.3s)
+  ✓  10 …ple Choice question @StartFromScratch @MultipleChoiceQuestion (3.7s)
+  ✓  11 …_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.8s)
+  ✓  12 …TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (3.0s)
+  ✓  13 … a Point Scale question @StartFromScratch @PointScaleQuestion (4.0s)
+  ✓  14 … a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.3s)
+  ✓  15 …en the Required toggle is on @StartFromScratch @RequiredStar (18.8s)
+  ✓  16 …tion text via the pencil icon @StartFromScratch @EditQuestion (5.5s)
+  ✓  17 …anges on an existing question @StartFromScratch @DiscardSave (26.2s)
+  ✓  18 …tion text blocks Save changes @StartFromScratch @DiscardSave (11.0s)
+  ✓  19 …question count unchanged @StartFromScratch @CancelAddQuestion (2.5s)
+  ✓  20 … Drag and drop reorders questions @StartFromScratch @DragDrop (1.5s)
+  ✓  21 …tion via hover row actions @StartFromScratch @DeleteDuplicate (1.6s)
+  ✓  22 …s boundary - min 2, max 15 @StartFromScratch @OptionBoundary (32.4s)
+  ✓  23 …nd back to Build Survey @StartFromScratch @StepperNavigation (18.5s)
+  ✓  24 …Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
+  ✓  25 …, select, delete selected, exit @StartFromScratch @ReviewMode (5.0s)
+  ✓  26 …› TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (2.2s)
+  ✓  27 …n there are recommendations @StartFromScratch @ValidateSurvey (5.6s)
+  ✓  28 …art From Scratch builder @StartFromScratch @StartFromScratch (262ms)
+  ✓  29 …l, then add and save one @StartFromScratch @CancelAddQuestion (5.6s)
+  ✓  30 …-add the same type as last @StartFromScratch @DeleteDuplicate (7.0s)
   -  31 …Cancel leaves the survey unpublished @StartFromScratch @PublishPopup
   -  32 …› TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  33 …ete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  34 …bled with fewer than 3 questions @StartFromScratch @ValidateDisabled
-  -  35 … to the previous step from the builder @StartFromScratch @BackButton
+  ✓  33 …, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.4s)
+  ✓  34 …h fewer than 3 questions @StartFromScratch @ValidateDisabled (182ms)
+  ✓  35 …previous step from the builder @StartFromScratch @BackButton (570ms)
 
-
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:41:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option onthe survey home page @StartFromScratch @LandStartFromScratch 
-
-    Error: "Start from scratch" option not visible after navigating to survey
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:51:17
-
-    attachment #1: screenshot (image/png) ───────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #3: start-from-scratch-video (video/webm) ────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\attachments\start-from-scratch-video-41ad67c70995d74e316273574a59eb153a283253.webm
-    ─────────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────────
-    test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-from-scratch--7c5eb-ion-on-the-survey-home-page-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:41:7 › Start from scratch › Start from Scratch: Should display the Start from scratch option on the survey home page @StartFromScratch @LandStartFromScratch 
   2 skipped
-  32 did not run
+  33 passed (5.0m)
 
 To open last HTML report run:
 
@@ -287,6 +64,4 @@ To open last HTML report run:
 
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+$ 
