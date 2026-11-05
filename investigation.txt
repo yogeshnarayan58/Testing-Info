@@ -1,8 +1,13 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ override existing { override: true }
+$ npx cross-env CI=true npm test -- --project=chromium
+
+> e2e@1.0.0 test
+> playwright test --project=chromium
+
+◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Custom reporter - Custom options received
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -14,162 +19,463 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 34 tests using 1 worker
+Running 85 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Custom reporter - Starting the run with 85 tests
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 … @StartFromScratch @LandStartFromScratch (18.6s)
+  ✓   1 …o dataset @SelectPanelist @SPModalCancel (23.0s)
 Auth state loaded from storage/auth.json
-  ✓   2 …creen @StartFromScratch @DatasetSelection (3.4s)
-  ✓   3 …s are set @StartFromScratch @DataSummary (41.1s)
-  ✓   4 …se count @StartFromScratch @ResponseCount (5.6s)
-  ✓   5 …StartFromScratch @ProceedToSurveyBuilder (554ms)
-  ✓   6 …tion panel @StartFromScratch @EmptyState (157ms)
-  ✓   7 … name @StartFromScratch @SaveDraftDialog (10.0s)
-  ✓   8 …title @StartFromScratch @EditSurveyTitle (316ms)
-  ✓   9 …n @StartFromScratch @SingleChoiceQuestion (1.4s)
-  ✓  10 …@StartFromScratch @MultipleChoiceQuestion (3.7s)
-  ✓  11 …uestion @StartFromScratch @RatingQuestion (3.0s)
-  ✓  12 …S question @StartFromScratch @NPSQuestion (2.7s)
-  ✓  13 …ion @StartFromScratch @PointScaleQuestion (4.0s)
-  ✓  14 …ion @StartFromScratch @MultiScaleQuestion (4.1s)
-  ✓  15 …le is on @StartFromScratch @RequiredStar (18.9s)
-  ✓  16 …ncil icon @StartFromScratch @EditQuestion (5.6s)
-  ✓  17 … question @StartFromScratch @DiscardSave (26.3s)
-  ✓  18 …e changes @StartFromScratch @DiscardSave (11.0s)
-  ✓  19 …nged @StartFromScratch @CancelAddQuestion (2.6s)
-  ✓  20 …ers questions @StartFromScratch @DragDrop (1.6s)
-  ✓  21 …ctions @StartFromScratch @DeleteDuplicate (1.7s)
-  ✓  22 …max 15 @StartFromScratch @OptionBoundary (31.1s)
-  ✓  23 …vey @StartFromScratch @StepperNavigation (18.3s)
-  ✓  24 … message @StartFromScratch @MaxQuestions (19.4s)
-  ✓  25 …ected, exit @StartFromScratch @ReviewMode (5.7s)
-  ✓  26 …vey as draft @StartFromScratch @SaveDraft (2.2s)
-  ✓  27 …dations @StartFromScratch @ValidateSurvey (6.3s)
-  ✓  28 …lder @StartFromScratch @StartFromScratch (185ms)
-  ✓  29 … one @StartFromScratch @CancelAddQuestion (5.9s)
-  ✓  30 …s last @StartFromScratch @DeleteDuplicate (7.1s)
-  ✓  31 …ey @StartFromScratch @ReviewSurveyDetails (4.2s)
-  ✓  32 …ey @StartFromScratch @ReviewModeDeleteAll (1.2s)
-  ✓  33 …tions @StartFromScratch @ValidateDisabled (5.4s)
-  ✓  34 …he builder @StartFromScratch @BackButton (613ms)
-
-  34 passed (5.2m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+      2 … and start from scratch @SelectPanelist @SPSetup
+  ✓   2 …rt from scratch @SelectPanelist @SPSetup (18.6s)
+Custom reporter: - Test result created: 12033413
+      3 … reach Select Panelists @SelectPanelist @SPSetup
+  ✓   3 …Select Panelists @SelectPanelist @SPSetup (5.1s)
+      4 … the summary sentence @SelectPanelist @SPSummary
+  ✓   4 …mary sentence @SelectPanelist @SPSummary (56.2s)
+  ✓   5 …efreshed" date @SelectPanelist @SPFooter (159ms)
+      6 …ctly 1 selection @SelectPanelist @SPSearchButton
+Custom reporter: - Test result created: 12033417
+  ✓   6 …election @SelectPanelist @SPSearchButton (22.2s)
+      7 …lected items @SelectPanelist @SPFilterValidation
+  ✓   7 …tems @SelectPanelist @SPFilterValidation (41.8s)
+      8 …d credit message @SelectPanelist @SPSearchResult
+  ✓   8 … message @SelectPanelist @SPSearchResult (19.1s)
+  ✓   9 …nt choices @SelectPanelist @SPMoreOptions (1.3s)
+     10 …ilter resets it @SelectPanelist @SPResponseCount
+Custom reporter: - Test result created: 12033421
+  ✓  10 …sets it @SelectPanelist @SPResponseCount (36.3s)
+     11 …proceeding @SelectPanelist @SPTooFewParticipants
+  ✓  11 …ng @SelectPanelist @SPTooFewParticipants (57.9s)
+     12 …ome page @StartFromScratch @LandStartFromScratch
+  ✓  12 … @StartFromScratch @LandStartFromScratch (20.4s)
+Custom reporter: - Test result created: 12033424
+     13 …taset screen @StartFromScratch @DatasetSelection
+  ✓  13 …creen @StartFromScratch @DatasetSelection (2.7s)
+     14 …5 filters are set @StartFromScratch @DataSummary
+  ✓  14 …s are set @StartFromScratch @DataSummary (24.1s)
+     15 … response count @StartFromScratch @ResponseCount
+  ✓  15 …se count @StartFromScratch @ResponseCount (4.8s)
+     16 …eeding @StartFromScratch @ProceedToSurveyBuilder
+  ✓  16 …StartFromScratch @ProceedToSurveyBuilder (554ms)
+  ✓  17 …tion panel @StartFromScratch @EmptyState (123ms)
+     18 …a survey name @StartFromScratch @SaveDraftDialog
+Custom reporter: - Test result created: 12033429
+  ✓  18 …y name @StartFromScratch @SaveDraftDialog (9.8s)
+  ✓  19 …title @StartFromScratch @EditSurveyTitle (280ms)
+     20 …question @StartFromScratch @SingleChoiceQuestion
+Custom reporter: - Test result created: 12033431
+  ✓  20 …n @StartFromScratch @SingleChoiceQuestion (1.6s)
+     21 …estion @StartFromScratch @MultipleChoiceQuestion
+  ✓  21 …@StartFromScratch @MultipleChoiceQuestion (3.7s)
+     22 …ating question @StartFromScratch @RatingQuestion
+  ✓  22 …uestion @StartFromScratch @RatingQuestion (3.0s)
+     23 …d an NPS question @StartFromScratch @NPSQuestion
+  ✓  23 …S question @StartFromScratch @NPSQuestion (2.8s)
+     24 …e question @StartFromScratch @PointScaleQuestion
+  ✓  24 …ion @StartFromScratch @PointScaleQuestion (3.8s)
+     25 …e question @StartFromScratch @MultiScaleQuestion
+  ✓  25 …ion @StartFromScratch @MultiScaleQuestion (3.9s)
+     26 …red toggle is on @StartFromScratch @RequiredStar
+  ✓  26 …le is on @StartFromScratch @RequiredStar (18.8s)
+     27 … the pencil icon @StartFromScratch @EditQuestion
+  ✓  27 …ncil icon @StartFromScratch @EditQuestion (5.5s)
+     28 …existing question @StartFromScratch @DiscardSave
+  ✓  28 … question @StartFromScratch @DiscardSave (26.2s)
+     29 …ocks Save changes @StartFromScratch @DiscardSave
+  ✓  29 …e changes @StartFromScratch @DiscardSave (11.1s)
+     30 …t unchanged @StartFromScratch @CancelAddQuestion
+  ✓  30 …nged @StartFromScratch @CancelAddQuestion (2.6s)
+     31 …p reorders questions @StartFromScratch @DragDrop
+  ✓  31 …ers questions @StartFromScratch @DragDrop (1.5s)
+     32 …r row actions @StartFromScratch @DeleteDuplicate
+  ✓  32 …ctions @StartFromScratch @DeleteDuplicate (1.6s)
+     33 … min 2, max 15 @StartFromScratch @OptionBoundary
+  ✓  33 …max 15 @StartFromScratch @OptionBoundary (31.1s)
+     34 …uild Survey @StartFromScratch @StepperNavigation
+  ✓  34 …vey @StartFromScratch @StepperNavigation (18.3s)
+     35 …th limit message @StartFromScratch @MaxQuestions
+  ✓  35 … message @StartFromScratch @MaxQuestions (18.2s)
+     36 …ete selected, exit @StartFromScratch @ReviewMode
+  ✓  36 …ected, exit @StartFromScratch @ReviewMode (5.1s)
+     37 …ave survey as draft @StartFromScratch @SaveDraft
+  ✓  37 …vey as draft @StartFromScratch @SaveDraft (3.2s)
+     38 …ecommendations @StartFromScratch @ValidateSurvey
+  ✓  38 …dations @StartFromScratch @ValidateSurvey (7.9s)
+  ✓  39 …lder @StartFromScratch @StartFromScratch (213ms)
+     40 …nd save one @StartFromScratch @CancelAddQuestion
+Custom reporter: - Test result created: 12033452
+  ✓  40 … one @StartFromScratch @CancelAddQuestion (6.0s)
+     41 … type as last @StartFromScratch @DeleteDuplicate
+  ✓  41 …s last @StartFromScratch @DeleteDuplicate (6.9s)
+     42 …ld Survey @StartFromScratch @ReviewSurveyDetails
+  ✘  42 …y @StartFromScratch @ReviewSurveyDetails (17.6s)
+  -  43 …ld Survey @StartFromScratch @ReviewModeDeleteAll
+  -  44 … 3 questions @StartFromScratch @ValidateDisabled
+  -  45 …p from the builder @StartFromScratch @BackButton
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 40 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-  ✓   1 …on the survey home page @StartWithPrompt (20.1s)
+Custom reporter: - Test result created: 12033456
+Custom reporter: - Test result created: 12033457
+Custom reporter: - Test result created: 12033458
+Custom reporter: - Test result created: 12033459
+  ✓  46 …Scratch @LandStartFromScratch (retry #1) (19.5s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ataset @StartWithPrompt @DatasetSelection (3.6s)
-  ✓   3 … panelists @StartWithPrompt @DataSummary (43.9s)
-  ✓   4 …nse count @StartWithPrompt @ResponseCount (3.4s)
-  ✓   5 … entered @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   6 …vey page @StartWithPrompt @GenerateSurvey (2.0s)
-  ✓   7 …s screen @StartWithPrompt @GenerateSurvey (3.3s)
-  ✓   8 …er field @StartWithPrompt @GenerateSurvey (5.2s)
-  ✓   9 …uestions @StartWithPrompt @GenerateSurvey (3.8s)
-  ✓  10 …generation @StartWithPrompt @BuildSurvey (499ms)
-  ✓  11 …d prompt @StartWithPrompt @GenerateSurvey (7.8s)
-  ✓  12 …on count @StartWithPrompt @GenerateSurvey (2.8s)
-  ✓  13 …on count @StartWithPrompt @GenerateSurvey (8.3s)
-  ✓  14 …tartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
-  ✓  15 …ggle is on @StartWithPrompt @BuildSurvey (18.3s)
-  ✓  16 …pencil icon @StartWithPrompt @BuildSurvey (5.8s)
-  ✓  17 …g question @StartWithPrompt @DiscardSave (26.7s)
-  ✓  18 …ve changes @StartWithPrompt @DiscardSave (16.3s)
-  ✓  19 …row actions @StartWithPrompt @BuildSurvey (2.2s)
-  ✓  20 …s questions @StartWithPrompt @BuildSurvey (2.2s)
-  ✓  21 …t unchanged @StartWithPrompt @BuildSurvey (3.7s)
-  ✓  22 …e one @StartWithPrompt @CancelAddQuestion (5.5s)
-  ✓  23 …as last @StartWithPrompt @DeleteDuplicate (6.7s)
-  ✓  24 …ected, exit @StartWithPrompt @BuildSurvey (5.2s)
-  ✓  25 …3 questions @StartWithPrompt @BuildSurvey (3.9s)
-  ✓  26 …ild Survey @StartWithPrompt @BuildSurvey (993ms)
-  ✓  27 … and 0 rows @StartWithPrompt @BuildSurvey (60ms)
-  ✓  28 …e question @StartWithPrompt @BuildSurvey (875ms)
-  ✓  29 …ce question @StartWithPrompt @BuildSurvey (3.1s)
-  ✓  30 …ng question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  31 …PS question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  32 …le question @StartWithPrompt @BuildSurvey (3.7s)
-  ✓  33 …le question @StartWithPrompt @BuildSurvey (3.7s)
-  ✓  34 …ild Survey @StartWithPrompt @BuildSurvey (24.7s)
-  ✓  35 … max 15 @StartWithPrompt @OptionBoundary (32.6s)
-  ✓  36 …ey name @StartWithPrompt @SaveDraftDialog (9.0s)
-  ✓  37 …rvey as draft @StartWithPrompt @SaveDraft (6.6s)
-  ✓  38 …ndations @StartWithPrompt @ValidateSurvey (4.4s)
-  ✓  39 …ey @StartWithPrompt @ReviewSurveyDetails (11.9s)
-  ✓  40 …h survey @StartWithPrompt @PublishSurvey (37.1s)
-
-  40 passed (6.5m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+     47 …n @StartFromScratch @DatasetSelection (retry #1)
+  ✓  47 …tFromScratch @DatasetSelection (retry #1) (3.3s)
+     48 …re set @StartFromScratch @DataSummary (retry #1)
+  ✓  48 …StartFromScratch @DataSummary (retry #1) (16.5s)
+     49 …ount @StartFromScratch @ResponseCount (retry #1)
+  ✓  49 …tartFromScratch @ResponseCount (retry #1) (4.8s)
+     50 …rtFromScratch @ProceedToSurveyBuilder (retry #1)
+  ✓  50 …ratch @ProceedToSurveyBuilder (retry #1) (487ms)
+  ✓  51 …@StartFromScratch @EmptyState (retry #1) (406ms)
+     52 …me @StartFromScratch @SaveDraftDialog (retry #1)
+Custom reporter: - Test result created: 12033464
+  ✓  52 …rtFromScratch @SaveDraftDialog (retry #1) (9.9s)
+  ✓  53 …tFromScratch @EditSurveyTitle (retry #1) (267ms)
+  ✓  54 …mScratch @SingleChoiceQuestion (retry #1) (1.1s)
+     55 …rtFromScratch @MultipleChoiceQuestion (retry #1)
+Custom reporter: - Test result created: 12033466
+Custom reporter: - Test result created: 12033467
+  ✓  55 …cratch @MultipleChoiceQuestion (retry #1) (4.3s)
+     56 …ion @StartFromScratch @RatingQuestion (retry #1)
+  ✓  56 …artFromScratch @RatingQuestion (retry #1) (2.9s)
+     57 …estion @StartFromScratch @NPSQuestion (retry #1)
+  ✓  57 …@StartFromScratch @NPSQuestion (retry #1) (2.7s)
+     58 …@StartFromScratch @PointScaleQuestion (retry #1)
+  ✓  58 …romScratch @PointScaleQuestion (retry #1) (4.2s)
+     59 …@StartFromScratch @MultiScaleQuestion (retry #1)
+  ✓  59 …romScratch @MultiScaleQuestion (retry #1) (4.0s)
+     60 …is on @StartFromScratch @RequiredStar (retry #1)
+  ✓  60 …tartFromScratch @RequiredStar (retry #1) (18.4s)
+     61 … icon @StartFromScratch @EditQuestion (retry #1)
+  ✓  61 …StartFromScratch @EditQuestion (retry #1) (5.8s)
+     62 …estion @StartFromScratch @DiscardSave (retry #1)
+  ✓  62 …StartFromScratch @DiscardSave (retry #1) (26.5s)
+     63 …hanges @StartFromScratch @DiscardSave (retry #1)
+  ✓  63 …StartFromScratch @DiscardSave (retry #1) (11.0s)
+     64 … @StartFromScratch @CancelAddQuestion (retry #1)
+  ✓  64 …FromScratch @CancelAddQuestion (retry #1) (2.5s)
+     65 …questions @StartFromScratch @DragDrop (retry #1)
+  ✓  65 …ns @StartFromScratch @DragDrop (retry #1) (1.7s)
+     66 …ns @StartFromScratch @DeleteDuplicate (retry #1)
+  ✓  66 …rtFromScratch @DeleteDuplicate (retry #1) (1.6s)
+     67 … 15 @StartFromScratch @OptionBoundary (retry #1)
+  ✓  67 …rtFromScratch @OptionBoundary (retry #1) (30.4s)
+     68 … @StartFromScratch @StepperNavigation (retry #1)
+  ✓  68 …romScratch @StepperNavigation (retry #1) (18.5s)
+     69 …ssage @StartFromScratch @MaxQuestions (retry #1)
+  ✓  69 …tartFromScratch @MaxQuestions (retry #1) (18.0s)
+     70 …d, exit @StartFromScratch @ReviewMode (retry #1)
+  ✓  70 … @StartFromScratch @ReviewMode (retry #1) (5.2s)
+     71 …as draft @StartFromScratch @SaveDraft (retry #1)
+  ✓  71 …t @StartFromScratch @SaveDraft (retry #1) (2.1s)
+     72 …ons @StartFromScratch @ValidateSurvey (retry #1)
+  ✓  72 …artFromScratch @ValidateSurvey (retry #1) (5.7s)
+  ✓  73 …FromScratch @StartFromScratch (retry #1) (201ms)
+     74 … @StartFromScratch @CancelAddQuestion (retry #1)
+Custom reporter: - Test result created: 12033486
+  ✓  74 …FromScratch @CancelAddQuestion (retry #1) (6.1s)
+     75 …st @StartFromScratch @DeleteDuplicate (retry #1)
+  ✓  75 …rtFromScratch @DeleteDuplicate (retry #1) (7.2s)
+     76 …StartFromScratch @ReviewSurveyDetails (retry #1)
+  ✓  76 …omScratch @ReviewSurveyDetails (retry #1) (3.4s)
+     77 …StartFromScratch @ReviewModeDeleteAll (retry #1)
+  ✓  77 …omScratch @ReviewModeDeleteAll (retry #1) (1.2s)
+     78 …s @StartFromScratch @ValidateDisabled (retry #1)
+  ✓  78 …tFromScratch @ValidateDisabled (retry #1) (5.2s)
+     79 …builder @StartFromScratch @BackButton (retry #1)
+  ✓  79 …@StartFromScratch @BackButton (retry #1) (592ms)
+     80 … option on the survey home page @StartWithPrompt
+  ✓  80 …on the survey home page @StartWithPrompt (19.8s)
+Custom reporter: - Test result created: 12033493
+     81 …e and dataset @StartWithPrompt @DatasetSelection
+  ✓  81 …ataset @StartWithPrompt @DatasetSelection (3.4s)
+     82 …arch for panelists @StartWithPrompt @DataSummary
+  ✓  82 … panelists @StartWithPrompt @DataSummary (16.9s)
+     83 …a response count @StartWithPrompt @ResponseCount
+  ✓  83 …nse count @StartWithPrompt @ResponseCount (3.7s)
+     84 …ompt is entered @StartWithPrompt @GenerateSurvey
+  ✓  84 … entered @StartWithPrompt @GenerateSurvey (1.9s)
+Custom reporter - Error creating test result: Error: testcaseName is required and should be 100 characters or less
+    at PostgresActions.validateTestResult (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:111:13)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:75:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\reporters\grafana-reporter.ts:54:33)
+  ✓  85 …vey page @StartWithPrompt @GenerateSurvey (1.8s)
+     86 …uestions screen @StartWithPrompt @GenerateSurvey
+  ✓  86 …s screen @StartWithPrompt @GenerateSurvey (3.0s)
+     87 …nd number field @StartWithPrompt @GenerateSurvey
+  ✓  87 …er field @StartWithPrompt @GenerateSurvey (5.5s)
+     88 …es AI questions @StartWithPrompt @GenerateSurvey
+  ✓  88 …uestions @StartWithPrompt @GenerateSurvey (1.6s)
+  ✓  89 …generation @StartWithPrompt @BuildSurvey (448ms)
+     90 …tate and prompt @StartWithPrompt @GenerateSurvey
+Custom reporter: - Test result created: 12033501
+  ✓  90 …d prompt @StartWithPrompt @GenerateSurvey (7.5s)
+  ✓  91 …on count @StartWithPrompt @GenerateSurvey (1.0s)
+     92 … question count @StartWithPrompt @GenerateSurvey
+Custom reporter: - Test result created: 12033503
+  ✓  92 …on count @StartWithPrompt @GenerateSurvey (7.1s)
+     93 …ions @StartWithPrompt @BuildSurvey @MaxQuestions
+  ✓  93 …tartWithPrompt @BuildSurvey @MaxQuestions (1.8s)
+     94 …uired toggle is on @StartWithPrompt @BuildSurvey
+  ✓  94 …ggle is on @StartWithPrompt @BuildSurvey (18.0s)
+     95 …ia the pencil icon @StartWithPrompt @BuildSurvey
+  ✓  95 …pencil icon @StartWithPrompt @BuildSurvey (5.9s)
+     96 … existing question @StartWithPrompt @DiscardSave
+  ✓  96 …g question @StartWithPrompt @DiscardSave (26.8s)
+     97 …locks Save changes @StartWithPrompt @DiscardSave
+  ✓  97 …ve changes @StartWithPrompt @DiscardSave (16.2s)
+     98 … hover row actions @StartWithPrompt @BuildSurvey
+  ✓  98 …row actions @StartWithPrompt @BuildSurvey (1.7s)
+     99 …reorders questions @StartWithPrompt @BuildSurvey
+  ✓  99 …s questions @StartWithPrompt @BuildSurvey (1.8s)
+     100 …n count unchanged @StartWithPrompt @BuildSurvey
+  ✓  100 … unchanged @StartWithPrompt @BuildSurvey (3.1s)
+     101 …nd save one @StartWithPrompt @CancelAddQuestion
+  ✓  101 … one @StartWithPrompt @CancelAddQuestion (5.2s)
+     102 … type as last @StartWithPrompt @DeleteDuplicate
+  ✓  102 …s last @StartWithPrompt @DeleteDuplicate (6.5s)
+     103 …te selected, exit @StartWithPrompt @BuildSurvey
+  ✓  103 …cted, exit @StartWithPrompt @BuildSurvey (4.8s)
+     104 … than 3 questions @StartWithPrompt @BuildSurvey
+  ✓  104 … questions @StartWithPrompt @BuildSurvey (3.6s)
+     105 …y on Build Survey @StartWithPrompt @BuildSurvey
+  ✓  105 …ild Survey @StartWithPrompt @BuildSurvey (1.0s)
+  ✓  106 …and 0 rows @StartWithPrompt @BuildSurvey (82ms)
+     107 …e Choice question @StartWithPrompt @BuildSurvey
+  ✓  107 … question @StartWithPrompt @BuildSurvey (858ms)
+     108 …e Choice question @StartWithPrompt @BuildSurvey
+Custom reporter: - Test result created: 12033531
+  ✓  108 …e question @StartWithPrompt @BuildSurvey (3.3s)
+     109 …a Rating question @StartWithPrompt @BuildSurvey
+  ✓  109 …g question @StartWithPrompt @BuildSurvey (2.6s)
+     110 …d an NPS question @StartWithPrompt @BuildSurvey
+  ✓  110 …S question @StartWithPrompt @BuildSurvey (2.6s)
+     111 …nt Scale question @StartWithPrompt @BuildSurvey
+  ✓  111 …e question @StartWithPrompt @BuildSurvey (3.5s)
+     112 …ti Scale question @StartWithPrompt @BuildSurvey
+  ✓  112 …e question @StartWithPrompt @BuildSurvey (3.4s)
+     113 …k to Build Survey @StartWithPrompt @BuildSurvey
+  ✓  113 …ld Survey @StartWithPrompt @BuildSurvey (24.6s)
+     114 … min 2, max 15 @StartWithPrompt @OptionBoundary
+  ✓  114 …max 15 @StartWithPrompt @OptionBoundary (32.5s)
+     115 …a survey name @StartWithPrompt @SaveDraftDialog
+  ✓  115 … name @StartWithPrompt @SaveDraftDialog (14.3s)
+     116 …ave survey as draft @StartWithPrompt @SaveDraft
+  ✓  116 …vey as draft @StartWithPrompt @SaveDraft (6.9s)
+     117 …ecommendations @StartWithPrompt @ValidateSurvey
+  ✓  117 …dations @StartWithPrompt @ValidateSurvey (1.7s)
+     118 …ld Survey @StartWithPrompt @ReviewSurveyDetails
+  ✓  118 …y @StartWithPrompt @ReviewSurveyDetails (13.1s)
+     119 … Publish survey @StartWithPrompt @PublishSurvey
+  ✘  119 … survey @StartWithPrompt @PublishSurvey (50.0s)
+Custom reporter: - Test result created: 12033544
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 11 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-  ✓   1 …o dataset @SelectPanelist @SPModalCancel (28.4s)
+  ✓  120 …y home page @StartWithPrompt (retry #1) (24.7s)
 Auth state loaded from storage/auth.json
-  ✓   2 …rt from scratch @SelectPanelist @SPSetup (19.6s)
-Auth state loaded from storage/auth.json
-  ✓   3 …Select Panelists @SelectPanelist @SPSetup (5.3s)
-  ✓   4 …mary sentence @SelectPanelist @SPSummary (56.1s)
-  ✓   5 …efreshed" date @SelectPanelist @SPFooter (150ms)
-  ✓   6 …election @SelectPanelist @SPSearchButton (22.3s)
-  ✓   7 …tems @SelectPanelist @SPFilterValidation (41.6s)
-  ✓   8 … message @SelectPanelist @SPSearchResult (19.4s)
-  ✓   9 …nt choices @SelectPanelist @SPMoreOptions (1.1s)
-  ✓  10 …sets it @SelectPanelist @SPResponseCount (36.2s)
-  ✓  11 …ng @SelectPanelist @SPTooFewParticipants (58.8s)
+     121 …t @StartWithPrompt @DatasetSelection (retry #1)
+  ✓  121 …tWithPrompt @DatasetSelection (retry #1) (5.1s)
+     122 …elists @StartWithPrompt @DataSummary (retry #1)
+  ✓  122 …StartWithPrompt @DataSummary (retry #1) (17.8s)
+     123 …ount @StartWithPrompt @ResponseCount (retry #1)
+  ✓  123 …tartWithPrompt @ResponseCount (retry #1) (3.7s)
+     124 …red @StartWithPrompt @GenerateSurvey (retry #1)
+  ✓  124 …artWithPrompt @GenerateSurvey (retry #1) (2.2s)
+Custom reporter - Error creating test result: Error: testcaseName is required and should be 100 characters or less
+    at PostgresActions.validateTestResult (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:111:13)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:75:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\reporters\grafana-reporter.ts:54:33)
+  ✓  125 …artWithPrompt @GenerateSurvey (retry #1) (3.2s)
+     126 …een @StartWithPrompt @GenerateSurvey (retry #1)
+  ✓  126 …artWithPrompt @GenerateSurvey (retry #1) (6.6s)
+     127 …eld @StartWithPrompt @GenerateSurvey (retry #1)
+  ✓  127 …artWithPrompt @GenerateSurvey (retry #1) (6.6s)
+     128 …ons @StartWithPrompt @GenerateSurvey (retry #1)
+  ✓  128 …artWithPrompt @GenerateSurvey (retry #1) (2.6s)
+     129 …ration @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  129 …StartWithPrompt @BuildSurvey (retry #1) (861ms)
+     130 …mpt @StartWithPrompt @GenerateSurvey (retry #1)
+  ✓  130 …artWithPrompt @GenerateSurvey (retry #1) (8.8s)
+  ✓  131 …artWithPrompt @GenerateSurvey (retry #1) (1.1s)
+     132 …unt @StartWithPrompt @GenerateSurvey (retry #1)
+Custom reporter: - Test result created: 12033554
+  ✓  132 …artWithPrompt @GenerateSurvey (retry #1) (8.6s)
+     133 …ithPrompt @BuildSurvey @MaxQuestions (retry #1)
+  ✓  133 …pt @BuildSurvey @MaxQuestions (retry #1) (2.8s)
+     134 … is on @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  134 …StartWithPrompt @BuildSurvey (retry #1) (22.6s)
+     135 …l icon @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  135 …@StartWithPrompt @BuildSurvey (retry #1) (7.2s)
+     136 …estion @StartWithPrompt @DiscardSave (retry #1)
+  ✓  136 …StartWithPrompt @DiscardSave (retry #1) (29.4s)
+     137 …hanges @StartWithPrompt @DiscardSave (retry #1)
+  ✓  137 …StartWithPrompt @DiscardSave (retry #1) (17.0s)
+     138 …ctions @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  138 …@StartWithPrompt @BuildSurvey (retry #1) (3.1s)
+     139 …stions @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  139 …@StartWithPrompt @BuildSurvey (retry #1) (2.8s)
+     140 …hanged @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  140 …@StartWithPrompt @BuildSurvey (retry #1) (4.3s)
+     141 … @StartWithPrompt @CancelAddQuestion (retry #1)
+  ✓  141 …WithPrompt @CancelAddQuestion (retry #1) (6.4s)
+     142 …st @StartWithPrompt @DeleteDuplicate (retry #1)
+  ✓  142 …rtWithPrompt @DeleteDuplicate (retry #1) (8.5s)
+     143 …, exit @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  143 …@StartWithPrompt @BuildSurvey (retry #1) (8.4s)
+     144 …stions @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  144 …@StartWithPrompt @BuildSurvey (retry #1) (5.2s)
+     145 …Survey @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  145 …@StartWithPrompt @BuildSurvey (retry #1) (1.6s)
+  ✓  146 …StartWithPrompt @BuildSurvey (retry #1) (143ms)
+     147 …estion @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  147 …@StartWithPrompt @BuildSurvey (retry #1) (1.4s)
+     148 …estion @StartWithPrompt @BuildSurvey (retry #1)
+Custom reporter: - Test result created: 12033570
+  ✓  148 …@StartWithPrompt @BuildSurvey (retry #1) (4.1s)
+     149 …estion @StartWithPrompt @BuildSurvey (retry #1)
+  ✓  149 …@StartWithPrompt @BuildSurvey (retry #1) (2.9s)
+     150 …estion @StartWithPrompt @BuildSurvey (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status503: "<html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  150 …@StartWithPrompt @BuildSurvey (retry #1) (2.9s)
+     151 …estion @StartWithPrompt @BuildSurvey (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  151 …@StartWithPrompt @BuildSurvey (retry #1) (5.1s)
+     152 …estion @StartWithPrompt @BuildSurvey (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  152 …@StartWithPrompt @BuildSurvey (retry #1) (5.4s)
+     153 …Survey @StartWithPrompt @BuildSurvey (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  153 …StartWithPrompt @BuildSurvey (retry #1) (26.4s)
+     154 … 15 @StartWithPrompt @OptionBoundary (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  154 …rtWithPrompt @OptionBoundary (retry #1) (38.1s)
+     155 …me @StartWithPrompt @SaveDraftDialog (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  155 …tWithPrompt @SaveDraftDialog (retry #1) (11.9s)
+     156 …as draft @StartWithPrompt @SaveDraft (retry #1)
+Custom reporter - Error creating test result: Error: Request failed with status502: "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+    at makeAPIRequest (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\utils\apiRequest.ts:27:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresActions.createOrUpdateTestResults (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\reporter\postgresActions.ts:84:26)
+    at GrafanaPlaywrightReporter.onTestEnd (C:\Users\yogesh.upadhyay\projects\di
+  ✓  156 …t @StartWithPrompt @SaveDraft (retry #1) (7.1s)
+  ✓  157 …artWithPrompt @ValidateSurvey (retry #1) (3.0s)
+     158 …StartWithPrompt @ReviewSurveyDetails (retry #1)
+Custom reporter: - Test result created: 12033574
+  ✓  158 …hPrompt @ReviewSurveyDetails (retry #1) (13.0s)
+     159 …rvey @StartWithPrompt @PublishSurvey (retry #1)
+  ✓  159 …artWithPrompt @PublishSurvey (retry #1) (37.4s)
 
-  11 passed (5.5m)
 
-To open last HTML report run:
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:398:7 › Start from scratch › TC_BS_29: Review survey details dialog, Edit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails 
 
-  npx playwright show-report
+    Error: Failed to open Publish dialog: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('[data-test-id=\'-close-button\']')
 
+
+       at ..\page-objects\common\survey-builder.page.ts:1564
+
+      1562 |       await this.clickWhenVisible('publishSurveyButton', 'Publish survey button');
+      1563 |     } catch (error) {
+    > 1564 |       throw new Error(`Failed to open Publish dialog: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1565 |     }
+      1566 |   }
+      1567 |
+        at SurveyBuilderPage.openPublishDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1564:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:408:7
+
+    attachment #1: screenshot (image/png) ───────────────
+    test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) 
+    test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\attachments\start-from-scratch-video-f8e7fed29fcb41c5bae27d8f3747fe394bdd98d8.webm
+    ─────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────
+    test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--f4e96-vey-returns-to-Build-Survey-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:437:7 › Start with a prompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey 
+
+    Error: Failed to verify publish succeeded: "Survey published successfully" toast did not appear after redirect (url: https://si.connect.nielseniq.io/reportexperience-dev/my-assets/report/my-assets, elapsed: 24.5s, .survey-action-toast text: none visible)
+
+       at ..\page-objects\common\survey-builder.page.ts:1657
+
+      1655 |       );
+      1656 |     } catch (error) {
+    > 1657 |       throw new Error(`Failed to verify publish succeeded: ${errorinstanceof Error ? error.message : error}`);
+           |             ^
+      1658 |     }
+      1659 |   }
+      1660 |
+        at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1657:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:486:35
+
+    attachment #1: screenshot (image/png) ───────────────
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ─
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\attachments\start-with-prompt-video-fe8fb9809f5d9684f29cbdacea1bdfd927de8c39.webm
+    ─────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────
+
+  2 flaky
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:398:7 › Start from scratch › TC_BS_29: Review survey details dialog, Edit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:437:7 › Start with a prompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey 
+  83 passed (25.9m)
+Custom reporter: - Test result created: 12033577
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ 
