@@ -1,23 +1,8 @@
-Both changes are in. I ran nothing, so none of it is verified.
-
-Locator (survey-builder.locator.json): new createNewFolderDialogNameInput is input:visible >> nth=0. It resolves inside the Create new folder dialog because the page object scopes it with getScopedElement. saveDraftDialogNameInput is unchanged.
-
-Page object (survey-builder.page.ts):
-
-Name input: areCreateNewFolderDialogControlsVisible and fillCreateNewFolderDialogName now use the new locator.
-Typing check: fillCreateNewFolderDialogName types the name, then reads the field back and throws if the value doesn't match. I couldn't read enterText in the framework. If it sets the value without firing input events, Create will stay disabled, and the click step below will report that.
-Create button: clickCreateNewFolderDialogCreate used to click as soon as the button was visible. It now polls every UI_STATE_UPDATE_DELAY for up to MEDIUM_TIMEOUT until the button is enabled. It checks isEnabled(), aria-disabled, the state attribute and a disabled class. It throws "Create button was still disabled after 10000ms" if it never enables.
-The Create button locator role=button[name="Create"] still needs to match the real button. I haven't confirmed that, only that it is unchanged from before.
-
-
-+26
--2
--------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium
-◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -31,214 +16,134 @@ Global setup completed. Auth state saved.
 
 Running 40 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓   1 …ompt option on the survey home page @StartWithPrompt (19.3s)
+  ✓   1 …ompt option on the survey home page @StartWithPrompt (20.9s)
 Auth state loaded from storage/auth.json
-  ✓   2 …t type and dataset @StartWithPrompt @DatasetSelection (2.8s)
-  ✓   3 …d search for panelists @StartWithPrompt @DataSummary (44.2s)
-  ✓   4 …lect a response count @StartWithPrompt @ResponseCount (3.8s)
-  ✓   5 …il prompt is entered @StartWithPrompt @GenerateSurvey (1.8s)
-  ✓   6 …he Build Survey page @StartWithPrompt @GenerateSurvey (1.9s)
-  ✓   7 …ize Questions screen @StartWithPrompt @GenerateSurvey (3.1s)
-  ✓   8 …der and number field @StartWithPrompt @GenerateSurvey (5.3s)
-  ✓   9 …creates AI questions @StartWithPrompt @GenerateSurvey (1.5s)
-  ✓  10 …le after AI generation @StartWithPrompt @BuildSurvey (609ms)
-  ✓  11 …ing state and prompt @StartWithPrompt @GenerateSurvey (6.9s)
-  ✓  12 …s the question count @StartWithPrompt @GenerateSurvey (1.0s)
-  ✓  13 …s the question count @StartWithPrompt @GenerateSurvey (6.8s)
-  ✓  14 …questions @StartWithPrompt @BuildSurvey @MaxQuestions (1.8s)
-  ✓  15 … Required toggle is on @StartWithPrompt @BuildSurvey (18.2s)
-  ✓  16 …ext via the pencil icon @StartWithPrompt @BuildSurvey (5.8s)
-  ✓  17 …n an existing question @StartWithPrompt @DiscardSave (26.7s)
-  ✓  18 …xt blocks Save changes @StartWithPrompt @DiscardSave (16.1s)
-  ✓  19 …n via hover row actions @StartWithPrompt @BuildSurvey (1.9s)
-  ✓  20 …drop reorders questions @StartWithPrompt @BuildSurvey (1.8s)
-  ✓  21 …uestion count unchanged @StartWithPrompt @BuildSurvey (3.2s)
-  ✓  22 … add and save one @StartWithPrompt @CancelAddQuestion (5.2s)
-  ✓  23 …e same type as last @StartWithPrompt @DeleteDuplicate (6.5s)
-  ✓  24 …, delete selected, exit @StartWithPrompt @BuildSurvey (4.7s)
-  ✓  25 … fewer than 3 questions @StartWithPrompt @BuildSurvey (4.0s)
-  ✓  26 …, stay on Build Survey @StartWithPrompt @BuildSurvey (937ms)
-  ✓  27 …tion options and 0 rows @StartWithPrompt @BuildSurvey (60ms)
-  ✓  28 …Single Choice question @StartWithPrompt @BuildSurvey (651ms)
-  ✓  29 …ultiple Choice question @StartWithPrompt @BuildSurvey (3.3s)
+  ✓   2 …t type and dataset @StartWithPrompt @DatasetSelection (3.6s)
+  ✓   3 …d search for panelists @StartWithPrompt @DataSummary (44.9s)
+  ✓   4 …lect a response count @StartWithPrompt @ResponseCount (3.4s)
+  ✓   5 …il prompt is entered @StartWithPrompt @GenerateSurvey (1.9s)
+  ✓   6 …he Build Survey page @StartWithPrompt @GenerateSurvey (2.0s)
+  ✓   7 …ize Questions screen @StartWithPrompt @GenerateSurvey (3.6s)
+  ✓   8 …der and number field @StartWithPrompt @GenerateSurvey (5.4s)
+  ✓   9 …creates AI questions @StartWithPrompt @GenerateSurvey (4.7s)
+  ✓  10 …le after AI generation @StartWithPrompt @BuildSurvey (501ms)
+  ✓  11 …ing state and prompt @StartWithPrompt @GenerateSurvey (8.5s)
+  ✓  12 …s the question count @StartWithPrompt @GenerateSurvey (3.8s)
+  ✓  13 …s the question count @StartWithPrompt @GenerateSurvey (9.1s)
+  ✓  14 …questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.3s)
+  ✓  15 … Required toggle is on @StartWithPrompt @BuildSurvey (19.2s)
+  ✓  16 …ext via the pencil icon @StartWithPrompt @BuildSurvey (6.1s)
+  ✓  17 …n an existing question @StartWithPrompt @DiscardSave (27.5s)
+  ✓  18 …xt blocks Save changes @StartWithPrompt @DiscardSave (16.4s)
+  ✓  19 …n via hover row actions @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  20 …drop reorders questions @StartWithPrompt @BuildSurvey (2.7s)
+  ✓  21 …uestion count unchanged @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  22 … add and save one @StartWithPrompt @CancelAddQuestion (5.5s)
+  ✓  23 …e same type as last @StartWithPrompt @DeleteDuplicate (6.8s)
+  ✓  24 …, delete selected, exit @StartWithPrompt @BuildSurvey (5.8s)
+  ✓  25 … fewer than 3 questions @StartWithPrompt @BuildSurvey (4.1s)
+  ✓  26 …l, stay on Build Survey @StartWithPrompt @BuildSurvey (1.2s)
+  ✓  27 …tion options and 0 rows @StartWithPrompt @BuildSurvey (99ms)
+  ✓  28 … Single Choice question @StartWithPrompt @BuildSurvey (1.1s)
+  ✓  29 …ultiple Choice question @StartWithPrompt @BuildSurvey (3.4s)
   ✓  30 …: Add a Rating question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  31 …3d: Add an NPS question @StartWithPrompt @BuildSurvey (2.6s)
-  ✓  32 … a Point Scale question @StartWithPrompt @BuildSurvey (3.6s)
-  ✓  33 … a Multi Scale question @StartWithPrompt @BuildSurvey (3.5s)
-  ✓  34 …d back to Build Survey @StartWithPrompt @BuildSurvey (24.6s)
-  ✓  35 …ary - min 2, max 15 @StartWithPrompt @OptionBoundary (31.7s)
-  ✘  36 …ires a survey name @StartWithPrompt @SaveDraftDialog (29.4s)
-  -  37 …› TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  38 …n there are recommendations @StartWithPrompt @ValidateSurvey
-  -  39 …eturns to Build Survey @StartWithPrompt @ReviewSurveyDetails
-  -  40 …_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey
+  ✓  31 …3d: Add an NPS question @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  32 … a Point Scale question @StartWithPrompt @BuildSurvey (4.0s)
+  ✓  33 … a Multi Scale question @StartWithPrompt @BuildSurvey (3.8s)
+  ✓  34 …d back to Build Survey @StartWithPrompt @BuildSurvey (25.3s)
+  ✓  35 …ary - min 2, max 15 @StartWithPrompt @OptionBoundary (37.6s)
+  ✓  36 …ires a survey name @StartWithPrompt @SaveDraftDialog (10.4s)
+  ✓  37 …_10: Save survey as draft @StartWithPrompt @SaveDraft (7.0s)
+  ✓  38 … are recommendations @StartWithPrompt @ValidateSurvey (6.2s)
+  ✓  39 …o Build Survey @StartWithPrompt @ReviewSurveyDetails (13.2s)
+  ✘  40 …S_18: Publish survey @StartWithPrompt @PublishSurvey (28.0s)
 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:736:7 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:437:7 › Start with a prompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey 
 
-    Error: Failed to open the Save draft dialog: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('[data-test-id=\'save-draft\']')
-        - locator resolved to <niq-button tabindex="0" size="medium" role="button" colortheme="light" _nghost-ng-c653818712="" data-test-id="save-draft" _ngcontent-ng-c3633474721="" class="ng-tns-c653818712-475 ng-trigger ng-trigger-clickAnimation light medium secondary text-neutral icon-right ng-star-inserted default">…</niq-button>
-      - attempting click action
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-        - retrying click action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-        - retrying click action
-          - waiting 100ms
-        28 × waiting for element to be visible, enabled and stable
-           - element is visible, enabled and stable
-           - scrolling into view if needed
-           - done scrolling
-           - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-         - retrying click action
-           - waiting 500ms
+    Error: Failed to confirm publish: Confirm publish button not visible after 15000ms
 
+       at ..\page-objects\common\survey-builder.page.ts:1654
 
-       at ..\page-objects\common\survey-builder.page.ts:643
-
-      641 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-      642 |     } catch (error) {
-    > 643 |       throw new Error(`Failed to open the Save draft dialog: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      644 |     }
-      645 |   }
-      646 |
-        at SurveyBuilderPage.clickSaveDraftAndWaitForDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:643:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:776:9
+      1652 |       return isConfirmDialogVisible && isPublishingStatusVisible;
+      1653 |     } catch (error) {
+    > 1654 |       throw new Error(`Failed to confirm publish: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1655 |     }
+      1656 |   }
+      1657 |
+        at SurveyBuilderPage.confirmPublish (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1654:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:458:32
 
     attachment #1: screenshot (image/png) ───────────────────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\test-failed-1.png
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
     ─────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
     attachment #3: start-with-prompt-video (video/webm) ─────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\attachments\start-with-prompt-video-54e74bab34e522c9d1c37e38be6d17b596fb680d.webm
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\attachments\start-with-prompt-video-57b53156992ba8acccbbad3afa4f5b0196ccfc37.webm
     ─────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
     attachment #5: trace (application/zip) ──────────────────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
+    test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-c7565--16-TC-BS-18-Publish-survey-chromium\trace.zip
 
     ─────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:736:7 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
-  4 did not run
-  35 passed (5.7m)
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:437:7 › Start with a prompt › TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey 
+  39 passed (6.9m)
 
-To open last HTML report run:
+----------------------------------
+TC_BS_16/TC_BS_18: Publish survey
+survey/common-test-cases/build-survey-common-test-cases.ts:437
+28.0s
+chromiumStartWithPromptPublishSurvey
+serial
+Copy prompt
+Error: Failed to confirm publish: Confirm publish button not visible after 15000ms
 
-  npx playwright show-report
+   at ..\page-objects\common\survey-builder.page.ts:1654
 
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
-$ 
-------------------
-Error: Failed to open the Save draft dialog: locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('[data-test-id=\'save-draft\']')
-    - locator resolved to <niq-button tabindex="0" size="medium" role="button" colortheme="light" _nghost-ng-c653818712="" data-test-id="save-draft" _ngcontent-ng-c3633474721="" class="ng-tns-c653818712-475 ng-trigger ng-trigger-clickAnimation light medium secondary text-neutral icon-right ng-star-inserted default">…</niq-button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      - scrolling into view if needed
-      - done scrolling
-      - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      - scrolling into view if needed
-      - done scrolling
-      - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-    - retrying click action
-      - waiting 100ms
-    28 × waiting for element to be visible, enabled and stable
-       - element is visible, enabled and stable
-       - scrolling into view if needed
-       - done scrolling
-       - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-     - retrying click action
-       - waiting 500ms
-
-
-   at ..\page-objects\common\survey-builder.page.ts:643
-
-  641 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-  642 |     } catch (error) {
-> 643 |       throw new Error(`Failed to open the Save draft dialog: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  644 |     }
-  645 |   }
-  646 |
-    at SurveyBuilderPage.clickSaveDraftAndWaitForDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:643:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:776:9
+  1652 |       return isConfirmDialogVisible && isPublishingStatusVisible;
+  1653 |     } catch (error) {
+> 1654 |       throw new Error(`Failed to confirm publish: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1655 |     }
+  1656 |   }
+  1657 |
+    at SurveyBuilderPage.confirmPublish (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1654:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:458:32
 Filter steps
 Before Hooks
-9ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-81ms
-Wait for selector locator('.edit-icon')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 19ms
-Click locator('.edit-icon')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-116ms
-Wait for selector locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-127ms
-Fill "" locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-86ms
-Press "Tab" locator('role=textbox[name="Survey Title"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-44ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-16ms
-Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-29ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-68ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-2.6s
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text="Survey name is required."').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15ms
-Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="My Assets"]').first().locator('.arrow')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-74ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="Q4 Appliance Research"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'-close-button\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 5.0s
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text=/^Create new folder/').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-18ms
-Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('text=/^Create new folder/').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-62ms
-Wait for selector locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-83ms
-Wait for selector locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first().locator('input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-76ms
-Fill "Q4 Appliance Research" locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first().locator('input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-583ms
-Wait for selector locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first().locator('role=button[name="Create"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-37ms
-Click locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first().locator('role=button[name="Create"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-63ms
-Wait for selector locator('[role=\'dialog\']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey"))').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-3.5s
-Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-89ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+33ms
+Click locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.3s
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+634ms
+Wait for selector locator('.publish-survey-title')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Wait for selector locator('.publish-review-details [data-test-id$=\'_Dimension\']').nth(4) ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+92ms
+Wait for selector locator('[data-test-id=\'publish-response-count\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+39ms
+Wait for selector locator('text=Review survey details') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+84ms
+Wait for selector locator('[data-test-id=\'-footer\']').locator('role=button[name="Publish survey"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 15.0s
 After Hooks
-2.0s
+8.6s
 Worker Cleanup
