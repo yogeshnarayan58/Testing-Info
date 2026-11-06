@@ -1,23 +1,24 @@
-The shared publish test is now registered in start-from-scratch.spec.ts, the only file I changed. I ran nothing, and no existing test, title, tag or order was changed.
+I fixed the "Setup: Return to Build Survey and restore at least three questions" test in start-from-scratch.spec.ts. I ran nothing.
 
-Setup test: the "Setup: Return to Build Survey and restore at least three questions" test (@PublishSetup) sits after the TC_BS_12 Back test.
-It calls selectPanelistPage.clickProceedToSurveyBuilder() and asserts isBuildSurveyPageLoaded().
-It reads the question count and, while it is below 3, calls openAddQuestionPanel() then addSingleChoiceQuestion(...) with the same single-choice test data TC_BS_03a uses.
-It asserts the count is at least 3.
-I added openAddQuestionPanel() because TC_BS_03a calls addSingleChoiceQuestion directly, which only works from the empty state. The panel opener works for any count.
-Publish test: registerPublishSavedSurveyTest follows the setup test, with the title 'TC_BS_16/TC_BS_18: Publish survey' and tag @PublishSurvey, the same as in the Prompt spec.
-Comment: the one above TC_BS_29 now reads "Publish (TC_BS_16/18) runs near the end of this flow, after the builder tests, because publishing redirects to My assets."
-Last test: TC_BS_10c is still last.
-Import: I added registerPublishSavedSurveyTest to the import list.
-I haven't confirmed that the survey is still validated and saved after going back to Select Panelists and returning. The publish test starts with openPublishDialog(), which revalidates when the footer shows "Validate survey", so that should cover it. It assumes the survey already has a folder, which TC_BS_10a gives it.
-+1
--1
----------------
+The new order inside the test is:
+
+Proceed to the survey builder and assert Build Survey is loaded, unchanged.
+If the question count is 0, add the first question with addRatingQuestion(testData.surveyQuestions.rating.questionText), straight from the empty state. It does not call openAddQuestionPanel() or addSingleChoiceQuestion here.
+While the count is below 3, call openAddQuestionPanel() then addSingleChoiceQuestion(...) with the same single-choice test data TC_BS_03a uses.
+Assert the count is at least 3, unchanged.
+A short comment above the Rating step explains that the empty builder remembers the last selected type (Single Choice), so clicking that tile again opens no editor.
+
+TC_BS_03c calls clickAddQuestion() before addRatingQuestion, but I left that out as you asked, because the empty state has no Add question link. Nothing else in the file changed.
+
+
++5
+-0
+-----------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (25) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -32,133 +33,148 @@ Global setup completed. Auth state saved.
 
 Running 37 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-  ✓   1 …n the survey home page @StartFromScratch @LandStartFromScratch (37.3s)
+  ✓   1 …tch option on the survey home page @StartFromScratch @LandStartFromScratch (18.9s)
 Auth state loaded from storage/auth.json
-  ✓   2 …the Choose a dataset screen @StartFromScratch @DatasetSelection (6.1s)
-  ✓   3 …sts after all 5 filters are set @StartFromScratch @DataSummary (46.0s)
-  ✓   4 …ter selecting a response count @StartFromScratch @ResponseCount (4.9s)
-  ✓   5 …age after proceeding @StartFromScratch @ProceedToSurveyBuilder (797ms)
-  ✓   6 …rvey" and the Add question panel @StartFromScratch @EmptyState (330ms)
-  ✓   7 …itle requires a survey name @StartFromScratch @SaveDraftDialog (14.3s)
-  ✓   8 …TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (654ms)
-  ✓   9 … Single Choice question @StartFromScratch @SingleChoiceQuestion (2.8s)
-  ✓  10 …tiple Choice question @StartFromScratch @MultipleChoiceQuestion (4.6s)
-  ✓  11 …BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (3.7s)
-  ✓  12 …› TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (3.3s)
-  ✓  13 …dd a Point Scale question @StartFromScratch @PointScaleQuestion (5.6s)
-  ✓  14 …dd a Multi Scale question @StartFromScratch @MultiScaleQuestion (5.6s)
-  ✓  15 …when the Required toggle is on @StartFromScratch @RequiredStar (19.8s)
-  ✓  16 …estion text via the pencil icon @StartFromScratch @EditQuestion (6.2s)
-  ✓  17 …changes on an existing question @StartFromScratch @DiscardSave (27.5s)
-  ✓  18 …estion text blocks Save changes @StartFromScratch @DiscardSave (12.0s)
-  ✓  19 …e question count unchanged @StartFromScratch @CancelAddQuestion (3.1s)
-  ✓  20 …5: Drag and drop reorders questions @StartFromScratch @DragDrop (2.7s)
-  ✓  21 …estion via hover row actions @StartFromScratch @DeleteDuplicate (2.5s)
-  ✓  22 …ons boundary - min 2, max 15 @StartFromScratch @OptionBoundary (34.3s)
-  ✓  23 … and back to Build Survey @StartFromScratch @StepperNavigation (20.2s)
-  ✓  24 …d Duplicate with limit message @StartFromScratch @MaxQuestions (21.8s)
-  ✓  25 …ls, select, delete selected, exit @StartFromScratch @ReviewMode (9.7s)
-  ✓  26 …h › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (2.8s)
-  ✓  27 …hen there are recommendations @StartFromScratch @ValidateSurvey (5.0s)
-  ✓  28 …Start From Scratch builder @StartFromScratch @StartFromScratch (354ms)
-  ✓  29 …cel, then add and save one @StartFromScratch @CancelAddQuestion (7.3s)
-  ✓  30 …re-add the same type as last @StartFromScratch @DeleteDuplicate (8.2s)
-  ✓  31 … returns to Build Survey @StartFromScratch @ReviewSurveyDetails (4.2s)
-  ✓  32 …ll, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.7s)
-  ✓  33 …with fewer than 3 questions @StartFromScratch @ValidateDisabled (5.5s)
-  ✓  34 …e previous step from the builder @StartFromScratch @BackButton (882ms)
-  ✘  35 …store at least three questions @StartFromScratch @PublishSetup (17.6s)
-  -  36 …h › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  37 … folder and survey are listed in My assets @StartFromScratch @MyAssets
+  ✓   2 …and confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (4.0s)
+  ✓   3 …h for Panelists after all 5 filters are set @StartFromScratch @DataSummary (41.6s)
+  ✓   4 …y builder after selecting a response count @StartFromScratch @ResponseCount (5.0s)
+  ✓   5 …ild Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (511ms)
+  ✓   6 … "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState (98ms)
+  ✓   7 …with empty title requires a survey name @StartFromScratch @SaveDraftDialog (10.6s)
+  ✓   8 …m scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (333ms)
+  ✓   9 …S_03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion (1.7s)
+  ✓  10 …b: Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion (3.8s)
+  ✓  11 …cratch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.9s)
+  ✓  12 …rom scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.8s)
+  ✓  13 …TC_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion (3.8s)
+  ✓  14 …TC_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.0s)
+  ✓  15 …tar appears when the Required toggle is on @StartFromScratch @RequiredStar (18.5s)
+  ✓  16 …_25: Edit question text via the pencil icon @StartFromScratch @EditQuestion (5.5s)
+  ✓  17 …card / Save changes on an existing question @StartFromScratch @DiscardSave (26.5s)
+  ✓  18 …28: Empty question text blocks Save changes @StartFromScratch @DiscardSave (11.4s)
+  ✓  19 …on leaves the question count unchanged @StartFromScratch @CancelAddQuestion (2.5s)
+  ✓  20 …ch › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop (1.6s)
+  ✓  21 …plicate a question via hover row actions @StartFromScratch @DeleteDuplicate (1.5s)
+  ✓  22 …_BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.3s)
+  ✓  23 …retains data and back to Build Survey @StartFromScratch @StepperNavigation (18.5s)
+  ✓  24 … question and Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
+  ✓  25 … Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode (4.9s)
+  ✓  26 … from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (1.6s)
+  ✓  27 …q feedback when there are recommendations @StartFromScratch @ValidateSurvey (7.4s)
+  ✓  28 …ible in the Start From Scratch builder @StartFromScratch @StartFromScratch (192ms)
+  ✓  29 …Question cancel, then add and save one @StartFromScratch @CancelAddQuestion (5.8s)
+  ✓  30 …estion then re-add the same type as last @StartFromScratch @DeleteDuplicate (7.0s)
+  ✓  31 … Edit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails (5.9s)
+  ✓  32 …ll, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.2s)
+  ✓  33 …is disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled (5.3s)
+  ✓  34 …eturns to the previous step from the builder @StartFromScratch @BackButton (811ms)
+  ✓  35 …urvey and restore at least three questions @StartFromScratch @PublishSetup (18.8s)
+  ✘  36 …ratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey (14.7s)
+  -  37 …S_10c: Saved folder and survey are listed in My assets @StartFromScratch @MyAssets
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:266:7 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:438:7 ›Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
 
-    Error: Failed to add Single Choice question: Question text input not visible after 15000ms
+    Error: Expected "Review survey details" dialog to be visible
+    expect(received).toBeTruthy()
 
-       at ..\page-objects\common\survey-builder.page.ts:278
+    Received: false
 
-      276 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
-      277 |     } catch (error) {
-    > 278 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      279 |     }
-      280 |   }
-      281 |
-        at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:278:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:275:7
+       at ..\page-objects\common\assert-utils.ts:14
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:446:15
 
-    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #3: start-from-scratch-video (video/webm) ──────────────────────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\attachments\start-from-scratch-video-040429d41508e97f130c489675f661e11126349c.webm
-    ───────────────────────────────────────────────────────────────────────────
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
-    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+    attachment #3: start-from-scratch-video (video/webm) ──────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\attachments\start-from-scratch-video-61aae784deeb07c722d15a9540ca7296624e0f5f.webm
+    ───────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #5: trace (application/zip) ────────────────────────────────────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────────
+    ───────────────────────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:266:7 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:438:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
   1 skipped
-  1 did not run
-  34 passed (6.9m)
---------------
-Setup: Return to Build Survey and restore at least three questions
-survey/start-from-scratch.spec.ts:266
-17.6s
-chromiumStartFromScratchPublishSetup
+  35 passed (6.0m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
+$
+-------------------
+
+Start from scratch
+TC_BS_16/TC_BS_18: Publish survey
+survey/common-test-cases/build-survey-common-test-cases.ts:438
+14.7s
+chromiumStartFromScratchPublishSurvey
 serial
 Copy prompt
-Error: Failed to add Single Choice question: Question text input not visible after 15000ms
+Error: Expected "Review survey details" dialog to be visible
+expect(received).toBeTruthy()
 
-   at ..\page-objects\common\survey-builder.page.ts:278
+Received: false
 
-  276 |       await this.waitForQuestionCountAtLeast(questionIndex, MEDIUM_TIMEOUT);
-  277 |     } catch (error) {
-> 278 |       throw new Error(`Failed to add Single Choice question: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  279 |     }
-  280 |   }
-  281 |
-    at SurveyBuilderPage.addSingleChoiceQuestion (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:278:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:275:7
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:446:15
 Filter steps
 Before Hooks
-30ms
-Wait for selector locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-107ms
-Click locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-879ms
-Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-40ms
-Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+13ms
+Wait for selector locator('[data-test-id=\'validate-survey\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+51ms
+Wait for selector locator('.footer-page-loader')— ../page-objects/common/survey-builder.page.ts:1465
+3.3s
+Wait for selector locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1550
+38ms
+Click locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1551
+594ms
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 39ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-44ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-39ms
-Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-36ms
-Wait for selector locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-33ms
-Click locator('[data-test-id=\'question-type-SINGLE_CHOICE\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-734ms
-Wait for selector locator('[data-test-id=\'question-text-input-1-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
+Click locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+168ms
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+10.2s
 After Hooks
-7.7s
+2.0s
 Worker Cleanup
-3ms
+5ms
