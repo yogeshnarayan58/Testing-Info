@@ -147,3 +147,56 @@ Wait for selector locator('[data-test-id=\'survey-assets-grid\']')— ../node_mo
 After Hooks
 2.8s
 Worker Cleanup
+
+TC_BS_10c: Saved folder and survey are listed in My assets
+survey/common-test-cases/build-survey-common-test-cases.ts:493
+38.6s
+chromiumStartWithPromptMyAssets
+serial
+Copy prompt
+Error: Expected folder "Q4 Appliance Research" to be listed in My assets
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:504:17
+Filter steps
+Before Hooks
+43ms
+Navigate si.connect.nielseniq.io/reportexperience-dev/report/featuretoggle— ../node_modules/@gfk/gta/core/web/webActions.ts:627
+2.9s
+Wait for selector locator('tr:has(td:text-is("Enable Survey Modernization in FMS"))')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+7.3s
+Click locator('tr:has(td:text-is("Enable Survey Modernization in FMS")) input[role=\'switch\']')— ../page-objects/common/feature-toggle.page.ts:69
+516ms
+Reload— ../page-objects/common/feature-toggle.page.ts:81
+1.8s
+Wait for selector locator('tr:has(td:text-is("Enable Survey Modernization in FMS"))')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.5s
+Navigate si.connect.nielseniq.io/reportexperience-dev/survey— ../node_modules/@gfk/gta/core/web/webActions.ts:627
+1.9s
+Wait for selector locator('.view-all-link:has-text("View all surveys")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+2.3s
+Click locator('.view-all-link:has-text("View all surveys")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.2s
+Wait for selector locator('[data-test-id=\'survey-assets-grid\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+295ms
+Wait for selector locator('[data-test-id=\'my-assets-tab-my-assets\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+112ms
+Wait for selector locator('[data-test-id=\'survey-grid-title\']:text-is("Q4 Appliance Research")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.3s
+After Hooks
+2.2s
+Worker Cleanup
