@@ -1,8 +1,61 @@
+I reordered the end of start-from-scratch.spec.ts to match the Prompt flow. I ran nothing. No test code, title or tag was changed; I only moved registrations and deleted the one workaround test.
+
+What moved or was removed
+
+Moved to the end, in your order: TC_BS_10a, TC_BS_10, TC_BS_23, TC_BS_29, TC_BS_16/TC_BS_18 and TC_BS_10c.
+Comment: the new comment sits above the moved block: "// Same tail as start-with-prompt.spec.ts: save, validate, review, publish."
+Deleted: "Setup: Save the draft into My Assets again".
+Old comment removed: I also removed the old "Publish (TC_BS_16/18) runs near the end…" comment, because it described TC_BS_29's former position.
+Final order
+
+Start from Scratch: Should display the Start from scratch option on the survey home page
+Dataset Selection: Should select the dataset and confirm the Choose a dataset screen
+Panelist Filters: Should enable Search for Panelists after all 5 filters are set
+Response Count: Should enable Proceed to survey builder after selecting a response count
+Survey Builder: Should navigate to the Build Survey page after proceeding
+TC_BS_01
+TC_BS_02
+TC_BS_03a
+TC_BS_03b
+TC_BS_03c
+TC_BS_03d
+TC_BS_03e
+TC_BS_03f
+TC_BS_07
+TC_BS_25
+TC_BS_26
+TC_BS_28
+TC_BS_05
+TC_BS_15
+TC_BS_06
+TC_BS_04
+TC_BS_12 (Stepper navigation)
+TC_BS_08
+TC_BS_13/TC_BS_14
+TC_AI_12
+TC_BS_22
+TC_BS_20
+TC_BS_27
+TC_BS_09
+TC_BS_12 (Back button)
+Setup: Return to Build Survey and restore at least three questions
+TC_BS_10a
+TC_BS_10
+TC_BS_23
+TC_BS_29
+TC_BS_16/TC_BS_18: Publish survey
+TC_BS_10c
+Two knock-on effects of the move, from reading the code:
+
+TC_BS_10 and TC_BS_23 now run after the survey has been deleted and rebuilt, and TC_BS_10a runs after that rebuild as well.
+TC_BS_10a no longer runs before TC_BS_02 and TC_BS_03a, so the comment in it saying TC_BS_03a assumes an empty state no longer matches the Scratch order.
+-----------------------------
+
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/automation-remaining-and-stability-part_1)
 $ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -15,145 +68,197 @@ Login process completed successfully. Landed on https://si.connect.nielseniq.io/
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 38 tests using 1 worker
+Running 37 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-  ✓   1 …tch option on the survey home page @StartFromScratch @LandStartFromScratch (22.7s)
+  ✓   1 …om scratch option on the survey home page @StartFromScratch @LandStartFromScratch (19.2s)
 Auth state loaded from storage/auth.json
-  ✓   2 …and confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (4.2s)
-  ✓   3 …h for Panelists after all 5 filters are set @StartFromScratch @DataSummary (41.6s)
-  ✓   4 …y builder after selecting a response count @StartFromScratch @ResponseCount (5.1s)
-  ✓   5 …ild Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (525ms)
-  ✓   6 …"Untitled Survey" and the Add question panel @StartFromScratch @EmptyState (153ms)
-  ✓   7 …with empty title requires a survey name @StartFromScratch @SaveDraftDialog (10.5s)
-  ✓   8 …m scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (711ms)
-  ✓   9 …S_03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion (1.5s)
-  ✓  10 …b: Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion (3.7s)
-  ✓  11 …cratch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (3.1s)
-  ✓  12 …rom scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (3.1s)
-  ✓  13 …TC_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion (4.1s)
-  ✓  14 …TC_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.4s)
-  ✓  15 …tar appears when the Required toggle is on @StartFromScratch @RequiredStar (18.8s)
-  ✓  16 …_25: Edit question text via the pencil icon @StartFromScratch @EditQuestion (5.7s)
-  ✓  17 …card / Save changes on an existing question @StartFromScratch @DiscardSave (26.6s)
-  ✓  18 …28: Empty question text blocks Save changes @StartFromScratch @DiscardSave (11.1s)
-  ✓  19 …on leaves the question count unchanged @StartFromScratch @CancelAddQuestion (2.6s)
-  ✓  20 …ch › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop (1.8s)
-  ✓  21 …plicate a question via hover row actions @StartFromScratch @DeleteDuplicate (1.6s)
-  ✓  22 …_BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.3s)
-  ✓  23 …retains data and back to Build Survey @StartFromScratch @StepperNavigation (18.3s)
-  ✓  24 … question and Duplicate with limit message @StartFromScratch @MaxQuestions (18.7s)
-  ✓  25 … Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode (6.0s)
-  ✓  26 … from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (2.6s)
-  ✓  27 …q feedback when there are recommendations @StartFromScratch @ValidateSurvey (7.0s)
-  ✓  28 …ible in the Start From Scratch builder @StartFromScratch @StartFromScratch (275ms)
-  ✓  29 …Question cancel, then add and save one @StartFromScratch @CancelAddQuestion (6.1s)
-  ✓  30 …estion then re-add the same type as last @StartFromScratch @DeleteDuplicate (7.0s)
-  ✓  31 … Edit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails (3.6s)
-  ✓  32 …ll, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.5s)
-  ✓  33 …is disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled (5.2s)
-  ✓  34 …eturns to the previous step from the builder @StartFromScratch @BackButton (662ms)
-  ✓  35 …urvey and restore at least three questions @StartFromScratch @PublishSetup (37.7s)
-  ✘  36 …Setup: Save the draft into My Assets again @StartFromScratch @PublishSetup (12.8s)
-  -  37 … from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
-  -  38 …S_10c: Saved folder and survey are listed in My assets @StartFromScratch @MyAssets
+  ✓   2 …ataset and confirm the Choose a dataset screen @StartFromScratch @DatasetSelection (3.5s)
+  ✓   3 …e Search for Panelists after all 5 filters are set @StartFromScratch @DataSummary (44.6s)
+  ✓   4 …o survey builder after selecting a response count @StartFromScratch @ResponseCount (5.2s)
+  ✓   5 … the Build Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder (671ms)
+  ✓   6 … shows "Untitled Survey" and the Add question panel @StartFromScratch @EmptyState (127ms)
+  ✓   7 …art from scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle (814ms)
+  ✓   8 … › TC_BS_03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion (1.0s)
+  ✓   9 …C_BS_03b: Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion (4.6s)
+  ✓  10 … from scratch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion (2.7s)
+  ✓  11 …Start from scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion (2.6s)
+  ✓  12 …atch › TC_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion (4.3s)
+  ✓  13 …atch › TC_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion (4.1s)
+  ✓  14 …uired star appears when the Required toggle is on @StartFromScratch @RequiredStar (18.6s)
+  ✓  15 …› TC_BS_25: Edit question text via the pencil icon @StartFromScratch @EditQuestion (5.5s)
+  ✓  16 …26: Discard / Save changes on an existing question @StartFromScratch @DiscardSave (26.4s)
+  ✓  17 … TC_BS_28: Empty question text blocks Save changes @StartFromScratch @DiscardSave (11.0s)
+  ✓  18 … Question leaves the question count unchanged @StartFromScratch @CancelAddQuestion (2.6s)
+  ✓  19 …m scratch › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop (1.7s)
+  ✓  20 … and duplicate a question via hover row actions @StartFromScratch @DeleteDuplicate (1.8s)
+  ✓  21 …ch › TC_BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary (31.6s)
+  ✓  22 …elists retains data and back to Build Survey @StartFromScratch @StepperNavigation (18.3s)
+  ✓  23 …les Add question and Duplicate with limit message @StartFromScratch @MaxQuestions (17.9s)
+  ✓  24 … Review Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode (5.8s)
+  ✓  25 …are visible in the Start From Scratch builder @StartFromScratch @StartFromScratch (211ms)
+  ✓  26 …ia Add Question cancel, then add and save one @StartFromScratch @CancelAddQuestion (5.7s)
+  ✓  27 …last question then re-add the same type as last @StartFromScratch @DeleteDuplicate (7.0s)
+  ✓  28 …elect all, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll (1.5s)
+  ✓  29 …urvey is disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled (214ms)
+  ✓  30 …utton returns to the previous step from the builder @StartFromScratch @BackButton (572ms)
+  ✓  31 …Build Survey and restore at least three questions @StartFromScratch @PublishSetup (38.2s)
+  ✓  32 … draft with empty title requires a survey name @StartFromScratch @SaveDraftDialog (10.9s)
+  ✓  33 …› Start from scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft (7.4s)
+  ✓  34 …ws Optiq feedback when there are recommendations @StartFromScratch @ValidateSurvey (4.4s)
+  ✓  35 …ialog, Edit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails (12.1s)
+  ✘  36 …from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey (31.2s)
+  -  37 … › TC_BS_10c: Saved folder and survey are listed in My assets @StartFromScratch @MyAssets
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:307:7 › Start from scratch › Setup: Save the draft into My Assets again @StartFromScratch @PublishSetup 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:438:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
 
-    Error: Expected "Survey saved as draft successfully" toast to be visible after saving draft
-    expect(received).toBeTruthy()
+    Error: Failed to verify publish succeeded: Publish failed: " Error  Survey publish failed forsurveyId: svy_5A887A7EAD771C4C4A7CEA5E0EE08631 " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_5A887A7EAD771C4C4A7CEA5E0EE08631, elapsed: 7.1s)
 
-    Received: false
+       at ..\page-objects\common\survey-builder.page.ts:1655
 
-       at ..\page-objects\common\assert-utils.ts:14
+      1653 |       );
+      1654 |     } catch (error) {
+    > 1655 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1656 |     }
+      1657 |   }
+      1658 |
+        at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1655:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:487:35
 
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:321:15
+    attachment #1: screenshot (image/png) ────────────────────────────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────────────────────
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
-    Error Context: test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\error-context.md
+    attachment #3: start-from-scratch-video (video/webm) ─────────────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\attachments\start-from-scratch-video-d8722299c4da25528191006dc445d1fe2c7f7250.webm
+    ──────────────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #3: start-from-scratch-video (video/webm) ──────────────────────────────────
-    test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\attachments\start-from-scratch-video-5069737c2105564d1eb44697b263b07114101079.webm
-    ───────────────────────────────────────────────────────────────────────────────────────
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
-    Error Context: test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────────────────────
-    test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\trace.zip
+    attachment #5: trace (application/zip) ───────────────────────────────────────────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--4bc23--draft-into-My-Assets-again-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:307:7 › Start from scratch › Setup: Save the draft into My Assets again @StartFromScratch @PublishSetup 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:438:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
   1 skipped
-  1 did not run
-  35 passed (6.4m)
---------------------------------------
-Setup: Save the draft into My Assets again
-survey/start-from-scratch.spec.ts:307
-12.8s
-chromiumStartFromScratchPublishSetup
+  35 passed (6.9m)
+----------------------------------------
+Start from scratch
+TC_BS_16/TC_BS_18: Publish survey
+survey/common-test-cases/build-survey-common-test-cases.ts:438
+31.2s
+chromiumStartFromScratchPublishSurvey
 serial
 Copy prompt
-Error: Expected "Survey saved as draft successfully" toast to be visible after saving draft
-expect(received).toBeTruthy()
+Error: Failed to verify publish succeeded: Publish failed: " Error  Survey publish failed for surveyId: svy_5A887A7EAD771C4C4A7CEA5E0EE08631 " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_5A887A7EAD771C4C4A7CEA5E0EE08631, elapsed: 7.1s)
 
-Received: false
+   at ..\page-objects\common\survey-builder.page.ts:1655
 
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-  16 |
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:321:15
+  1653 |       );
+  1654 |     } catch (error) {
+> 1655 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1656 |     }
+  1657 |   }
+  1658 |
+    at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1655:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:487:35
 Filter steps
 Before Hooks
-12ms
-Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-101ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+10ms
+Wait for selector locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1550
+5.0s
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+19ms
+Click locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+71ms
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+113ms
+Wait for selector locator('.publish-survey-title')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+74ms
+Wait for selector locator('.publish-review-details [data-test-id$=\'_Dimension\']').nth(4) ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Wait for selector locator('[data-test-id=\'publish-response-count\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+18ms
+Evaluate locator('.question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+17ms
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first().locator('role=button[name="Edit survey"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+21ms
+Click locator('[role=\'dialog\']:has-text("Review survey details")').first().locator('role=button[name="Edit survey"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
 64ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first() ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-2.1s
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=textbox[name="Name"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10ms
-Fill "Appliance Purchase Feedback Survey" locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=textbox[name="Name"]')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+318ms
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+134ms
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+140ms
+Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+35ms
+Wait for selector locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 26ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="My Assets"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+Hover locator('.question-row').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+89ms
+Wait for selector locator('.question-actions niq-icon-button[iconname=\'edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+23ms
+Click locator('.question-actions niq-icon-button[iconname=\'edit\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+119ms
+Wait for selector locator('survey-question-editor .save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+33ms
+Wait for selector locator('.question-row').first().locator('survey-question-editor input:is([data-test-id$=\'-input\'], [data-test-id^=\'question-text-input\']):visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+43ms
+Fill "How likely are you to recommend this product to a colleague?" locator('.question-row').first().locator('survey-question-editor input:is([data-test-id$=\'-input\'], [data-test-id^=\'question-text-input\']):visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+135ms
+Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+734ms
+Wait for selector locator('.question-row').first().locator('.save-changes-action:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('.question-row').first().locator('.question-text')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+24ms
+Wait for selector locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1550
 25ms
-Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=treeitem[name*="My Assets"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-61ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=button[name="Save draft"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10ms
-Click locator('[role=\'dialog\']:has-text("Save your survey")').first().locator('role=button[name="Save draft"]').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-42ms
-Wait for selector locator('text=Survey saved as draft successfully')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10.0s
+Click locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1551
+159ms
+Wait for selector locator('[data-test-id=\'validate-survey\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+95ms
+Click locator('[data-test-id=\'validate-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+132ms
+Wait for selector locator('.footer-page-loader')— ../page-objects/common/survey-builder.page.ts:1465
+3.2s
+Wait for selector locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1550
+35ms
+Click locator('[data-test-id=\'-close-button\']').visible().first()— ../page-objects/common/survey-builder.page.ts:1551
+70ms
+Wait for selector locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+65ms
+Click locator('[data-test-id=\'publish-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+156ms
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+80ms
+Wait for selector locator('.publish-question-summary')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+87ms
+Wait for selector locator('text=Review survey details') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+632ms
+Wait for selector locator('[role=\'dialog\']:has-text("Review survey details")').first().locator('[data-test-id=\'confirm-publish\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+27ms
+Click locator('[role=\'dialog\']:has-text("Review survey details")').first().locator('[data-test-id=\'confirm-publish\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+137ms
+Wait for selector locator('role=status[name="Publishing survey"]') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+216ms
 After Hooks
-1.8s
----------------------
+5.3s
+Worker Cleanup
+1ms
