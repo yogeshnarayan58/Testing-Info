@@ -1,94 +1,61 @@
-# data-test-id remaining (after round 1 + 2 swap)
+Jamaltheen S (Jamaltheen-S_niq) reviewed 2 days ago
+e2e/page-objects/common/survey-builder.page.ts
+        await this.waitUntilVisible(saveButton, `Save changes button (index ${index})`);
+        await saveButton.click();
+      }
+      const saveButton = this.getSaveChangesButtonElement(index);
+@Jamaltheen-S_niq
+Jamaltheen S (Jamaltheen-S_niq)
+2 days ago
+How can we split this file based functionalities.?
 
-Scope: `e2e/locators/**/*.json` and `e2e/page-objects/**/*.ts` (inline selectors). Selectors that already contain `data-test-id` / `data-testid` are excluded.
-Template root: `libs/survey-mod-lib/src/lib/` (abbreviated `L/`). Templates scanned: `libs/**/*.html`, `src/**/*.html`, plus the one inline template in `suggestion-tags.component.ts`.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Jamaltheen-S_niq
+Jamaltheen S (Jamaltheen-S_niq) approved these changes 2 days ago
+Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 13 hours ago
+e2e/locators/survey/feature-toggle.locator.json
+@@ -0,0 +1,20 @@
+{
+  "name": "Feature Toggle Page",
+  "webElements": [
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+13 hours ago
+Instead of 3 different locators, create one locator with parameterized option
+Pass the 'featureName' through field text in test step so that locator can be reused for other features by passing the names through respective tests
+example -
+{
+"elementName": "featureToggle",
+"selectorType": "playwrights",
+"selectorValue": "tr:has(td:text-is("{featureName}"))"
+}
 
-Statuses: `ID EXISTS` = template already has a data-test-id, locator can swap. `NEEDS ID` = our template element, no data-test-id yet. `EXTERNAL` = rendered by an external package / host / login. `NEEDS DEV DECISION` = toast / tooltip / overlay rendered by a service.
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 12 hours ago
+e2e/locators/survey/my-assets.locator.json
+    { "elementName": "surveyGridTitleByText", "selectorType": "playwrights", "selectorValue": "[data-test-id='survey-grid-title']:text-is(\"${text}\") >> nth=0" },
+    { "elementName": "myAssetsTab", "selectorType": "css", "selectorValue": "[data-test-id='my-assets-tab-my-assets']" },
+    { "elementName": "folderBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='my-assets-folder-breadcrumb']" },
+    { "elementName": "viewAllSurveysLink", "selectorType": "playwrights", "selectorValue": ".view-all-link:has-text(\"View all surveys\") >> nth=0" }
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+12 hours ago
+Can we avoid using nth=0 here and make the locator unique using exact text matching instead?
 
-| # | file | locator name or line | current selector | status | existing ID or template file:line |
-|---|---|---|---|---|---|
-| 1 | e2e/locators/survey/survey-builder.locator.json | optionInputByLabel | `role=textbox[name="${text}"] >> nth=0` | ID EXISTS – can swap | `question-option-${questionNumber}-${i}` (L/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:17) |
-| 2 | e2e/locators/survey/survey-builder.locator.json | maxOptionsMessageText | `text="You have already reached the maximum number of options." >> nth=0` | NEEDS DEV DECISION | tooltip overlay on add-option (choice-editor.component.html:29) |
-| 3 | e2e/locators/survey/survey-builder.locator.json | maxQuestionsMessageText | `You have already reached the maximum number of questions.` (text) | NEEDS DEV DECISION | tooltip overlay on add-question (L/features/build-survey/components/preview-mode/preview-mode.component.html:98) |
-| 4 | e2e/locators/survey/survey-builder.locator.json | select-panelists-step-circle | `.niq-step-circle >> nth=0` | EXTERNAL | library-internal step circle (`crf-survey-wrapper`, scss only) |
-| 5 | e2e/locators/survey/survey-builder.locator.json | myAssetsTreeItem | `role=treeitem[name*="My Assets"]` | EXTERNAL | `@nielsen/crf-ui-components` save-a-copy tree (L/features/build-survey/components/survey-header/survey-header.component.html:69) |
-| 6 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialog | `[role='dialog']:has-text("Save your survey") >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` (survey-header.component.html:69) |
-| 7 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogNameInput | `role=textbox[name="Name"]` | EXTERNAL | `crf-uic-save-a-copy` |
-| 8 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogErrorText | `text="Survey name is required." >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` |
-| 9 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogMyAssetsFolder | `role=treeitem[name*="My Assets"] >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` |
-| 10 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogSaveButton | `role=button[name="Save draft"] >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` |
-| 11 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogCancelButton | `role=button[name="Cancel"] >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` |
-| 12 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogCreateNewFolderLink | `text=/^Create new folder/ >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` |
-| 13 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogMyAssetsArrow | `role=treeitem[name*="My Assets"] >> nth=0 >> .arrow` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 14 | e2e/locators/survey/survey-builder.locator.json | saveDraftDialogFolderTree | `[role='tree'] >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 15 | e2e/locators/survey/survey-builder.locator.json | publishLocationDialog | `[role='dialog']:has-text("Publish your survey") >> nth=0` | EXTERNAL | `crf-uic-save-a-copy` (publish reuses it) |
-| 16 | e2e/locators/survey/survey-builder.locator.json | dialogContinueButton | `role=button[name="Continue"]` | EXTERNAL | `crf-uic-save-a-copy` |
-| 17 | e2e/locators/survey/survey-builder.locator.json | createNewFolderLink | `text="Create new folder"` | EXTERNAL | `crf-uic-save-a-copy` |
-| 18 | e2e/locators/survey/survey-builder.locator.json | createNewFolderInLocationButton | `text="Create new folder in location"` | EXTERNAL | `crf-uic-save-a-copy` |
-| 19 | e2e/locators/survey/survey-builder.locator.json | createNewFolderDialog | `[role='dialog']:visible:has-text("Create new folder"):not(:has-text("Save your survey")):not(:has-text("Publish your survey")) >> nth=0` | EXTERNAL | `crf-uic-create-folder` (survey-header.component.html:79) |
-| 20 | e2e/locators/survey/survey-builder.locator.json | createNewFolderDialogNameInput | `input:visible >> nth=0` | EXTERNAL | `crf-uic-create-folder` |
-| 21 | e2e/locators/survey/survey-builder.locator.json | createNewFolderDialogCreateButton | `role=button[name="Create"]` | EXTERNAL | `crf-uic-create-folder` |
-| 22 | e2e/locators/survey/survey-builder.locator.json | createNewFolderDialogCloseButton | `role=button[name="Close"]` | EXTERNAL | `crf-uic-create-folder` |
-| 23 | e2e/locators/survey/survey-builder.locator.json | locationDialogFolderRow | `role=treeitem` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 24 | e2e/locators/survey/survey-builder.locator.json | locationDialogFolderByName | `role=treeitem[name*="${text}"]` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 25 | e2e/locators/survey/survey-builder.locator.json | savedAssetGridcellByTitle | `role=gridcell[name="${text}"]` | EXTERNAL | `@nielsen/crf-ui-components` grid |
-| 26 | e2e/locators/survey/survey-builder.locator.json | validatingSurveyToastText | `text="Validating your survey" >> nth=0` | NEEDS DEV DECISION | toast from `build-survey/services/validation.service.ts:361` |
-| 27 | e2e/locators/survey/survey-builder.locator.json | changesRecommendedToastText | `text="Changes recommended" >> nth=0` | NEEDS DEV DECISION | toast from `validation.service.ts:352` |
-| 28 | e2e/locators/survey/survey-builder.locator.json | validationCompleteToastText | `text="Validation complete" >> nth=0` | NEEDS DEV DECISION | toast from `validation.service.ts:356` |
-| 29 | e2e/locators/survey/survey-builder.locator.json | changesNeededToastText | `text="Changes needed" >> nth=0` | NEEDS DEV DECISION | toast from `validation.service.ts:343` |
-| 30 | e2e/locators/survey/survey-builder.locator.json | recommendationTagText | `text=/\d+ recommendation/i >> nth=0` | NEEDS ID | L/features/build-survey/components/question-editor/suggestion-tags/suggestion-tags.component.ts:18 |
-| 31 | e2e/locators/survey/survey-builder.locator.json | viewOptiqFeedbackLink | `View Optiq feedback` (text) | ID EXISTS – can swap | `ai-suggestions` (L/features/build-survey/components/survey-header/survey-header.component.html:48) |
-| 32 | e2e/locators/survey/survey-builder.locator.json | saveDraftSuccessToast | `Survey saved as draft successfully` (text) | NEEDS DEV DECISION | toast with `containerClass: 'survey-action-toast'` (`survey-header.component.ts:165`) |
-| 33 | e2e/locators/survey/survey-builder.locator.json | reviewSurveyDetailsDialog | `[role='dialog']:has-text("Review survey details") >> nth=0` | NEEDS ID | L/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:1 (`niq-dialog`; host ID deferred earlier) |
-| 34 | e2e/locators/survey/survey-builder.locator.json | publishSurveyTitle | `.publish-survey-title` | NEEDS ID | survey-publish-popup.component.html:8 |
-| 35 | e2e/locators/survey/survey-builder.locator.json | publishQuestionSummary | `.publish-question-summary` | NEEDS ID | survey-publish-popup.component.html:18 |
-| 36 | e2e/locators/survey/survey-builder.locator.json | publishEditSurveyButton | `role=button[name="Edit survey"]` | NEEDS ID | survey-publish-popup.component.html:24 |
-| 37 | e2e/locators/survey/survey-builder.locator.json | publish-response-count-text | `.publish-review-details` | NEEDS ID | survey-publish-popup.component.html:10 (container; child `publish-response-count` exists at :19 if only the count text is needed) |
-| 38 | e2e/locators/survey/survey-builder.locator.json | publish-success-toast | `Survey published successfully` (text) | NEEDS DEV DECISION | toast from `survey-publish-popup.component.ts:71` |
-| 39 | e2e/locators/survey/survey-builder.locator.json | survey-action-toast | `.survey-action-toast` | NEEDS DEV DECISION | service-set `containerClass` (`survey-common.service.ts:403`, `survey-publish-popup.component.ts:71`) |
-| 40 | e2e/locators/survey/survey-builder.locator.json | questionTextDisplay | `.question-text` | ID EXISTS – can swap | `question-text-${questionNumber}` (choice-editor.component.html:55, rating-editor.component.html:59, nps-editor.component.html:45, text-editor.component.html:27, scale-editor.component.html:141) |
-| 41 | e2e/locators/survey/start-with-prompt.locator.json | datasetByText | `${text}` (text) | EXTERNAL | `re-dataset-picker` |
-| 42 | e2e/locators/survey/start-with-prompt.locator.json | questionCountError | `.question-count-error[role='alert']:visible, .question-count-error [role='alert']:visible` | NEEDS ID | L/features/build-survey/components/question-generator/question-generator.html:18 |
-| 43 | e2e/locators/survey/start-with-prompt.locator.json | rephraseWithAiButton | `.rephrase-action >> nth=${text}` | ID EXISTS – can swap | `rephrase-with-ai-${i}` (preview-mode.component.html:38) |
-| 44 | e2e/locators/survey/start-with-prompt.locator.json | rephraseInput | `.rephrase-input:not([data-tmp='${text}'])` | ID EXISTS – can swap | `rephrase-input-${i}` (preview-mode.component.html:46) |
-| 45 | e2e/locators/survey/start-with-prompt.locator.json | rephraseSendButton | `.rephrase-send:not([data-tmp='${text}'])` | ID EXISTS – can swap | `rephrase-send-${i}` (preview-mode.component.html:51) |
-| 46 | e2e/locators/survey/start-with-prompt.locator.json | optiqHeading | `Let's get you started with Optiq!` (text) | NEEDS ID | L/features/select-panelist/components/select-panelist.component.html:3 |
-| 47 | e2e/locators/survey/select-panelist.locator.json | selectedOption | `[data-cy='Selected-option']` | EXTERNAL | data-selector panel (`@nielsen/crf-data-summary` / `crf-data-selector-panel-v2`) |
-| 48 | e2e/locators/survey/select-panelist.locator.json | searchForPanelistsButton | `[id='report-btn-run']` | NEEDS ID | L/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:37 (has `id` + `data-cy` only) |
-| 49 | e2e/locators/survey/select-panelist.locator.json | 250ResponsesButton | `250 Responses` (text) | ID EXISTS – can swap | `select-response-count-250` (L/features/select-panelist/components/select-panelist.component.html:35) |
-| 50 | e2e/locators/survey/select-panelist.locator.json | selectedResponseCountButton | `.responses button.selected` | ID EXISTS – can swap | `select-response-count-${count}` + `.selected` state class (select-panelist.component.html:35) |
-| 51 | e2e/locators/survey/select-panelist.locator.json | buildSurveyPageHeading | `text= Build Survey >>nth=0` | EXTERNAL | string not present in this repo's templates/i18n (host / other owner) |
-| 52 | e2e/locators/survey/select-panelist.locator.json | productOfferingModal | `.ds-picker-container.ds-picker-type-selection` | EXTERNAL | `re-dataset-picker` |
-| 53 | e2e/locators/survey/select-panelist.locator.json | selectDatasetButton | `.no-dataset-state niq-button` | NEEDS ID | panelist-dataselector.component.html:79 |
-| 54 | e2e/locators/survey/select-panelist.locator.json | eligibilityMessage | `.eligibility` | NEEDS ID | select-panelist.component.html:17 |
-| 55 | e2e/locators/survey/select-panelist.locator.json | responsesCreditMessage | `.responses-frame .question` | NEEDS ID | select-panelist.component.html:28 |
-| 56 | e2e/locators/survey/select-panelist.locator.json | footerSelectedValue | `.dataset-footer .selected-value` | NEEDS ID | L/shared/components/dataset-footer/dataset-footer.component.html:4 |
-| 57 | e2e/locators/survey/select-panelist.locator.json | filterValidationMessage | `crf-data-selector-panel-v2 >> text=/Please select 1\|Looking good!\|Please remove 1/ >> visible=true >> nth=0` | EXTERNAL | `crf-data-selector-panel-v2` (panelist-dataselector.component.html:49) |
-| 58 | e2e/locators/survey/select-panelist.locator.json | filterCounter | `crf-data-selector-panel-v2 >> text=/\b\d+\/\d+\b/ >> visible=true >> nth=0` | EXTERNAL | `crf-data-selector-panel-v2` |
-| 59 | e2e/locators/survey/select-panelist.locator.json | checkboxLabel | `div.item-container:has-text('${text}') niq-checkbox >> nth=0` | EXTERNAL | data-selector panel (`@nielsen/crf-data-summary`) |
-| 60 | e2e/locators/survey/my-assets.locator.json | viewAllSurveysLink | `.view-all-link:has-text("View all surveys") >> nth=0` | NEEDS ID | L/features/survey-home/components/survey-homepage/survey-homepage.component.html:14 |
-| 61 | e2e/locators/survey/feature-toggle.locator.json | surveyModernizationFmsRow | `tr:has(td:text-is("Enable Survey Modernization in FMS"))` | EXTERNAL | FMS admin page, not in this repo |
-| 62 | e2e/locators/survey/feature-toggle.locator.json | surveyModernizationFmsSwitch | `tr:has(td:text-is("Enable Survey Modernization in FMS")) input[role='switch']` | EXTERNAL | FMS admin page, not in this repo |
-| 63 | e2e/locators/survey/feature-toggle.locator.json | surveyModernizationFmsSwitchLabel | `tr:has(td:text-is("Enable Survey Modernization in FMS")) label.switch` | EXTERNAL | FMS admin page, not in this repo |
-| 64 | e2e/locators/survey/login.locator.json | userName | `[data-id='username-input']` | EXTERNAL | login / OAuth page |
-| 65 | e2e/locators/survey/login.locator.json | nextButton | `role=button[name="Next"]` | EXTERNAL | login / OAuth page |
-| 66 | e2e/locators/survey/login.locator.json | password | `[data-id='password-input']` | EXTERNAL | login / OAuth page |
-| 67 | e2e/locators/survey/login.locator.json | verifyButton | `role=button[name="Verify"]` | EXTERNAL | login / OAuth page |
-| 68 | e2e/locators/survey/start-from-scratch.locator.json | productOfferingHeading | `role=heading[name="Product Offering"]` | EXTERNAL | `re-dataset-picker` / host |
-| 69 | e2e/page-objects/common/survey-builder.page.ts | line 563 | `getByRole('treeitem', { name: 'My Assets' })` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 70 | e2e/page-objects/common/survey-builder.page.ts | line 564 | `.locator('.arrow')` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 71 | e2e/page-objects/common/survey-builder.page.ts | line 566 | `getByRole('treeitem').filter({ hasNotText: 'My Assets' })` | EXTERNAL | `crf-uic-save-a-copy` tree |
-| 72 | e2e/page-objects/common/survey-builder.page.ts | line 592 | `getByText(saveDraftSuccessToast)` | NEEDS DEV DECISION | toast (same as #32) |
-| 73 | e2e/page-objects/common/survey-builder.page.ts | line 1308 | `e.querySelector('button')` | EXTERNAL | inner `<button>` rendered by `niq-button` (`@nielseniq/athena-core`) |
-| 74 | e2e/page-objects/common/survey-builder.page.ts | line 1312 | `e.querySelector('button')` | EXTERNAL | inner `<button>` rendered by `niq-button` (`@nielseniq/athena-core`) |
-| 75 | e2e/page-objects/common/survey-builder.page.ts | line 1864 | `${row} >> nth=${index} >> .save-changes-action:visible` | ID EXISTS – can swap | `save-question-changes` (L/features/build-survey/components/question-editor/question-editor.component.html:43) |
-| 76 | e2e/page-objects/survey/start-with-prompt.page.ts | line 234 | `locator("[role='slider'], input[type='range']")` | EXTERNAL | `niq-slider` (question-generator.html:11) |
-| 77 | e2e/page-objects/survey/start-with-prompt.page.ts | line 415 | `.rephrase-send-loading` | NEEDS ID | preview-mode.component.html:51 (class toggled on the `rephrase-send-${i}` element; a loading-state attribute is needed) |
-| 78 | e2e/page-objects/survey/start-with-prompt.page.ts | line 442 | `.rephrase-send-loading` | NEEDS ID | preview-mode.component.html:51 (same as #77) |
+nth=0 introduces a dependency on the DOM order and may silently select an unintended element if multiple matches exist or the order changes
 
-## Counts
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 12 hours ago
+e2e/locators/survey/survey-builder.locator.json
+    { "elementName": "saveDraftDialogMyAssetsFolder", "selectorType": "playwrights", "selectorValue": "role=treeitem[name*=\"My Assets\"] >> nth=0" },
+    { "elementName": "saveDraftDialogSaveButton", "selectorType": "playwrights", "selectorValue": "role=button[name=\"Save draft\"] >> nth=0" },
+    { "elementName": "saveDraftDialogCancelButton", "selectorType": "playwrights", "selectorValue": "role=button[name=\"Cancel\"] >> nth=0" },
+    { "elementName": "saveDraftDialogCreateNewFolderLink", "selectorType": "playwrights", "selectorValue": "text=/^Create new folder/ >> nth=0" },
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+12 hours ago
+Improvise locator strategy for similar locators, for better reusability and stability
 
-- ID EXISTS: 9
-- NEEDS ID: 16
-- EXTERNAL: 43
-- NEEDS DEV DECISION: 10
