@@ -1,256 +1,163 @@
-AC1: Results Dashboard Availability
-Given a survey has been successfully published
-When publication completes
-Then the Survey Results dashboard shall become available immediately to authorized users
-And the Survey Results step shall be highlighted in the survey workflow tracker.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/automation-remaining-and-stability-part_1)
+$ git checkout main
+Switched to branch 'main'
+Your branch is behind 'origin/main' by 9 commits, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
 
-AC2: Post-Publish Navigation
-Given a user publishes a survey
-When publication completes
-Then the user shall be directed to the Find My Stuff (FMS) experience
-And a link to the Results Dashboard shall be visible and selectable
-And a message shall inform the user that their survey has been published and results can be monitored from the dashboard.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (main)
+$ git pull origin main 
+remote: Enumerating objects: 1046, done.
+remote: Counting objects: 100% (550/550), done.
+remote: Compressing objects: 100% (123/123), done.
+remote: Total 1046 (delta 452), reused 470 (delta 416), pack-reused 496 (from 2)
+Receiving objects: 100% (1046/1046), 549.07 KiB | 1.15 MiB/s, done.
+Resolving deltas: 100% (586/586), completed with 74 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * branch              main       -> FETCH_HEAD
+   cf2ecfd5..90a3cdb0  main       -> origin/main
+Updating a5fee230..90a3cdb0
+Fast-forward
+ e2e/constants/timeout-constants.ts                 |   2 +
+ e2e/locators/survey/feature-toggle.locator.json    |  20 +
+ e2e/locators/survey/my-assets.locator.json         |  11 +
+ e2e/locators/survey/select-panelist.locator.json   |  10 +
+ e2e/locators/survey/start-with-prompt.locator.json |   8 +-
+ e2e/locators/survey/survey-builder.locator.json    |  28 +-
+ e2e/page-objects/common/common-page.ts             |  25 +-
+ e2e/page-objects/common/feature-toggle.page.ts     |  90 +++
+ e2e/page-objects/common/login.page.ts              |   8 +
+ e2e/page-objects/common/my-assets.page.ts          |  87 +++
+ e2e/page-objects/common/select-panelist.page.ts    |  34 +
+ e2e/page-objects/common/survey-builder.page.ts     | 724 +++++++++++++++++++--
+ e2e/page-objects/survey/start-from-scratch.page.ts |   5 +
+ e2e/page-objects/survey/start-with-prompt.page.ts  | 169 ++++-
+ e2e/test-data/dev-test-data.json                   |   8 +
+ .../build-survey-common-test-cases.ts              | 407 +++++++++++-
+ e2e/tests/survey/select-panelist.spec.ts           |  98 +++
+ e2e/tests/survey/start-from-scratch.spec.ts        | 173 +++--
+ e2e/tests/survey/start-with-prompt.spec.ts         | 107 ++-
+ libs/survey-mod-lib/assets/payload/bar.json        |   1 +
+ libs/survey-mod-lib/assets/payload/column.json     |   1 +
+ libs/survey-mod-lib/assets/payload/common.json     | 100 ---
+ libs/survey-mod-lib/assets/payload/grid.json       | 104 ++-
+ libs/survey-mod-lib/assets/payload/pie.json        |   1 +
+ libs/survey-mod-lib/ng-package.json                |   2 +-
+ libs/survey-mod-lib/package.json                   |   2 +-
+ .../components/build-survey.component.html         |   4 +-
+ .../components/build-survey.component.spec.ts      |  42 ++
+ .../components/build-survey.component.ts           |  13 +-
+ .../components/footer/footer.component.html        |   4 +-
+ .../components/footer/footer.component.spec.ts     |  72 +-
+ .../components/footer/footer.component.ts          |  34 +-
+ .../optiq-feedback/optiq-feedback.component.html   |  68 +-
+ .../optiq-feedback/optiq-feedback.component.scss   |  23 +-
+ .../optiq-feedback.component.spec.ts               | 280 +++++++-
+ .../optiq-feedback/optiq-feedback.component.ts     | 123 +++-
+ .../preview-mode/preview-mode.component.spec.ts    |  82 ++-
+ .../preview-mode/preview-mode.component.ts         |  38 +-
+ .../question-editor/question-editor.component.html |   1 +
+ .../question-editor.component.spec.ts              |  11 +
+ .../question-editor/question-editor.component.ts   |  33 +-
+ .../rating-editor/rating-editor.component.html     |  80 ++-
+ .../rating-editor/rating-editor.component.scss     | 115 +++-
+ .../rating-editor/rating-editor.component.spec.ts  |  82 +++
+ .../rating-editor/rating-editor.component.ts       |  39 +-
+ .../review-mode/review-mode.component.html         |  17 +-
+ .../review-mode/review-mode.component.scss         |  37 ++
+ .../review-mode/review-mode.component.ts           |   2 +
+ .../survey-publish-popup.component.html            |   2 +-
+ .../features/build-survey/models/build-survey.ts   |  18 +-
+ .../services/optiq-feedback.util.spec.ts           |  95 +++
+ .../build-survey/services/optiq-feedback.util.ts   |  60 ++
+ .../services/survey-data-mapper.util.spec.ts       |  15 +
+ .../services/survey-payload.util.spec.ts           |  21 +-
+ .../build-survey/services/survey-payload.util.ts   |   5 +-
+ .../services/survey-question.util.spec.ts          |  28 +
+ .../build-survey/services/survey-question.util.ts  |  15 +-
+ .../build-survey/services/survey.service.spec.ts   | 194 +++++-
+ .../build-survey/services/survey.service.ts        | 127 ++--
+ .../services/validation.service.spec.ts            |  37 +-
+ .../build-survey/services/validation.service.ts    |  15 +-
+ .../components/my-assets-page.component.html       |  39 +-
+ .../components/my-assets-page.component.scss       |  62 +-
+ .../components/my-assets-page.component.spec.ts    | 375 ++++++++++-
+ .../components/my-assets-page.component.ts         | 125 +++-
+ .../survey-asset-action-dialogs.component.html     |  27 +-
+ .../survey-asset-action-dialogs.component.scss     |  17 +
+ .../survey-asset-action-dialogs.component.spec.ts  | 389 +++++++++--
+ .../survey-asset-action-dialogs.component.ts       | 147 ++++-
+ .../survey-details/survey-details.component.html   |   1 -
+ .../survey-details.component.spec.ts               |  41 +-
+ .../components/survey-grid-columns.config.ts       |  10 -
+ .../my-assets-selection-actions.constant.spec.ts   |  94 ++-
+ .../my-assets-selection-actions.constant.ts        |  36 +-
+ .../my-assets/constants/my-assets-tabs.constant.ts |   8 +-
+ .../services/survey-asset-actions.service.spec.ts  | 109 +++-
+ .../services/survey-asset-actions.service.ts       |  68 +-
+ .../services/survey-asset-api.service.spec.ts      |  25 +-
+ .../services/survey-grid-handler.service.spec.ts   |  25 +-
+ .../services/survey-grid-handler.service.ts        |  13 +-
+ .../utils/asset-catalog-request.util.spec.ts       |   7 +-
+ .../components/select-panelist.component.html      |   2 +-
+ .../survey-homepage/survey-homepage.component.html |  19 +-
+ .../survey-homepage/survey-homepage.component.scss |  58 +-
+ .../survey-homepage.component.spec.ts              |   4 +-
+ .../survey-homepage/survey-homepage.component.ts   |   8 +-
+ .../lib/features/survey-home/models/survey-home.ts |  12 +-
+ .../components/grid/grid.component.html            |   4 +
+ .../components/grid/grid.component.scss            |   9 +-
+ .../components/grid/grid.component.spec.ts         |  38 +-
+ .../components/grid/grid.component.ts              |  28 +-
+ .../question-chart/question-chart.component.html   |   4 +-
+ .../question-chart/question-chart.component.scss   |   6 +-
+ .../question-chart.component.spec.ts               |  65 +-
+ .../question-chart/question-chart.component.ts     |   6 +-
+ .../results-dashboard.component.html               | 104 +--
+ .../results-dashboard.component.scss               | 140 ++--
+ .../results-dashboard.component.spec.ts            | 126 ++--
+ .../results-dashboard.component.ts                 | 113 ++--
+ .../survey-results.component.spec.ts               | 168 ++++-
+ .../survey-results/survey-results.component.ts     |  28 +-
+ .../survey-results/constants/grid.constants.ts     |   2 +-
+ .../survey-results/models/survey-results.ts        |  71 +-
+ .../utils-datasummary/data-summary.service.spec.ts | 221 +++++++
+ .../utils-datasummary/data-summary.service.ts      | 199 ++++++
+ .../survey-results/utils/grid-columns.util.spec.ts |  20 +
+ .../survey-results/utils/grid-columns.util.ts      |   4 +-
+ .../utils/survey-results-payload.util.spec.ts      | 277 ++++++++
+ .../utils/survey-results-payload.util.ts           | 213 ++++++
+ .../survey-action-items.component.scss             |  25 +-
+ .../survey-action-items.component.ts               |   2 +-
+ .../src/lib/shared/styles/_survey-grid.scss        |  11 +-
+ .../src/lib/shared/styles/styles.scss              |  18 +
+ libs/survey-mod-lib/tsconfig.lib.json              |   1 +
+ package-lock.json                                  |  12 +-
+ package.json                                       |   4 +-
+ 116 files changed, 6647 insertions(+), 1050 deletions(-)
+ create mode 100644 e2e/locators/survey/feature-toggle.locator.json
+ create mode 100644 e2e/locators/survey/my-assets.locator.json
+ create mode 100644 e2e/page-objects/common/feature-toggle.page.ts
+ create mode 100644 e2e/page-objects/common/my-assets.page.ts
+ delete mode 100644 libs/survey-mod-lib/assets/payload/common.json
+ create mode 100644 libs/survey-mod-lib/src/lib/features/build-survey/services/optiq-feedback.util.spec.ts
+ create mode 100644 libs/survey-mod-lib/src/lib/features/build-survey/services/optiq-feedback.util.ts
+ create mode 100644 libs/survey-mod-lib/src/lib/features/survey-results/utils-datasummary/data-summary.service.spec.ts
+ create mode 100644 libs/survey-mod-lib/src/lib/features/survey-results/utils-datasummary/data-summary.service.ts
+ create mode 100644 libs/survey-mod-lib/src/lib/features/survey-results/utils/survey-results-payload.util.spec.ts
+ create mode 100644 libs/survey-mod-lib/src/lib/features/survey-results/utils/survey-results-payload.util.ts
 
-AC3: Stage 1 – No Responses Received
-Given a survey has been published and no responses have been received
-When a user accesses the Results Dashboard
-Then a disclaimer shall indicate that the survey is newly launched and insufficient data has been collected
-And charts and tables shall be displayed in an empty state
-And KPI components shall be visible and active
-And the Survey Overview tab shall be available
-And Export and Share functions shall be disabled.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (main)
+$ git log --oneline -8
+90a3cdb0 (HEAD -> main, origin/main, origin/HEAD) Merge pull request #214 from niq-enterprise/feature/automation-remaining-and-stability-part_1
+7e84dc4d Merge branch 'main' into feature/automation-remaining-and-stability-part_1
+bb2c87bf RE repo updated successfully with Survey Mod lib version 26.23.12-dev
+adf2d827 Survey Modernization Library version 26.23.12-dev published to Artifactory
+8b4975fa Merge pull request #223 from niq-enterprise/feature/RBOC-224786/grid-header-enhancement
+67654d4c Merge branch 'main' of https://github.com/niq-enterprise/disc-fe-omni-survey-mod into feature/RBOC-224786/grid-header-enhancement
+90d06715 Merge pull request #226 from niq-enterprise/feature/RBOC-22146
+5
+c667a5b9 Merge branch 'main' of https://github.com/niq-enterprise/disc-
+fe-omni-survey-mod into feature/RBOC-221465
 
-AC4: Stage 2 – Responses In Progress
-Given a survey has received responses but has not reached its target completion threshold
-When a user accesses the Results Dashboard
-Then a disclaimer shall indicate that results are still being collected
-And charts and tables shall display currently available responses
-And KPI values shall accurately reflect collected responses
-And the Survey Overview tab shall remain available
-And Export and Share functions shall remain disabled.
-
-AC5: Stage 3 – Survey Complete
-Given a survey has achieved its required response target or completed fielding status
-When a user accesses the Results Dashboard
-Then the disclaimer shall be removed
-And Export and Share functionality shall be enabled
-And the AI Summary shall become available
-And the Survey Overview tab shall remain available.
-
-AC6: Dashboard State Management
-Given a survey transitions between response collection states
-When response volumes increase or completion criteria are met
-Then the dashboard shall automatically reflect the appropriate stage (No Responses, In Progress, Complete) based on survey status and response thresholds.
-
-AC7: KPI Display
-Given a user accesses the Results Dashboard
-When KPI data is available
-Then the following KPIs shall be displayed in the specified order:
-
-Total Responses
-Completion Rate
-Time Remaining on Survey
-And KPI values shall reflect the most current survey data available.
-
-AC8: KPI Refresh
-Given new survey responses are received
-When the dashboard is refreshed or reloaded
-Then KPI metrics shall reflect the updated survey response counts and status.
-
-AC9: Question-Level Visualization Support
-Given survey results exist for a supported question type
-When a user views the Results Dashboard
-Then visualizations supported by the approved Chart Library shall be available for that question type.
-
-AC10: Single Choice Visualization Support
-The dashboard shall support the following visualizations for Single Choice questions:
-
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table View
-AC11: Multiple Choice Visualization Support
-The dashboard shall support the following visualizations for Multiple Choice questions:
-
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table View
-AC12: Rating Visualization Support
-The dashboard shall support the following visualizations for Rating questions:
-
-Heatmap
-Table View
-AC13: NPS Visualization Support
-The dashboard shall support the following visualizations for NPS questions:
-
-Speedometer
-Bar Chart
-Table View
-And the solution shall support future extensibility for additional chart formats.
-
-AC14: Point and Multi-Scale Visualization Support
-For Point Scale and Multi-Scale questions:
-
-Combined View
-
-Heatmap
-Table
-Single Statement View
-
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table
-shall be supported.
-
-AC15: Survey Overview Access
-Given a user accesses the Results Dashboard
-When survey results are viewed
-Then the Survey Overview tab shall remain accessible regardless of dashboard stage.
-
-AC16: AI Summary Placement
-Given a completed survey qualifies for AI Summary generation
-When a user accesses the completed Results Dashboard
-Then the AI Summary shall appear below the KPI section and above results visualizations.
-
-AC17: AI Summary Generation
-Given a survey has reached completion status
-When the AI Summary is generated
-Then the summary shall present:
-
-Overall survey findings
-Key trends
-Notable insights
-Significant conclusions
-based on collected survey responses.
-
-AC18: Export and Share Controls
-Given a user has access to the Results Dashboard
-When the survey is not yet complete
-Then Export and Share controls shall remain unavailable.
-
-And
-
-When the survey reaches completion status
-Then Export and Share controls shall become available according to the Export and Sharing requirements defined in dependent epics.
-
-AC19: Empty-State Handling
-Given dashboard visualizations do not yet contain data
-When the user views a chart or table
-Then the dashboard shall display an appropriate empty-state experience rather than an error.
-
-AC20: Live Results Accuracy
-Given responses are being collected
-When the Results Dashboard is rendered
-Then charts, tables, KPIs, and AI-generated insights shall be based on the latest available survey response data.
-
-AC21: Authorization and Access Control
-Given a user attempts to access a Results Dashboard
-When permissions are evaluated
-Then only authorized users shall be allowed to view survey results, exports, AI summaries, and related dashboard artifacts.
-
-AC22: Design Compliance
-Given the Results Dashboard is rendered
-When users interact with the experience
-Then layouts, component placement, workflow progression, and dashboard presentation shall align with the approved Survey Results dashboard designs.
-
-Release Notes Classification:Enhancement
-Release Notes Audience:
-User Level
-Impact:
-TBD
-
-Team:Omni Survey Mod
-UserVoice Links:None
-User/Business Value (WSJF):10
-PI Commitment:Committed
-Epic Type:Functional
-RR/OE (WSJF):10
-Time Criticality (WSJF):10
-Epic Status:To Do
-Story Points:103
-Planning Increment:
-PI_4_2026
-UX Required:Yes
-Description
-Background:
-
-After users pass the survey "Build" portion of their user experience, they will "Review" their Survey and then send it through to "Publishing".  After the "Publishing" phase, the Survey will be fielded to participants and responses will begin to come through in a "Results" dashboard view for them to analyze. This epic is covering the UI build of the "Results" dashboard, inclusive of all the charts, tables, KPIs, AI Summary, and the placement of relevant functions. 
-
-Goal: Develop the screens and functionality to support a "Results" dashboard where survey results are live and viewable by users in a variety of formats.  
-
- 
-
-Scope: 
-
-Trigger
-Dashboard should become available immediately upon publication.  When a user selects "Publish", they should unlock the dashboard view.  In the line tracker at the top of the screen "Survey Results" is highlighted.  There are different stages of the dashboard.
-Just Published --> FMS
-User should be immediately directed to Find My Stuff experience where the dashboard link is present, live, and selectable
-Text disclaimer/pop-up required alerting the user that their survey was just published and can be referenced here. 
-Stage 1 - No responses gathered
-Disclaimer should be present on page with text reminder that the survey was just launched and the data is not robust
-Share/Export functions should be disabled
-Charts and tables are present, but empty
-KPIs are present and live
-Survey overview tab is present
-Stage 2 - Survey responses coming in, not complete
-Disclaimer should still be present
-Share/Export functions should be disabled
-Charts and tables are present, displaying incremental responses
-KPIs are present and live, reflecting the increase in responses accurately
-Survey overview tab is present
-Notification should be sent out to user at the half-way point of full responses i.e. if user requires 400 responses, notification goes out at 200 responses (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
-Stage 3 - Survey is complete, all responses gathered
-Disclaimer is removed
-Share/Export functions should be enabled
-AI Summary unlocked
-Survey overview tab is present
-Notification should be sent to user that survey is complete (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
-Charts and Tables
-For each question type, we have associated charts and displays that correspond and should be displayed.  Chart Library Supported charts only 
-Single Choice 
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Multiple Choice
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Rating (TBD)
-Heatmap
-Table
-NPS
-Speedometer (Persistent)
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Point and Multi Scale
-Main (Combined view)
-Heatmap (Persistent)
-Table (Persistent)
-Sub (Single statement view)
-Bar (Toggle)
-Column (Toggle)
-Pie (Default + Toggle)
-Table (Toggle)
-KPIs
-3 KPIs for MVP listed in this order:
-Total Responses
-Completion Rate
-Time left on survey
-All are live and should update upon page refresh to reflect new responses
-AI Summary
-AI Summary sits at the top of the results dashboard, underneath the KPIs.  
-Triggered to load when survey is complete and display a text summary of the results, including insights on overall summary, trends, and notable conclusions to the user. 
-Do we give a follow-up option? 
-Export and Share
-See Export epic: 
-Share?
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (main)
+$ 
