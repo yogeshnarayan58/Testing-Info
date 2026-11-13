@@ -1,103 +1,18 @@
-TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit
-survey/common-test-cases/build-survey-common-test-cases.ts:504
-5.4s
-chromiumStartFromScratchReviewMode
-serial
-Copy prompt
-Error: Expected -1 questions after deleting one, found 0
-expect(received).toBeTruthy()
+All seven are done.
 
-Received: false
-
-   at ..\page-objects\common\assert-utils.ts:14
-
-  12 |  */
-  13 | export function assertTrue(result: boolean, message?: string): void {
-> 14 |   assert(result).toBeTruthy(message);
-     |                  ^
-  15 | }
-  16 |
-    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:551:17
-Filter steps
-Before Hooks
-15ms
-Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-87ms
-Wait for selector locator('[data-test-id=\'review-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-33ms
-Click locator('[data-test-id=\'review-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-204ms
-Wait for selector locator('[data-test-id=\'review-select-all\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-59ms
-Wait for selector locator('[data-test-id=\'review-expand-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-29ms
-Wait for selector locator('[data-test-id=\'review-collapse-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-52ms
-Wait for selector locator('[data-test-id=\'review-delete-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-27ms
-Wait for selector locator('[data-test-id=\'exit-review-mode\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-30ms
-Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-19ms
-Wait for selector locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-16ms
-Click locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-56ms
-Wait for selector locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-19ms
-Click locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-60ms
-Wait for selector locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Click locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-38ms
-Wait for selector locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-11ms
-Click locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-48ms
-Wait for selector locator('[data-test-id=\'review-expand-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Click locator('[data-test-id=\'review-expand-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-46ms
-Wait for selector locator('[data-test-id=\'review-collapse-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Click locator('[data-test-id=\'review-collapse-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-67ms
-Wait for selector locator('[data-test-id=\'exit-review-mode\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15ms
-Click locator('[data-test-id=\'exit-review-mode\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-165ms
-Wait for selector locator('[data-test-id=\'review-survey\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-36ms
-Click locator('[data-test-id=\'review-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-124ms
-Wait for selector locator('[data-test-id=\'review-select-all\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-20ms
-Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-17ms
-Wait for selector locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-12ms
-Click locator('[data-test-id=\'select-question-0-icon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-51ms
-Wait for selector locator('[data-test-id=\'review-delete-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-305ms
-Click locator('[data-test-id=\'review-delete-questions\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-84ms
-Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-26ms
-After Hooks
-2.3s
-Worker Cleanup
-----------------------------------
+1a: done. questionNumberMarker in survey-builder.locator.json now uses the combined selector.
+1b: done. ratingRowInput and addRatingRowButton are added right after ratingQuestionTextInput.
+2: done. questionNumberMarker in start-with-prompt.locator.json now uses the combined selector.
+3: done. surveyQuestions.rating in dev-test-data.json has "rows": ["Overall experience", "Ease of use"] after questionText.
+4a: done. addRatingQuestion in survey-builder.page.ts is replaced with the version that takes a rows parameter and calls fillRatingRows.
+4b: done. fillRatingRows is added directly after addRatingQuestion, and I didn't add another devTestData import.
+5: done. The question-number div in review-mode.component.html now has [attr.data-test-id]="'review-question-number-' + $index".
+I ran no commands. The two JSON files still have CRLF endings on every line. survey-builder.page.ts showed the same line count (1961) before and after the 4a/4b edits, so I couldn't confirm its endings that way. I did confirm the new method is in the file.
+-------------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1   ◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -112,91 +27,346 @@ Global setup completed. Auth state saved.
 
 Running 37 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-  ✓   1 …page @StartFromScratch @LandStartFromScratch (17.2s)
-Auth state loaded from storage/auth.json
-  ✓   2 …et screen @StartFromScratch @DatasetSelection (2.5s)
-  ✓   3 …lters are set @StartFromScratch @DataSummary (42.0s)
-  ✓   4 …sponse count @StartFromScratch @ResponseCount (4.7s)
-  ✓   5 …ng @StartFromScratch @ProceedToSurveyBuilder (504ms)
-  ✓   6 …question panel @StartFromScratch @EmptyState (113ms)
-  ✓   7 …vey title @StartFromScratch @EditSurveyTitle (560ms)
-  ✓   8 …tion @StartFromScratch @SingleChoiceQuestion (806ms)
-  ✓   9 …ion @StartFromScratch @MultipleChoiceQuestion (3.8s)
-  ✓  10 …ng question @StartFromScratch @RatingQuestion (2.9s)
-  ✓  11 …n NPS question @StartFromScratch @NPSQuestion (2.7s)
-  ✓  12 …uestion @StartFromScratch @PointScaleQuestion (4.0s)
-  ✓  13 …uestion @StartFromScratch @MultiScaleQuestion (3.6s)
-  ✓  14 …toggle is on @StartFromScratch @RequiredStar (18.3s)
-  ✓  15 …e pencil icon @StartFromScratch @EditQuestion (5.8s)
-  ✓  16 …ting question @StartFromScratch @DiscardSave (26.8s)
-  ✓  17 … Save changes @StartFromScratch @DiscardSave (11.5s)
-  ✓  18 …nchanged @StartFromScratch @CancelAddQuestion (3.1s)
-  ✓  19 …eorders questions @StartFromScratch @DragDrop (2.6s)
-  ✓  20 …ow actions @StartFromScratch @DeleteDuplicate (2.3s)
-  ✓  21 … 2, max 15 @StartFromScratch @OptionBoundary (34.4s)
-  ✓  22 … Survey @StartFromScratch @StepperNavigation (26.0s)
-  ✓  23 …imit message @StartFromScratch @MaxQuestions (54.5s)
-  ✘  24 … selected, exit @StartFromScratch @ReviewMode (5.4s)
-  -  25 … Scratch builder @StartFromScratch @StartFromScratch
-  -  26 …dd and save one @StartFromScratch @CancelAddQuestion
-  -  27 …same type as last @StartFromScratch @DeleteDuplicate
-  -  28 … Build Survey @StartFromScratch @ReviewModeDeleteAll
-  -  29 …than 3 questions @StartFromScratch @ValidateDisabled
-  -  30 … step from the builder @StartFromScratch @BackButton
-  -  31 …east three questions @StartFromScratch @PublishSetup
-  -  32 …res a survey name @StartFromScratch @SaveDraftDialog
-  -  33 …0: Save survey as draft @StartFromScratch @SaveDraft
-  -  34 …re recommendations @StartFromScratch @ValidateSurvey
-  -  35 … Build Survey @StartFromScratch @ReviewSurveyDetails
-  -  36 …_18: Publish survey @StartFromScratch @PublishSurvey
-  -  37 … are listed in My assets @StartFromScratch @MyAssets
+      1 …home page @StartFromScratch @LandStartFromScratch
+  ✓   1 …e @StartFromScratch @LandStartFromScratch (20      2 …ataset screen @StartFromScratch @DatasetSelec
+  ✓   2 …screen @StartFromScratch @DatasetSelection (3      3 … 5 filters are set @StartFromScratch @DataSum
+  ✓   3 …rs are set @StartFromScratch @DataSummary (43      4 …a response count @StartFromScratch @ResponseC
+  ✓   4 …nse count @StartFromScratch @ResponseCount (4      5 …ceeding @StartFromScratch @ProceedToSurveyBui
+  ✓   5 …@StartFromScratch @ProceedToSurveyBuilder (52      6 … Add question panel @StartFromScratch @EmptyS
+  ✓   6 …stion panel @StartFromScratch @EmptyState (14      7 …t survey title @StartFromScratch @EditSurveyT
+  ✓   7 … title @StartFromScratch @EditSurveyTitle (75      8 … question @StartFromScratch @SingleChoiceQues
+  ✓   8 …on @StartFromScratch @SingleChoiceQuestion (1      9 …uestion @StartFromScratch @MultipleChoiceQues
+  ✓   9 … @StartFromScratch @MultipleChoiceQuestion (4     10 …Rating question @StartFromScratch @RatingQues
+  ✓  10 …question @StartFromScratch @RatingQuestion (3     11 …dd an NPS question @StartFromScratch @NPSQues
+  ✓  11 …PS question @StartFromScratch @NPSQuestion (2     12 …le question @StartFromScratch @PointScaleQues
+  ✓  12 …tion @StartFromScratch @PointScaleQuestion (3     13 …le question @StartFromScratch @MultiScaleQues
+  ✓  13 …tion @StartFromScratch @MultiScaleQuestion (4     14 …ired toggle is on @StartFromScratch @Required
+  ✓  14 …gle is on @StartFromScratch @RequiredStar (19     15 …a the pencil icon @StartFromScratch @EditQues
+  ✓  15 …encil icon @StartFromScratch @EditQuestion (5     16 … existing question @StartFromScratch @Discard
+  ✓  16 …g question @StartFromScratch @DiscardSave (26     17 …locks Save changes @StartFromScratch @Discard
+  ✓  17 …ve changes @StartFromScratch @DiscardSave (11     18 …nt unchanged @StartFromScratch @CancelAddQues
+  ✓  18 …anged @StartFromScratch @CancelAddQuestion (2     19 …op reorders questions @StartFromScratch @Drag
+  ✓  19 …ders questions @StartFromScratch @DragDrop (1     20 …er row actions @StartFromScratch @DeleteDupli
+  ✓  20 …actions @StartFromScratch @DeleteDuplicate (1     21 …- min 2, max 15 @StartFromScratch @OptionBoun
+  ✓  21 … max 15 @StartFromScratch @OptionBoundary (32     22 …Build Survey @StartFromScratch @StepperNaviga
+  ✓  22 …rvey @StartFromScratch @StepperNavigation (25     23 …ith limit message @StartFromScratch @MaxQuest
+  ✓  23 …t message @StartFromScratch @MaxQuestions (19     24 …lete selected, exit @StartFromScratch @Review
+  ✓  24 …lected, exit @StartFromScratch @ReviewMode (6     25 …ratch builder @StartFromScratch @StartFromScr
+  ✓  25 …ilder @StartFromScratch @StartFromScratch (19     26 …and save one @StartFromScratch @CancelAddQues
+  ✓  26 …e one @StartFromScratch @CancelAddQuestion (6     27 …e type as last @StartFromScratch @DeleteDupli
+  ✓  27 …as last @StartFromScratch @DeleteDuplicate (8     28 …ild Survey @StartFromScratch @ReviewModeDelet
+  ✓  28 …vey @StartFromScratch @ReviewModeDeleteAll (1     29 …n 3 questions @StartFromScratch @ValidateDisa
+  ✓  29 …tions @StartFromScratch @ValidateDisabled (21     30 …ep from the builder @StartFromScratch @BackBu
+  ✓  30 …the builder @StartFromScratch @BackButton (57     31 …t three questions @StartFromScratch @PublishS
+  ✓  31 …questions @StartFromScratch @PublishSetup (39     32 … a survey name @StartFromScratch @SaveDraftDi
+  ✓  32 …ey name @StartFromScratch @SaveDraftDialog (8     33 …Save survey as draft @StartFromScratch @SaveD
+  ✓  33 …rvey as draft @StartFromScratch @SaveDraft (6     34 …recommendations @StartFromScratch @ValidateSu
+  ✓  34 …ndations @StartFromScratch @ValidateSurvey (2     35 …ild Survey @StartFromScratch @ReviewSurveyDet
+  ✓  35 …ey @StartFromScratch @ReviewSurveyDetails (12     36 …: Publish survey @StartFromScratch @PublishSurvey
+Publish request failed with status 400
+Publish request post data: {"surveyId":"svy_4AD3316B8FB0ADBE67A47BAECDEC516A","name":"Appliance Purchase Feedback Survey","description":"Appliance Purchase Feedback Survey","version":"3","metadata":{"questionTypes":[],"source":"DISCOVER-UI","userPrompts":[]},"reportInfo":{"jobId":"80d451e1-18ef-42e5-bf4b-2deabe5fd0ff","panelistJobId":"142afac7-d933-4cc7-8aad-d1f712a6800e","application":"DISCOVER"},"assetInfo":{"assetId":"US-1227127884716343324","title":"Appliance Purchase Feedback Survey","assetType":"DISCOVERSURVEY","rights":[{"availability":"ADMIN","orderManagementId":"7DBC2CC90CAA4982873B693EA59B2B43","userId":"7F30169CBD5B4B26806431A8E142DFD6"},{"availability":"OWNED","orderManagementId":"7DBC2CC90CAA4982873B693EA59B2B43","userId":"52091a80481c87e399eb17b370004fca"}],"sourceType":"NG2PORTAL","parameters":{"reportType":"layoutEditor","dataViewId":"OrderId_4011"},"launchURL":"survey/results/svy_4AD3316B8FB0ADBE67A47BAECDEC516A","status":"PUBLISHED"},"locale":"en-US","createdBy":{"userId":"52091a80481c87e399eb17b370004fca","clientId":"f5bf9f2199a01c13cf825c659ce71218","emailId":"automation1gen@nielseniq.com","applicationId":"7DBC2CC90CAA4982873B693EA59B2B43"},"folder":{"name":"Q4 Appliance Research","folderId":"US-1224737637335924761"},"panelists":{"targetCompletes":250,"maxResponsesPerPanelist":1},"delivery":{"invitesSent":250,"channels":[{"channel":"WEB_LINK","enabled":true,"config":{"slug":"","expiresAt":"2026-11-23T08:56:11.663Z","singleUse":false}}],"schedule":{"openAt":"2026-11-13T08:56:11.663Z","closeAt":"2026-11-23T08:56:11.663Z","timezone":"Asia/Calcutta"}},"questions":[{"id":"q_1","order":"1","type":"STAR_RATING","required":false,"prompt":{"text":"How likely are you to recommend this product to a colleague?","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}},{"id":"q_2","order":"2","type":"STAR_RATING","required":false,"prompt":{"text":"Rate your experience","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}},{"id":"q_3","order":"3","type":"STAR_RATING","required":false,"prompt":{"text":"Rate your experience","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}}]}
+Publish response body: {"code":{"message":"Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A","code":9105,"httpStatus":"BAD_REQUEST"},"errorMessage":"Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A","transactionId":"17EECDF8F19A44CFA1D655D21DB28B88","timeMillis":2719}
+  ✘  36 …h survey @StartFromScratch @PublishSurvey (41.2s)
+     37 …e listed in My assets @StartFromScratch @MyAs
+  -  37 …e listed in My assets @StartFromScratch @MyAssets
 
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:430:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
 
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:504:7 › Start from scratch › TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit@StartFromScratch @ReviewMode 
+    Error: Failed to verify publish succeeded: Publish failed: " Error  Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_4AD3316B8FB0ADBE67A47BAECDEC516A, elapsed: 17.8s)
 
-    Error: Expected -1 questions after deleting one, found 0
-    expect(received).toBeTruthy()
+       at ..\page-objects\common\survey-builder.page.ts:1680
 
-    Received: false
+      1678 |       );
+      1679 |     } catch (error) {
+    > 1680 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1681 |     }
+      1682 |   }
+      1683 |
+        at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1680:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:477:35
 
-       at ..\page-objects\common\assert-utils.ts:14
+    attachment #1: screenshot (image/png) ────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────
 
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:551:17
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
-    attachment #1: screenshot (image/png) ───────────────────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────
+    attachment #3: start-from-scratch-video (video/webm) ─
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\attachments\start-from-scratch-video-d42a3f675df6431a53b365eddb72f71dfa6834b4.webm
+    ──────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) ────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\attachments\start-from-scratch-video-0aae8b0b051f08fccfba08f0c8564b18efcca299.webm
-    ─────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────
-    test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\trace.zip
+    attachment #5: trace (application/zip) ───────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--b5c7d-select-delete-selected-exit-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
 
-    ─────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:504:7 › Start from scratch › TC_BS_13/TC_BS_14: Review Mode controls, select, delete selected, exit @StartFromScratch @ReviewMode 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:430:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
   1 skipped
-  12 did not run
-  23 passed (5.5m)
+  35 passed (7.3m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ 
+-------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1   ◇ injected env (25) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 37 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+      1 …home page @StartFromScratch @LandStartFromScratch
+  ✓   1 …e @StartFromScratch @LandStartFromScratch (20      2 …ataset screen @StartFromScratch @DatasetSelec
+  ✓   2 …screen @StartFromScratch @DatasetSelection (3      3 … 5 filters are set @StartFromScratch @DataSum
+  ✓   3 …rs are set @StartFromScratch @DataSummary (43      4 …a response count @StartFromScratch @ResponseC
+  ✓   4 …nse count @StartFromScratch @ResponseCount (4      5 …ceeding @StartFromScratch @ProceedToSurveyBui
+  ✓   5 …@StartFromScratch @ProceedToSurveyBuilder (52      6 … Add question panel @StartFromScratch @EmptyS
+  ✓   6 …stion panel @StartFromScratch @EmptyState (14      7 …t survey title @StartFromScratch @EditSurveyT
+  ✓   7 … title @StartFromScratch @EditSurveyTitle (75      8 … question @StartFromScratch @SingleChoiceQues
+  ✓   8 …on @StartFromScratch @SingleChoiceQuestion (1      9 …uestion @StartFromScratch @MultipleChoiceQues
+  ✓   9 … @StartFromScratch @MultipleChoiceQuestion (4     10 …Rating question @StartFromScratch @RatingQues
+  ✓  10 …question @StartFromScratch @RatingQuestion (3     11 …dd an NPS question @StartFromScratch @NPSQues
+  ✓  11 …PS question @StartFromScratch @NPSQuestion (2     12 …le question @StartFromScratch @PointScaleQues
+  ✓  12 …tion @StartFromScratch @PointScaleQuestion (3     13 …le question @StartFromScratch @MultiScaleQues
+  ✓  13 …tion @StartFromScratch @MultiScaleQuestion (4     14 …ired toggle is on @StartFromScratch @Required
+  ✓  14 …gle is on @StartFromScratch @RequiredStar (19     15 …a the pencil icon @StartFromScratch @EditQues
+  ✓  15 …encil icon @StartFromScratch @EditQuestion (5     16 … existing question @StartFromScratch @Discard
+  ✓  16 …g question @StartFromScratch @DiscardSave (26     17 …locks Save changes @StartFromScratch @Discard
+  ✓  17 …ve changes @StartFromScratch @DiscardSave (11     18 …nt unchanged @StartFromScratch @CancelAddQues
+  ✓  18 …anged @StartFromScratch @CancelAddQuestion (2     19 …op reorders questions @StartFromScratch @Drag
+  ✓  19 …ders questions @StartFromScratch @DragDrop (1     20 …er row actions @StartFromScratch @DeleteDupli
+  ✓  20 …actions @StartFromScratch @DeleteDuplicate (1     21 …- min 2, max 15 @StartFromScratch @OptionBoun
+  ✓  21 … max 15 @StartFromScratch @OptionBoundary (32     22 …Build Survey @StartFromScratch @StepperNaviga
+  ✓  22 …rvey @StartFromScratch @StepperNavigation (25     23 …ith limit message @StartFromScratch @MaxQuest
+  ✓  23 …t message @StartFromScratch @MaxQuestions (19     24 …lete selected, exit @StartFromScratch @Review
+  ✓  24 …lected, exit @StartFromScratch @ReviewMode (6     25 …ratch builder @StartFromScratch @StartFromScr
+  ✓  25 …ilder @StartFromScratch @StartFromScratch (19     26 …and save one @StartFromScratch @CancelAddQues
+  ✓  26 …e one @StartFromScratch @CancelAddQuestion (6     27 …e type as last @StartFromScratch @DeleteDupli
+  ✓  27 …as last @StartFromScratch @DeleteDuplicate (8     28 …ild Survey @StartFromScratch @ReviewModeDelet
+  ✓  28 …vey @StartFromScratch @ReviewModeDeleteAll (1     29 …n 3 questions @StartFromScratch @ValidateDisa
+  ✓  29 …tions @StartFromScratch @ValidateDisabled (21     30 …ep from the builder @StartFromScratch @BackBu
+  ✓  30 …the builder @StartFromScratch @BackButton (57     31 …t three questions @StartFromScratch @PublishS
+  ✓  31 …questions @StartFromScratch @PublishSetup (39     32 … a survey name @StartFromScratch @SaveDraftDi
+  ✓  32 …ey name @StartFromScratch @SaveDraftDialog (8     33 …Save survey as draft @StartFromScratch @SaveD
+  ✓  33 …rvey as draft @StartFromScratch @SaveDraft (6     34 …recommendations @StartFromScratch @ValidateSu
+  ✓  34 …ndations @StartFromScratch @ValidateSurvey (2     35 …ild Survey @StartFromScratch @ReviewSurveyDet
+  ✓  35 …ey @StartFromScratch @ReviewSurveyDetails (12     36 …: Publish survey @StartFromScratch @PublishSurvey
+Publish request failed with status 400
+Publish request post data: {"surveyId":"svy_4AD3316B8FB0ADBE67A47BAECDEC516A","name":"Appliance Purchase Feedback Survey","description":"Appliance Purchase Feedback Survey","version":"3","metadata":{"questionTypes":[],"source":"DISCOVER-UI","userPrompts":[]},"reportInfo":{"jobId":"80d451e1-18ef-42e5-bf4b-2deabe5fd0ff","panelistJobId":"142afac7-d933-4cc7-8aad-d1f712a6800e","application":"DISCOVER"},"assetInfo":{"assetId":"US-1227127884716343324","title":"Appliance Purchase Feedback Survey","assetType":"DISCOVERSURVEY","rights":[{"availability":"ADMIN","orderManagementId":"7DBC2CC90CAA4982873B693EA59B2B43","userId":"7F30169CBD5B4B26806431A8E142DFD6"},{"availability":"OWNED","orderManagementId":"7DBC2CC90CAA4982873B693EA59B2B43","userId":"52091a80481c87e399eb17b370004fca"}],"sourceType":"NG2PORTAL","parameters":{"reportType":"layoutEditor","dataViewId":"OrderId_4011"},"launchURL":"survey/results/svy_4AD3316B8FB0ADBE67A47BAECDEC516A","status":"PUBLISHED"},"locale":"en-US","createdBy":{"userId":"52091a80481c87e399eb17b370004fca","clientId":"f5bf9f2199a01c13cf825c659ce71218","emailId":"automation1gen@nielseniq.com","applicationId":"7DBC2CC90CAA4982873B693EA59B2B43"},"folder":{"name":"Q4 Appliance Research","folderId":"US-1224737637335924761"},"panelists":{"targetCompletes":250,"maxResponsesPerPanelist":1},"delivery":{"invitesSent":250,"channels":[{"channel":"WEB_LINK","enabled":true,"config":{"slug":"","expiresAt":"2026-11-23T08:56:11.663Z","singleUse":false}}],"schedule":{"openAt":"2026-11-13T08:56:11.663Z","closeAt":"2026-11-23T08:56:11.663Z","timezone":"Asia/Calcutta"}},"questions":[{"id":"q_1","order":"1","type":"STAR_RATING","required":false,"prompt":{"text":"How likely are you to recommend this product to a colleague?","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}},{"id":"q_2","order":"2","type":"STAR_RATING","required":false,"prompt":{"text":"Rate your experience","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}},{"id":"q_3","order":"3","type":"STAR_RATING","required":false,"prompt":{"text":"Rate your experience","helpText":null},"answerSpec":{"rows":[{"value":"overall_experience","label":"Overall experience"},{"value":"ease_of_use","label":"Ease of use"}]},"validation":{"minValue":1,"maxValue":5}}]}
+Publish response body: {"code":{"message":"Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A","code":9105,"httpStatus":"BAD_REQUEST"},"errorMessage":"Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A","transactionId":"17EECDF8F19A44CFA1D655D21DB28B88","timeMillis":2719}
+  ✘  36 …h survey @StartFromScratch @PublishSurvey (41.2s)
+     37 …e listed in My assets @StartFromScratch @MyAs
+  -  37 …e listed in My assets @StartFromScratch @MyAssets
+
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:430:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
+
+    Error: Failed to verify publish succeeded: Publish failed: " Error  Survey publish failed for surveyId: svy_4AD3316B8FB0ADBE67A47BAECDEC516A " (url: https://si.connect.nielseniq.io/reportexperience-dev/survey/build-survey/svy_4AD3316B8FB0ADBE67A47BAECDEC516A, elapsed: 17.8s)
+
+       at ..\page-objects\common\survey-builder.page.ts:1680
+
+      1678 |       );
+      1679 |     } catch (error) {
+    > 1680 |       throw new Error(`Failed to verify publish succeeded: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1681 |     }
+      1682 |   }
+      1683 |
+        at SurveyBuilderPage.verifyPublishSucceeded (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1680:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:477:35
+
+    attachment #1: screenshot (image/png) ────────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ─
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\attachments\start-from-scratch-video-d42a3f675df6431a53b365eddb72f71dfa6834b4.webm
+    ──────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────
+    test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--2bbf6--16-TC-BS-18-Publish-survey-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:430:7 › Start from scratch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey 
+  1 skipped
+  35 passed (7.3m)
+--------------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 41 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+  ✓   1 … a prompt option on the survey home page @StartWithPrompt (23.0s)
+Auth state loaded from storage/auth.json
+  ✓   2 …ataset type and dataset @StartWithPrompt @DatasetSelection (7.0s)
+  ✓   3 …ons and search for panelists @StartWithPrompt @DataSummary (1.0m)
+  ✓   4 …ld select a response count @StartWithPrompt @ResponseCount (2.8s)
+  ✓   5 …bled until prompt entered @StartWithPrompt @GenerateSurvey (2.5s)
+  ✓   6 …ach the Build Survey page @StartWithPrompt @GenerateSurvey (2.5s)
+  ✓   7 …ustomize Questions screen @StartWithPrompt @GenerateSurvey (7.5s)
+  ✓   8 …t slider and number field @StartWithPrompt @GenerateSurvey (6.9s)
+  ✓   9 …ions creates AI questions @StartWithPrompt @GenerateSurvey (4.6s)
+  ✓  10 …y title after AI generation @StartWithPrompt @BuildSurvey (719ms)
+  ✓  11 … loading state and prompt @StartWithPrompt @GenerateSurvey (8.5s)
+  ✓  12 …reases the question count @StartWithPrompt @GenerateSurvey (3.0s)
+  ✓  13 …reases the question count @StartWithPrompt @GenerateSurvey (9.7s)
+  ✓  14 …max) questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.8s)
+  ✘  15 …n the Required toggle is on @StartWithPrompt @BuildSurvey (16.4s)
+  -  16 …t question text via the pencil icon @StartWithPrompt @BuildSurvey
+  -  17 …ave changes on an existing question @StartWithPrompt @DiscardSave
+  -  18 …y question text blocks Save changes @StartWithPrompt @DiscardSave
+  -  19 …te a question via hover row actions @StartWithPrompt @BuildSurvey
+  -  20 …5: Drag and drop reorders questions @StartWithPrompt @BuildSurvey
+  -  21 …leaves the question count unchanged @StartWithPrompt @BuildSurvey
+  -  22 …cancel, then add and save one @StartWithPrompt @CancelAddQuestion
+  -  23 …en re-add the same type as last @StartWithPrompt @DeleteDuplicate
+  -  24 …rols, select, delete selected, exit @StartWithPrompt @BuildSurvey
+  -  25 …isabled with fewer than 3 questions @StartWithPrompt @BuildSurvey
+  -  26 …l, delete all, stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  27 …ows Add Question options and 0 rows @StartWithPrompt @BuildSurvey
+  -  28 …S_03a: Add a Single Choice question @StartWithPrompt @BuildSurvey
+  -  29 …03b: Add a Multiple Choice question @StartWithPrompt @BuildSurvey
+  -  30 … › TC_BS_03c: Add a Rating question @StartWithPrompt @BuildSurvey
+  -  31 …pt › TC_BS_03d: Add an NPS question @StartWithPrompt @BuildSurvey
+  -  32 …_BS_03e: Add a Point Scale question @StartWithPrompt @BuildSurvey
+  -  33 …_BS_03f: Add a Multi Scale question @StartWithPrompt @BuildSurvey
+  -  34 …tains data and back to Build Survey @StartWithPrompt @BuildSurvey
+  -  35 …Options boundary - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  36 …ty title requires a survey name @StartWithPrompt @SaveDraftDialog
+  -  37 …ompt › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  38 …k when there are recommendations @StartWithPrompt @ValidateSurvey
+  -  39 …vey returns to Build Survey @StartWithPrompt @ReviewSurveyDetails
+  -  40 …TC_BS_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey
+  -  41 …der and survey are listed in My assets @StartWithPrompt @MyAssets
+
+
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:57:7 › Start with a prompt › TC_BS_07: Required star appears when the Required toggle is on @StartWithPrompt @BuildSurvey 
+
+    Error: Failed to set Required (index 0) to true: Required toggle (index 0) not visible after 15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:1825
+
+      1823 |       }
+      1824 |     } catch (error) {
+    > 1825 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1826 |     }
+      1827 |   }
+      1828 |
+        at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1825:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:64:7
+
+    attachment #1: screenshot (image/png) ────────────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ──────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\attachments\start-with-prompt-video-9b6a2839967502e2c234e0aea69f43cae2efc1ce.webm
+    ──────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────────────────
+    test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-91700-n-the-Required-toggle-is-on-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:57:7 › Start with a prompt › TC_BS_07: Required star appears whenthe Required toggle is on @StartWithPrompt @BuildSurvey 
+  1 skipped
+  25 did not run
+  14 passed (3.6m)
+----------------------------------
+TC_BS_07: Required star appears when the Required toggle is on
+survey/common-test-cases/build-survey-common-test-cases.ts:57
+16.4s
+chromiumStartWithPromptBuildSurvey
+serial
+Copy prompt
+Error: Failed to set Required (index 0) to true: Required toggle (index 0) not visible after 15000ms
+
+   at ..\page-objects\common\survey-builder.page.ts:1825
+
+  1823 |       }
+  1824 |     } catch (error) {
+> 1825 |       throw new Error(`Failed to set Required (index ${index}) to ${desired}: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1826 |     }
+  1827 |   }
+  1828 |
+    at SurveyBuilderPage.setRequired (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1825:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:64:7
+Filter steps
+Before Hooks
+15ms
+Wait for selector locator('[data-test-id^=\'question-row-\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+28ms
+Hover locator('[data-test-id^=\'question-row-\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:832
+97ms
+Wait for selector locator('niq-icon-button[data-test-id^=\'edit-question-\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+29ms
+Click locator('niq-icon-button[data-test-id^=\'edit-question-\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+169ms
+Wait for selector locator('[data-test-id=\'save-question-changes\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+73ms
+Wait for selector locator('[data-test-id^=\'question-row-\']').first().locator('[data-test-id=\'-input-checkbox\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.5s
+After Hooks
+3.2s
+Worker Cleanup
+
