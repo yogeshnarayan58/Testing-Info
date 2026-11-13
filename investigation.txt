@@ -1,85 +1,1057 @@
-Jamaltheen S (Jamaltheen-S_niq) reviewed 2 days ago
-e2e/page-objects/common/survey-builder.page.ts
-        await this.waitUntilVisible(saveButton, `Save changes button (index ${index})`);
-        await saveButton.click();
-      }
-      const saveButton = this.getSaveChangesButtonElement(index);
-@Jamaltheen-S_niq
-Jamaltheen S (Jamaltheen-S_niq)
-2 days ago
-How can we split this file based functionalities.?
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (25) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Jamaltheen-S_niq
-Jamaltheen S (Jamaltheen-S_niq) approved these changes 2 days ago
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 13 hours ago
-e2e/locators/survey/feature-toggle.locator.json
-@@ -0,0 +1,20 @@
-{
-  "name": "Feature Toggle Page",
-  "webElements": [
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-13 hours ago
-Instead of 3 different locators, create one locator with parameterized option
-Pass the 'featureName' through field text in test step so that locator can be reused for other features by passing the names through respective tests
-example -
-{
-"elementName": "featureToggle",
-"selectorType": "playwrights",
-"selectorValue": "tr:has(td:text-is("{featureName}"))"
-}
+Running 37 tests using 1 worker
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 12 hours ago
-e2e/locators/survey/my-assets.locator.json
-    { "elementName": "surveyGridTitleByText", "selectorType": "playwrights", "selectorValue": "[data-test-id='survey-grid-title']:text-is(\"${text}\") >> nth=0" },
-    { "elementName": "myAssetsTab", "selectorType": "css", "selectorValue": "[data-test-id='my-assets-tab-my-assets']" },
-    { "elementName": "folderBreadcrumb", "selectorType": "css", "selectorValue": "[data-test-id='my-assets-folder-breadcrumb']" },
-    { "elementName": "viewAllSurveysLink", "selectorType": "playwrights", "selectorValue": ".view-all-link:has-text(\"View all surveys\") >> nth=0" }
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-12 hours ago
-Can we avoid using nth=0 here and make the locator unique using exact text matching instead?
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+  ✓   1 …page @StartFromScratch @LandStartFromScratch (54.6s)
+Auth state loaded from storage/auth.json
+  ✓   2 …et screen @StartFromScratch @DatasetSelection (7.3s)
+  ✓   3 …lters are set @StartFromScratch @DataSummary (55.1s)
+  ✓   4 …sponse count @StartFromScratch @ResponseCount (5.0s)
+  ✓   5 …ng @StartFromScratch @ProceedToSurveyBuilder (867ms)
+  ✓   6 …question panel @StartFromScratch @EmptyState (256ms)
+  ✓   7 …rvey title @StartFromScratch @EditSurveyTitle (2.0s)
+  ✓   8 …stion @StartFromScratch @SingleChoiceQuestion (2.9s)
+  ✓   9 …ion @StartFromScratch @MultipleChoiceQuestion (6.6s)
+  ✓  10 …ng question @StartFromScratch @RatingQuestion (6.5s)
+  ✓  11 …n NPS question @StartFromScratch @NPSQuestion (5.2s)
+  ✓  12 …uestion @StartFromScratch @PointScaleQuestion (7.7s)
+  ✓  13 …uestion @StartFromScratch @MultiScaleQuestion (5.8s)
+  ✓  14 …toggle is on @StartFromScratch @RequiredStar (21.3s)
+  ✓  15 …e pencil icon @StartFromScratch @EditQuestion (6.4s)
+  ✓  16 …ting question @StartFromScratch @DiscardSave (27.9s)
+  ✓  17 … Save changes @StartFromScratch @DiscardSave (12.1s)
+  ✓  18 …nchanged @StartFromScratch @CancelAddQuestion (3.5s)
+  ✓  19 …eorders questions @StartFromScratch @DragDrop (2.9s)
+  ✓  20 …ow actions @StartFromScratch @DeleteDuplicate (2.7s)
+  ✓  21 … 2, max 15 @StartFromScratch @OptionBoundary (36.2s)
+  ✓  22 … Survey @StartFromScratch @StepperNavigation (21.8s)
+  ✘  23 …limit message @StartFromScratch @MaxQuestions (5.0m)
+  -  24 … delete selected, exit @StartFromScratch @ReviewMode
+  -  25 … Scratch builder @StartFromScratch @StartFromScratch
+  -  26 …dd and save one @StartFromScratch @CancelAddQuestion
+  -  27 …same type as last @StartFromScratch @DeleteDuplicate
+  -  28 … Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  29 …than 3 questions @StartFromScratch @ValidateDisabled
+  -  30 … step from the builder @StartFromScratch @BackButton
+  -  31 …east three questions @StartFromScratch @PublishSetup
+  -  32 …res a survey name @StartFromScratch @SaveDraftDialog
+  -  33 …0: Save survey as draft @StartFromScratch @SaveDraft
+  -  34 …re recommendations @StartFromScratch @ValidateSurvey
+  -  35 … Build Survey @StartFromScratch @ReviewSurveyDetails
+  -  36 …_18: Publish survey @StartFromScratch @PublishSurvey
+  -  37 … are listed in My assets @StartFromScratch @MyAssets
 
-nth=0 introduces a dependency on the DOM order and may silently select an unintended element if multiple matches exist or the order changes
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 12 hours ago
-e2e/locators/survey/survey-builder.locator.json
-    { "elementName": "saveDraftDialogMyAssetsFolder", "selectorType": "playwrights", "selectorValue": "role=treeitem[name*=\"My Assets\"] >> nth=0" },
-    { "elementName": "saveDraftDialogSaveButton", "selectorType": "playwrights", "selectorValue": "role=button[name=\"Save draft\"] >> nth=0" },
-    { "elementName": "saveDraftDialogCancelButton", "selectorType": "playwrights", "selectorValue": "role=button[name=\"Cancel\"] >> nth=0" },
-    { "elementName": "saveDraftDialogCreateNewFolderLink", "selectorType": "playwrights", "selectorValue": "text=/^Create new folder/ >> nth=0" },
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-12 hours ago
-Improvise locator strategy for similar locators, for better reusability and stability
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:170:7 › Start from scratch › TC_BS_08: Max questions (10) disables Add question and Duplicate with limit message @StartFromScratch @MaxQuestions 
 
----------------------------------
-1a: added
-1b: added
-1c: added
-1d: added
-1e: added
-2a (choice-editor): added
-2b (nps-editor): added
-2c (scale-editor): added
-2d (text-editor): added
-3 (suggestion-tags warning niq-tag): added
-4 (question-count-error): added
+    Test timeout of 300000ms exceeded.
 
-5 (rephrase-send data-loading): added
-6a: added
-6b: added
-6c: added
-7a: added
-7b: added
-8: added
-9: added
-I only inserted attributes within existing lines, so line endings are unchanged. I didn't run any commands or touch the e2e files. Every edit matched on the first try.
+    Error: Failed to verify max-questions limit: Failed to open Add Question panel: Failed to click add question: Add question link not visible after 15000ms
 
-I didn't touch rating-editor.
+      197 |       assertTrue(questionNumbersAfter.length ===10, 'count stays 10');
+      198 |     } catch (error) {
+    > 199 |       throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      200 |     }
+      201 |   });
+      202 |
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:199:13
+
+    attachment #1: screenshot (image/png) ───────────────────
+    test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ────
+    test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\attachments\start-from-scratch-video-826de26862458d58277d4d71f1d0fe5efbe88d33.webm
+    ─────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────
+    test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--3396e-uplicate-with-limit-message-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:170:7 › Start from scratch › TC_BS_08: Max questions (10) disables Add question and Duplicate with limit message @StartFromScratch @MaxQuestions 
+  1 skipped
+  13 did not run
+  22 passed (11.0m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ 
+---------------------------
+TC_BS_08: Max questions (10) disables Add question and Duplicate with limit message
+survey/start-from-scratch.spec.ts:170
+5.0m
+chromiumStartFromScratchMaxQuestions
+serial
+Copy prompt
+Test timeout of 300000ms exceeded.
+Error: Failed to verify max-questions limit: Failed to open Add Question panel: Failed to click add question: Add question link not visible after 15000ms
+
+  197 |       assertTrue(questionNumbersAfter.length === 10, 'count stays 10');
+  198 |     } catch (error) {
+> 199 |       throw new Error(`Failed to verify max-questions limit: ${error instanceof Error ? error.message : error}`);
+      |             ^
+  200 |     }
+  201 |   });
+  202 |
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:199:13
+Filter steps
+Before Hooks
+17ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+122ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+44ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+39ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.5s
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+44ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+267ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+56ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+100ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+56ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.3s
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+45ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+58ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+314ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+832ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+67ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+153ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+208ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+128ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+208ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+53ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+58ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+333ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+899ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+39ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+184ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+76ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+131ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+53ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+229ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+59ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+60ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+1.7s
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+915ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+40ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+45ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+240ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+121ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+235ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+53ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+61ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+358ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+795ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+50ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+170ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+58ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+81ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+41ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+168ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+57ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+71ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.2s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+351ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+922ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+46ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+205ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+82ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+117ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+453ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+37ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+43ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+229ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+906ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+38ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+35ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+39ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+190ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+94ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+116ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+244ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+59ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+315ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+861ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+47ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+118ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+38ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+233ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+60ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+99ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+205ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+49ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+58ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+325ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+876ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+41ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+45ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+196ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+80ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+113ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+272ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+38ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+63ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+36ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+318ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+864ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+42ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+56ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+328ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+76ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+99ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+247ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+45ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+318ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+61ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+53ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+53ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+207ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+70ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+131ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+159ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+334ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+43ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+226ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+75ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+120ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+263ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+50ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+59ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+325ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+41ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+42ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+37ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+186ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+98ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+123ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+241ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+55ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+55ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+42ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+326ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+47ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+51ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+194ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+81ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+146ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+56ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+257ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+52ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+62ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+298ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+101ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+51ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+202ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+135ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+237ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+49ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+43ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+320ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+46ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+51ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+247ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+66ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+112ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+52ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+231ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+43ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+337ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+48ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+191ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+115ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+103ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+101ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+261ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+33ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+42ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+317ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+43ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+138ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+101ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+209ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+62ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+129ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+223ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+54ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+53ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+321ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+44ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+195ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+72ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+109ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+219ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+64ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+34ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+303ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+58ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+44ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+223ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+67ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+105ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+227ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+56ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+324ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+47ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+204ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+189ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+123ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+295ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+51ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+56ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+321ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+48ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+52ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+63ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+198ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+69ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+130ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+53ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+225ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+27ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+58ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+361ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+46ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+52ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+221ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+80ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+130ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+64ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+253ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+53ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+56ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+36ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+324ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+75ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+39ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+43ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+191ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+66ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+135ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+350ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+53ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+56ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+38ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+314ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+41ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+46ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+41ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+196ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+86ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+123ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+233ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+332ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+51ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+46ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+59ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+210ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+83ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+104ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+253ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+41ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+60ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+354ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+49ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+206ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+94ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+94ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+183ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+55ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+34ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+258ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+46ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+270ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+95ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+110ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+203ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+37ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+54ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+55ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+284ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+41ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+43ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+179ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+74ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+129ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+50ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+152ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+83ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+38ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+260ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+42ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+46ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+48ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+206ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+65ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+110ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+53ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+246ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+47ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+55ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.0s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+45ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+316ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+57ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+41ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+190ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+70ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+104ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+44ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+230ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+50ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+64ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+41ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+336ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+50ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+50ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+191ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+65ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+124ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+49ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+245ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+48ms
+Evaluate locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:184
+56ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+310ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+47ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+45ms
+Evaluate locator('[data-test-id^=\'question-number-\']')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+46ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+46ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+201ms
+Wait for selector locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+68ms
+Fill "Rate your experience" locator('[data-test-id=\'question-text-input-7-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+109ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+51ms
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+238ms
+After Hooks
+5.1s
+Worker Cleanup
