@@ -1,228 +1,40 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ npx playwright show-report
+$ git status
+On branch feature/locator-swap-new-ids
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   locators/survey/start-from-scratch.locator.json
+        modified:   locators/survey/start-with-prompt.locator.json
+        modified:   locators/survey/survey-builder.locator.json
+        modified:   page-objects/common/survey-builder.page.ts
+        modified:   test-data/dev-test-data.json
+        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
+        modified:   tests/survey/start-from-scratch.spec.ts
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
+        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
 
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
+no changes added to commit (use "git add" and/or "git commit -a")
 
+-------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
+$ git diff --stat
+ .../survey/start-from-scratch.locator.json         | 18 ++---------
+ e2e/locators/survey/start-with-prompt.locator.json |  2 +-
+ e2e/locators/survey/survey-builder.locator.json    | 14 ++++----
+ e2e/page-objects/common/survey-builder.page.ts     | 37 ++++++++++++++++++----
+ e2e/test-data/dev-test-data.json                   |  3 +-
+ .../build-survey-common-test-cases.ts              | 20 ------------
+ e2e/tests/survey/start-from-scratch.spec.ts        |  5 +--
+ .../preview-mode/preview-mode.component.html       |  1 +
+ .../review-mode/review-mode.component.html         |  2 +-
+ 9 files changed, 48 insertions(+), 54 deletions(-)
 
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
-◇ injected env (25) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 41 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true}
-isLambdaTest = false
-  ✓   1 …rompt option on the survey home page @StartWithPrompt (24.4s)
-Auth state loaded from storage/auth.json
-  ✓   2 …et type and dataset @StartWithPrompt @DatasetSelection (6.1s)
-  ✓   3 …nd search for panelists @StartWithPrompt @DataSummary (55.0s)
-  ✓   4 …elect a response count @StartWithPrompt @ResponseCount (2.5s)
-  ✓   5 … until prompt entered @StartWithPrompt @GenerateSurvey (2.3s)
-  ✓   6 …the Build Survey page @StartWithPrompt @GenerateSurvey (2.2s)
-  ✓   7 …mize Questions screen @StartWithPrompt @GenerateSurvey (8.1s)
-  ✓   8 …ider and number field @StartWithPrompt @GenerateSurvey (7.1s)
-  ✓   9 … creates AI questions @StartWithPrompt @GenerateSurvey (3.5s)
-  ✓  10 …itle after AI generation @StartWithPrompt @BuildSurvey (1.0s)
-  ✓  11 …ding state and prompt @StartWithPrompt @GenerateSurvey (7.9s)
-  ✓  12 …es the question count @StartWithPrompt @GenerateSurvey (1.3s)
-  ✓  13 …es the question count @StartWithPrompt @GenerateSurvey (9.1s)
-  ✓  14 … questions @StartWithPrompt @BuildSurvey @MaxQuestions (2.9s)
-  ✓  15 …e Required toggle is on @StartWithPrompt @BuildSurvey (24.5s)
-  ✓  16 …text via the pencil icon @StartWithPrompt @BuildSurvey (7.6s)
-  ✓  17 …on an existing question @StartWithPrompt @DiscardSave (29.0s)
-  ✓  18 …ext blocks Save changes @StartWithPrompt @DiscardSave (17.4s)
-  ✓  19 …on via hover row actions @StartWithPrompt @BuildSurvey (3.3s)
-  ✓  20 … drop reorders questions @StartWithPrompt @BuildSurvey (3.0s)
-  ✓  21 …question count unchanged @StartWithPrompt @BuildSurvey (4.3s)
-  ✓  22 …n add and save one @StartWithPrompt @CancelAddQuestion (7.4s)
-  ✓  23 …e same type as last @StartWithPrompt @DeleteDuplicate (11.7s)
-  ✓  24 …, delete selected, exit @StartWithPrompt @BuildSurvey (10.6s)
-  ✓  25 …h fewer than 3 questions @StartWithPrompt @BuildSurvey (5.7s)
-  ✓  26 …ll, stay on Build Survey @StartWithPrompt @BuildSurvey (1.6s)
-  ✓  27 …tion options and 0 rows @StartWithPrompt @BuildSurvey (167ms)
-  ✓  28 …a Single Choice question @StartWithPrompt @BuildSurvey (1.5s)
-  ✓  29 …Multiple Choice question @StartWithPrompt @BuildSurvey (3.9s)
-  ✓  30 …c: Add a Rating question @StartWithPrompt @BuildSurvey (3.6s)
-  ✓  31 …03d: Add an NPS question @StartWithPrompt @BuildSurvey (3.2s)
-  ✓  32 …d a Point Scale question @StartWithPrompt @BuildSurvey (5.2s)
-  ✓  33 …d a Multi Scale question @StartWithPrompt @BuildSurvey (5.3s)
-  ✓  34 …nd back to Build Survey @StartWithPrompt @BuildSurvey (28.0s)
-  ✓  35 …dary - min 2, max 15 @StartWithPrompt @OptionBoundary (40.6s)
-  ✘  36 …uires a survey name @StartWithPrompt @SaveDraftDialog (22.0s)
-  -  37 … › TC_BS_10: Save survey as draft @StartWithPrompt @SaveDraft
-  -  38 …en there are recommendations @StartWithPrompt @ValidateSurvey
-  -  39 …returns to Build Survey @StartWithPrompt @ReviewSurveyDetails
-  -  40 …S_16/TC_BS_18: Publish survey @StartWithPrompt @PublishSurvey
-  -  41 …and survey are listed in My assets @StartWithPrompt @MyAssets
-
-
-  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:773:7 › Start with a prompt › TC_BS_10a: Save draft withempty title requires a survey name @StartWithPrompt @SaveDraftDialog 
-
-    Error: Failed to open the Save draft dialog: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('[data-test-id=\'save-draft\']')
-        - locator resolved to <niq-button tabindex="0" size="medium" role="button" aria-busy="true" colortheme="light" _nghost-ng-c653818712="" data-test-id="save-draft" _ngcontent-ng-c3633474721="" class="ng-tns-c653818712-401 ng-trigger ng-trigger-clickAnimation light medium secondary text-neutral icon-right ng-star-inserted loading">…</niq-button>
-      - attempting click action
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-        - retrying click action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-        - retrying click action
-          - waiting 100ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-        - retrying click action
-          - waiting 500ms
-        24 × waiting for element to be visible, enabled and stable
-           - element is visible, enabled and stable
-           - scrolling into view if needed
-           - done scrolling
-           - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-         - retrying click action
-           - waiting 500ms
-
-
-       at ..\page-objects\common\survey-builder.page.ts:668
-
-      666 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-      667 |     } catch (error) {
-    > 668 |       throw new Error(`Failed to open the Save draft dialog: ${error instanceof Error ? error.message : error}`);
-          |             ^
-      669 |     }
-      670 |   }
-      671 |
-        at SurveyBuilderPage.clickSaveDraftAndWaitForDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:668:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:788:7
-
-    attachment #1: screenshot (image/png) ────────────────────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\test-failed-1.png
-    ──────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
-
-    attachment #3: start-with-prompt-video (video/webm) ──────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\attachments\start-with-prompt-video-6626416622407bdc8e2054880e8413228dccdc2d.webm
-    ──────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ───────────────────────────
-    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
-
-    ──────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:773:7 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
-  1 skipped
-  4 did not run
-  35 passed (7.3m)
---------------------------------
-TC_BS_10a: Save draft with empty title requires a survey name
-survey/common-test-cases/build-survey-common-test-cases.ts:773
-22.0s
-chromiumStartWithPromptSaveDraftDialog
-serial
-Copy prompt
-Error: Failed to open the Save draft dialog: locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('[data-test-id=\'save-draft\']')
-    - locator resolved to <niq-button tabindex="0" size="medium" role="button" aria-busy="true" colortheme="light" _nghost-ng-c653818712="" data-test-id="save-draft" _ngcontent-ng-c3633474721="" class="ng-tns-c653818712-401 ng-trigger ng-trigger-clickAnimation light medium secondary text-neutral icon-right ng-star-inserted loading">…</niq-button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      - scrolling into view if needed
-      - done scrolling
-      - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      - scrolling into view if needed
-      - done scrolling
-      - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-    - retrying click action
-      - waiting 100ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is visible, enabled and stable
-      - scrolling into view if needed
-      - done scrolling
-      - <div _ngcontent-ng-c3633474721="" class="action-group ng-star-inserted">…</div> intercepts pointer events
-    - retrying click action
-      - waiting 500ms
-    24 × waiting for element to be visible, enabled and stable
-       - element is visible, enabled and stable
-       - scrolling into view if needed
-       - done scrolling
-       - <div _ngcontent-ng-c33994700="" class="dialog-title-row ng-star-inserted">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
-     - retrying click action
-       - waiting 500ms
-
-
-   at ..\page-objects\common\survey-builder.page.ts:668
-
-  666 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
-  667 |     } catch (error) {
-> 668 |       throw new Error(`Failed to open the Save draft dialog: ${error instanceof Error ? error.message : error}`);
-      |             ^
-  669 |     }
-  670 |   }
-  671 |
-    at SurveyBuilderPage.clickSaveDraftAndWaitForDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:668:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:788:7
-Filter steps
-Before Hooks
-34ms
-Evaluate locator('[data-test-id^=\'question-number-\'], [data-test-id^=\'reorder-question-\'] .question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-139ms
-Wait for selector locator('[data-test-id=\'edit-survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-41ms
-Click locator('[data-test-id=\'edit-survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-147ms
-Wait for selector locator('[data-test-id=\'survey-title-input\'] input, input[data-test-id=\'survey-title-input\'], input[data-test-id=\'survey-title-input-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-39ms
-Fill "" locator('[data-test-id=\'survey-title-input\'] input, input[data-test-id=\'survey-title-input\'], input[data-test-id=\'survey-title-input-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-97ms
-Press "Tab" locator('[data-test-id=\'survey-title-input\'] input, input[data-test-id=\'survey-title-input\'], input[data-test-id=\'survey-title-input-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:681
-91ms
-Evaluate locator('[data-test-id^=\'question-number-\'], [data-test-id^=\'reorder-question-\'] .question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-35ms
-Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-74ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-219ms
-Wait for selector locator('[role=\'dialog\']:has-text("Save your survey")').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-5.1s
-Wait for selector locator('[data-test-id=\'save-draft\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-182ms
-Click locator('[data-test-id=\'save-draft\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-15.1s
-After Hooks
-4.2s
-Worker Cleanup
+$ git log --oneline -5
+1e1e1f9b (HEAD -> feature/locator-swap-new-ids) lib: add 19 data-test-idsfor e2e
+cc0913f8 e2e: swap locators to data-test-ids
+90a3cdb0 (origin/main, origin/HEAD, main) Merge pull request #214 from niq-enterprise/feature/automation-remaining-and-stability-part_1
+7e84dc4d Merge branch 'main' into feature/automation-remaining-and-stability-part_1
+bb2c87bf RE repo updated successfully with Survey Mod lib version 26.23.12-dev
+--------------------------
