@@ -1,40 +1,270 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ git status
-On branch feature/locator-swap-new-ids
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   locators/survey/start-from-scratch.locator.json
-        modified:   locators/survey/start-with-prompt.locator.json
-        modified:   locators/survey/survey-builder.locator.json
-        modified:   page-objects/common/survey-builder.page.ts
-        modified:   test-data/dev-test-data.json
-        modified:   tests/survey/common-test-cases/build-survey-common-test-cases.ts
-        modified:   tests/survey/start-from-scratch.spec.ts
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html
-        modified:   ../libs/survey-mod-lib/src/lib/features/build-survey/components/review-mode/review-mode.component.html
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/locator-swap-new-ids)
+$ git diff -- e2e/locators/survey/start-from-scratch.locator.json e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts e2e/tests/survey/start-from-scratch.spec.ts
+diff --git a/e2e/locators/survey/start-from-scratch.locator.json b/e2e/locators/survey/start-from-scratch.locator.json
+index e2651917..d7d13dc1 100644
+--- a/e2e/locators/survey/start-from-scratch.locator.json
++++ b/e2e/locators/survey/start-from-scratch.locator.json
+@@ -4,25 +4,13 @@
+     { "elementName": "startFromScratch", "selectorType": "css", "selectorValue": "[data-testid='quick-survey-quick-2']" },
+     { "elementName": "productOfferingHeading", "selectorType": "playwrights", "selectorValue": "role=heading[name=\"Product Offering\"]" },
+     { "elementName": "nextButton", "selectorType": "css", "selectorValue": "[data-test-id='btn-next-dataset']" },
+-    {
+-      "elementName": "searchToggle",
+-      "selectorType": "css",
+-      "selectorValue": "[data-test-id='dataset-picker-search-bar-toggle-s
+earch-button-icon']"
+-    },
++    { "elementName": "searchToggle","selectorType": "css","selectorValue"
+: "[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']"},
+     { "elementName": "searchInput", "selectorType": "css", "selectorValue
+": "[data-test-id='dataset-picker-search-bar-input']" },
+-    {
+-      "elementName": "datasetByLabel",
+-      "selectorType": "tag",
+-      "selectorValue": "[data-test-id^='rv-dataset-id-selector']:has-text
+('${text}')"
+-    },
++    { "elementName": "datasetByLabel","selectorType": "tag","selectorValu
+e": "[data-test-id^='rv-dataset-id-selector']:has-text('${text}')"},
+     { "elementName": "dialogElement", "selectorType": "css", "selectorVal
+ue": "[data-test-id='title-second-dialog']" },
+     { "elementName": "applyButton", "selectorType": "css", "selectorValue
+": "[data-test-id='apply-dataset-btn']" },
+     { "elementName": "defaultDataset", "selectorType": "css", "selectorVa
+lue": "[data-test-id='rv-default-dataset']" },
+     { "elementName": "chooseDatasetBreadcrumb", "selectorType": "css", "s
+electorValue": "[data-test-id='dataset-picker-title']" },
+-    {
+-      "elementName": "chooseDataviewBreadcrumb",
+-      "selectorType": "css",
+-      "selectorValue": "[data-test-id='breadcrumb-and-search-container']"
+-    }
++    { "elementName": "chooseDataviewBreadcrumb","selectorType": "css","se
+lectorValue": "[data-test-id='breadcrumb-and-search-container']"}
+   ]
+ }
+diff --git a/e2e/tests/survey/common-test-cases/build-survey-common-test-c
+ases.ts b/e2e/tests/survey/common-test-cases/build-survey-common-test-case
+s.ts
+index edcc51ea..b836d86c 100644
+--- a/e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts
++++ b/e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts
+@@ -10,7 +10,6 @@ const datasetNames = Object.keys(testData.datasets) as A
+rray<keyof typeof testDa
+ const DATASET_NAME = datasetNames[0];
+ const datasetConfig = testData.datasets[DATASET_NAME];
+ 
+-// Short readable per-run suffix, e.g. " - 04 Nov 22:55" (date and minute
+, so same-day reruns rarely collide).
+ function uniqueNameSuffix(): string {
+   const now = new Date();
+   const date = now.toLocaleDateString('en-GB', { day: '2-digit', month: '
+short' });
+@@ -25,7 +24,6 @@ export interface BuildSurveyTestContext {
+ export interface BuildSurveyTestOptions {
+   title?: string;
+   tag?: string;
+-  /** Only honoured by registerPublishPopupCancelTest: registers it as te
+st.fixme. */
+   fixme?: boolean;
+ }
+ 
+@@ -235,7 +233,6 @@ export function registerCancelAddQuestionTest(ctx: Bui
+ldSurveyTestContext, optio
+   );
+ }
+ 
+-// Clears the max-questions limit (if hit) so 'Add question' is clickable
+ again.
+ async function ensureAddQuestionEnabled(surveyBuilderPage: SurveyBuilderP
+age): Promise<void> {
+   const addQuestionState = await surveyBuilderPage.getAddQuestionDisabled
+State();
+   if (addQuestionState.disabled) {
+@@ -243,7 +240,6 @@ async function ensureAddQuestionEnabled(surveyBuilderP
+age: SurveyBuilderPage): P
+   }
+ }
+ 
+-// Empty state has no 'Add question' link - adds via the same type-tile f
+low TC_BS_03a uses, only when the survey has 0 questions.
+ export async function ensureAtLeastOneQuestion(surveyBuilderPage: SurveyB
+uilderPage): Promise<void> {
+   if ((await surveyBuilderPage.getQuestionCount()) === 0) {
+     const { questionText, options } = testData.surveyQuestions.singleChoi
+ce;
+@@ -404,12 +400,8 @@ export function registerReviewSurveyDetailsEditTest(c
+tx: BuildSurveyTestContext,
+       const selectPanelistPage = new SelectPanelistPage(ctx.getBasePage()
+);
+       await surveyBuilderPage.ensureQuestionCount(3);
+       const countBefore = await surveyBuilderPage.getQuestionCount();
+-
+-      // openPublishDialog() runs the existing validate step first when "
+Validate survey" is showing instead of "Review & publish survey".
+       await surveyBuilderPage.openPublishDialog();
+-
+       assertTrue(await surveyBuilderPage.isReviewSurveyDetailsDialogVisib
+le(), 'Expected "Review survey details" dialog to be visible');
+-
+       const dialogTitle = await surveyBuilderPage.getReviewDialogTitleTex
+t();
+       assertTrue(dialogTitle !== '', 'Expected the dialog title (publish-
+dialog-title) to be non-empty');
+       const surveyTitle = await surveyBuilderPage.getReviewDialogSurveyTi
+tleText();
+@@ -440,7 +432,6 @@ export function registerPublishSavedSurveyTest(ctx: Bu
+ildSurveyTestContext, opti
+     const selectPanelistPage = new SelectPanelistPage(ctx.getBasePage());
+     const SELECTED_RESPONSE_COUNT = 250; // the setup selects 250 respons
+es
+ 
+-    // The survey is already saved (it has a folder), so publishing opens
+ "Review survey details" directly.
+     await surveyBuilderPage.openPublishDialog();
+ 
+     assertTrue(await surveyBuilderPage.isReviewSurveyDetailsDialogVisible
+(), 'Expected "Review survey details" dialog to be visible');
+@@ -456,7 +447,6 @@ export function registerPublishSavedSurveyTest(ctx: Bu
+ildSurveyTestContext, opti
+       `Expected "${SELECTED_RESPONSE_COUNT}" responses in "Review survey 
+details", got "${responseCountText}"`
+     );
+ 
+-    // Edit survey -> change the first question's text -> publish again (
+the edit sends the survey back to "Validate survey").
+     const questionCount = await surveyBuilderPage.getQuestionCount();
+     await surveyBuilderPage.clickReviewDialogEditSurvey();
+     assertTrue(await surveyBuilderPage.isReviewSurveyDetailsDialogClosed(
+), 'Expected "Review survey details" dialog closed after Edit survey');
+@@ -490,14 +480,12 @@ export function registerPublishSavedSurveyTest(ctx: 
+BuildSurveyTestContext, opti
+ }
+ 
+ export function registerSavedSurveyInMyAssetsTest(ctx: BuildSurveyTestCon
+text, options?: BuildSurveyTestOptions): void {
+-  // FIXME: folder and survey are saved while the FMS toggle is off in th
+e test browser, but the Surveys list is loaded with it on. Enable the togg
+le at the start of each flow, then re-enable this test.
+   test.fixme(
+     options?.title ?? 'TC_BS_10c: Saved folder and survey are listed in M
+y assets',
+     { tag: options?.tag ?? '@MyAssets' },
+     async () => {
+       const myAssetsPage = new MyAssetsPage(ctx.getBasePage());
+       const folderName = testData.folders.newFolder;
+-      // TC_BS_10a saves under this name; in the Scratch flow TC_BS_02 re
+names the survey afterwards and later saves keep that title.
+       const savedName = testData.surveyNames.saveDraftDialog;
+       const editedName = testData.surveyQuestions.surveyTitle;
+ 
+@@ -599,7 +587,6 @@ export function registerReviewModeDeleteAllTest(ctx: B
+uildSurveyTestContext, opt
+       const questionCountAfterDelete = await surveyBuilderPage.getQuestio
+nCount();
+       assertTrue(questionCountAfterDelete === 0, `Expected 0 questions af
+ter deleting all, found ${questionCountAfterDelete}`);
+ 
+-      // Deleting ALL questions auto-closes Review Mode; only exit if it'
+s still open.
+       const exitButton = await surveyBuilderPage.isExitReviewModeButtonHi
+dden();
+       if (!exitButton) {
+         await surveyBuilderPage.exitReviewMode();
+@@ -813,7 +800,6 @@ export function registerSaveDraftEmptyTitleTest(ctx: B
+uildSurveyTestContext, opt
+         "Expected the dialog's Save draft button to be disabled with an e
+mpty survey name"
+       );
+ 
+-      // Cancel (covers the old TC_BS_17): the dialog closes and nothing 
+changes, then it is reopened for the rest of the test.
+       const countBeforeCancel = await surveyBuilderPage.getQuestionCount(
+);
+       await surveyBuilderPage.clickSaveDraftDialogCancel();
+       assertTrue(await surveyBuilderPage.isSaveDraftDialogClosed(), 'Expe
+cted "Save your survey" dialog to be closed after Cancel');
+@@ -829,7 +815,6 @@ export function registerSaveDraftEmptyTitleTest(ctx: B
+uildSurveyTestContext, opt
+       await surveyBuilderPage.clickSaveDraftAndWaitForDialog();
+       assertTrue(await surveyBuilderPage.isSaveDraftDialogVisible(), 'Exp
+ected "Save your survey" dialog to reopen after Cancel');
+ 
+-      // Create the folder first, or reuse it when a previous run already
+ created it.
+       const folderName = testData.folders.newFolder;
+       if (!(await surveyBuilderPage.ensureSaveDraftDialogFolderListed(fol
+derName))) {
+         await surveyBuilderPage.clickSaveDraftDialogCreateNewFolderLink()
+;
+@@ -864,9 +849,6 @@ export function registerSaveDraftEmptyTitleTest(ctx: B
+uildSurveyTestContext, opt
+ 
+       const titleAfterSave = await surveyBuilderPage.getSurveyTitleDispla
+y();
+       assertTrue(titleAfterSave === draftName, `Expected survey title to 
+update to "${draftName}" after saving draft, got "${titleAfterSave}"`);
+-
+-      // TC_BS_03a (next registered test) assumes a 0-question empty stat
+e, so undo the question added above.
+-      // Skipped when questions already existed (e.g. AI-generated) so re
+al questions are not deleted.
+       if (initialQuestionCount === 0) {
+         await surveyBuilderPage.deleteQuestionAt(0);
+       }
+@@ -940,8 +922,6 @@ export function registerOptionBoundaryTest(ctx: BuildS
+urveyTestContext, options?
+ 
+     const optionCountAfterMax = await surveyBuilderPage.getOptionCount();
+     assertTrue(optionCountAfterMax === 15, `Expected option count to stay
+ 15, found ${optionCountAfterMax}`);
+-
+-    // The blank options cannot be saved; discard instead.
+     await surveyBuilderPage.clickDiscardChanges();
+     assertTrue(!(await surveyBuilderPage.isEditorOpen()), 'Expected edito
+r closed after Discard changes');
+   });
+diff --git a/e2e/tests/survey/start-from-scratch.spec.ts b/e2e/tests/surve
+y/start-from-scratch.spec.ts
+index c6a7a7f9..083ba2e6 100644
+--- a/e2e/tests/survey/start-from-scratch.spec.ts
++++ b/e2e/tests/survey/start-from-scratch.spec.ts
+@@ -267,8 +267,6 @@ test.describe.serial('Start from scratch', { tag: '@St
+artFromScratch' }, () => {
+ 
+     let questionCount = await surveyBuilderPage.getQuestionCount();
+     if (questionCount === 0) {
+-      // The empty builder remembers the last selected type (Single Choic
+e), so clicking that tile again opens no editor: start with Rating.
+-      // addRatingQuestion ends with clickAddQuestion(), which does not e
+xist in the empty state; the text is already entered by then.
+       try {
+         await surveyBuilderPage.addRatingQuestion(ratingText);
+       } catch (error) {
+@@ -276,7 +274,7 @@ test.describe.serial('Start from scratch', { tag: '@St
+artFromScratch' }, () => {
+           throw error;
+         }
+       }
+-      // The first question of an empty builder is saved by a click outsi
+de the card (the inline editor listens for document clicks).
++
+       await surveyBuilderPage.saveQuestionChanges();
+       questionCount = await waitForQuestionCountAtLeast(1);
+       assertTrue(questionCount >= 1, `Expected the first question to be s
+aved, found ${questionCount} questions`);
+@@ -289,7 +287,6 @@ test.describe.serial('Start from scratch', { tag: '@St
+artFromScratch' }, () => {
+     assertTrue(questionCount >= 3, `Expected at least 3 questions, found 
+${questionCount}`);
+   });
+ 
+-  // Same tail as start-with-prompt.spec.ts: save, validate, review, publ
+ish.
+   registerSaveDraftEmptyTitleTest({ getBasePage: () => basePage });
+ 
+   registerSaveDraftTest({ getBasePage: () => basePage }, { title: 'TC_BS_
+10: Save survey as draft', tag: '@SaveDraft' });
 
-no changes added to commit (use "git add" and/or "git commit -a")
-
--------------------
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ git diff --stat
- .../survey/start-from-scratch.locator.json         | 18 ++---------
- e2e/locators/survey/start-with-prompt.locator.json |  2 +-
- e2e/locators/survey/survey-builder.locator.json    | 14 ++++----
- e2e/page-objects/common/survey-builder.page.ts     | 37 ++++++++++++++++++----
- e2e/test-data/dev-test-data.json                   |  3 +-
- .../build-survey-common-test-cases.ts              | 20 ------------
- e2e/tests/survey/start-from-scratch.spec.ts        |  5 +--
- .../preview-mode/preview-mode.component.html       |  1 +
- .../review-mode/review-mode.component.html         |  2 +-
- 9 files changed, 48 insertions(+), 54 deletions(-)
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/locator-swap-new-ids)
-$ git log --oneline -5
-1e1e1f9b (HEAD -> feature/locator-swap-new-ids) lib: add 19 data-test-idsfor e2e
-cc0913f8 e2e: swap locators to data-test-ids
-90a3cdb0 (origin/main, origin/HEAD, main) Merge pull request #214 from niq-enterprise/feature/automation-remaining-and-stability-part_1
-7e84dc4d Merge branch 'main' into feature/automation-remaining-and-stability-part_1
-bb2c87bf RE repo updated successfully with Survey Mod lib version 26.23.12-dev
---------------------------
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod (feature/locator-swap-new-ids)
+$ 
