@@ -1,87 +1,20 @@
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --headed
-◇ injected env (26) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Switching user language to fr-FR...
-User language set to fr-FR.
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 11 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-isLambdaTest = false
-  ✓   1 … modal applies no dataset @SelectPanelist @SPModalCancel (33.3s)
-Auth state loaded from storage/auth.json
-  ✓   2 …ome page and start from scratch @SelectPanelist @SPSetup (25.9s)
-Auth state loaded from storage/auth.json
-  ✓   3 …taset and reach Select Panelists @SelectPanelist @SPSetup (7.2s)
-  ✓   4 …rectly in the summary sentence @SelectPanelist @SPSummary (1.2m)
-  ✘   5 …w with a "Last refreshed" date @SelectPanelist @SPFooter (844ms)
-  -   6 …y filter has exactly 1 selection @SelectPanelist @SPSearchButton
-  -   7 …the number of selected items @SelectPanelist @SPFilterValidation
-  -   8 …ponse options and credit message @SelectPanelist @SPSearchResult
-  -   9 …additional response count choices @SelectPanelist @SPMoreOptions
-  -  10 …and changing a filter resets it @SelectPanelist @SPResponseCount
-  -  11 …sage and blocks proceeding @SelectPanelist @SPTooFewParticipants
-[global-teardown] Resetting user language from fr-FR to en-US...
-Auth state loaded from storage/auth.json
-[global-teardown] User language reset to en-US.
-
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, datasetand view with a "Last refreshed" date @SelectPanelist @SPFooter 
-
-    Error: Expected footer text to start with "Last refreshed", got "Dernière actualisation : Nov 13, 2026"
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:117:15
-
-    attachment #1: screenshot (image/png) ───────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\test-failed-1.png
-    ─────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ───────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\attachments\select-panelist-video-0d04ff7650f80e862a01967974c5108d16c9f438.webm
-    ─────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ──────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
-
-    ─────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter 
-  6 did not run
-  4 passed (5.1m)
--------------------------------------
+Hi Jamal
+ 
+I'm starting on the language automation for Survey Mod. We'll cover all 13 languages, starting with French and then the rest. I've checked how OmniShopper does it, and have a few questions before I begin:
+1-What to check. My plan is to check only the fixed screen text in each language: page titles, buttons, messages and error text. Text we type in the tests (survey names, questions) and dataset items wouldn't be checked.
+-The reason: OmniShopper does the same. Their tests run in the selected language, but they only check a few fixed texts per report (title, description, setup sentence, business questions). The rest is just checked to work.
+-Is that fine, or are there specific screens or texts you want covered?
+2-Full suite or separate run? OmniShopper runs the whole suite in the selected language, but only when someone triggers it manually; their daily scheduled run stays in English. Should we follow the same?
+3-AI questions. In Start with Prompt, when the language is French, should the AI generate the questions in French, or always in English? I won't check the exact wording since it changes every run, only the language if that's expected.
+4-Expected text. Is there a translation sheet or file for Survey Mod, with each English text and its translation in all 13 languages? Then the tests can use it directly without anyone copying text from the screen.
+5-Translated screens. Are all Survey Mod screens fully translated (Survey Home, Select Panelist, Start from Scratch, Start with Prompt, dialogs)? Or are some still English-only for now, so I don't report those as failures?
+ 
+Yogesh Upadhyay
+Hi Jamal   I'm starting on the language automation for Survey Mod. We'll cover all 13 languages, starting with French and then the rest. I've checked how OmniShopper does it, and have a few questions…
+we can check only static texts. 
+yes
+survey stays in English now. you can skip survey question and answers
+we have multiple sheet which we used for translation. how omnishopper maintains?
+current sprint scope only for select panelist and build survey(excluding validation changes) 
+ 
+ 
