@@ -1,8 +1,45 @@
+Setup: Should select the product offering and dataset and reach Select Panelists
+survey/select-panelist.spec.ts:79
+9.5s
+chromiumSelectPanelistSPSetup
+serial
+Copy prompt
+Error: Expected "Choose a dataset" confirmation not visible after selecting Omni Agg SI 3yrs Synd
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:82:15
+Filter steps
+Before Hooks
+38ms
+Wait for selector locator('[data-test-id=\'ds-dataSelectorContent\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.1s
+Wait for selector locator('[data-test-id=\'dataset-picker-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'breadcrumb-and-search-container\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+After Hooks
+3.4s
+Worker Cleanup
+-------------------------------------
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --headed
-◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -19,13 +56,13 @@ Global setup completed. Auth state saved.
 
 Running 11 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-  ✓   1 … modal applies no dataset @SelectPanelist @SPModalCancel (41.6s)
+  ✓   1 … modal applies no dataset @SelectPanelist @SPModalCancel (33.0s)
 Auth state loaded from storage/auth.json
-  ✓   2 …ome page and start from scratch @SelectPanelist @SPSetup (27.6s)
+  ✓   2 …ome page and start from scratch @SelectPanelist @SPSetup (26.2s)
 Auth state loaded from storage/auth.json
-  ✘   3 …taset and reach Select Panelists @SelectPanelist @SPSetup (9.8s)
+  ✘   3 …taset and reach Select Panelists @SelectPanelist @SPSetup (9.5s)
   -   4 …own correctly in the summary sentence @SelectPanelist @SPSummary
   -   5 … and view with a "Last refreshed" date @SelectPanelist @SPFooter
   -   6 …y filter has exactly 1 selection @SelectPanelist @SPSearchButton
@@ -67,7 +104,7 @@ Auth state loaded from storage/auth.json
     Error Context: test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\error-context.md
 
     attachment #3: select-panelist-video (video/webm) ───────────────────
-    test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\attachments\select-panelist-video-662a27c017246d9709b17ce9449790e896d52c44.webm
+    test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\attachments\select-panelist-video-251982133765df4505bad8a3ae36a7b8ac878a87.webm
     ─────────────────────────────────────────────────────────────────────
 
     Error Context: test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\error-context.md
@@ -83,12 +120,5 @@ Auth state loaded from storage/auth.json
   1 failed
     [chromium] › tests\survey\select-panelist.spec.ts:79:7 › Select Panelists - filters and search › Setup: Should select the product offering and dataset and reach Select Panelists @SelectPanelist @SPSetup 
   8 did not run
-  2 passed (4.1m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
-$ 
+  2 passed (3.7m)
+-------------------------------------
