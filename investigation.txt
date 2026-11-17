@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --grep "TC_SP_03" --headed
-◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -13,40 +13,48 @@ Terms page not shown or already accepted, continuing login...
 FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
 Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
 Switching user language to fr-FR...
-Global setup failed: Error: Failed to set the user locale to 'fr-FR': page.waitForEvent: Timeout 60000ms exceeded while waiting for event "load"
-=========================== logs ===========================
-waiting for event "load"
-============================================================
-    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:112:13)
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
-    at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6378:27)
+User language set to fr-FR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 1 test using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+  ✓  1 …g modal applies no dataset @SelectPanelist @SPModalCancel (32.8s)
+Auth state loaded from storage/auth.json
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/launchpad page.goto: Navigation to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad" is interrupted by another navigation to"https://si.connect.nielseniq.io/reportexperience-dev/settings/account"
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"
+
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at ProfilePage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:68:35)
+    at ProfilePage.openLaunchpad (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:74:16)
+    at ProfilePage.isAppInLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:86:18)
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:112:26)
+    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
+    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': the launchpad greeting is not in 'en-US' after saving
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:119:13)
+    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
+    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
+    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6394:7)
     at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6154:11)
     at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6170:5)
-    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6134:33)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6135:28)
     at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6299:18)
     at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6956:18)
     at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
     at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
-Global setup completed. Auth state saved.
-Error: Global setup failed: Failed to set the user locale to 'fr-FR': page.waitForEvent: Timeout 60000ms exceeded while waiting for event "load"
-=========================== logs ===========================
-waiting for event "load"
-============================================================
 
-   at ..\helpers\global-setup.ts:50
-
-  48 |     console.error('Global setup failed:', error);
-  49 |     if (error instanceof Error) {
-> 50 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  51 |     }
-  52 |     throw new Error('Global setup failed with an unknown error');
-  53 |   } finally {
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
-[global-teardown] Resetting user language from fr-FR to en-US...
-Auth state loaded from storage/auth.json
-[global-teardown] User language reset to en-US.
-
+  1 passed (3.0m)
 
 To open last HTML report run:
 
