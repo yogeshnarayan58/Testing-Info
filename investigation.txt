@@ -1,25 +1,57 @@
-import { test, expect } from '@playwright/test';
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --grep "TC_SP_03" --headed
+◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to fr-FR...
+Global setup failed: Error: Failed to set the user locale to 'fr-FR': page.waitForEvent: Timeout 60000ms exceeded while waiting for event "load"
+=========================== logs ===========================
+waiting for event "load"
+============================================================
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:112:13)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
+    at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6378:27)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6154:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6170:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6134:33)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6299:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6956:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+Global setup completed. Auth state saved.
+Error: Global setup failed: Failed to set the user locale to 'fr-FR': page.waitForEvent: Timeout 60000ms exceeded while waiting for event "load"
+=========================== logs ===========================
+waiting for event "load"
+============================================================
 
-test('test', async ({ page }) => {
-  await page.goto('https://niqloginuat.identity.nielseniq.io/as/authorize?response_type=code&scope=openid%20email%20profile%20offline_access%201bd20d33-5a7e-404a-a849-6ab1b3923a24.access&client_id=1bd20d33-5a7e-404a-a849-6ab1b3923a24&state=NYIAYE9vRd8fdTHqvU3XB-Fp4_351Iy-WXk0bYZYrt0&redirect_uri=https%3A%2F%2Fsi.connect.nielseniq.io%2Fredirect_uri&nonce=aGLlUrl0p0ckxbOBvUGtxobwvMki9ynJ9AhdUjdjMGY&code_challenge=zJ48T6FJlGKPoy1OMCt7hLTmXzUm8UBWsBZ15wZEhh8&code_challenge_method=S256');
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('automation1gen@nielseniq.com');
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('NIQTemplates@2027');
-  await page.getByRole('button', { name: 'Verify' }).click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
-  await page.locator('[data-test-id="global-nav-trigger-iconbtn-comp-icon"]').click();
-  await page.locator('[data-test-id="profile-settings-item"]').click();
-  await page.locator('[data-test-id="settings-category-title-LP.PROFILE.INFO.ACCOUNT.TITLE"]').click();
-  await page.locator('[data-test-id="profile-display-setting"] [data-test-id="profile-display-setting-lang-input"]').click();
-  await page.locator('[data-test-id="profile-language-drp-down-value-French"]').click();
-  await page.locator('[data-test-id="profile-save-changes-button"]').click();
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/survey');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/lauchpad');
-  await page.goto('https://si.connect.nielseniq.io/reportexperience-dev/launchpad');
-  await page.getByRole('heading', { name: 'Bienvenue, Automation1' }).click();
-  await page.getByRole('heading', { name: 'Bienvenue, Automation1' }).click();
-  await page.locator('[data-test-id="global-nav-sp-hamburger-btn"]').click();
-  await page.locator('[data-test-id="global-nav-sp-overlay-container"] [data-test-id="global-nav-sp-expanded-analyze-my-page-button-side-panel-header"]').click();
-});
+   at ..\helpers\global-setup.ts:50
+
+  48 |     console.error('Global setup failed:', error);
+  49 |     if (error instanceof Error) {
+> 50 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  51 |     }
+  52 |     throw new Error('Global setup failed with an unknown error');
+  53 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+[global-teardown] User language reset to en-US.
+
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
+$ 
