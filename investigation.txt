@@ -1,8 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --grep "TC_SP_03" --headed
-◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --headed
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -17,44 +17,73 @@ User language set to fr-FR.
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
 
-Running 1 test using 1 worker
+Running 11 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 isLambdaTest = false
-  ✓  1 …g modal applies no dataset @SelectPanelist @SPModalCancel (32.8s)
+  ✓   1 … modal applies no dataset @SelectPanelist @SPModalCancel (41.6s)
 Auth state loaded from storage/auth.json
+  ✓   2 …ome page and start from scratch @SelectPanelist @SPSetup (27.6s)
+Auth state loaded from storage/auth.json
+  ✘   3 …taset and reach Select Panelists @SelectPanelist @SPSetup (9.8s)
+  -   4 …own correctly in the summary sentence @SelectPanelist @SPSummary
+  -   5 … and view with a "Last refreshed" date @SelectPanelist @SPFooter
+  -   6 …y filter has exactly 1 selection @SelectPanelist @SPSearchButton
+  -   7 …the number of selected items @SelectPanelist @SPFilterValidation
+  -   8 …ponse options and credit message @SelectPanelist @SPSearchResult
+  -   9 …additional response count choices @SelectPanelist @SPMoreOptions
+  -  10 …and changing a filter resets it @SelectPanelist @SPResponseCount
+  -  11 …sage and blocks proceeding @SelectPanelist @SPTooFewParticipants
 [global-teardown] Resetting user language from fr-FR to en-US...
 Auth state loaded from storage/auth.json
-Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/launchpad page.goto: Navigation to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad" is interrupted by another navigation to"https://si.connect.nielseniq.io/reportexperience-dev/settings/account"
-Call log:
-  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"
+[global-teardown] User language reset to en-US.
 
-    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
-    at ProfilePage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:68:35)
-    at ProfilePage.openLaunchpad (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:74:16)
-    at ProfilePage.isAppInLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:86:18)
-    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:112:26)
-    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
-    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3) {
-  log: [
-    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"'
-  ],
-  name: 'Error'
-}
-[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': the launchpad greeting is not in 'en-US' after saving
-    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:119:13)
-    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
-    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
-    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6394:7)
-    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6154:11)
-    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6170:5)
-    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6135:28)
-    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6299:18)
-    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6956:18)
-    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:95:18)
-    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
 
-  1 passed (3.0m)
+  1) [chromium] › tests\survey\select-panelist.spec.ts:79:7 › Select Panelists - filters and search › Setup: Should select the product offering and dataset and reach Select Panelists @SelectPanelist @SPSetup 
+
+    Error: Expected "Choose a dataset" confirmation not visible after selecting Omni Agg SI 3yrs Synd
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:82:15
+
+    attachment #1: screenshot (image/png) ───────────────────────────────
+    test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\test-failed-1.png
+    ─────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ───────────────────
+    test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\attachments\select-panelist-video-662a27c017246d9709b17ce9449790e896d52c44.webm
+    ─────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ──────────────────────────────
+    test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-dde6f--and-reach-Select-Panelists-chromium\trace.zip
+
+    ─────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:79:7 › Select Panelists - filters and search › Setup: Should select the product offering and dataset and reach Select Panelists @SelectPanelist @SPSetup 
+  8 did not run
+  2 passed (4.1m)
 
 To open last HTML report run:
 
