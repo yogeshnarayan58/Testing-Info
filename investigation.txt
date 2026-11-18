@@ -1,100 +1,8 @@
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (26) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
 ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Switching user language to fr-FR...
-User language set to fr-FR.
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 11 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (31.8s)
-Auth state loaded from storage/auth.json
-  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (27.0s)
-Auth state loaded from storage/auth.json
-  ✓   3 …dataset and reach Select Panelists @SelectPanelist @SPSetup (7.3s)
-  ✓   4 …orrectly in the summary sentence @SelectPanelist @SPSummary (1.1m)
-  ✘   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (295ms)
-  -   6 …ery filter has exactly 1 selection @SelectPanelist @SPSearchButton
-  -   7 …t the number of selected items @SelectPanelist @SPFilterValidation
-  -   8 …esponse options and credit message @SelectPanelist @SPSearchResult
-  -   9 …s additional response count choices @SelectPanelist @SPMoreOptions
-  -  10 …, and changing a filter resets it @SelectPanelist @SPResponseCount
-  -  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants
-[global-teardown] Resetting user language from fr-FR to en-US...
-Auth state loaded from storage/auth.json
-[global-teardown] User language reset to en-US.
-
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset andview with a "Last refreshed" date @SelectPanelist @SPFooter 
-
-    Error: Expected footer text to start with "Last refreshed", got "Dernière actualisation : Nov 13, 2026"
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:117:15
-
-    attachment #1: screenshot (image/png) ─────────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ─────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\attachments\select-panelist-video-5de30c965c0922de5372e4846ca93cf634374743.webm
-    ───────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ────────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
-
-    ───────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter 
-  6 did not run
-  4 passed (5.1m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
-◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -112,16 +20,20 @@ Global setup completed. Auth state saved.
 
 Running 11 tests using 1 worker
 
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (30.3s)
+  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (32.4s)
 Auth state loaded from storage/auth.json
-  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (35.4s)
+  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (20.8s)
 Auth state loaded from storage/auth.json
-  ✓   3 …ataset and reach Select Panelists @SelectPanelist @SPSetup (11.0s)
+  ✓   3 …dataset and reach Select Panelists @SelectPanelist @SPSetup (8.0s)
   ✓   4 …orrectly in the summary sentence @SelectPanelist @SPSummary (1.1m)
-  ✘   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (278ms)
-  -   6 …ery filter has exactly 1 selection @SelectPanelist @SPSearchButton
+  ✓   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (320ms)
+  ✘   6 …er has exactly 1 selection @SelectPanelist @SPSearchButton (42.8s)
+setDimensionSelection failed for 'productNoDataPrompt': locator.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator('[data-test-id=\'ds-Product_Dimension\']')
+
   -   7 …t the number of selected items @SelectPanelist @SPFilterValidation
   -   8 …esponse options and credit message @SelectPanelist @SPSearchResult
   -   9 …s additional response count choices @SelectPanelist @SPMoreOptions
@@ -133,51 +45,52 @@ Language dropdown offers languages not in localization-data.json: Simplified Chi
 [global-teardown] User language reset to en-US.
 
 
-  1) [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset andview with a "Last refreshed" date @SelectPanelist @SPFooter 
+  1) [chromium] › tests\survey\select-panelist.spec.ts:129:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled onlywhen every filter has exactly 1 selection @SelectPanelist @SPSearchButton 
 
-    Error: Expected footer text to start with "Last refreshed", got "Dernière actualisation : Nov 13, 2026"
-    expect(received).toBeTruthy()
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('[data-test-id=\'ds-Product_Dimension\']')
 
-    Received: false
 
-       at ..\page-objects\common\assert-utils.ts:14
+       at ..\page-objects\common\select-panelist.page.ts:104
 
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:117:15
+      102 |     );
+      103 |     await filledTile.waitFor();
+    > 104 |     await filledTile.click();
+          |                      ^
+      105 |     await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
+      106 |
+      107 |     const removeIcon = this.webActionHandler.getWebElement(
+        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
+        at SelectPanelistPage.replaceFilledTileDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:104:22)
+        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:189:11)
+        at SelectPanelistPage.setDimensionSelections (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:29:7)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:142:5
 
     attachment #1: screenshot (image/png) ─────────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\test-failed-1.png
+    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\test-failed-1.png
     ───────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
+    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
 
     attachment #3: select-panelist-video (video/webm) ─────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\attachments\select-panelist-video-0b9c07a15aa1220083397d67a7abf6c048e9d80d.webm
+    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\attachments\select-panelist-video-fd818647f006dcf4f63adaa73fc2cea9a7a5d165.webm
     ───────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
+    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
 
     attachment #5: trace (application/zip) ────────────────────────────────
-    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+        npx playwright show-trace test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
 
     ───────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter 
-  6 did not run
-  4 passed (5.2m)
+    [chromium] › tests\survey\select-panelist.spec.ts:129:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled only when every filter has exactly 1 selection @SelectPanelist @SPSearchButton 
+  5 did not run
+  5 passed (6.5m)
 
 To open last HTML report run:
 
