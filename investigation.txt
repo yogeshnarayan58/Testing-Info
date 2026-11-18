@@ -1,8 +1,59 @@
+Both fixes are in, and the scan results are below. I did not run any commands or tests, as you asked.
+
+Fix 1: select-panelist.page.ts
+getCurrentFilledTileDimensionValue() now returns '' when the empty-state prompt (noDataPrompt) is visible. The prompt's text is no longer read.
+isPlaceholderValue() is now only value.length === 0, and the /^select\b/i regex is gone. In en-US the empty state used to be "Select …" and is now '', so both count as a placeholder. setDimensionSelection, dimensionAlreadyMatches and isDimensionAlreadySelected therefore behave the same.
+getCurrentDimensionValue() (the non-tile path) is left unchanged. All 5 dimensionTab values in dev-test-data.json are in FILLED_TILE_DIMENSION_LABELS, so that path is never used today. I can't tell from the code whether an element on that path is empty, and a text-free check there would be a guess. If you ever add a non-tile dimension, it would treat English "Select …" text as a selection, so it needs the same fix first.
+Fix 2: survey-builder.page.ts
+confirmPublish() now records the status of the /api/v1/publish response in a new private field, lastPublishStatus. It is cleared just before the Publish click.
+verifyPublishSucceeded() no longer checks the toast for "Survey published successfully". It fails fast only when lastPublishStatus >= 400 while the toast is showing. The message keeps the Publish failed: "<toast>" (…) form and now includes the HTTP status. The navigation-to-/my-assets success check and the timeouts are untouched.
+One behaviour difference: a non-success toast that arrives without a failed publish response is no longer caught early. It would now surface as the existing timeout error, which already includes the toast text.
+Scan: other logic that depends on visible English text
+I changed none of these.
+
+Tests
+
+start-with-prompt.spec.ts line 142: the error text must include 'please enter a value between 3 and 10'.
+select-panelist.spec.ts
+Line 163: the filter banner must include messageText, which is English at the call sites.
+Line 211: the credit message must match /credit/i.
+Lines 28–29 and 296: the eligibility message must equal the English TOO_FEW_PARTICIPANTS_MESSAGE.
+Line 283: it picks the retailer item 'Beauty Supply', an item name that is not localized.
+start-from-scratch.spec.ts line 97: the survey title must equal 'Untitled Survey'.
+build-survey-common-test-cases.ts line 41: the title must not equal 'Untitled Survey'.
+Page objects
+select-panelist.page.ts
+Lines 71–75: FILLED_TILE_DIMENSION_LABELS ('Product', 'Retailer', …) feed the filledDimensionTile text locator.
+Line 457: getEligibleCount parses the number with /\d[\d,]*/, which assumes , as the thousands separator. A locale that uses . or a space would give a wrong count.
+survey-builder.page.ts lines 584 and 587: the treeitem role is filtered by the name 'My Assets'.
+dataset-selection.helper.ts line 38: the default dataset text must include the dataset label. Whether this breaks depends on whether dataset names are localized.
+Locators
+
+survey-builder.locator.json uses English text selectors, and the dialog selectors are the ones that other lookups depend on:
+maxOptionsMessageText (line 18)
+saveDraftDialog ("Save your survey", line 48)
+saveDraftDialogErrorText ("Survey name is required.", line 50)
+saveDraftDialogCreateNewFolderLink (line 54)
+
+publishLocationDialog ("Publish your survey", line 57)
+createNewFolderLink (line 59)
+createNewFolderInLocationButton (line 60)
+createNewFolderDialog (line 61)
+the validation toasts: validatingSurveyToastText, changesRecommendedToastText, validationCompleteToastText, changesNeededToastText and recommendationTagText (lines 71–75)
+reviewSurveyDetailsDialog ("Review survey details", line 81)
+select-panelist.locator.json: line 112 uses text= Build Survey, and line 167 matches Please select 1|Looking good!|Please remove 1.
+my-assets.locator.json line 9: viewAllSurveysLink uses "View all surveys".
+feature-toggle.locator.json lines 7, 12 and 17: the row is found by "Enable Survey Modernization in FMS". This is an admin page and probably not localized.
+Files changed
+select-panelist.page.ts: empty state returns '', and isPlaceholderValue is empty-only.
+survey-builder.page.ts: the publish check now uses the API response status instead of the toast text.
+--------------------------------------------------------------------------
+
 yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
 ◇ injected env (26) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -13,7 +64,7 @@ Terms page not shown or already accepted, continuing login...
 FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
 Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
 Switching user language to fr-FR...
-Language dropdown offers languages not in localization-data.json: Simplified Chinese, Polish
+Language dropdown offers languages not in localization-data.json: SimplifiedChinese, Polish
 User language set to fr-FR.
 Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
@@ -22,80 +73,68 @@ Running 11 tests using 1 worker
 
 ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 isLambdaTest = false
-  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (32.4s)
+  ✓   1 …odalCancel (30.9s)
+  ✓   2 …t @SPSetup (30.1s)
+      2 …tPanelist @SPSetup
 Auth state loaded from storage/auth.json
-  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (20.8s)
-Auth state loaded from storage/auth.json
-  ✓   3 …dataset and reach Select Panelists @SelectPanelist @SPSetup (8.0s)
-  ✓   4 …orrectly in the summary sentence @SelectPanelist @SPSummary (1.1m)
-  ✓   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (320ms)
-  ✘   6 …er has exactly 1 selection @SelectPanelist @SPSearchButton (42.8s)
-setDimensionSelection failed for 'productNoDataPrompt': locator.click: Timeout 15000ms exceeded.
-Call log:
-  - waiting for locator('[data-test-id=\'ds-Product_Dimension\']')
-
-  -   7 …t the number of selected items @SelectPanelist @SPFilterValidation
-  -   8 …esponse options and credit message @SelectPanelist @SPSearchResult
-  -   9 …s additional response count choices @SelectPanelist @SPMoreOptions
-  -  10 …, and changing a filter resets it @SelectPanelist @SPResponseCount
-  -  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants
+  ✓   3 …st @SPSetup (9.0s)
+  ✓   4 … @SPSummary (1.3m)
+  ✓   5 … @SPFooter (255ms)
+  ✓   6 …archButton (23.1s)
+  ✓   7 …Validation (49.9s)
+  ✘   8 …archResult (19.9s)
+  -   9 …ist @SPMoreOptions
+  -  10 …t @SPResponseCount
+  -  11 …TooFewParticipants
 [global-teardown] Resetting user language from fr-FR to en-US...
 Auth state loaded from storage/auth.json
-Language dropdown offers languages not in localization-data.json: Simplified Chinese, Polish
+Language dropdown offers languages not in localization-data.json: SimplifiedChinese, Polish
 [global-teardown] User language reset to en-US.
 
 
-  1) [chromium] › tests\survey\select-panelist.spec.ts:129:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled onlywhen every filter has exactly 1 selection @SelectPanelist @SPSearchButton 
+  1) [chromium] › tests\survey\select-panelist.spec.ts:188:7 › Select Panelists - filters and search › TC_SP_08: Search result shows eligible count, response options and credit message @SelectPanelist @SPSearchResult 
 
-    TimeoutError: locator.click: Timeout 15000ms exceeded.
-    Call log:
-      - waiting for locator('[data-test-id=\'ds-Product_Dimension\']')
+    Error: Expected credit message to contain "100" and "credit", got "Combien de réponses souhaitez-vous obtenir ? Un nombre plus élevé de réponses nécessite plus de temps et influe également sur le calcul des crédits. Par exemple : 100 réponses = 1 crédit"
+    expect(received).toBeTruthy()
 
+    Received: false
 
-       at ..\page-objects\common\select-panelist.page.ts:104
+       at ..\page-objects\common\assert-utils.ts:14
 
-      102 |     );
-      103 |     await filledTile.waitFor();
-    > 104 |     await filledTile.click();
-          |                      ^
-      105 |     await this.webActionHandler.delay(UI_STATE_UPDATE_DELAY);
-      106 |
-      107 |     const removeIcon = this.webActionHandler.getWebElement(
-        at WebElement.click (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webElement.ts:71:10)
-        at SelectPanelistPage.replaceFilledTileDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:104:22)
-        at SelectPanelistPage.setDimensionSelection (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:189:11)
-        at SelectPanelistPage.setDimensionSelections (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:29:7)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:142:5
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:210:15
 
-    attachment #1: screenshot (image/png) ─────────────────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\test-failed-1.png
-    ───────────────────────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) 
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\test-failed-1.png
+    ───────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
+    Error Context: test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\error-context.md
 
-    attachment #3: select-panelist-video (video/webm) ─────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\attachments\select-panelist-video-fd818647f006dcf4f63adaa73fc2cea9a7a5d165.webm
-    ───────────────────────────────────────────────────────────────────────
+    attachment #3: select-panelist-video (video/webm) 
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\attachments\select-panelist-video-22fd5f78f78ecc1c55a974e9193c79fd91a37fc1.webm
+    ───────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\error-context.md
+    Error Context: test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ────────────────────────────────
-    test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
+    attachment #5: trace (application/zip) 
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-select-panelist-Sel-8e35e-ter-has-exactly-1-selection-chromium\trace.zip
+        npx playwright show-trace test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\trace.zip
 
-    ───────────────────────────────────────────────────────────────────────
+    ───────────────────────
 
   1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:129:7 › Select Panelists - filters and search › TC_SP_07: Search for Panelists is enabled only when every filter has exactly 1 selection @SelectPanelist @SPSearchButton 
-  5 did not run
-  5 passed (6.5m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
-$ 
+    [chromium] › tests\survey\select-panelist.spec.ts:188:7 › Select Panelists - filters and search › TC_SP_08: Search result shows eligible count, response options and credit message @SelectPanelist @SPSearchResult 
+  3 did not run
+  7 passed (7.0m)
+------------------------------
