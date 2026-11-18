@@ -1,86 +1,188 @@
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 4 hours ago
-e2e/locators/survey/profile.locator.json
-    { "elementName": "profileLanguageSettingsInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting'] [data-test-id='profile-display-setting-lang-input']" },
-    { "elementName": "profileLanguageInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting-lang-input']" },
-    { "elementName": "saveChanges", "selectorType": "css", "selectorValue": "[data-test-id='profile-save-changes-button']" },
-    { "elementName": "en-US", "selectorType": "css", "selectorValue": "[data-test-id='profile-language-drp-down-value-English (United States)']" },
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-4 hours ago
-Parameterize the language/country instead of adding locator for each language/country.
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
+◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to fr-FR...
+User language set to fr-FR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-Ex - "[data-test-id='profile-language-drp-down-value-${languageName}']"
+Running 11 tests using 1 worker
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 3 hours ago
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-left a comment
-for future changes
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (31.8s)
+Auth state loaded from storage/auth.json
+  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (27.0s)
+Auth state loaded from storage/auth.json
+  ✓   3 …dataset and reach Select Panelists @SelectPanelist @SPSetup (7.3s)
+  ✓   4 …orrectly in the summary sentence @SelectPanelist @SPSummary (1.1m)
+  ✘   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (295ms)
+  -   6 …ery filter has exactly 1 selection @SelectPanelist @SPSearchButton
+  -   7 …t the number of selected items @SelectPanelist @SPFilterValidation
+  -   8 …esponse options and credit message @SelectPanelist @SPSearchResult
+  -   9 …s additional response count choices @SelectPanelist @SPMoreOptions
+  -  10 …, and changing a filter resets it @SelectPanelist @SPResponseCount
+  -  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+[global-teardown] User language reset to en-US.
 
-e2e/page-objects/common/profile.page.ts
-  }
 
-  /** Picks the language in the profile settings and saves; skips when the app is already in that language. Afterwards confirms the switch on the launchpad. */
-  async setUserLocale(locale: string): Promise<void> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-4 hours ago
-Add function to check the list of existing languages, and if any language is added/removed function should handle it gracefully by throwing an error without failing the further steps.
+  1) [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset andview with a "Last refreshed" date @SelectPanelist @SPFooter 
 
-Map the languages to text based on the display text in UI, so that we can either pass specific language or make function to pick randomly any of the language from mapped list
+    Error: Expected footer text to start with "Last refreshed", got "Dernière actualisation : Nov 13, 2026"
+    expect(received).toBeTruthy()
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-    try {
-      await this.navigateToUrl(this.buildUrl(envConfig.BASE_URL, LAUNCHPAD_RELATIVE_PATH));
-      const profileIcon = this.webActionHandler.getWebElement(this.getResource('profileIcon'));
-      await this.waitUntilVisible(profileIcon, 'Profile icon', NAVIGATION_TIMEOUT);
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-4 hours ago
-this step can be removed as the below step validates the same before performing the action
+    Received: false
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-  }
+       at ..\page-objects\common\assert-utils.ts:14
 
-  /** True when the language shown in the profile settings is the one for the given locale code. */
-  async validateUserLocale(locale: string): Promise<boolean> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-4 hours ago
-instead of just fetching the language, modify the function to handle the selection of user passed language
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:117:15
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-  }
+    attachment #1: screenshot (image/png) ─────────────────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────
 
-  /** Returns the language text currently shown in the Account settings (e.g. "English (United States)"). */
-  async getUserLocale(): Promise<string> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-3 hours ago
-can club this function with getLocaleLabel(). Instead of 2 different functions
+    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/playwright/setup/globalTeardown.ts
-}
+    attachment #3: select-panelist-video (video/webm) ─────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\attachments\select-panelist-video-5de30c965c0922de5372e4846ca93cf634374743.webm
+    ───────────────────────────────────────────────────────────────────────
 
-/** Puts the user's language back to the default after a non-default LOCALE run. Independent of the LambdaTest logic; logs errors, never throws. */
-async function resetUserLocale(): Promise<void> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-3 hours ago
-need to handle case when user had already changed the language.
+    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/test-data/localization-data.json
-@@ -0,0 +1,15 @@
-[
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-3 hours ago
-map this with country names, so that function can handle the country name when passed. It helps in maintainability and ease of use
+    attachment #5: trace (application/zip) ────────────────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+    Usage:
 
-@Yogesh-Upadhyay-consultant_niq	Reply...
+        npx playwright show-trace test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter 
+  6 did not run
+  4 passed (5.1m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to fr-FR...
+Language dropdown offers languages not in localization-data.json: Simplified Chinese, Polish
+User language set to fr-FR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 11 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+  ✓   1 …ng modal applies no dataset @SelectPanelist @SPModalCancel (30.3s)
+Auth state loaded from storage/auth.json
+  ✓   2 … home page and start from scratch @SelectPanelist @SPSetup (35.4s)
+Auth state loaded from storage/auth.json
+  ✓   3 …ataset and reach Select Panelists @SelectPanelist @SPSetup (11.0s)
+  ✓   4 …orrectly in the summary sentence @SelectPanelist @SPSummary (1.1m)
+  ✘   5 …iew with a "Last refreshed" date @SelectPanelist @SPFooter (278ms)
+  -   6 …ery filter has exactly 1 selection @SelectPanelist @SPSearchButton
+  -   7 …t the number of selected items @SelectPanelist @SPFilterValidation
+  -   8 …esponse options and credit message @SelectPanelist @SPSearchResult
+  -   9 …s additional response count choices @SelectPanelist @SPMoreOptions
+  -  10 …, and changing a filter resets it @SelectPanelist @SPResponseCount
+  -  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+Language dropdown offers languages not in localization-data.json: Simplified Chinese, Polish
+[global-teardown] User language reset to en-US.
+
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset andview with a "Last refreshed" date @SelectPanelist @SPFooter 
+
+    Error: Expected footer text to start with "Last refreshed", got "Dernière actualisation : Nov 13, 2026"
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:117:15
+
+    attachment #1: screenshot (image/png) ─────────────────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ─────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\attachments\select-panelist-video-0b9c07a15aa1220083397d67a7abf6c048e9d80d.webm
+    ───────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────────────────────
+    test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-bd41c--with-a-Last-refreshed-date-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:109:7 › Select Panelists - filters and search › TC_SP_04: Footer shows the source, dataset and view with a "Last refreshed" date @SelectPanelist @SPFooter 
+  6 did not run
+  4 passed (5.2m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+yogesh.upadhyay@LP-GGN-0X005000 MINGW64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-setup)
+$ 
