@@ -1,56 +1,129 @@
-Scan only; I changed no files and ran nothing. The save-a-copy and create-folder dialogs, the filter banner and the dataset picker come from external libraries that are not in this repo, so I could only check their ids through the existing locators.
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed yesterday
+e2e/locators/survey/profile.locator.json
+Outdated
+    { "elementName": "profileLanguageSettingsInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting'] [data-test-id='profile-display-setting-lang-input']" },
+    { "elementName": "profileLanguageInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting-lang-input']" },
+    { "elementName": "saveChanges", "selectorType": "css", "selectorValue": "[data-test-id='profile-save-changes-button']" },
+    { "elementName": "en-US", "selectorType": "css", "selectorValue": "[data-test-id='profile-language-drp-down-value-English (United States)']" },
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+yesterday
+Parameterize the language/country instead of adding locator for each language/country.
 
-I left out Home, Results, the validation/Optiq feedback panel and My Assets. User-entered data (question text, survey and folder titles) is compared as data and is not listed.
+Ex - "[data-test-id='profile-language-drp-down-value-${languageName}']"
 
-Line numbers marked ~ are approximate. Paths are relative to e2e/ for locators, page objects and tests, and to libs/survey-mod-lib/src/lib/ for templates. survey-builder.locator.json is abbreviated to sb.json, select-panelist.locator.json to sp.json, and survey-header.component.html to survey-header.html.
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+4 minutes ago
+Author
+Done. The per-language locators are replaced by one "languageOption" locator with the language name filled in.
 
-#	Screen & flow	File:line	What it does	Current text locator or assertion	data-test-id in the app	Fix type	Proposed fix
-1	Dataset picker, scratch	start-from-scratch.locator.json:9 (page :78)	Picks a dataset tile	[data-test-id^='rv-dataset-id-selector']:has-text('${text}')	Prefix id from the external re-dataset-picker	STRUCTURAL_CHECK	Dataset name is catalog data, not UI wording; keep.
-2	Dataset picker, prompt	start-with-prompt.locator.json:10 (page :80)	Picks a dataset by visible name	text=${text}	MISSING (external picker)	STRUCTURAL_CHECK	Same as #1; swap to the rv-dataset-id-selector… prefix id if the name is ever localized.
-3	Select Panelist, both	sp.json:47	Ticks a dimension item	div.item-container:has-text('${text}') niq-checkbox	MISSING (external data-selector)	STRUCTURAL_CHECK	The item name is dataset content; keep.
-4	Select Panelist, both	sp.json (categoryItem)	Opens a parent category	ds-navigationItemLabel_${text}	Id built from the item name (external lib)	STRUCTURAL_CHECK	Dataset content; keep.
-5	Select Panelist, both	select-panelist.page.ts:71-75, sp.json	Finds the empty/filled dimension tiles	ds-noDataPrompt_Product, ds-${text}_Dimension with English labels	External data-summary	STRUCTURAL_CHECK	Verify that these ids stay English in other locales. If they don't, I can't tell from this repo what they become.
-6	Build Survey, both	sp.json:112 (page :332)	Checks the Build Survey page loaded	text= Build Survey (stepper label SURVEYMOD_BUILD_SURVEY)	survey-title, survey-header.html:7 (review-survey also exists); the stepper step has no id	USE_EXISTING_ID	Wait for survey-title instead.
-7	Select Panelist, both	sp.json:167; select-panelist.page.ts getFilterValidationMessage; select-panelist.spec.ts TC_SP_06 (expectState)	Banner text per selection count	Please select 1|Looking good!|Please remove 1	MISSING (external crf-data-selector-panel-v2)	STRUCTURAL_CHECK	Drop the wording and assert only the counter 0/1, 1/1, 2/1.
-8	Select Panelist, both	sp.json:172	Reads the n/m counter	Regex \d+/\d+	MISSING (external)	STRUCTURAL_CHECK	Already language-neutral; add an id later if you want to remove the regex.
-9	Select Panelist, both	select-panelist.page.ts getEligibleCount	Parses the eligible number	.eligibility, regex \d[\d,]*	panelist-eligibility-message, select-panelist.component.html:17	STRUCTURAL_CHECK	householdCount is printed as a raw number, so parsing is locale-safe. Optionally swap .eligibility for the id.
-10	Select Panelist, both	select-panelist.spec.ts:28-29, 296 (TC_SP_09)	Compares the eligibility message with English text	=== TOO_FEW_PARTICIPANTS_MESSAGE	panelist-eligibility-message	USE_LANGUAGE_FILE	Take the text from localization-data.json; the sheet key is probably SURVEYMOD_CRITERIA.FAILED (select-panelist.component.html:20).
-11	Select Panelist, both	select-panelist.spec.ts:211  (TC_SP_08); sp.json responsesCreditMessage	Checks the credit message	includes('100') && /credit/i	responses-credit-message, select-panelist.component.html:28	USE_LANGUAGE_FILE	Key SURVEYMOD_EXPECTED_RESPONSES_MESSAGE (response 100, credit 1); also swap the locator to the id.
-12	Select Panelist, both	select-panelist.spec.ts TC_SP_04	Footer "Last refreshed" prefix	startsWith the label	rb-report-refreshed-on-block, dataset-footer.component.html:18	USE_LANGUAGE_FILE	Already done via lastRefreshedLabel (SURVEYMOD_LAST_REFRESHED).
-13	Select Panelist, both	select-panelist.page.ts getFooterParts (~l.512-520)	Splits the footer on ' | '	.dataset-footer .selected-value	dataset-footer-selected-value, dataset-footer.component.html:5	STRUCTURAL_CHECK	The separator is not translated; optionally swap to the id.
-14	Select Panelist, prompt	start-with-prompt.locator.json:32 (page :140; spec :78)	Checks the Optiq heading	Let's get you started with Optiq!	select-panelist-title (select-panelist.component.html:3) and build-survey-with-ai-optiq-image (:8)	USE_EXISTING_ID	Assert the id is visible together with the Optiq image.
-15	Build Survey, both	sb.json:18 (page :160)	Max-options tooltip on hover	text="You have already reached the maximum number of options."	MISSING: the tooltip is a library overlay on choice-editor.component.html:36	USE_LANGUAGE_FILE	Key SURVEYMOD_MAXIMUM_OPTIONS_WARNING.
-16	Build Survey, both	sb.json:29 (page :1195, ~1468; start-from-scratch.spec.ts:188, 192; start-with-prompt.spec.ts:229, 233)	Max-questions tooltip on Add/Duplicate	text="You have already reached the maximum number of questions."	MISSING (overlay, preview-mode.component.html:81, 112, 124, 136)	USE_LANGUAGE_FILE	Key SURVEYMOD_MAXIMUM_QUESTIONS_WARNING.
-17	Build Survey, prompt	start-with-prompt.spec.ts:142 (locator :22)	Question-count error wording	includes('please enter a value between 3 and 10')	question-count-error, question-generator.html:18	USE_LANGUAGE_FILE	Key SURVEYMOD_PLEASE_ENTER_VALUE_BETWEEN with min 3, max 10; also swap the locator to the id.
-18	Build Survey, both	start-from-scratch.spec.ts:97; build-survey-common-test-cases.ts:41	Compares the title with 'Untitled Survey'	=== 'Untitled Survey'	survey-title, survey-header.html:7	STRUCTURAL_CHECK	The text is hardcoded in survey.service.ts:82, so it is not localized; keep.
-19	Build Survey, both	sb.json:77 (page :602, 613, 627)	Finds the draft-saved toast by text	Survey saved as draft successfully	MISSING: toast only has class .survey-action-toast (survey-header.component.ts:161)	USE_LANGUAGE_FILE	Key SURVEYMOD_DRAFT_SAVED.
-20	Build Survey, both	sb.json:90	Publish-success toast text	Survey published successfully	n/a	STRUCTURAL_CHECK	Nothing in e2e uses it; delete it (publish is now detected by API status and URL).
-21	Save-draft dialog	sb.json:48 (page :681, 691, 700, 818, 824)	Finds the "Save your survey" dialog	[role='dialog']:has-text("Save your survey")	MISSING on <crf-uic-save-a-copy>, survey-header.html:~68	ADD_ID_IN_TEMPLATE	Add [attr.data-test-id]="isPublishAction() ? 'publish-location-dialog' : 'save-draft-dialog'" on crf-uic-save-a-copy (key SURVEYMOD_SAVE_SURVEY).
-22	Publish location dialog	sb.json:57 (page :915-968, 1055, 1065, 1151-1170)	Finds the "Publish your survey" dialog	has-text("Publish your survey")	Same host as #21	ADD_ID_IN_TEMPLATE	Same attribute as #21 (key SURVEYMOD_PUBLISH_YOUR_SURVEY).
-23	Create-folder dialog	sb.json:61 (page :768, 809, 1075)	Finds the create-folder dialog	[role='dialog']:visible:has-text("Create new folder")…	MISSING on <crf-uic-create-folder>, survey-header.html:~83	ADD_ID_IN_TEMPLATE	Add data-test-id="create-folder-dialog" (key SURVEYMOD_CREATE_NEW_FOLDER).
-24	Save/publish dialog	sb.json:49 (page :855)	Fills the dialog name input	role=textbox[name="Name"]	save-a-copy-title-input, from the external library; already used in sb.json:45	USE_EXISTING_ID	Use saveCopyTitleInput.5	Save-draft dialog	sb.json:50 (page :833)	Name-required error	text="Survey name is required."	MISSING (external dialog)	USE_LANGUAGE_FILE	Key SURVEYMOD_VALIDATION_NAME_REQUIRED_ERROR.
-26	Save-draft dialog	sb.json:52 (page :842, 875)	Clicks Save draft in the dialog	role=button[name="Save draft"]	save-pending-changes-button (external; sb.json:47)	USE_EXISTING_ID	Use savePendingChangesButton.
-27	Save/publish/create-folder dialogs	sb.json:53 (page :681, 937, 1086, 1141)	Clicks Cancel	role=button[name="Cancel"] (key CANCEL)	MISSING (external lib)	ADD_ID_IN_TEMPLATE	Needs an id on the cancel button in crf-uic-save-a-copy and crf-uic-create-folder, i.e. in the external library.
-28	Publish location dialog	sb.json:58 (page :924, 968)	Clicks Continue	role=button[name="Continue"] (key SURVEYMOD_CONTINUE)	Probably save-pending-changes-button, since acceptText switches to Continue in publish mode	USE_EXISTING_ID	Use save-pending-changes-button; I'm not sure it is the same button.
-29	Save and publish dialogs	sb.json:54 and :59 (page :798, 1055)	"Create new folder" link	text=/^Create new folder/, text="Create new folder"	MISSING (external)	ADD_ID_IN_TEMPLATE	External library change (key SURVEYMOD_CREATE_NEW_FOLDER).
-30	Publish location dialog	sb.json:60 (page :1065)	"Create new folder in location" button	text="Create new folder in location"	MISSING (external)	ADD_ID_IN_TEMPLATE	External library change; the string is a hardcoded literal passed to translate at survey-header.html:75.
-31	Create-folder dialog	sb.json:63 (page :1087, 1112)	Clicks Create	role=button[name="Create"] (key SURVEYMOD_CREATE)	MISSING (external)	ADD_ID_IN_TEMPLATE	External library change.
-32	Create-folder dialog	sb.json:64 (page :1088)	Checks the Close (X) button	role=button[name="Close"]	MISSING (external)	ADD_ID_IN_TEMPLATE	External library change.
-33	Save and publish dialogs	sb.json:46, 51, 55; survey-builder.page.ts:584, 587	"My Assets" root tree item	treeitem name*="My Assets"	MISSING (external tree)	STRUCTURAL_CHECK	The name is hardcoded in shared/utils/survey-folder.util.ts:8, so keep it. Revisit only if the library localizes tree labels.
-34	Publish dialog	sb.json:66 (page :701, 1159, 1170)	Finds a folder by its name	treeitem[name*="${text}"]	MISSING (external)	STRUCTURAL_CHECK	Folder names are test data; keep.
-35	Review survey details	sb.json:81 (page :978, 988, 1045)	Finds the dialog	[role='dialog']:has-text("Review survey details")	publish-survey-dialog, survey-publish-popup.component.html:1	USE_EXISTING_ID	Swap to the id (key SURVEYMOD_REVIEW_SURVEY_DETAILS).
-36	Review survey details	sb.json:86 (page :1045)	Clicks Edit survey	role=button[name="Edit survey"]	publish-edit-survey, survey-publish-popup.component.html:24	USE_EXISTING_ID	Swap to the id.
-37	Review survey details	sb.json:80	Publish survey button (footer)	[data-test-id='-footer'] >> role=button[name="Publish survey"]	confirm-publish, survey-publish-popup.component.html:27	USE_EXISTING_ID	The  page object already uses reviewDialogPublishButton; delete this unused locator.
-38	Review survey details	build-survey-common-test-cases.ts:405-415, 444, 468; sb.json:83-85	Title, question summary and response count checks	Non-empty checks, includes(String(n)); class locators	publish-survey-title, publish-question-summary, publish-response-count (popup html:8, 18, 19)	STRUCTURAL_CHECK	Numbers only; optionally swap the class locators to the ids.
-39	Build Survey, both	sb.json:14	Textbox by name	role=textbox[name="${text}"]	question-option-<q>-<i>, choice-editor.component.html:17	USE_EXISTING_ID	Unused in the page objects; delete it, or use the id.
-Counts: USE_EXISTING_ID 9 (#6, 14, 24, 26, 28, 35, 36, 37, 39), USE_LANGUAGE_FILE 8 (#10, 11, 12, 15, 16, 17, 19, 25), ADD_ID_IN_TEMPLATE 8 (#21, 22, 23, 27, 29, 30, 31, 32), STRUCTURAL_CHECK 14 (#1-5, 7-9, 13, 18, 20, 33, 34, 38).
-New ids needed: survey-header.component.html for the two dialog hosts (#21, 22) and the create-folder host (#23). The inner Cancel, Create, Close and "Create new folder" controls (#27, 29-32) need ids in the shared crf-uic-save-a-copy and crf-uic-create-folder library, since they are not in this repo.
-Unsure:
-Whether the host elements stay visible only while their dialog is open (#21-23).
-Whether #28 is the same button as #26.
-Whether the external ids in #5 and #33 stay English in other locales.
-The exact sheet keys, because the translation JSON is not in this repo; the keys above are inferred from the templates and may not match the sheet.
-10:47 PM
-7m 38s
-•
-Claude Sonnet 5.5 • 112.3
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 20 hours ago
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+left a comment
+for future changes
+
+e2e/page-objects/common/profile.page.ts
+Outdated
+  }
+
+  /** Picks the language in the profile settings and saves; skips when the app is already in that language. Afterwards confirms the switch on the launchpad. */
+  async setUserLocale(locale: string): Promise<void> {
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+yesterday
+Add function to check the list of existing languages, and if any language is added/removed function should handle it gracefully by throwing an error without failing the further steps.
+
+Map the languages to text based on the display text in UI, so that we can either pass specific language or make function to pick randomly any of the language from mapped list
+
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+3 minutes ago
+Author
+Done in a lighter form. setUserLocale now reads the languages in the dropdown. If the requested one is missing it fails with a clear error listing the available ones. Other added/removed languages are only logged as a warning, so later steps still run. The UI display text is mapped in localization-data.json. A random pick isn't added since no test needs it yet; it is a small addition on the mapping.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/page-objects/common/profile.page.ts
+Outdated
+    try {
+      await this.navigateToUrl(this.buildUrl(envConfig.BASE_URL, LAUNCHPAD_RELATIVE_PATH));
+      const profileIcon = this.webActionHandler.getWebElement(this.getResource('profileIcon'));
+      await this.waitUntilVisible(profileIcon, 'Profile icon', NAVIGATION_TIMEOUT);
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+yesterday
+this step can be removed as the below step validates the same before performing the action
+
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+2 minutes ago
+Author
+Done. The click right after already waits for the icon.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/page-objects/common/profile.page.ts
+Outdated
+  }
+
+  /** True when the language shown in the profile settings is the one for the given locale code. */
+  async validateUserLocale(locale: string): Promise<boolean> {
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+yesterday
+instead of just fetching the language, modify the function to handle the selection of user passed language
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/page-objects/common/profile.page.ts
+Outdated
+  }
+
+  /** Returns the language text currently shown in the Account settings (e.g. "English (United States)"). */
+  async getUserLocale(): Promise<string> {
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+20 hours ago
+can club this function with getLocaleLabel(). Instead of 2 different functions
+
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+now
+Author
+Done. One getLocaleLabel(): with a language it returns the dropdown text from the mapping, without one it returns the language currently shown in settings.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/playwright/setup/globalTeardown.ts
+}
+
+/** Puts the user's language back to the default after a non-default LOCALE run. Independent of the LambdaTest logic; logs errors, never throws. */
+async function resetUserLocale(): Promise<void> {
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+20 hours ago
+need to handle case when user had already changed the language.
+
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+1 minute ago
+Author
+Right now the teardown resets to en-US after a non-default LOCALE run, and the switch is skipped when the app is already in that language. Do you mean: 1) skip the reset when the account is already en-US (already covered), or 2) restore the language the account had before the run? If 2, I'll do it in a follow-up PR.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+e2e/test-data/localization-data.json
+@@ -0,0 +1,15 @@
+[
+@Raghavendra-Mutyala-consultant_niq
+Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
+20 hours ago
+map this with country names, so that function can handle the country name when passed. It helps in maintainability and ease of use
+
+@Yogesh-Upadhyay-consultant_niq
+Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
+now
+Author
+Done. Each locale now has languageName and countryName, and the language can be passed as a locale code, language name or country name.
+
+@Yogesh-Upadhyay-consultant_niq	Reply...
+Yogesh Upadhyay
+Address PR review: parameterized language locator, language-name mapp… 
