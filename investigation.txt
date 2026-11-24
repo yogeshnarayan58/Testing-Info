@@ -1,129 +1,30 @@
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed yesterday
-e2e/locators/survey/profile.locator.json
-Outdated
-    { "elementName": "profileLanguageSettingsInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting'] [data-test-id='profile-display-setting-lang-input']" },
-    { "elementName": "profileLanguageInput", "selectorType": "css", "selectorValue": "[data-test-id='profile-display-setting-lang-input']" },
-    { "elementName": "saveChanges", "selectorType": "css", "selectorValue": "[data-test-id='profile-save-changes-button']" },
-    { "elementName": "en-US", "selectorType": "css", "selectorValue": "[data-test-id='profile-language-drp-down-value-English (United States)']" },
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-yesterday
-Parameterize the language/country instead of adding locator for each language/country.
-
-Ex - "[data-test-id='profile-language-drp-down-value-${languageName}']"
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-4 minutes ago
-Author
-Done. The per-language locators are replaced by one "languageOption" locator with the language name filled in.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 20 hours ago
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-left a comment
-for future changes
-
-e2e/page-objects/common/profile.page.ts
-Outdated
-  }
-
-  /** Picks the language in the profile settings and saves; skips when the app is already in that language. Afterwards confirms the switch on the launchpad. */
-  async setUserLocale(locale: string): Promise<void> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-yesterday
-Add function to check the list of existing languages, and if any language is added/removed function should handle it gracefully by throwing an error without failing the further steps.
-
-Map the languages to text based on the display text in UI, so that we can either pass specific language or make function to pick randomly any of the language from mapped list
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-3 minutes ago
-Author
-Done in a lighter form. setUserLocale now reads the languages in the dropdown. If the requested one is missing it fails with a clear error listing the available ones. Other added/removed languages are only logged as a warning, so later steps still run. The UI display text is mapped in localization-data.json. A random pick isn't added since no test needs it yet; it is a small addition on the mapping.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-Outdated
-    try {
-      await this.navigateToUrl(this.buildUrl(envConfig.BASE_URL, LAUNCHPAD_RELATIVE_PATH));
-      const profileIcon = this.webActionHandler.getWebElement(this.getResource('profileIcon'));
-      await this.waitUntilVisible(profileIcon, 'Profile icon', NAVIGATION_TIMEOUT);
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-yesterday
-this step can be removed as the below step validates the same before performing the action
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-2 minutes ago
-Author
-Done. The click right after already waits for the icon.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-Outdated
-  }
-
-  /** True when the language shown in the profile settings is the one for the given locale code. */
-  async validateUserLocale(locale: string): Promise<boolean> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-yesterday
-instead of just fetching the language, modify the function to handle the selection of user passed language
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/page-objects/common/profile.page.ts
-Outdated
-  }
-
-  /** Returns the language text currently shown in the Account settings (e.g. "English (United States)"). */
-  async getUserLocale(): Promise<string> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-20 hours ago
-can club this function with getLocaleLabel(). Instead of 2 different functions
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-now
-Author
-Done. One getLocaleLabel(): with a language it returns the dropdown text from the mapping, without one it returns the language currently shown in settings.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/playwright/setup/globalTeardown.ts
-}
-
-/** Puts the user's language back to the default after a non-default LOCALE run. Independent of the LambdaTest logic; logs errors, never throws. */
-async function resetUserLocale(): Promise<void> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-20 hours ago
-need to handle case when user had already changed the language.
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-1 minute ago
-Author
-Right now the teardown resets to en-US after a non-default LOCALE run, and the switch is skipped when the app is already in that language. Do you mean: 1) skip the reset when the account is already en-US (already covered), or 2) restore the language the account had before the run? If 2, I'll do it in a follow-up PR.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-e2e/test-data/localization-data.json
-@@ -0,0 +1,15 @@
-[
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-20 hours ago
-map this with country names, so that function can handle the country name when passed. It helps in maintainability and ease of use
-
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-now
-Author
-Done. Each locale now has languageName and countryName, and the language can be passed as a locale code, language name or country name.
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
-Yogesh Upadhyay
-Address PR review: parameterized language locator, language-name mapp… 
+Fix for the Jfrog related issue
+Hello General,
+As some of you may already know, the ADLM Support team was unable to resolve the issues with the existing JFrog Artifactory. Therefore, a new JFrog Artifactory instance has been deployed:
+https://nielseniq.jfrog.io/
+Ilian Ninov helped us publish the following items to the new Artifactory:
+GTA image for test execution through the pipeline
+GTA library
+Azure Login library
+To get your test project working again, please complete the following steps:
+Sign in to the Artifactory using the Azure AD button on the login screen:
+https://nielseniq.jfrog.io/
+Click your profile icon and select Edit Profile.
+Generate a new Identity Token.
+Copy the token and store it securely. Do not share it with anyone or commit it to your repository.
+On your laptop, create a new environment variable with the following details:
+Name: JFROG_RO_TOKEN
+Value: Your newly generated identity token
+Remove the existing content from your project’s .npmrc file and replace it with the following:
+@gfk:registry=https://nielseniq.jfrog.io/artifactory/api/npm/mi-data-platform-npm-local/
+//nielseniq.jfrog.io/artifactory/api/npm/mi-data-platform-npm-local/:_authToken=${JFROG_RO_TOKEN}
+registry=https://nielseniq.jfrog.io/artifactory/api/npm/npmjs-remote/
+//nielseniq.jfrog.io/artifactory/api/npm/npmjs-remote/:_authToken=${JFROG_RO_TOKEN}
+Delete the existing node_modules folder.
+Ensure that your package.json uses the latest versions of GTA and Azure Login:
+"@gfk/azure-login": "latest",
+"@gfk/gta": "latest"
+Run the following command:
+npm install --verbose
+Verify that the installation completes without any errors.
+PS: To fix your failing pipeline due to the old artifactory token in it, please contact your team's SRE to get the token or credentials required for the new jfrog artifactory and get it updated in the CI CD variables. 
