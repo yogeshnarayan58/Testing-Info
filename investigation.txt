@@ -487,4 +487,54 @@ npm verbose exit 0
 npm info ok
 
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Global setup failed: browserType.launch: Executable doesn't exist at C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\chromium-1255\chrome-win64\chrome.exe
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+    at BasePage.initializer (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\basePage.ts:59:45)
+    at BasePageFactory.createBasePage (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\utils\base-page-factory.ts:199:27)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:34:38) {
+  log: [],
+  name: 'Error'
+}
+Error: Global setup failed: browserType.launch: Executable doesn't exist at C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\chromium-1255\chrome-win64\chrome.exe
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+
+   at ..\helpers\global-setup.ts:43
+
+  41 |     console.error('Global setup failed:', error);
+  42 |     if (error instanceof Error) {
+> 43 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  44 |     }
+  45 |     throw new Error('Global setup failed with an unknown error');
+  46 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
 $ 
