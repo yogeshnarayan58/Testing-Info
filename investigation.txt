@@ -1,25 +1,60 @@
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ git checkout main
-error: Your local changes to the following files would be overwritten by checkout:
-        package.json
-Please commit your changes or stash them before you switch branches.
-Aborting
+NCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (20) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/ page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ git status
-On branch feature/generate-survey-ai-automation
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   .npmrc
-        modified:   package-lock.json
-        modified:   ../package.json
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:68:35)
+    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:62:16)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        ../test-results/
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at LoginPage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:68:35)
+    at LoginPage.login (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\login.page.ts:62:16)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:37:21) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+Global setup completed. Auth state saved.
+Error: Global setup failed: page.goto: net::ERR_CONNECTION_CLOSED at https://si.connect.nielseniq.io/reportexperience-dev/
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/", waiting until "domcontentloaded"
 
-no changes added to commit (use "git add" and/or "git commit -a")
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
+   at ..\helpers\global-setup.ts:43
+
+  41 |     console.error('Global setup failed:', error);
+  42 |     if (error instanceof Error) {
+> 43 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  44 |     }
+  45 |     throw new Error('Global setup failed with an unknown error');
+  46 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:43:13)
+
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
 $ 
