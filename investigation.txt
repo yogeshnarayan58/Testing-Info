@@ -1,49 +1,9 @@
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod> cd e2e
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> $cert = Get-ChildItem -Path Cert:\LocalMachine\Root | Where-Object { $_.Subject -like "*Zscaler*" } | Select-Object -First 1
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> Export-Certificate -Cert $cert -FilePath "$env:USERPROFILE\zscaler-root-ca.crt" -Type CERT
-
-
-    Directory: C:\Users\yogesh.upadhyay
-
-
-Mode                 LastWriteTime         Length Name                      
-----                 -------------         ------ ----                      
--a----        24-11-2026     15:34           1260 zscaler-root-ca.crt       
-
-
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> 
----------------------------------------------------------------------
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ openssl x509 -inform DER -in "$USERPROFILE/zscaler-root-ca.crt" -out "$USERPROFILE/zscaler-root-ca.pem"
-
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ head -3 "$USERPROFILE/zscaler-root-ca.pem"
------BEGIN CERTIFICATE-----
-MIIE6DCCA9CgAwIBAgIJANu+mC2Jt3uTMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYD
-VQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTERMA8GA1UEBxMIU2FuIEpvc2Ux
--------------------------
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod> cd e2e
-PS C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e> setx NODE_EXTRA_CA_CERTS "$env:USERPROFILE\zscaler-root-ca.pem"
-
-SUCCESS: Specified value was saved.
--------------------------------------------------------
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ export NODE_EXTRA_CA_CERTS="$USERPROFILE/zscaler-root-ca.pem"
-
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
-$ npx playwright install chromium
-Downloading Chrome for Testing 159.0.8154.6 (playwright chromium v1255) from https://cdn.playwright.dev/builds/cft/159.0.8154.6/win64/chrome-win64.zip
-207.3 MiB [====================] 100% 0.0s
-Chrome for Testing 159.0.8154.6 (playwright chromium v1255) downloaded to C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\chromium-1255
-Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-win64.zip
-1.6 MiB [====================] 100% 0.0s
-FFmpeg (playwright ffmpeg v1013) downloaded to C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\ffmpeg-1013
-Downloading Chrome Headless Shell 159.0.8154.6 (playwright chromium-headless-shell v1255) from https://cdn.playwright.dev/builds/cft/159.0.8154.6/win64/chrome-headless-shell-win64.zip
-123.8 MiB [====================] 100% 0.0s
-Chrome Headless Shell 159.0.8154.6 (playwright chromium-headless-shell v1255) downloaded to C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\chromium_headless_shell-1255
-Downloading Winldd (playwright winldd v1007) from https://cdn.playwright.dev/dbazure/download/playwright/builds/winldd/1007/winldd-win64.zip
-0.1 MiB [====================] 100% 0.0s
-Winldd (playwright winldd v1007) downloaded to C:\Users\yogesh.upadhyay\AppData\Local\ms-playwright\winldd-1007
+$ git checkout main
+error: Your local changes to the following files would be overwritten by checkout:
+        package.json
+Please commit your changes or stash them before you switch branches.
+Aborting
 
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/generate-survey-ai-automation)
 $ 
