@@ -1,39 +1,100 @@
-e2e/playwright/setup/globalTeardown.ts
-}
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod (main)
+$ cd e2e
 
-/** Puts the user's language back to the default after a non-default LOCALE run. Independent of the LambdaTest logic; logs errors, never throws. */
-async function resetUserLocale(): Promise<void> {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-last week
-need to handle case when user had already changed the language.
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
+$ git pull origin main
+info: please complete authentication in your browser...
+remote: Enumerating objects: 183, done.
+remote: Counting objects: 100% (90/90), done.
+remote: Compressing objects: 100% (18/18), done.
+remote: Total 183 (delta 72), reused 72 (delta 72), pack-reused 93 (from 1)
+Receiving objects: 100% (183/183), 97.39 KiB | 1.50 MiB/s, done.
+Resolving deltas: 100% (86/86), completed with 32 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * branch              main       -> FETCH_HEAD
+   dcdfb9ce..03e0135d  main       -> origin/main
+Updating dcdfb9ce..03e0135d
+Fast-forward
+ libs/survey-mod-lib/package.json                   |   2 +-
+ .../features/build-survey/models/build-survey.ts   |   9 --
+ .../my-assets-empty-state.component.html           |   6 +-
+ .../my-assets-empty-state.component.ts             |   3 +-
+ .../components/my-assets-page.component.html       |  44 ++++----
+ .../components/my-assets-page.component.spec.ts    |  63 ++++++-----
+ .../components/my-assets-page.component.ts         |  16 ++-
+ .../survey-asset-action-dialogs.component.html     |  32 +++---
+ .../survey-asset-action-dialogs.component.spec.ts  | 120 ++++++++++++++-------
+ .../survey-asset-action-dialogs.component.ts       |  64 ++++++-----
+ .../survey-details/survey-details.component.html   |  30 +++---
+ .../survey-details.component.spec.ts               |  27 +++--
+ .../survey-details/survey-details.component.ts     |   8 +-
+ .../components/survey-grid-columns.config.ts       |  12 +--
+ .../survey-grid/survey-grid-columns.config.ts      |  53 ---------
+ .../my-assets-selection-actions.constant.spec.ts   |   2 +-
+ .../my-assets-selection-actions.constant.ts        |  22 ++--
+ .../my-assets/constants/my-assets-tabs.constant.ts |  34 +++---
+ .../my-assets/constants/survey-status.constant.ts  |   6 +-
+ .../services/survey-asset-api.service.spec.ts      |   2 +-
+ .../services/survey-grid-handler.service.spec.ts   |  19 ++--
+ .../services/survey-grid-handler.service.ts        |  10 +-
+ .../survey-homepage.component.spec.ts              |   8 +-
+ .../survey-homepage/survey-homepage.component.ts   |   2 +-
+ .../grid/grid-tooltip/grid-tooltip.component.html  |   4 +-
+ .../grid-tooltip/grid-tooltip.component.spec.ts    |  47 ++++----
+ .../grid/grid-tooltip/grid-tooltip.component.ts    |   2 -
+ .../components/grid/grid.component.html            |   8 +-
+ .../components/grid/grid.component.ts              |   3 +-
+ .../question-chart/question-chart.component.html   |   4 +-
+ .../question-chart.component.spec.ts               |   9 +-
+ .../question-chart/question-chart.component.ts     |   9 +-
+ .../results-dashboard.component.html               |  57 +++++-----
+ .../results-dashboard.component.spec.ts            |  69 +++++++++---
+ .../results-dashboard.component.ts                 |  14 +--
+ .../survey-results/survey-results.component.html   |   8 +-
+ .../survey-results/survey-results.component.ts     |   6 +-
+ .../survey-results/constants/grid.constants.ts     |  16 ---
+ .../survey-results/models/survey-results.ts        | 106 ++++--------------
+ .../common-side-panel.component.html               |   2 +-
+ .../common-side-panel.component.spec.ts            |   2 +-
+ .../survey-action-items.component.html             |  11 +-
+ .../survey-action-items.component.spec.ts          |  17 ++-
+ .../survey-action-items.component.ts               |   7 +-
+ .../survey-details/survey-details.component.html   |  24 ++---
+ .../survey-details.component.spec.ts               |  10 +-
+ .../survey-details/survey-details.component.ts     |   3 +-
+ package-lock.json                                  |  12 +--
+ package.json                                       |   4 +-
+ 49 files changed, 523 insertions(+), 525 deletions(-)
+ delete mode 100644 libs/survey-mod-lib/src/lib/features/my-assets/components/survey-grid/survey-grid-columns.config.ts
 
-@Yogesh-Upadhyay-consultant_niq
-Yogesh Upadhyay (Yogesh-Upadhyay-consultant_niq)
-last week
-Author
-Right now the teardown resets to en-US after a non-default LOCALE run, and the switch is skipped when the app is already in that language. Do you mean: 1) skip the reset when the account is already en-US (already covered), or 2) restore the language the account had before the run? If 2, I'll do it in a follow-up PR.
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
+$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
 
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-5 days ago
-• 
-are we handling the case if the default language is not English?
-Ex - When user logs in, he is displayed with other language than English.
+nothing to commit, working tree clean
 
-restore the language the account had before the run? - This case won't be required to handle as ours is test account.
-----------------------------
-Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq) reviewed 5 days ago
-e2e/page-objects/common/profile.page.ts
-  }
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
+$ git fetch origin 
+info: please complete authentication in your browser...
+remote: Enumerating objects: 707, done.
+remote: Counting objects: 100% (362/362), done.
+remote: Compressing objects: 100% (22/22), done.
+remote: Total 707 (delta 343), reused 342 (delta 339), pack-reused 345 (from 2)
+Receiving objects: 100% (707/707), 317.91 KiB | 1.03 MiB/s, done.
+Resolving deltas: 100% (421/421), completed with 150 local objects.
+From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
+ * [new branch]        Reset-Data-source-set  -> origin/Reset-Data-source-set
+   118395f2..7459225f  feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue -> origin/feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue
+ * [new branch]        feature/RBOC-219626    -> origin/feature/RBOC-219626
+ * [new branch]        feature/RBOC-220767-analysis-on-share-functionality -> origin/feature/RBOC-220767-analysis-on-share-functionality
+ * [new branch]        feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration -> origin/feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration
+ * [new branch]        feature/RBOC-220781-result-ux-changes -> origin/feature/RBOC-220781-result-ux-changes
+ * [new branch]        feature/RBOC-223567-dev-fixes -> origin/feature/RBOC-223567-dev-fixes
+ * [new branch]        feature/RBOC-224786-AG-Grid-upgrade-to-v36 -> origin/feature/RBOC-224786-AG-Grid-upgrade-to-v36
+ * [new branch]        feature/hi-sca-vul-fix -> origin/feature/hi-sca-vul-fix
+ * [new branch]        feature/localization-setup -> origin/feature/localization-setup
+   2e0655f2..ddeb3747  gh-pages               -> origin/gh-pages
 
-  /** Throws when the requested language is missing from the dropdown; only warns about differences from localization-data.json. */
-  private checkLanguageAvailable(languageName: string, available: string[]): void {
-@Raghavendra-Mutyala-consultant_niq
-Raghavendra Mutyala (Raghavendra-Mutyala-consultant_niq)
-5 days ago
-• 
-This function is not required. This is already handled in selection function
-
-@Yogesh-Upadhyay-consultant_niq	Reply...
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
+$ 
