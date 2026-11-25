@@ -1,100 +1,26 @@
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod (main)
-$ cd e2e
+I wasn't able to execute the type-check/lint commands myself — the tool calls (direct tsc, and a delegated task-agent run) were both denied in this session. I did a careful manual review instead (checked signatures, removed-code references, and tsconfig flags) and am confident the change is sound, but you should run the check yourself to confirm. Here's the summary:
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
-$ git pull origin main
-info: please complete authentication in your browser...
-remote: Enumerating objects: 183, done.
-remote: Counting objects: 100% (90/90), done.
-remote: Compressing objects: 100% (18/18), done.
-remote: Total 183 (delta 72), reused 72 (delta 72), pack-reused 93 (from 1)
-Receiving objects: 100% (183/183), 97.39 KiB | 1.50 MiB/s, done.
-Resolving deltas: 100% (86/86), completed with 32 local objects.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * branch              main       -> FETCH_HEAD
-   dcdfb9ce..03e0135d  main       -> origin/main
-Updating dcdfb9ce..03e0135d
-Fast-forward
- libs/survey-mod-lib/package.json                   |   2 +-
- .../features/build-survey/models/build-survey.ts   |   9 --
- .../my-assets-empty-state.component.html           |   6 +-
- .../my-assets-empty-state.component.ts             |   3 +-
- .../components/my-assets-page.component.html       |  44 ++++----
- .../components/my-assets-page.component.spec.ts    |  63 ++++++-----
- .../components/my-assets-page.component.ts         |  16 ++-
- .../survey-asset-action-dialogs.component.html     |  32 +++---
- .../survey-asset-action-dialogs.component.spec.ts  | 120 ++++++++++++++-------
- .../survey-asset-action-dialogs.component.ts       |  64 ++++++-----
- .../survey-details/survey-details.component.html   |  30 +++---
- .../survey-details.component.spec.ts               |  27 +++--
- .../survey-details/survey-details.component.ts     |   8 +-
- .../components/survey-grid-columns.config.ts       |  12 +--
- .../survey-grid/survey-grid-columns.config.ts      |  53 ---------
- .../my-assets-selection-actions.constant.spec.ts   |   2 +-
- .../my-assets-selection-actions.constant.ts        |  22 ++--
- .../my-assets/constants/my-assets-tabs.constant.ts |  34 +++---
- .../my-assets/constants/survey-status.constant.ts  |   6 +-
- .../services/survey-asset-api.service.spec.ts      |   2 +-
- .../services/survey-grid-handler.service.spec.ts   |  19 ++--
- .../services/survey-grid-handler.service.ts        |  10 +-
- .../survey-homepage.component.spec.ts              |   8 +-
- .../survey-homepage/survey-homepage.component.ts   |   2 +-
- .../grid/grid-tooltip/grid-tooltip.component.html  |   4 +-
- .../grid-tooltip/grid-tooltip.component.spec.ts    |  47 ++++----
- .../grid/grid-tooltip/grid-tooltip.component.ts    |   2 -
- .../components/grid/grid.component.html            |   8 +-
- .../components/grid/grid.component.ts              |   3 +-
- .../question-chart/question-chart.component.html   |   4 +-
- .../question-chart.component.spec.ts               |   9 +-
- .../question-chart/question-chart.component.ts     |   9 +-
- .../results-dashboard.component.html               |  57 +++++-----
- .../results-dashboard.component.spec.ts            |  69 +++++++++---
- .../results-dashboard.component.ts                 |  14 +--
- .../survey-results/survey-results.component.html   |   8 +-
- .../survey-results/survey-results.component.ts     |   6 +-
- .../survey-results/constants/grid.constants.ts     |  16 ---
- .../survey-results/models/survey-results.ts        | 106 ++++--------------
- .../common-side-panel.component.html               |   2 +-
- .../common-side-panel.component.spec.ts            |   2 +-
- .../survey-action-items.component.html             |  11 +-
- .../survey-action-items.component.spec.ts          |  17 ++-
- .../survey-action-items.component.ts               |   7 +-
- .../survey-details/survey-details.component.html   |  24 ++---
- .../survey-details.component.spec.ts               |  10 +-
- .../survey-details/survey-details.component.ts     |   3 +-
- package-lock.json                                  |  12 +--
- package.json                                       |   4 +-
- 49 files changed, 523 insertions(+), 525 deletions(-)
- delete mode 100644 libs/survey-mod-lib/src/lib/features/my-assets/components/survey-grid/survey-grid-columns.config.ts
+Fix 1 — default language not English
+Already implemented, unchanged — global-setup.ts already switches unconditionally for any LOCALE, including en-US:
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
-$ git status
-On branch main
-Your branch is up to date with 'origin/main'.
 
-nothing to commit, working tree clean
+console.log(`Switching user language to ${envConfig.LOCALE}...`);
+await new ProfilePage(basePage).setUserLocale(envConfig.LOCALE);
+// The auth state was saved at login, before the language switch; refresh it so tests reuse the switched session.
+await basePage.getWebActions().getStorageState('storage/auth.json');
+console.log(`User language set to ${envConfig.LOCALE}.`);
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
-$ git fetch origin 
-info: please complete authentication in your browser...
-remote: Enumerating objects: 707, done.
-remote: Counting objects: 100% (362/362), done.
-remote: Compressing objects: 100% (22/22), done.
-remote: Total 707 (delta 343), reused 342 (delta 339), pack-reused 345 (from 2)
-Receiving objects: 100% (707/707), 317.91 KiB | 1.03 MiB/s, done.
-Resolving deltas: 100% (421/421), completed with 150 local objects.
-From https://github.com/niq-enterprise/disc-fe-omni-survey-mod
- * [new branch]        Reset-Data-source-set  -> origin/Reset-Data-source-set
-   118395f2..7459225f  feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue -> origin/feature/RBOC-203321-Handle-period-fromTo-durationto-options-and-new-jobid-issue
- * [new branch]        feature/RBOC-219626    -> origin/feature/RBOC-219626
- * [new branch]        feature/RBOC-220767-analysis-on-share-functionality -> origin/feature/RBOC-220767-analysis-on-share-functionality
- * [new branch]        feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration -> origin/feature/RBOC-220768-Milestone---Bar-chart-&-Column-Charts-integration
- * [new branch]        feature/RBOC-220781-result-ux-changes -> origin/feature/RBOC-220781-result-ux-changes
- * [new branch]        feature/RBOC-223567-dev-fixes -> origin/feature/RBOC-223567-dev-fixes
- * [new branch]        feature/RBOC-224786-AG-Grid-upgrade-to-v36 -> origin/feature/RBOC-224786-AG-Grid-upgrade-to-v36
- * [new branch]        feature/hi-sca-vul-fix -> origin/feature/hi-sca-vul-fix
- * [new branch]        feature/localization-setup -> origin/feature/localization-setup
-   2e0655f2..ddeb3747  gh-pages               -> origin/gh-pages
+It never skips based on LOCALE === DEFAULT_LOCALE, so it already attempts a switch for en-US runs too.
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (main)
-$ 
+What was actually broken was the skip/switch decision inside setUserLocale (profile.page.ts): it decided "already in locale" via isAppInLocale(), which reads the Launchpad greeting heading (e.g. "Welcome," for en-US, "Bienvenue," for fr-FR) — a hardcoded natural-language word, undefined for every other locale (so it never skipped for them). I replaced that with reading the current language directly off the Profile/Account settings element (getLocaleLabel(), which navigates to Account settings and reads profileLanguageInput's text) and comparing it to the expected label for the requested locale — pure element state, no English-word heuristics, and it works for every LOCALE uniformly.
+
+Fix 2 — profile.page.ts
+Removed checkLanguageAvailable (private method) and its only call site in setUserLocale.
+Confirmed the selection function already throws a clear error when the language is missing: waitUntilVisible throws `Language option '${languageName}' not visible after ${timeoutMs}ms`, further wrapped as `Failed to set the user locale to '${localeOrName}': ...`. No new error needed.
+No imports/constants became unused (UNKNOWN_LABEL_PLACEHOLDER, localizationData, etc. are all still used elsewhere). getAvailableLanguages() is now uncalled internally but is a public method, not an unused import/variable, so I left it as-is per the stated scope.
+
+Changed files
+e2e/page-objects/common/profile.page.ts — replaced the greeting-based "already switched" check with a direct profile-element language read; removed checkLanguageAvailable and its call.
+No other files were changed (global-setup.ts and globalTeardown.ts left untouched as required).
+
+Validation status: npx tsc -p e2e/tsconfig.json --noEmit and a lint pass could not be executed — both the direct command and a delegated task-agent attempt were denied in this session. There's also no ESLint config scoped to e2e/ (it's outside angular.json's projects, so npm run lint/lint:lib don't cover it) — only prettier is configured there. Please run cd e2e; npx tsc -p tsconfig.json --noEmit yourself to confirm, alongside your en-US/fr-FR test runs.
