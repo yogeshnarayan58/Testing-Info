@@ -1,665 +1,238 @@
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-Loading the script '<URL>' violates the following Content Security Policy directive: "script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.
-4139.6142218e05a633ef.js:910 Executing inline event handler violates the following Content Security Policy directive 'script-src 'self' 'nonce-awbLwjeBKvpeUEqwskVhggAAAJM''. Either the 'unsafe-inline' keyword, a hash ('sha256-...'), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The policy is report-only, so the violation has been logged but no further action has been taken.
-4139.6142218e05a633ef.js:24240 Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
-/*
- * Survey Mod text checker - tr-TR (manual testing helper, NOT part of the repo)
- * 1. Switch the app language to tr-TR in Profile > Settings.
- * 2. F12 > Console, paste this whole file, press Enter. Paste once per page load (a full reload clears it).
- * 3. Click through the flow. It re-checks every ~1.5 s and prints one line per screen.
- * GREEN outline = text matches the sheet. RED outline = still English / raw key. No outline = not in sheet, check by eye.
- * Commands: __l10nCopy() export everything (clipboard + l10n-TR-result.txt) | __l10nLeft() core sheet texts not seen yet
- *           __l10nTotal() summary | __l10nClear() remove outlines | __l10nStop() stop
- */
-(function () {
-  const TAG = 'TR', CODE = 'tr-TR';
-  const ITEMS = [["SURVEYMOD_SELECT_PANELISTS","Select Panelists","Panelistleri seçin",1],["SURVEYMOD_BUILD_SURVEY","Build Survey","Anket oluştur",1],["SURVEYMOD_SURVEY_RESULTS","Survey Results","Anket sonuçları",1],["SURVEYMOD_PUBLISH_SURVEY","Publish Survey","Anketi yayımla",1],["SURVEYMOD_LETS_GET_YOU_STARTED","Let's get you started!","Haydi başlayalım!",1],["SURVEYMOD_OPTIQ_AI","Optiq AI","Optiq AI",1],["SURVEYMOD_LETS_GET_YOU_STARTED_WITH_OPTIQ","Let's get you started with Optiq!","Optiq ile başlayalım!",1],["SURVEYMOD_OPTIQ_TEXT","Optiq is here to help you build your survey. First, define the audience you'd like to hear from using the criteria below. Once you've identified eligible respondents, you'll be ready to generate a survey tailored to your research goals.","Optiq, anketinizi oluşturmanıza yardımcı olmak için burada. Öncelikle aşağıdaki ölçütleri kullanarak görüşlerini almak istediğiniz hedef kitleyi tanımlayın. Uygun katılımcıları belirledikten sonra araştırma hedeflerinize göre uyarlanmış bir anket oluşturabilirsiniz.",1],["SURVEYMOD_DATASET_ERROR","Please select a dataset to continue.","Devam etmek için lütfen bir veri kümesi seçin.",1],["SURVEYMOD_SELECT_DATASET","Select dataset","Veri kümesi seçin",1],["SURVEYMOD_EDIT","Edit","Düzenle",1],["SURVEYMOD_COPY","Copy","Kopyala",1],["SURVEYMOD_DELETE","Delete","Sil",1],["Buyers of","Buyers of","Satın alanlar",1],["within","within","içinde",1],["in","in","konumunda",1],["by","by","göre",1],["during","during","sırasında",1],["SURVEYMOD_CRITERIA.FAILED","Your current criteria returns too few eligible participants. Try expanding your selection (e.g., geography, demographics, or time frame) to increase your audience size","Mevcut ölçütleriniz çok az sayıda uygun katılımcı döndürüyor. Hedef kitlenizi büyütmek için seçiminizi coğrafya, demografik özellikler veya zaman aralığı gibi alanlarda genişletmeyi deneyin.",1],["SURVEYMOD_PROMPT_LABEL","I've noticed a 15% drop in FrostFire sales this quarter. Draft a survey to explore customer loyalty, compare our pricing with competitors like PolarBlast and GlacierFizz, and assess their promotional impact.","Bu çeyrekte FrostFire satışlarının %15 düştüğünü fark ettim. Müşteri sadakatini araştırmak, fiyatlarımızı PolarBlast ve GlacierFizz gibi rakiplerle karşılaştırmak ve rakiplerin promosyonlarının etkisini değerlendirmek için bir anket hazırlayın.",1],["SURVEYMOD_YOUR_AUDIENCE","Your Audience","Hedef kitleniz",1],["SURVEYMOD_ELIGIBLE_PANELISTS","{panelist_count} eligible panelists","{panelist_count} uygun panelist",1],["SURVEYMOD_CREDIT_USED_MESSAGE","{used_credits} credits will be used for this survey. Remaining Credits : {remaining_credits}","Bu anket için {used_credits} kredi kullanılacak. Kalan kredi: {remaining_credits}",1],["SURVEYMOD_RESPONSE_EXPECTATION_MESSAGE","How many survey responses would you like to collect?? {response_count} responses = {credit} credit","Kaç anket yanıtı toplamak istiyorsunuz? {response_count} yanıt = {credit} kredi",1],["SURVEYMOD_STANDARD_COST","Standard Cost","Standart maliyet",1],["SURVEYMOD_EXPECTED_REPLIES","{expected_replies_count} expected replies","{expected_replies_count} beklenen yanıt",1],["SURVEYMOD_COST","Cost","Maliyet",1],["SURVEYMOD_CREDITS","{remaining_credit_count} credits remaining","{remaining_credit_count} kredi kaldı",1],["SURVEYMOD_REMAINING","Remaining","Kalan",1],["SURVEYMOD_SURVEY_CONTEXT","Survey Context","Anket bağlamı",1],["SURVEYMOD_GENERATE_MORE_QUESTIONS","Generate more questions","Daha fazla soru oluştur",1],["SURVEYMOD_DESCRIBE_QUESTIONS_TO_ADD","Describe questions to add","Eklenecek soruları açıklayın",1],["SURVEYMOD_AI_WARNING","Survey questions and options are generated by AI and can be wrong. Learn more","Anket soruları ve yanıt seçenekleri yapay zekâ tarafından oluşturulur ve hatalı olabilir. Daha fazla bilgi",1],["SURVEYMOD_REPHRASE_WITH_AI","Rephrase with AI","Yapay zekâ ile yeniden ifade et",1],["SURVEYMOD_DUPLICATE","Duplicate","Çoğalt",1],["SURVEYMOD_VALIDATE_SURVEY","Validate survey","Anketi doğrula",1],["SURVEYMOD_DESCRIBE_NEW_QUESTIONS","Describe new questions","Yeni soruları açıklayın",1],["SURVEYMOD_CLOSE","Close","Kapat",1],["SURVEYMOD_SUBMIT","Submit","Gönder",1],["SURVEYMOD_BEER_SURVEY","Beer Survey","Bira anketi",1],["SURVEYMOD_SELECT_ALL","Select All","Tümünü seç",1],["SURVEYMOD_EXPAND_ALL","Expand All","Tümünü genişlet",1],["SURVEYMOD_COLLAPSE_ALL","Collapse All","Tümünü daralt",1],["SURVEYMOD_EXIT_REVIEW_MODE","Exit Review Mode","İnceleme modundan çık",1],["SURVEYMOD_IM_OPTIQ_LETS_BUILD_YOUR_SURVEY_TOGETHER","I'm Optiq, let's build your survey together","Ben Optiq. Anketinizi birlikte oluşturalım.",1],["SURVEYMOD_DEFINE_YOUR_TARGET_AUDIENCE","Define your target audience","Hedef kitlenizi tanımlayın",1],["SURVEYMOD_FIND_MATCHING_RESPONDENTS","Find matching respondents","Eşleşen katılımcıları bulun",1],["SURVEYMOD_SELECT_NUMBER_OF_RESPONSES","Select number of responses","Yanıt sayısını seçin",1],["SURVEYMOD_ADD_CONTEXT","Add context","Bağlam ekleyin",1],["SURVEYMOD_STRUCTURE_SURVEY","Structure survey","Anketi yapılandırın",1],["SURVEYMOD_RESPONDENTS_MATCH_YOUR_CRITERIA","respondents match your criteria","katılımcı ölçütlerinize uyuyor",1],["SURVEYMOD_EXPECTED_RESPONSES_MESSAGE","How many responses are you looking for? (More responses takes longer and also affects metering. Eg: {response} responses = {credit} credit)","Kaç yanıt almak istiyorsunuz? Daha fazla yanıt daha uzun sürer ve kredi hesaplamasını da etkiler. Örneğin: {response} yanıt = {credit} kredi",1],["SURVEYMOD_EXPECTED_RESPONSES","Expected responses","Beklenen yanıtlar",1],["SURVEYMOD_CREDITS_USED","{credits} Credits used","{credits} kredi kullanıldı",1],["SURVEYMOD_CREDITS_REMAINING","Credits remaining","Kalan kredi",1],["SURVEYMOD_AI_SURVEY_GENERATION_MESSAGE","What would you like to learn? Optiq will generate a survey tailored to your research objectives","Ne öğrenmek istiyorsunuz? Optiq, araştırma hedeflerinize göre uyarlanmış bir anket oluşturur.",1],["SURVEYMOD_POMPT_LABEL2","I want to measure brand awareness, usage, and perceptions among category buyers and understand how my brand compares to competitors","Kategori alıcıları arasındaki marka bilinirliğini, kullanımını ve algısını ölçmek ve markamın rakiplerle nasıl karşılaştırıldığını anlamak istiyorum.",1],["SURVEYMOD_ADD_NEW_QUESTION","Add question","Soru ekle",1],["SURVEYMOD_CHOOSE_A_VIEW","Choose a view","Görünüm seçin",1],["SURVEYMOD_DEFAULT","Default","Varsayılan",1],["SURVEYMOD_ENTIRE_DATASET","Entire Dataset","Tüm veri kümesi",1],["SURVEYMOD_SEARCH_FOR_PANELISTS","Search for Panelists","Panelist ara",1],["SURVEYMOD_AUDIENCE_SELECTION_MESSGAE","Let’s start by picking the panelists you would like to send this survey to. Please pick the relevant dimensions below to help narrow down the list of panelists.","Öncelikle bu anketi göndermek istediğiniz panelistleri seçin. Panelist listesini daraltmak için aşağıdaki ilgili boyutları seçin.",1],["SURVEYMOD_SOURCE","Source","Kaynak",1],["SURVEYMOD_LAST_REFRESHED","Last refreshed:","Son yenileme:",1],["SURVEYMOD_CONGRATULATIONS_THERE_ARE","Congratulations there are","Tebrikler,",1],["SURVEYMOD_PEOPLE_ELIGIBLE_FOR_YOUR_CRITERIA","people eligible for your criteria","kişi ölçütlerinize uyuyor",1],["SURVEYMOD_RESPONSE_COUNT_TEXT","{response_count} Responses","{response_count} yanıt",1],["SURVEYMOD_FEWER_OPTIONS","Fewer options","Daha az seçenek",1],["SURVEYMOD_PROCEED_TO_SURVEY_BUILDER","Proceed to survey builder","Anket oluşturucuya devam et",1],["SURVEYMOD_SINGLE_CHOICE","Single Choice","Tek seçim",1],["SURVEYMOD_MULTIPLE_CHOICE","Multiple Choice","Çoklu seçim",1],["SURVEYMOD_RATING","Rating","Derecelendirme",1],["SURVEYMOD_NET_PROMOTER_SCORE","Net Promoter Score","Net Promoter Score",1],["SURVEYMOD_POINT_SCALE","Point Scale","Puan ölçeği",1],["SURVEYMOD_MULTI_SCALE","Multi Scale","Çoklu ölçek",1],["SURVEYMOD_BACK","Back","Geri",1],["SURVEYMOD_PUBLISH","Publish","Yayımla",1],["SURVEYMOD_QUESTION","Question","Soru",1],["SURVEYMOD_ADD_OPTION","Add option","Seçenek ekle",1],["SURVEYMOD_REQUIRED","Required","Zorunlu",1],["SURVEYMOD_DISCARD_CHANGES","Discard changes","Değişiklikleri iptal et",1],["SURVEYMOD_SAVE_CHANGES","Save changes","Değişiklikleri kaydet",1],["SURVEYMOD_NPS_LABEL_1","1","1",1],["SURVEYMOD_NPS_LABEL_2","2","2",1],["SURVEYMOD_NPS_LABEL_3","3","3",1],["SURVEYMOD_NPS_LABEL_4","4","4",1],["SURVEYMOD_NPS_LABEL_5","5","5",1],["SURVEYMOD_NPS_LABEL_6","6","6",1],["SURVEYMOD_NPS_LABEL_7","7","7",1],["SURVEYMOD_NPS_LABEL_8","8","8",1],["SURVEYMOD_NPS_LABEL_9","9","9",1],["SURVEYMOD_NPS_LABEL_10","10","10",1],["SURVEYMOD_NPS_LEFT_LABEL_I_WILL_DEFINITELY_NOT_RECOMMEND","I will definitely not recommend","Kesinlikle tavsiye etmeyeceğim",1],["SURVEYMOD_RIGHT_NPS_LABEL_I_WILL_DEFINITELY_RECOMMEND","I will definitely recommend","Kesinlikle tavsiye edeceğim",1],["SURVEYMOD_REVIEW_SURVEY","Review Survey","Anketi incele",1],["SURVEYMOD_SAVE_DRAFT","Save draft","Taslağı kaydet",1],["SURVEYMOD_DELETE_SURVEY","Delete survey","Anketi sil",1],["SURVEYMOD_PUBLISH_YOUR_SURVEY","Publish your survey","Anketinizi yayımlayın",1],["SURVEYMOD_NAME","Name","Ad",1],["SURVEYMOD_CHOOSE_A_LOCATION","Choose a location","Konum seçin",1],["SURVEYMOD_CREATE_NEW_FOLDER","Create new folder","Yeni klasör oluştur",1],["SURVEYMOD_CONTINUE","Continue","Devam et",1],["SURVEYMOD_CONFIRM_PUBLISH","Confirm publish?","Yayımlama onaylansın mı?",1],["SURVEYMOD_QUICK_REVIEW_TEXT","Quick review of your selection before publishing","Yayımlamadan önce seçimlerinizi hızlıca gözden geçirin",1],["SURVEYMOD_CREDITS_USAGE_MESSAGE","{used_credit} credits were used for this survey. Remaining Credits: {remaining_credits}","Bu anket için {used_credit} kredi kullanıldı. Kalan kredi: {remaining_credits}",1],["SURVEYMOD_QUESTION_COUNT_TEXT","How many questions would you like your survey to include?","Anketinizde kaç soru olmasını istersiniz?",1],["SURVEYMOD_QUESTION_TYPE_TEXT","Which question types would you like to include?","Hangi soru türlerini eklemek istersiniz?",1],["SURVEYMOD_GENERATE_SURVEY_QUESTIONS","Generate survey questions","Anket soruları oluştur",1],["SURVEY_MOD_SURVEY_STUCUTURE_MSG","Tell Optiq how you'd like your survey structured","Optiq'e anketinizin nasıl yapılandırılmasını istediğinizi belirtin",1],["SURVEYMOD_USER_CONTEXT_LABEL","Please provide the context of what kind of a survey you are looking for to proceed with survey generation","Anket oluşturmaya devam etmek için nasıl bir anket istediğinizi açıklayın",1],["SURVEYMOD_GENERATE_SURVEY","Generate Survey","Anket oluştur",1],["SURVEYMOD_PUBLISH_CONFIRM_MESSAGE","Are you sure you are ready to publish the survey? Please go back to the last step if you would like to update above details.","Anketi yayımlamaya hazır olduğunuzdan emin misiniz? Yukarıdaki ayrıntıları güncellemek istiyorsanız önceki adıma dönün.",1],["SURVEYMOD_THE_ACTION_CANNOT_BE_UNDONE","The action cannot be undone.","Bu işlem geri alınamaz.",1],["SURVEYMOD_CONFIRM","Confirm","Onayla",1],["SURVEYMOD_MEASURE_PERFORMANCE_TEXT","Measure performance and trends across countries, regions and local countries using retail measurement data","Perakende ölçüm verilerini kullanarak ülkeler, bölgeler ve yerel pazarlar genelindeki performansı ve eğilimleri ölçün",1],["Product","Product","Ürün",1],["Select","Select","Seç",1],["Products","Products","Ürünler",1],["Demographic","Demographic","Demografik özellikler",1],["Period","Period","Dönem",1],["Geography","Geography","Coğrafya",1],["SURVEYMOD_MOVE_TO_TRASH","Move to trash","Çöp kutusuna taşı",1],["SURVEYMOD_AI_SURVEY_BUILD","I’m Optiq, let’s build your survey together","Ben Optiq. Anketinizi birlikte oluşturalım.",1],["SURVEYMOD_DRAFT_SAVED","Survey saved as draft successfully","Anket taslak olarak kaydedildi",1],["SURVEYMOD_FAILED_DRAFT","Failed to save the survey draft. Please try again.","Anket taslağı kaydedilemedi. Lütfen tekrar deneyin.",1],["SURVEYMOD_LOAD_SURVEY_FAILED","Unable to load survey. Please try again.","Anket yüklenemedi. Lütfen tekrar deneyin.",1],["SURVEYMOD_ERROR","Error Occurred","Bir hata oluştu",1],["SURVEYMOD_FOLDER_CREATION_FAILED","Failed to create folder. Please try again.","Klasör oluşturulamadı. Lütfen tekrar deneyin.",1],["SURVEYMOD_FOLDER_CREATED","Folder \"{title}\" created successfully","“{title}” klasörü oluşturuldu",1],["SURVEYMOD_SURVEY_PUBLISHED","Survey published successfully.","Anket yayımlandı.",1],["SURVEYMOD_PUBLISH_FAILED","Failed to publish the survey. Please try again.","Anket yayımlanamadı. Lütfen tekrar deneyin.",1],["SURVEYMOD_SAVE_SURVEY","Save your survey","Anketinizi kaydedin",1],["SURVEYMOD_RESULTS_TAB","Results","Sonuçlar",0],["SURVEYMOD_SURVEY_SPECS_TAB","Survey specs","Anket özellikleri",0],["SURVEYMOD_RESPONSES","responses","yanıt",0],["SURVEYMOD_PUBLISHED","Published","Yayınlandı",0],["SURVEYMOD_CLOSED","Closed","Kapatıldı",0],["SURVEYMOD_TARGET_AUDIENCE_TITLE","Your target audience","Hedef kitleniz",0],["SURVEYMOD_RESPONSE_TITLE","Number of responses","Yanıt sayısı",0],["SURVEYMOD_SHARE_REPORT","Share report","Raporu paylaş",0],["SURVEYMOD_TOTAL_RESPONSES","Total Responses","Toplam yanıt",0],["SURVEYMOD_COMPLETION_RATE","Completion Rate","Tamamlanma oranı",0],["SURVEYMOD_ESTIMATE_TIME_LEFT","Estimated time left on survey","Ankette tahmini kalan süre",0],["SURVEYMOD_DAYS","days","gün",0],["SURVEYMOD_INSUFFICIENT_DATA_DISCLAIMER","This data is not ready to be used as it could be inaccurate without adequate \nresponses. Please wait until you have more responses.","Bu veriler yeterli yanıt olmadan hatalı olabileceğinden henüz kullanıma hazır değil. Lütfen daha fazla yanıt gelene kadar bekleyin.",0],["SURVEYMOD_DATA_DISCLAIMER","Not all survey responses have been collected. Current results are preliminary and may change as additional responses are received.","Tüm anket yanıtları henüz toplanmadı. Mevcut sonuçlar ön niteliğindedir ve ek yanıtlar alındıkça değişebilir.",0],["SURVEYMOD_SUMMARY_BETA_TEXT","All insights is in beta and can get things wrong.","Tüm içgörüler beta sürümündedir ve hatalar içerebilir.",0],["SURVEYMOD_COLUMN_CHART","Column Chart","Sütun grafiği",0],["SURVEYMOD_PIE_CHART","Pie Chart","Pasta grafiği",0],["SURVEYMOD_AVERAGE_RATING","Average Rating","Ortalama puan",0],["SURVEYMOD_SHOW_BREAKDOWN","Show statement breakdown","İfade dağılımını göster",0],["SURVEYMOD_STATEMENT_BREAKDOWN","Statement breakdown","İfade dağılımı",0],["SURVEYMOD_NO_RESULTS_CHART","No results available for this chart.","Bu grafik için sonuç yok.",0],["SURVEYMOD_EXIT_SCREEN","SURVEYMOD_EXIT_SCREEN","SURVEYMOD_EXIT_SCREEN",0],["SURVEYMOD_VIEW_SCREEN","View in full screen mode","Tam ekran modunda görüntüle",0],["SURVEYMOD_TARGET_AUDIENCE","Target audience","Hedef kitle",0],["SURVEYMOD_QUESTIONNAIRE","Questionnaire","Anket formu",0],["SURVEYMOD_SURVEY_SAMPLE","Survey sample","Anket örneği",0],["SURVEYMOD_CREDITS_CHARGED","Credits charged","Kullanılan kredi",0],["SURVEYMOD_QUESTIONS","questions","soru",0],["SURVEYMOD_EXPECTED_RESPONSE","expected responses","beklenen yanıt",0],["SURVEYMOD_UNABLE_LOAD_CHART","Unable to load chart.","Grafik yüklenemiyor.",0],["SURVEYMOD_SELECT_DIFFERENT_DATASET","Please Select a different dataset","Lütfen farklı bir veri kümesi seçin",0],["SURVEYMOD_AI_BUILD_SURVEY","Hi! Optiq is here to help you build your survey.","Merhaba! Optiq anketinizi oluşturmanıza yardımcı olmak için burada.",0],["SURVEYMOD_MORE_OPTIONS","More options","Daha fazla seçenek",0],["SURVEYMOD_UNSELECT_ALL","Unselect All","Tümünü kaldır",0],["SURVEYMOD_VIEW_OPTIQ_FEEDBACK","View Optiq feedback","Optiq geri bildirimini görüntüle",0],["SURVEYMOD_CREATE","Create","Oluştur",0],["SURVEYMOD_PUBLISH_WARNING","Changes cannot be made after the survey is published.","Anket yayınlandıktan sonra değişiklik yapılamaz.",0],["SURVEYMOD_REVIEW_SURVEY_DETAILS","Review survey details","Anket ayrıntılarını incele",0],["SURVEYMOD_EDIT_SURVEY","Edit survey","Anketi düzenle",0],["ROW","Row","Satır",0],["COLUMN","Column","Sütun",0],["SURVEYMOD_MAXIMUM_QUESTIONS_WARNING","You have already reached the maximum number of questions.","Maksimum soru sayısına zaten ulaştınız.",0],["SURVEYMOD_MINIMUM_COLUMNS_WARNING","You have already reached the minimum number of columns.","Minimum sütun sayısına zaten ulaştınız.",0],["SURVEYMOD_MAXIMUM_COLUMNS_WARNING","You have already reached the maximum number of columns.","Maksimum sütun sayısına zaten ulaştınız.",0],["SURVEYMOD_MINIMUM_ROWS_WARNING","You have already reached the minimum number of rows.","Minimum satır sayısına zaten ulaştınız.",0],["SURVEYMOD_MAXIMUM_ROWS_WARNING","You have already reached the maximum number of rows.","Maksimum satır sayısına zaten ulaştınız.",0],["SURVEYMOD_REVIEW_PUBLISH_SURVEY","Review & publish survey","Anketi incele ve yayınla",0],["SURVEYMOD_REVALIDATE_SURVEY","Revalidate survey","Anketi yeniden doğrula",0],["SURVEYMOD_VALIDATION_INPROGRESS","Survey validation in progress","Anket doğrulama devam ediyor",0],["SURVEYMOD_VALIDATION_NAME_REQUIRED_ERROR","Survey request validation failed: name is required","Anket isteği doğrulaması başarısız: ad gerekli",0],["SURVEYMOD_ENTER_QUESTION","Enter your question","Sorunuzu girin",0],["SURVEYMOD_SURVEY_TITLE","Survey Title","Anket başlığı",0],["SURVEYMOD_SELECTED_PANELIST_CRITERIA","Selected panelist criteria","Seçilen panelist kriterleri",0],["SURVEYMOD_PUBLISHING_SURVEY","Publishing survey","Anket yayınlanıyor",0],["SURVEYMOD_SURVEY_NAME_REQUIRED","Survey name is required.","Anket adı gerekli.",0],["SURVEYMOD_TELL_US_MORE","Tell us more...","Bize daha fazlasını anlatın...",0],["SURVEYMOD_ENTER_VALID_SURVEY_NAME","Enter a valid survey name.","Geçerli bir anket adı girin.",0],["SURVEYMOD_FOLDER_NAME_REQUIRED","Folder name is required.","Klasör adı gerekli.",0],["SURVEYMOD_FAILED_TO_LOAD_FOLDERS","Failed to load folders. Please try again.","Klasörler yüklenemedi. Lütfen yeniden deneyin.",0],["SURVEYMOD_FAILED_TO_CREATE_FOLDER","Failed to create folder. Please try again.","Klasör oluşturulamadı. Lütfen yeniden deneyin.",0],["SURVEYMOD_AI_PROMPT_PLACEHOLDER","E.g. Generate a few questions on the effectiveness of the product(s)","Örn. Ürün/ürünlerin etkinliğine ilişkin birkaç soru oluşturun",0],["SURVEYMOD_CLOSE_PANEL","Close panel","Paneli kapat",0],["SURVEYMOD_TYPE_PROMPT_PLACEHOLDER","Type your prompt for new questions...","Yeni sorular için istemizi yazın...",0],["SURVEYMOD_CHOOSE_DATASET","Choose a dataset","Bir veri kümesi seçin",0],["SURVEYMOD_PLEASE_ENTER_VALUE_BETWEEN","Please enter a value between {{min_value}} and {{max_value}}","Lütfen {{min_value}} ile {{max_value}} arasında bir değer girin",0],["SURVEYMOD_OPTION_NUMBER","Option {{number}}","Seçenek {{number}}",0],["SURVEYMOD_PANELIST_COUNT_JOB_FAILED","Panelist count job failed.","Panelist sayım işi başarısız oldu.",0],["SURVEYMOD_SLIDER_THUMB_LABEL","Single slider thumb","Tek kaydırıcı tutamacı",0],["SURVEYMOD_ENTER_VALID_FOLDER_NAME","Enter a valid folder name.","Geçerli bir klasör adı girin.",0],["SURVEYMOD_MAXIMUM_OPTIONS_WARNING","You have already reached the maximum number of options.","Maksimum seçenek sayısına zaten ulaştınız.",0],["SURVEYMOD_TT_VALIDATING_YOUR_SURVEY","Validating your survey","Anketiniz doğrulanıyor",0],["SURVEYMOD_TM_VALIDATING_YOUR_SURVEY","Optiq is validating your survey for compliance before publication.","Optiq, yayınlanmadan önce anketinizin uygunluğunu doğruluyor.",0],["SURVEYMOD_TT_CHANGES_NEEDED","Changes needed","Değişiklik gerekli",0],["SURVEYMOD_TT_CHANGES_RECOMMENDED","Changes recommended","Değişiklik öneriliyor",0],["SURVEYMOD_TT_VALIDATION_COMPLETE","Validation complete","Doğrulama tamamlandı",0],["SURVEYMOD_TM_READY_TOBE_PUBLISHED","Your survey is ready to be published.","Anketiniz yayınlanmaya hazır.",0],["SURVEYMOD_TT_SURVEY_EDITED","Survey Edited","Anket düzenlendi",0],["SURVEYMOD_TM_PLEASE_REVALIDATE","We noticed you have made edits. Please revalidate to proceed with publishing","Düzenlemeler yaptığınızı fark ettik. Yayınlamaya devam etmek için lütfen yeniden doğrulayın.",0],["SURVEYMOD_TT_VALIDATION_FAILED","Survey Validation Failed","Anket doğrulaması başarısız",0],["SURVEYMOD_TM_VALIDATION_FAILED_TRY_AGAIN","Survey validation failed. Please try again.","Anket doğrulaması başarısız oldu. Lütfen yeniden deneyin.",0],["SURVEYMOD_OPTIQ_FEEDBACK_CHANGE_NONE_REQUIRED","{{total}} change found (none required)","{{total}} değişiklik bulundu (zorunlu yok)",0],["SURVEYMOD_OPTIQ_FEEDBACK_CHANGE_REQUIRED","{{total}} change found ({{mandatory}} required to publish)","{{total}} değişiklik bulundu (yayınlamak için {{mandatory}} zorunlu)",0],["SURVEYMOD_OPTIQ_FEEDBACK_CHANGES_NONE_REQUIRED","{{total}} changes found (none required)","{{total}} değişiklik bulundu (zorunlu yok)",0],["SURVEYMOD_OPTIQ_FEEDBACK_CHANGES_REQUIRED","{{total}} changes found ({{mandatory}} required to publish)","{{total}} değişiklik bulundu (yayınlamak için {{mandatory}} zorunlu)",0],["survey.optiqFeedback.actionLabel","{{action}}, question {{number}}","{{action}}, soru {{number}}",0],["survey.optiqFeedback.fixAllDone.one","{{count}} suggestion applied.","{{count}} öneri uygulandı.",0],["survey.optiqFeedback.fixAllDone.many","{{count}} suggestions applied.","{{count}} öneri uygulandı.",0],["SURVEYMOD_SUGGESTION_RESOLVED","Suggestion resolved.","Öneri çözüldü.",0],["SURVEYMOD_REQUIRED_CHANGE","{{count}} required change","{{count}} zorunlu değişiklik",0],["SURVEYMOD_RECOMMENDATION","{{count}} recommendation","{{count}} öneri",0],["SURVEYMOD_TM_MANDATORY_CHANGE","{{mandatory}} required change identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_MANDATORY_CHANGES","{{mandatory}} required changes identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_MANDATORY_CHANGE_OPTIONAL_CHANGE","{{mandatory}} required change and {{optional}} recommendation was identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik ve {{optional}} öneri tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_MANDATORY_CHANGE_OPTIONAL_CHANGES","{{mandatory}} required change and {{optional}} recommendations were identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik ve {{optional}} öneri tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_MANDATORY_CHANGES_OPTIONAL_CHANGE","{{mandatory}} required changes and {{optional}} recommendation was identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik ve {{optional}} öneri tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_MANDATORY_CHANGES_OPTIONAL_CHANGES","{{mandatory}} required changes and {{optional}} recommendations were identified. Required changes must be resolved before publishing.","{{mandatory}} zorunlu değişiklik ve {{optional}} öneri tespit edildi. Zorunlu değişiklikler yayınlanmadan önce çözülmelidir.",0],["SURVEYMOD_TM_OPTIONAL_CHANGE","{{optional}} recommendation was identified. Review it to improve survey quality before publishing.","{{optional}} öneri tespit edildi. Yayınlamadan önce anket kalitesini artırmak için inceleyin.",0],["SURVEYMOD_TM_OPTIONAL_CHANGES","{{optional}} recommendations were identified. Review recommendations to improve survey quality before publishing.","{{optional}} öneri tespit edildi. Yayınlamadan önce anket kalitesini artırmak için önerileri inceleyin.",0],["SURVEYMOD_OPTIQ_FEEDBACK","Optiq Feedback","Optiq geri bildirimi",0],["SURVEYMOD_FIX_ALL","Fix all","Tümünü düzelt",0],["SURVEYMOD_REPHRASE","Rephrase","Yeniden ifade et",0],["rephraseOption","Rephrase option","Seçeneği yeniden ifade et",0],["rephraseQuestion","Rephrase question","Soruyu yeniden ifade et",0],["SURVEYMOD_REMOVE_OPTION","Remove option","Seçeneği kaldır",0],["SURVEYMOD_REMOVE_QUESTION","Remove question","Soruyu kaldır",0],["SURVEYMOD_REVIEW_SUGGESTION","Review suggestion","Öneriyi incele",0],["suggestedOption","Suggested option","Önerilen seçenek",0],["SURVEYMOD_ORIGINAL","Original","Orijinal",0],["SURVEYMOD_APPLYING_ALL_SUGGESTION","Applying all suggestions","Tüm öneriler uygulanıyor",0],["SURVEYMOD_SUGGESTIONS_DISCLAIMER","Suggestions for questions and options are generated by AI and can be wrong.","Sorular ve seçeneklere yönelik öneriler yapay zeka tarafından oluşturulur ve hatalı olabilir.",0],["SURVEYMOD_VALIDATION_IS_COMPLETE","Validation is complete","Doğrulama tamamlandı",0],["SURVEYMOD_NO_SUGGESTIONS","No Suggestions","Öneri yok",0],["SURVEYMOD_CHANGES_APPLIED","Changes Applied","Değişiklikler uygulandı",0],["viewFeedback","View Optiq feedback","Optiq geri bildirimini görüntüle",0],["SURVEYMOD_ADD_SELECTION_GROUP","Add selection group","Seçim grubu ekle",0],["SURVEYMOD_DISMISS","Dismiss","Kapat",0],["SURVEYMOD_LEARN_MORE","Learn more","Daha fazla bilgi",0],["SURVEYMOD_SUGGESTED","Suggested","Önerilen",0],["SURVEYMOD_OPTIONAL","Optional","İsteğe bağlı",0],["SURVEYMODE_REMOVE","Remove","Kaldır",0],["SUMMARY","Summary","Özet",0],["PERCENTAGE","Percentage","Yüzde",0],["ACTUAL","Actual","Gerçek",0],["BARCHART","Bar Chart","Çubuk grafik",0],["HEATMAP","Heatmap","Isı haritası",0],["SHARE","Share","Paylaş",0],["EXPORT_REPORT","Export report","Raporu dışa aktar",0],["EXPORT","Export","Dışa aktar",0],["CREDITS","credits","Kredi",0]]; // [key, english, translation, core(1 = Select Panelist/Build Survey sheet)]
-  if (window.__l10nStop) window.__l10nStop();
 
-  const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim().replace(/\s*[:：]\s*$/, '');
-  const PH = /\{\{?\s*\w+\s*\}?\}/;
-  const toRegex = (s) => new RegExp('^' + s.split(/\{\{?\s*\w+\s*\}?\}/).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.+') + '$');
+AC1: Results Dashboard Availability
+Given a survey has been successfully published
+When publication completes
+Then the Survey Results dashboard shall become available immediately to authorized users
+And the Survey Results step shall be highlighted in the survey workflow tracker.
 
-  const trExact = new Map(), trRegex = [], trPrefix = [], enExact = new Map(), enRegex = [], enPrefix = [];
-  let coreTotal = 0;
-  for (const [key, enRaw, trRaw, core] of ITEMS) {
-    const en = norm(enRaw), tr = norm(trRaw);
-    if (core) coreTotal++;
-    if (tr) {
-      if (PH.test(tr)) trRegex.push({ key, re: toRegex(tr) });
-      else { if (!trExact.has(tr)) trExact.set(tr, key); if (tr.length >= 6) trPrefix.push({ key, text: tr }); }
-    }
-    if (en && en !== tr) {
-      if (PH.test(en)) enRegex.push({ key, re: toRegex(en), expected: trRaw });
-      else { if (!enExact.has(en)) enExact.set(en, { key, expected: trRaw }); if (en.length >= 8) enPrefix.push({ key, en, expected: trRaw }); }
-    }
-  }
-  const info = new Map(ITEMS.map((x) => [x[0], { en: x[1], tr: x[2], core: x[3] }]));
-  const seen = new Set();
+AC2: Post-Publish Navigation
+Given a user publishes a survey
+When publication completes
+Then the user shall be directed to the Find My Stuff (FMS) experience
+And a link to the Results Dashboard shall be visible and selectable
+And a message shall inform the user that their survey has been published and results can be monitored from the dashboard.
 
-  const isVisible = (el) => {
-    if (!el || !el.getClientRects || el.getClientRects().length === 0) return false;
-    const cs = getComputedStyle(el);
-    return cs.visibility !== 'hidden' && cs.display !== 'none';
-  };
-  const collect = () => {
-    const out = [];
-    const walk = (root) => {
-      const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-      let n;
-      while ((n = tw.nextNode())) {
-        const el = n.parentElement;
-        if (!el || /^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(el.tagName)) continue;
-        const t = norm(n.textContent);
-        if (t && /\p{L}/u.test(t) && isVisible(el)) out.push({ text: t, el, where: 'text' });
-      }
-      root.querySelectorAll('*').forEach((el) => {
-        for (const a of ['placeholder', 'title', 'aria-label']) {
-          const t = norm(el.getAttribute && el.getAttribute(a));
-          if (t && /\p{L}/u.test(t) && isVisible(el)) out.push({ text: t, el, where: a });
-        }
-        if (el.shadowRoot) walk(el.shadowRoot);
-      });
-    };
-    walk(document.body);
-    return out;
-  };
+AC3: Stage 1 – No Responses Received
+Given a survey has been published and no responses have been received
+When a user accesses the Results Dashboard
+Then a disclaimer shall indicate that the survey is newly launched and insufficient data has been collected
+And charts and tables shall be displayed in an empty state
+And KPI components shall be visible and active
+And the Survey Overview tab shall be available
+And Export and Share functions shall be disabled.
 
-  let marked = [];
-  const clear = () => { marked.forEach(([el, o]) => (el.style.outline = o)); marked = []; };
-  const mark = (el, style) => { marked.push([el, el.style.outline]); el.style.outline = style; };
+AC4: Stage 2 – Responses In Progress
+Given a survey has received responses but has not reached its target completion threshold
+When a user accesses the Results Dashboard
+Then a disclaimer shall indicate that results are still being collected
+And charts and tables shall display currently available responses
+And KPI values shall accurately reflect collected responses
+And the Survey Overview tab shall remain available
+And Export and Share functions shall remain disabled.
 
-  const screens = [];
-  let lastSig = '', stable = 0, lastPrinted = '';
+AC5: Stage 3 – Survey Complete
+Given a survey has achieved its required response target or completed fielding status
+When a user accesses the Results Dashboard
+Then the disclaimer shall be removed
+And Export and Share functionality shall be enabled
+And the AI Summary shall become available
+And the Survey Overview tab shall remain available.
 
-  const scan = () => {
-    clear();
-    const ok = new Map(), english = new Map(), raw = new Map(), unknown = new Map();
-    for (const f of collect()) {
-      const t = f.text;
-      if (/SURVEYMOD_[A-Z0-9_]+/.test(t) || /^[A-Z][A-Z0-9_]+(\.[A-Z0-9_]+)+$/.test(t)) { raw.set(t, f); continue; }
-      let key = trExact.get(t);
-      if (!key) { const r = trRegex.find((x) => x.re.test(t)); if (r) key = r.key; }
-      if (!key) { const pf = trPrefix.find((x) => t.startsWith(x.text + ' ') || t.startsWith(x.text + ':')); if (pf) key = pf.key; }
-      if (key) { ok.set(t, { ...f, key }); seen.add(key); continue; }
-      const hit = enExact.get(t) || enRegex.find((x) => x.re.test(t)) || enPrefix.find((x) => t.startsWith(x.en + ' ') || t.startsWith(x.en + ':'));
-      if (hit) { english.set(t, { ...f, key: hit.key, expected: hit.expected }); seen.add(hit.key); continue; }
-      unknown.set(t, f);
-    }
-    ok.forEach((f) => mark(f.el, '2px solid #1db954'));
-    english.forEach((f) => mark(f.el, '3px solid red'));
-    raw.forEach((f) => mark(f.el, '3px solid red'));
-    return { ok, english, raw, unknown };
-  };
+AC6: Dashboard State Management
+Given a survey transitions between response collection states
+When response volumes increase or completion criteria are met
+Then the dashboard shall automatically reflect the appropriate stage (No Responses, In Progress, Complete) based on survey status and response thresholds.
 
-  const coreSeen = () => [...seen].filter((k) => info.get(k) && info.get(k).core).length;
+AC7: KPI Display
+Given a user accesses the Results Dashboard
+When KPI data is available
+Then the following KPIs shall be displayed in the specified order:
 
-  const tick = () => {
-    const r = scan();
-    const sig = [...r.ok.keys(), '|', ...r.english.keys(), '|', ...r.unknown.keys()].join('~') + location.pathname;
-    if (sig === lastSig) stable++; else { stable = 0; lastSig = sig; }
-    if (stable !== 1 || sig === lastPrinted) return;
-    lastPrinted = sig;
-    const segs = (location.pathname.split('/survey')[1] || '').split('/').filter(Boolean);
-    const flow = segs.length === 0 ? 'Home (out of scope)' : segs.includes('aiflow') ? 'Start with prompt' : 'Start from scratch';
-    const screen = segs.filter((s) => s !== 'aiflow').join('/') || 'home';
-    const name = `${flow} | ${screen} #${screens.length + 1}`;
-    screens.push({ name, flow, screen, ok: r.ok.size, okTexts: [...r.ok.keys()], english: [...r.english.values()], raw: [...r.raw.keys()], unknown: [...r.unknown.keys()] });
-    console.log(`%c[${TAG}] ${name} | ✅ ${r.ok.size} | ❌ ${r.english.size + r.raw.size} English/raw | ❔ ${r.unknown.size} not in sheet | core seen ${coreSeen()}/${coreTotal}`, 'font-weight:bold;font-size:13px');
-    if (r.english.size) { console.log('%c❌ Still English (should be ' + CODE + '):', 'color:red;font-weight:bold'); console.table([...r.english.values()].map((f) => ({ Text: f.text, Key: f.key, Expected: f.expected, Where: f.where }))); }
-    if (r.raw.size) { console.log('%c❌ Raw keys on screen:', 'color:red;font-weight:bold'); console.table([...r.raw.keys()].map((t) => ({ Text: t }))); }
-    if (r.unknown.size) { console.log('%c❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:', 'color:#c80;font-weight:bold'); console.table([...r.unknown.values()].map((f) => ({ Text: f.text, Where: f.where }))); }
-  };
+Total Responses
+Completion Rate
+Time Remaining on Survey
+And KPI values shall reflect the most current survey data available.
 
-  const timer = setInterval(tick, 1500);
-  tick();
+AC8: KPI Refresh
+Given new survey responses are received
+When the dashboard is refreshed or reloaded
+Then KPI metrics shall reflect the updated survey response counts and status.
 
-  const left = () => ITEMS.filter((x) => x[3] && !seen.has(x[0]));
-  window.__l10nLeft = () => { const l = left(); console.log(`[${TAG}] core sheet texts not seen yet: ${l.length}/${coreTotal}`); console.table(l.map((x) => ({ Key: x[0], English: x[1], [CODE]: x[2] }))); };
-  window.__l10nStop = () => { clearInterval(timer); clear(); console.log(`[${TAG}] stopped`); };
-  window.__l10nClear = clear;
-  window.__l10nTotal = () => {
-    const eng = new Map(), unk = new Set();
-    screens.forEach((s) => { s.english.forEach((f) => eng.set(f.text, { Text: f.text, Expected: f.expected, Screen: s.name })); s.raw.forEach((t) => eng.set(t, { Text: t, Expected: '(raw key)', Screen: s.name })); s.unknown.forEach((t) => unk.add(t)); });
-    console.log(`%c[${TAG} TOTAL] screens ${screens.length} | still English ${eng.size} | not in sheet ${unk.size} | core seen ${coreSeen()}/${coreTotal}`, 'font-weight:bold;font-size:13px');
-    if (eng.size) console.table([...eng.values()]);
-  };
-  window.__l10nCopy = () => {
-    const L = [];
-    const flows = ['Start from scratch', 'Start with prompt', 'Home (out of scope)'];
-    L.push(`${CODE} CHECK RESULT | ${new Date().toISOString()} | screens: ${screens.length} | core sheet texts seen: ${coreSeen()}/${coreTotal}`);
-    L.push('', '##### PROBLEMS (tab-separated): Flow / Screen / Actual / Expected / Key');
-    L.push(['Flow', 'Screen', 'Actual (shows)', 'Expected (sheet)', 'Key'].join('\t'));
-    const dup = new Set();
-    flows.forEach((fl) => screens.filter((s) => s.flow === fl).forEach((s) => {
-      s.english.forEach((f) => { const k = fl + s.screen + f.text; if (dup.has(k)) return; dup.add(k); L.push([fl, s.screen, f.text, f.expected, f.key].join('\t')); });
-      s.raw.forEach((x) => { const k = fl + s.screen + x; if (dup.has(k)) return; dup.add(k); L.push([fl, s.screen, x, '(raw key shown)', ''].join('\t')); });
-    }));
-    L.push('', `##### CORE SHEET TEXTS NEVER SEEN (${left().length}) - still to trigger/check: Key / English / ${CODE}`);
-    left().forEach((x) => L.push([x[0], x[1], x[2]].join('\t')));
-    flows.forEach((fl) => {
-      const list = screens.filter((s) => s.flow === fl);
-      if (!list.length) return;
-      L.push('', `##### FLOW: ${fl}`);
-      list.forEach((s) => {
-        L.push('', `=== ${s.name} | matched ${s.ok} | English/raw ${s.english.length + s.raw.length} | not in sheet ${s.unknown.length}`);
-        L.push('-- MATCHED (green):'); s.okTexts.forEach((t) => L.push('   ' + t));
-        L.push('-- NOT IN SHEET (no outline; includes data like dataset names):'); s.unknown.forEach((t) => L.push('   ' + t));
-      });
-    });
-    const text = L.join('\n');
-    try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); ta.remove(); } catch (e) {}
-    try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' })); a.download = 'l10n-' + TAG.toLowerCase() + '-result.txt'; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
-    console.log(`[${TAG}] result copied and saved as l10n-${TAG.toLowerCase()}-result.txt (${screens.length} screens)`);
-  };
-  console.log(`%c[${TAG}] watching ${CODE}. Click through the flow. __l10nLeft() = what is still unchecked, __l10nCopy() = export.`, 'color:#1db954;font-weight:bold');
-})();
+AC9: Question-Level Visualization Support
+Given survey results exist for a supported question type
+When a user views the Results Dashboard
+Then visualizations supported by the approved Chart Library shall be available for that question type.
 
+AC10: Single Choice Visualization Support
+The dashboard shall support the following visualizations for Single Choice questions:
 
-VM1815:115 [TR] stopped
-VM1824:151 [TR] watching tr-TR. Click through the flow. __l10nLeft() = what is still unchecked, __l10nCopy() = export.
-undefined
-Window {0: Window, window: Window, self: Window, document: document, name: '', location: Location, …}
-VM1824:104 [TR] Home (out of scope) | home #1 | ✅ 1 | ❌ 0 English/raw | ❔ 30 not in sheet | core seen 0/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Ayarlar''text'7'Rapor biçimlendirme''text'8'Veri tercihleri''text'9'Y''text'10'Hesap''text'11'Gizlilik tercihleri''text'12'E-posta''text'13'İletişim''text'14'Telefon numarası''text'15'Ülke''text'16'Görüntüleme ayarları''text'17'Saat dilimi''text'18'Dil''text'19'Meslek''text'20'Pozisyon''text'21'Üyelik''text'22'İptal et''text'23'Değişiklikleri Kaydet''text'24'Optiq''text'25'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'26'Yeni sohbet''text'27'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'28"Optiq'i Aç"'title'29'Bir soru sorun...''placeholder'Array(30)
-wmjQuery360.js:2 [Violation] Permissions policy violation: unload is not allowed in this document.
-ae.setDocument @ wmjQuery360.js:2
-ae @ wmjQuery360.js:2
-find @ wmjQuery360.js:2
-m @ walkme_lib_20261030-091036-27e770f2.br.js:7
-f @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-each @ wmjQuery360.js:2
-each @ wmjQuery360.js:2
-f @ walkme_lib_20261030-091036-27e770f2.br.js:7
-i.mapIframes @ walkme_lib_20261030-091036-27e770f2.br.js:7
-E.init @ walkme_lib_20261030-091036-27e770f2.br.js:7
-S @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-initWalkMeClasses @ walkme_lib_20261030-091036-27e770f2.br.js:7
-b @ walkme_lib_20261030-091036-27e770f2.br.js:7
-asyncCallback @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-i @ walkme_lib_20261030-091036-27e770f2.br.js:7
-b @ walkme_lib_20261030-091036-27e770f2.br.js:7
-w @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-dataFinishedLoading @ walkme_lib_20261030-091036-27e770f2.br.js:7
-P.requestIdleCallback.timeout @ walkme_lib_20261030-091036-27e770f2.br.js:7
-requestIdleCallback @ walkme_lib_20261030-091036-27e770f2.br.js:13
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-P.requestIdleCallback.timeout @ walkme_lib_20261030-091036-27e770f2.br.js:7
-requestIdleCallback @ walkme_lib_20261030-091036-27e770f2.br.js:13
-asyncCallback @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-i @ walkme_lib_20261030-091036-27e770f2.br.js:7
-b @ walkme_lib_20261030-091036-27e770f2.br.js:7
-w @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-dataFileLoadedWrapper @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-e @ wmjQuery360.js:2
-t @ wmjQuery360.js:2
-L.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-P.args.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-setTimeout
-y @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMacroTask @ polyfills.0bc17ac671dffe3e.js:7
-E @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Ae.n.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ wmjQuery360.js:2
-u @ wmjQuery360.js:2
-fireWith @ wmjQuery360.js:2
-fire @ wmjQuery360.js:2
-u @ wmjQuery360.js:2
-fireWith @ wmjQuery360.js:2
-a.<computed> @ wmjQuery360.js:2
-Promise.then
-r.requestIdleCallback.timeout @ walkme_lib_20261030-091036-27e770f2.br.js:11
-requestIdleCallback @ walkme_lib_20261030-091036-27e770f2.br.js:13
-load @ walkme_lib_20261030-091036-27e770f2.br.js:11
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-N.appendDataPackage @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ data_d003b321e41146eab151bca80d770b9f_tr.br.js:1
-WalkMeDataClass @ data_d003b321e41146eab151bca80d770b9f_tr.br.js:1
-(anonymous) @ data_d003b321e41146eab151bca80d770b9f_tr.br.js:1
-PendingScript
-c @ walkme_lib_20261030-091036-27e770f2.br.js:7
-d @ walkme_lib_20261030-091036-27e770f2.br.js:7
-x.addScriptWithCallback @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-s @ walkme_lib_20261030-091036-27e770f2.br.js:7
-requestIdleCallback @ walkme_lib_20261030-091036-27e770f2.br.js:13
-N.load @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-ee @ walkme_lib_20261030-091036-27e770f2.br.js:7
-$ @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Z @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-K @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-n @ walkme_lib_20261030-091036-27e770f2.br.js:7
-startInitializer @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-I @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-S.timeoutWrap @ walkme_lib_20261030-091036-27e770f2.br.js:7
-S.run @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-L.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-P.args.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-setTimeout
-y @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMacroTask @ polyfills.0bc17ac671dffe3e.js:7
-E @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Ae.n.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-S @ walkme_lib_20261030-091036-27e770f2.br.js:7
-o.setWalkmeTimeout @ walkme_lib_20261030-091036-27e770f2.br.js:7
-v @ walkme_lib_20261030-091036-27e770f2.br.js:7
-run @ walkme_lib_20261030-091036-27e770f2.br.js:7
-T @ walkme_lib_20261030-091036-27e770f2.br.js:7
-C @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-C.init @ walkme_lib_20261030-091036-27e770f2.br.js:7
-run @ walkme_lib_20261030-091036-27e770f2.br.js:7
-T @ walkme_lib_20261030-091036-27e770f2.br.js:7
-C @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-o @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-run @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-Ee @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-le @ polyfills.0bc17ac671dffe3e.js:7
-ye @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMicroTask @ polyfills.0bc17ac671dffe3e.js:7
-r @ polyfills.0bc17ac671dffe3e.js:7
-me @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-C @ polyfills.0bc17ac671dffe3e.js:7
-Ne.h.then @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-run @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-Ee @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-le @ polyfills.0bc17ac671dffe3e.js:7
-ye @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMicroTask @ polyfills.0bc17ac671dffe3e.js:7
-r @ polyfills.0bc17ac671dffe3e.js:7
-me @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-C @ polyfills.0bc17ac671dffe3e.js:7
-Ne.h.then @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-run @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-Ee @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-le @ polyfills.0bc17ac671dffe3e.js:7
-ye @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMicroTask @ polyfills.0bc17ac671dffe3e.js:7
-r @ polyfills.0bc17ac671dffe3e.js:7
-me @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-C @ polyfills.0bc17ac671dffe3e.js:7
-Ne.h.then @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-o @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-run @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-Ee @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-le @ polyfills.0bc17ac671dffe3e.js:7
-ye @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMicroTask @ polyfills.0bc17ac671dffe3e.js:7
-r @ polyfills.0bc17ac671dffe3e.js:7
-me @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-C @ polyfills.0bc17ac671dffe3e.js:7
-Ne.h.then @ polyfills.0bc17ac671dffe3e.js:7
-run @ walkme_lib_20261030-091036-27e770f2.br.js:7
-T @ walkme_lib_20261030-091036-27e770f2.br.js:7
-C @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-run @ walkme_lib_20261030-091036-27e770f2.br.js:7
-T @ walkme_lib_20261030-091036-27e770f2.br.js:7
-C @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-n @ walkme_lib_20261030-091036-27e770f2.br.js:11
-init @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:11
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:11
-init @ walkme_lib_20261030-091036-27e770f2.br.js:11
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-run @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-Ee @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-le @ polyfills.0bc17ac671dffe3e.js:7
-ye @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMicroTask @ polyfills.0bc17ac671dffe3e.js:7
-r @ polyfills.0bc17ac671dffe3e.js:7
-me @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Promise.then
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-C @ polyfills.0bc17ac671dffe3e.js:7
-Ne.h.then @ polyfills.0bc17ac671dffe3e.js:7
-83217 @ walkme_lib_20261030-091036-27e770f2.br.js:11
-__webpack_require__ @ walkme_lib_20261030-091036-27e770f2.br.js:13
-load @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-Promise.then
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:7
-ClassMakeTutorial @ walkme_lib_20261030-091036-27e770f2.br.js:7
-e @ walkme_lib_20261030-091036-27e770f2.br.js:7
-56119 @ walkme_lib_20261030-091036-27e770f2.br.js:7
-__webpack_require__ @ walkme_lib_20261030-091036-27e770f2.br.js:13
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:13
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:13
-(anonymous) @ walkme_lib_20261030-091036-27e770f2.br.js:13
-PendingScript
-M @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-un @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-window.walkme_pre_lib_loaded @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-t.callWalkmePreLibLoaded @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:24
-(anonymous) @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:24
-Promise.then
-t.start @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:24
-(anonymous) @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:3
-Promise.then
-_walkmeInternals.wmloader._walkmeInternals.wmloader.define.name @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:3
-e @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:3
-(anonymous) @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:3
-(anonymous) @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:3
-(anonymous) @ prelib-plugin-060ce67d-7978-3635-9b2f-a8933e22a11b.js:25
-PendingScript
-M @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-n @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-rn @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-(anonymous) @ walkme_c5c2b11dd9e14aeabfe295e3b8697769_https.js:1
-e @ wmjQuery360.js:2
-t @ wmjQuery360.js:2
-L.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-P.args.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-setTimeout
-y @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleTask @ polyfills.0bc17ac671dffe3e.js:7
-scheduleMacroTask @ polyfills.0bc17ac671dffe3e.js:7
-E @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ polyfills.0bc17ac671dffe3e.js:7
-Ae.n.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-(anonymous) @ wmjQuery360.js:2
-u @ wmjQuery360.js:2
-fireWith @ wmjQuery360.js:2
-fire @ wmjQuery360.js:2
-u @ wmjQuery360.js:2
-fireWith @ wmjQuery360.js:2
-ready @ wmjQuery360.js:2
-L.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-runTask @ polyfills.0bc17ac671dffe3e.js:7
-invokeTask @ polyfills.0bc17ac671dffe3e.js:7
-invoke @ polyfills.0bc17ac671dffe3e.js:7
-P.args.<computed> @ polyfills.0bc17ac671dffe3e.js:7
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-VM1824:104 [TR] Home (out of scope) | home #2 | ✅ 2 | ❌ 0 English/raw | ❔ 47 not in sheet | core seen 1/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Ayarlar''text'7'Rapor biçimlendirme''text'8'Veri tercihleri''text'9'Y''text'10'Hesap''text'11'Gizlilik tercihleri''text'12'E-posta''text'13'İletişim''text'14'Telefon numarası''text'15'Ülke''text'16'Görüntüleme ayarları''text'17'Saat dilimi''text'18'Dil''text'19'Meslek''text'20'Pozisyon''text'21'Üyelik''text'22'İptal et''text'23'Değişiklikleri Kaydet''text'24'Optiq''text'25'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'26'Yeni sohbet''text'27'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'28'Verilerimle sohbet et''text'29'Quick insights''text'30'Price Classes''text'31'#AutoTest_Rep_042926201876_1''text'32'Leaderboard''text'33'NewAssetType Draft''text'34'Price Classes Segmentation''text'35'Sales Trends''text'36'Scorecard''text'37'Segmentation''text'38'Price Classes Scorecard''text'39'Price Classes Trends''text'40'Şablon Seç''text'41'Sizin için''text'42'Rapor kütüphanesi''text'43'Merged dataset report''text'44'Rapor Oluştur''text'45"Optiq'i Aç"'title'46'Bir soru sorun...''placeholder'Array(47)
-VM1824:104 [TR] Home (out of scope) | home #3 | ✅ 1 | ❌ 0 English/raw | ❔ 30 not in sheet | core seen 1/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Ayarlar''text'7'Rapor biçimlendirme''text'8'Veri tercihleri''text'9'Y''text'10'Hesap''text'11'Gizlilik tercihleri''text'12'E-posta''text'13'İletişim''text'14'Telefon numarası''text'15'Ülke''text'16'Görüntüleme ayarları''text'17'Saat dilimi''text'18'Dil''text'19'Meslek''text'20'Pozisyon''text'21'Üyelik''text'22'İptal et''text'23'Değişiklikleri Kaydet''text'24'Optiq''text'25'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'26'Yeni sohbet''text'27'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'28"Optiq'i Aç"'title'29'Bir soru sorun...''placeholder'Array(30)
-VM1824:104 [TR] Home (out of scope) | home #4 | ✅ 2 | ❌ 0 English/raw | ❔ 52 not in sheet | core seen 1/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Anketler''text'7'Tekrar hoş geldiniz, güncellemelere bakalım''text'8'Tüm anketleri görüntüle''text'9'In progress''text'10'Appliances Purchase Behavior Survey''text'11'500/500 responses''text'12'Untitled Survey''text'13'400/800 responses''text'14'250/600 responses''text'15'0/0 responses''text'16'Anket kredisi''text'17'120 remaining''text'18'480/600 used''text'19'Resets Jan 1''text'20'Planı yükselt''text'21'Hızlı anket başlat''text'22'Optiq ile oluştur''text'23'Hedefinizi açıklayın ve Optiq anketinizi oluşturacak''text'24'Yayınlamadan önce tamamen düzenlenebilir''text'25'Sıfırdan başla''text'26'Anketinizi soru soru oluşturun''text'27'Boş anket''text'28'Anket içe aktar''text'29'Başka bir platformdan anket getirin''text'30'docs, .xlsx, .csv''text'31'Yardım ve öğrenme''text'32'Get started with survey''text'33'Central - Home''text'34'Become a survey expert''text'35'Enhance Product Strategy with Development Solutions''text'36'Using Optiq with survey''text'37'Industry Trends - NIQ''text'38"What's new in surveys"'text'39'AI for Business: Enterprise AI Insights & Use Cases | NIQ''text'40'Anketten daha fazlası''text'41'Survey report templates''text'42'Open your survey results in a prebuilt report to integrate with your NIQ data''text'43'GfK survey''text'44'Create surveys using the GfK panel to gather feedback from targeted audiences''text'45'Optiq''text'46'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'47'Yeni sohbet''text'48'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'49"Optiq'i Aç"'title'50'Survey credits used''aria-label'51'Bir soru sorun...''placeholder'Array(52)
-4139.6142218e05a633ef.js:24224 DS:Evaluate:DataSetBaseTypes -  (2) [{…}, {…}]
-4139.6142218e05a633ef.js:24224 DS:Evaluate:DataSetBaseTypes -  (2) [{…}, {…}]
-4139.6142218e05a633ef.js:24224 DS:Modal:Opened
-VM1824:104 [TR] Start from scratch | select-panelist #5 | ✅ 13 | ❌ 0 English/raw | ❔ 21 not in sheet | core seen 14/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'APPLIANCES''title'7'Beauty Supply''title'8'Total US''title'9'Total Panel''title'10'Cal Yr 2024 - w/e 12/28/24''title'11'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'12'Optiq''text'13'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'14'Yeni sohbet''text'15'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'16"Optiq'i Aç"'title'17'Step 1 of 3, current''aria-label'18'Step 2 of 3, pending''aria-label'19'Step 3 of 3, pending''aria-label'20'Bir soru sorun...''placeholder'Array(21)
-VM1824:104 [TR] Start from scratch | select-panelist #6 | ✅ 12 | ❌ 0 English/raw | ❔ 21 not in sheet | core seen 14/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'APPLIANCES''title'7'Beauty Supply''title'8'Total US''title'9'Total Panel''title'10'Cal Yr 2024 - w/e 12/28/24''title'11'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'12'Optiq''text'13'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'14'Yeni sohbet''text'15'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'16"Optiq'i Aç"'title'17'Step 1 of 3, current''aria-label'18'Step 2 of 3, pending''aria-label'19'Step 3 of 3, pending''aria-label'20'Bir soru sorun...''placeholder'Array(21)
-VM1824:104 [TR] Start from scratch | select-panelist #7 | ✅ 16 | ❌ 0 English/raw | ❔ 29 not in sheet | core seen 17/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'APPLIANCES''title'7'Beauty Supply''title'8'Total US''title'9'Total Panel''title'10'Cal Yr 2024 - w/e 12/28/24''title'11'100 Yanıt''text'12'150 Yanıt''text'13'200 Yanıt''text'14'250 Yanıt''text'15'300 Yanıt''text'16'400 Yanıt''text'17'500 Yanıt''text'18'İptal et''text'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, current''aria-label'26'Step 2 of 3, pending''aria-label'27'Step 3 of 3, pending''aria-label'28'Bir soru sorun...''placeholder'Array(29)
-VM1824:104 [TR] Start from scratch | build-survey #8 | ✅ 15 | ❌ 0 English/raw | ❔ 18 not in sheet | core seen 31/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'Minimum 3 questions are required to Publish a survey''text'8'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'9'Optiq''text'10'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'11'Yeni sohbet''text'12'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'13"Optiq'i Aç"'title'14'Step 1 of 3, completed''aria-label'15'Step 2 of 3, current''aria-label'16'Step 3 of 3, pending''aria-label'17'Bir soru sorun...''placeholder'Array(18)
-VM1824:104 [TR] Start from scratch | build-survey #9 | ✅ 16 | ❌ 0 English/raw | ❔ 18 not in sheet | core seen 31/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'Minimum 3 questions are required to Publish a survey''text'8'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'9'Optiq''text'10'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'11'Yeni sohbet''text'12'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'13"Optiq'i Aç"'title'14'Step 1 of 3, completed''aria-label'15'Step 2 of 3, current''aria-label'16'Step 3 of 3, pending''aria-label'17'Bir soru sorun...''placeholder'Array(18)
-VM1824:104 [TR] Start from scratch | build-survey #10 | ✅ 32 | ❌ 0 English/raw | ❔ 18 not in sheet | core seen 34/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'Minimum 3 questions are required to Publish a survey''text'8'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'9'Optiq''text'10'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'11'Yeni sohbet''text'12'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'13"Optiq'i Aç"'title'14'Step 1 of 3, completed''aria-label'15'Step 2 of 3, current''aria-label'16'Step 3 of 3, pending''aria-label'17'Bir soru sorun...''placeholder'Array(18)
-VM1824:104 [TR] Start from scratch | build-survey #11 | ✅ 12 | ❌ 0 English/raw | ❔ 21 not in sheet | core seen 34/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'Minimum 3 questions are required to Publish a survey''text'11'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'12'Optiq''text'13'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'14'Yeni sohbet''text'15'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'16"Optiq'i Aç"'title'17'Step 1 of 3, completed''aria-label'18'Step 2 of 3, current''aria-label'19'Step 3 of 3, pending''aria-label'20'Bir soru sorun...''placeholder'Array(21)
-VM1824:104 [TR] Start from scratch | build-survey #12 | ✅ 25 | ❌ 0 English/raw | ❔ 21 not in sheet | core seen 34/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'Minimum 3 questions are required to Publish a survey''text'11'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'12'Optiq''text'13'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'14'Yeni sohbet''text'15'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'16"Optiq'i Aç"'title'17'Step 1 of 3, completed''aria-label'18'Step 2 of 3, current''aria-label'19'Step 3 of 3, pending''aria-label'20'Bir soru sorun...''placeholder'Array(21)
-VM1824:104 [TR] Start from scratch | build-survey #13 | ✅ 23 | ❌ 0 English/raw | ❔ 25 not in sheet | core seen 34/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'Minimum 3 questions are required to Publish a survey''text'13'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'14'Optiq''text'15'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'16'Yeni sohbet''text'17'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'18"Optiq'i Aç"'title'19'Step 1 of 3, completed''aria-label'20'Step 2 of 3, current''aria-label'21'Step 3 of 3, pending''aria-label'22'Satır 1''placeholder'23'Satır 1, Beş yıldız ölçeği''aria-label'24'Bir soru sorun...''placeholder'Array(25)
-VM1824:104 [TR] Start from scratch | build-survey #14 | ✅ 24 | ❌ 0 English/raw | ❔ 34 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''text'15'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'16'Optiq''text'17'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'18'Yeni sohbet''text'19'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'20"Optiq'i Aç"'title'21'Step 1 of 3, completed''aria-label'22'Step 2 of 3, current''aria-label'23'Step 3 of 3, pending''aria-label'24'Satır 1, Beş yıldız ölçeği''aria-label'25'Satır 2, Beş yıldız ölçeği''aria-label'26'gfd''aria-label'27'Sütun 1''placeholder'28'fg''aria-label'29'Sütun 2''placeholder'30'dfg''aria-label'31'Satır 1''placeholder'32'Satır 2''placeholder'33'Bir soru sorun...''placeholder'Array(34)
-VM1824:104 [TR] Start from scratch | build-survey #15 | ✅ 26 | ❌ 0 English/raw | ❔ 35 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''text'15'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'16'Optiq''text'17'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'18'Yeni sohbet''text'19'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'20"Optiq'i Aç"'title'21'Step 1 of 3, completed''aria-label'22'Step 2 of 3, current''aria-label'23'Step 3 of 3, pending''aria-label'24'Satır 1, Beş yıldız ölçeği''aria-label'25'Satır 2, Beş yıldız ölçeği''aria-label'26'gfd''aria-label'27'Sütun 1''placeholder'28'fg''aria-label'29'Sütun 2''placeholder'30'dfg''aria-label'31'Satır 1''placeholder'32'Satır 2''placeholder'33'Satır 3''placeholder'34'Bir soru sorun...''placeholder'Array(35)
-VM1824:104 [TR] Start from scratch | build-survey #16 | ✅ 24 | ❌ 0 English/raw | ❔ 36 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''text'15'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'16'Optiq''text'17'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'18'Yeni sohbet''text'19'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'20"Optiq'i Aç"'title'21'Step 1 of 3, completed''aria-label'22'Step 2 of 3, current''aria-label'23'Step 3 of 3, pending''aria-label'24'Satır 1, Beş yıldız ölçeği''aria-label'25'Satır 2, Beş yıldız ölçeği''aria-label'26'gfd''aria-label'27'Sütun 1''placeholder'28'fg''aria-label'29'Sütun 2''placeholder'30'Sütun 3''placeholder'31'dfg''aria-label'32'Satır 1''placeholder'33'Satır 2''placeholder'34'Satır 3''placeholder'35'Bir soru sorun...''placeholder'Array(36)
-VM1824:104 [TR] Start from scratch | build-survey #17 | ✅ 26 | ❌ 0 English/raw | ❔ 36 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''text'15'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'16'Optiq''text'17'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'18'Yeni sohbet''text'19'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'20"Optiq'i Aç"'title'21'Step 1 of 3, completed''aria-label'22'Step 2 of 3, current''aria-label'23'Step 3 of 3, pending''aria-label'24'Satır 1, Beş yıldız ölçeği''aria-label'25'Satır 2, Beş yıldız ölçeği''aria-label'26'gfd''aria-label'27'Sütun 1''placeholder'28'fg''aria-label'29'Sütun 2''placeholder'30'dfgf''aria-label'31'Sütun 3''placeholder'32'dfg''aria-label'33'Satır 1''placeholder'34'Satır 2''placeholder'35'Bir soru sorun...''placeholder'Array(36)
-VM1824:104 [TR] Start from scratch | build-survey #18 | ✅ 24 | ❌ 0 English/raw | ❔ 34 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'19'Optiq''text'20'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'21'Yeni sohbet''text'22'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'23"Optiq'i Aç"'title'24'Step 1 of 3, completed''aria-label'25'Step 2 of 3, current''aria-label'26'Step 3 of 3, pending''aria-label'27'Satır 1, Beş yıldız ölçeği''aria-label'28'Satır 2, Beş yıldız ölçeği''aria-label'29'Sütun 1''placeholder'30'Sütun 2''placeholder'31'Satır 1''placeholder'32'Satır 2''placeholder'33'Bir soru sorun...''placeholder'Array(34)
-VM1824:104 [TR] Start from scratch | build-survey #19 | ✅ 20 | ❌ 0 English/raw | ❔ 31 not in sheet | core seen 36/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, completed''aria-label'26'Step 2 of 3, current''aria-label'27'Step 3 of 3, pending''aria-label'28'Satır 1, Beş yıldız ölçeği''aria-label'29'Satır 2, Beş yıldız ölçeği''aria-label'30'Bir soru sorun...''placeholder'Array(31)
-VM1824:104 [TR] Start from scratch | build-survey #20 | ✅ 13 | ❌ 0 English/raw | ❔ 31 not in sheet | core seen 41/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''aria-label'8'fghfg''text'9'fgh''text'10'dgfdg''aria-label'11'fdg''aria-label'12'dfgfd''aria-label'13'gfdg''text'14'dfgfdg''aria-label'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, completed''aria-label'26'Step 2 of 3, current''aria-label'27'Step 3 of 3, pending''aria-label'28'Satır 1, Beş yıldız ölçeği''aria-label'29'Satır 2, Beş yıldız ölçeği''aria-label'30'Bir soru sorun...''placeholder'Array(31)
-VM1824:104 [TR] Start from scratch | build-survey #21 | ✅ 14 | ❌ 0 English/raw | ❔ 31 not in sheet | core seen 41/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, completed''aria-label'26'Step 2 of 3, current''aria-label'27'Step 3 of 3, pending''aria-label'28'Satır 1, Beş yıldız ölçeği''aria-label'29'Satır 2, Beş yıldız ölçeği''aria-label'30'Bir soru sorun...''placeholder'Array(31)
-VM1824:104 [TR] Start from scratch | build-survey #22 | ✅ 18 | ❌ 0 English/raw | ❔ 31 not in sheet | core seen 42/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, completed''aria-label'26'Step 2 of 3, current''aria-label'27'Step 3 of 3, pending''aria-label'28'Satır 1, Beş yıldız ölçeği''aria-label'29'Satır 2, Beş yıldız ölçeği''aria-label'30'Bir soru sorun...''placeholder'Array(31)
-VM1824:104 [TR] Start from scratch | build-survey #23 | ✅ 18 | ❌ 0 English/raw | ❔ 48 not in sheet | core seen 42/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24'Verilerimle sohbet et''text'25'Quick insights''text'26'Price Classes''text'27'#AutoTest_Rep_042926201876_1''text'28'Leaderboard''text'29'NewAssetType Draft''text'30'Price Classes Segmentation''text'31'Sales Trends''text'32'Scorecard''text'33'Segmentation''text'34'Price Classes Scorecard''text'35'Price Classes Trends''text'36'Şablon Seç''text'37'Sizin için''text'38'Rapor kütüphanesi''text'39'Merged dataset report''text'40'Rapor Oluştur''text'41"Optiq'i Aç"'title'42'Step 1 of 3, completed''aria-label'43'Step 2 of 3, current''aria-label'44'Step 3 of 3, pending''aria-label'45'Satır 1, Beş yıldız ölçeği''aria-label'46'Satır 2, Beş yıldız ölçeği''aria-label'47'Bir soru sorun...''placeholder'Array(48)
-VM1824:104 [TR] Start from scratch | build-survey #24 | ✅ 22 | ❌ 0 English/raw | ❔ 44 not in sheet | core seen 42/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'1. fhb''text'20'(İsteğe bağlı)''text'21'A reviewer must clarify their intended meaning before respondents can answer reliably.''text'22'2. dgfdg''text'23'Clarify the question and provide distinct, meaningful options so respondents can select an answer.''text'24'3. dfgfd''text'25'Clarify what respondents should rate and provide meaningful rating items.''text'26'4. dfgfdg''text'27'Clarify what respondents are being asked to recommend before using the NPS scale.''text'28'5. dfgfd''text'29'Clarify the question and provide interpretable, ordered scale labels.''text'30'6. dfgfdg''text'31'Clarify the question and provide distinct, interpretable, ordered scale labels.''text'32'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'33'Optiq''text'34'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'35'Yeni sohbet''text'36'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'37"Optiq'i Aç"'title'38'Step 1 of 3, completed''aria-label'39'Step 2 of 3, current''aria-label'40'Step 3 of 3, pending''aria-label'41'Satır 1, Beş yıldız ölçeği''aria-label'42'Satır 2, Beş yıldız ölçeği''aria-label'43'Bir soru sorun...''placeholder'Array(44)
-VM1824:104 [TR] Start from scratch | build-survey #25 | ✅ 16 | ❌ 0 English/raw | ❔ 31 not in sheet | core seen 42/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'fhb''text'8'fghfg''aria-label'9'fgh''aria-label'10'dgfdg''text'11'fdg''aria-label'12'dfgfd''text'13'gfdg''text'14'dfgfdg''text'15'gfd''aria-label'16'fg''aria-label'17'dfg''aria-label'18'fdgfd''aria-label'19'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'20'Optiq''text'21'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'22'Yeni sohbet''text'23'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'24"Optiq'i Aç"'title'25'Step 1 of 3, completed''aria-label'26'Step 2 of 3, current''aria-label'27'Step 3 of 3, pending''aria-label'28'Satır 1, Beş yıldız ölçeği''aria-label'29'Satır 2, Beş yıldız ölçeği''aria-label'30'Bir soru sorun...''placeholder'Array(31)
-4139.6142218e05a633ef.js:24224 DS:Evaluate:DataSetBaseTypes -  (2) [{…}, {…}]
-4139.6142218e05a633ef.js:24224 DS:Evaluate:DataSetBaseTypes -  (2) [{…}, {…}]
-4139.6142218e05a633ef.js:24224 DS:Modal:Opened
-VM1824:104 [TR] Start with prompt | select-panelist #26 | ✅ 7 | ❌ 0 English/raw | ❔ 24 not in sheet | core seen 43/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Optiq''text'7'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'8'Yeni sohbet''text'9'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'10'Ürün Teklifi''text'11'Panel On Demand Homescan''text'12'Öncelikle perakendecilerde ve mağazadaki kanallard…satın alımlarının derinlemesine, eğilimli takibi.''text'13'Tümü''text'14'Panel On Demand Omnishopper''text'15'Çevrim içi ve mağaza kanallarında hane halkı satın alma davranışına ilişkin geniş eğilim analizi.''text'16'İptal et''text'17'Sonraki''text'18"Optiq'i Aç"'title'19'Step 1 of 3, current''aria-label'20'Step 2 of 3, pending''aria-label'21'Step 3 of 3, pending''aria-label'22'Bir soru sorun...''placeholder'23'Varsayılandan kaldır''aria-label'Array(24)
-VM1824:104 [TR] Start with prompt | select-panelist #27 | ✅ 12 | ❌ 0 English/raw | ❔ 21 not in sheet | core seen 43/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'APPLIANCES''title'7'Beauty Supply''title'8'Total US''title'9'Total Panel''title'10'Cal Yr 2024 - w/e 12/28/24''title'11'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'12'Optiq''text'13'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'14'Yeni sohbet''text'15'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'16"Optiq'i Aç"'title'17'Step 1 of 3, current''aria-label'18'Step 2 of 3, pending''aria-label'19'Step 3 of 3, pending''aria-label'20'Bir soru sorun...''placeholder'Array(21)
-VM1824:104 [TR] Start with prompt | select-panelist #28 | ✅ 16 | ❌ 0 English/raw | ❔ 30 not in sheet | core seen 44/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'APPLIANCES''title'7'Beauty Supply''title'8'Total US''title'9'Total Panel''title'10'Cal Yr 2024 - w/e 12/28/24''title'11'100 Yanıt''text'12'150 Yanıt''text'13'200 Yanıt''text'14'250 Yanıt''text'15'300 Yanıt''text'16'400 Yanıt''text'17'500 Yanıt''text'18'Optiq beta aşamasında bir yapay zekadır ve hatalar yapabilir.''text'19'İptal et''text'20'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'21'Optiq''text'22'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'23'Yeni sohbet''text'24'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'25"Optiq'i Aç"'title'26'Step 1 of 3, current''aria-label'27'Step 2 of 3, pending''aria-label'28'Step 3 of 3, pending''aria-label'29'Bir soru sorun...''placeholder'Array(30)
-VM1824:104 [TR] Start with prompt | build-survey #29 | ✅ 17 | ❌ 0 English/raw | ❔ 17 not in sheet | core seen 48/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Untitled Survey''title'7'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'8'Optiq''text'9'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'10'Yeni sohbet''text'11'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'12"Optiq'i Aç"'title'13'Step 1 of 3, completed''aria-label'14'Step 2 of 3, current''aria-label'15'Step 3 of 3, pending''aria-label'16'Bir soru sorun...''placeholder'Array(17)
-VM1824:104 [TR] Start with prompt | build-survey #30 | ✅ 16 | ❌ 0 English/raw | ❔ 49 not in sheet | core seen 51/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you purchase the appliance?''text'13'Beauty supply store''aria-label'14'Other physical store''aria-label'15'Online store''aria-label'16'Other''aria-label'17'How would you rate each of the following aspects of finding and purchasing the appliance?''text'18'Excellent''aria-label'19'Good''aria-label'20'Fair''aria-label'21'Poor''aria-label'22'Availability of the appliance you wanted''aria-label'23'Ease of finding a suitable appliance''aria-label'24'How important was each of the following when choosing the appliance?''text'25'Very important''aria-label'26'Somewhat important''aria-label'27'Not very important''aria-label'28'Not at all important''aria-label'29'Price and value''aria-label'30'Product performance and features''aria-label'31'Brand reputation''aria-label'32'Availability''aria-label'33'Overall, how would you rate the appliance you purchased?''text'34'Overall rating of the appliance''text'35'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'36'Not at all likely''aria-label'37'Extremely likely''aria-label'38'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'39'Optiq''text'40'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'41'Yeni sohbet''text'42'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'43"Optiq'i Aç"'title'44'Step 1 of 3, completed''aria-label'45'Step 2 of 3, current''aria-label'46'Step 3 of 3, pending''aria-label'47'Satır 1, Beş yıldız ölçeği''aria-label'48'Bir soru sorun...''placeholder'Array(49)
-VM1824:104 [TR] Start with prompt | build-survey #31 | ✅ 17 | ❌ 0 English/raw | ❔ 49 not in sheet | core seen 51/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you purchase the appliance?''text'13'Beauty supply store''aria-label'14'Other physical store''aria-label'15'Online store''aria-label'16'Other''aria-label'17'How would you rate each of the following aspects of finding and purchasing the appliance?''text'18'Excellent''aria-label'19'Good''aria-label'20'Fair''aria-label'21'Poor''aria-label'22'Availability of the appliance you wanted''aria-label'23'Ease of finding a suitable appliance''aria-label'24'How important was each of the following when choosing the appliance?''text'25'Very important''aria-label'26'Somewhat important''aria-label'27'Not very important''aria-label'28'Not at all important''aria-label'29'Price and value''aria-label'30'Product performance and features''aria-label'31'Brand reputation''aria-label'32'Availability''aria-label'33'Overall, how would you rate the appliance you purchased?''text'34'Overall rating of the appliance''text'35'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'36'Not at all likely''aria-label'37'Extremely likely''aria-label'38'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'39'Optiq''text'40'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'41'Yeni sohbet''text'42'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'43"Optiq'i Aç"'title'44'Step 1 of 3, completed''aria-label'45'Step 2 of 3, current''aria-label'46'Step 3 of 3, pending''aria-label'47'Satır 1, Beş yıldız ölçeği''aria-label'48'Bir soru sorun...''placeholder'Array(49)
-VM1824:104 [TR] Start with prompt | build-survey #32 | ✅ 16 | ❌ 0 English/raw | ❔ 52 not in sheet | core seen 51/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you buy the appliance?''text'13'Appliance or electronics store''aria-label'14'Department store''aria-label'15'Home improvement store''aria-label'16'Supermarket or hypermarket''aria-label'17'Online retailer''aria-label'18"Brand's website"'aria-label'19'Other''aria-label'20'How would you rate each of the following aspects of finding and purchasing the appliance?''text'21'Excellent''aria-label'22'Good''aria-label'23'Fair''aria-label'24'Poor''aria-label'25'Availability of the appliance you wanted''aria-label'26'Ease of finding a suitable appliance''aria-label'27'How important was each of the following when choosing the appliance?''text'28'Very important''aria-label'29'Somewhat important''aria-label'30'Not very important''aria-label'31'Not at all important''aria-label'32'Price and value''aria-label'33'Product performance and features''aria-label'34'Brand reputation''aria-label'35'Availability''aria-label'36'Overall, how would you rate the appliance you purchased?''text'37'Overall rating of the appliance''text'38'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'39'Not at all likely''aria-label'40'Extremely likely''aria-label'41'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'42'Optiq''text'43'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'44'Yeni sohbet''text'45'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'46"Optiq'i Aç"'title'47'Step 1 of 3, completed''aria-label'48'Step 2 of 3, current''aria-label'49'Step 3 of 3, pending''aria-label'50'Satır 1, Beş yıldız ölçeği''aria-label'51'Bir soru sorun...''placeholder'Array(52)
-VM1824:104 [TR] Start with prompt | build-survey #33 | ✅ 16 | ❌ 0 English/raw | ❔ 66 not in sheet | core seen 51/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you buy the appliance?''text'13'Appliance or electronics store''aria-label'14'Department store''aria-label'15'Home improvement store''aria-label'16'Supermarket or hypermarket''aria-label'17'Online retailer''aria-label'18"Brand's website"'aria-label'19'Other''aria-label'20'How would you rate each of the following aspects of finding and purchasing the appliance?''text'21'Excellent''aria-label'22'Good''aria-label'23'Fair''aria-label'24'Poor''aria-label'25'Availability of the appliance you wanted''aria-label'26'Ease of finding a suitable appliance''aria-label'27'How important was each of the following when choosing the appliance?''text'28'Very important''aria-label'29'Somewhat important''aria-label'30'Not very important''aria-label'31'Not at all important''aria-label'32'Price and value''aria-label'33'Product performance and features''aria-label'34'Brand reputation''aria-label'35'Availability''aria-label'36'Overall, how would you rate the appliance you purchased?''text'37'Overall rating of the appliance''text'38'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'39'Not at all likely''aria-label'40'Extremely likely''aria-label'41'What was the primary intended use of the appliance when you purchased it?''text'42'Personal or household use''aria-label'43'Professional or work use''aria-label'44'Both personal and professional use''aria-label'45'Since purchasing the appliance, has it needed any repairs?''text'46'Yes, and it has been repaired''aria-label'47'Yes, but it has not been repaired''aria-label'48'No''aria-label'49'Not sure''aria-label'50'If the appliance replaced a previous one, what happened to the previous appliance?''text'51'Kept it''aria-label'52'Recycled or disposed of it''aria-label'53'Sold or gave it away''aria-label'54'This purchase did not replace a previous appliance''aria-label'55'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'56'Optiq''text'57'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'58'Yeni sohbet''text'59'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'60"Optiq'i Aç"'title'61'Step 1 of 3, completed''aria-label'62'Step 2 of 3, current''aria-label'63'Step 3 of 3, pending''aria-label'64'Satır 1, Beş yıldız ölçeği''aria-label'65'Bir soru sorun...''placeholder'Array(66)
-VM1824:104 [TR] Start with prompt | build-survey #34 | ✅ 19 | ❌ 0 English/raw | ❔ 66 not in sheet | core seen 52/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you buy the appliance?''text'13'Appliance or electronics store''aria-label'14'Department store''aria-label'15'Home improvement store''aria-label'16'Supermarket or hypermarket''aria-label'17'Online retailer''aria-label'18"Brand's website"'aria-label'19'Other''aria-label'20'How would you rate each of the following aspects of finding and purchasing the appliance?''text'21'Excellent''aria-label'22'Good''aria-label'23'Fair''aria-label'24'Poor''aria-label'25'Availability of the appliance you wanted''aria-label'26'Ease of finding a suitable appliance''aria-label'27'How important was each of the following when choosing the appliance?''text'28'Very important''aria-label'29'Somewhat important''aria-label'30'Not very important''aria-label'31'Not at all important''aria-label'32'Price and value''aria-label'33'Product performance and features''aria-label'34'Brand reputation''aria-label'35'Availability''aria-label'36'Overall, how would you rate the appliance you purchased?''text'37'Overall rating of the appliance''text'38'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'39'Not at all likely''aria-label'40'Extremely likely''aria-label'41'What was the primary intended use of the appliance when you purchased it?''text'42'Personal or household use''aria-label'43'Professional or work use''aria-label'44'Both personal and professional use''aria-label'45'Since purchasing the appliance, has it needed any repairs?''text'46'Yes, and it has been repaired''aria-label'47'Yes, but it has not been repaired''aria-label'48'No''aria-label'49'Not sure''aria-label'50'If the appliance replaced a previous one, what happened to the previous appliance?''text'51'Kept it''aria-label'52'Recycled or disposed of it''aria-label'53'Sold or gave it away''aria-label'54'This purchase did not replace a previous appliance''aria-label'55'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'56'Optiq''text'57'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'58'Yeni sohbet''text'59'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'60"Optiq'i Aç"'title'61'Step 1 of 3, completed''aria-label'62'Step 2 of 3, current''aria-label'63'Step 3 of 3, pending''aria-label'64'Satır 1, Beş yıldız ölçeği''aria-label'65'Bir soru sorun...''placeholder'Array(66)
-VM1824:104 [TR] Start with prompt | build-survey #35 | ✅ 16 | ❌ 0 English/raw | ❔ 71 not in sheet | core seen 52/133
-VM1824:107 ❔ Not in the sheet (no outline) - check by eye; data like dataset names is fine:
-2669.7930e319795a7c54.js:1 (index)TextWhere(index)TextWhere0'İşimi izle''text'1'Verilerimi analiz et''text'2'Çalışmalarımı bul''text'3'Daha fazla araç keşfet''text'4'Yogesh''text'5'CHANGE DATASET''text'6'Appliances Purchase Behavior Survey''title'7'Which type of appliance did you purchase?''text'8'Hair dryer''aria-label'9'Hair styling appliance, such as a straightener or curling tool''aria-label'10'Grooming appliance, such as an electric trimmer''aria-label'11'Other appliance''aria-label'12'Where did you buy the appliance?''text'13'Appliance or electronics store''aria-label'14'Department store''aria-label'15'Home improvement store''aria-label'16'Supermarket or hypermarket''aria-label'17'Online retailer''aria-label'18"Brand's website"'aria-label'19'Other''aria-label'20'How would you rate each of the following aspects of finding and purchasing the appliance?''text'21'Excellent''aria-label'22'Good''aria-label'23'Fair''aria-label'24'Poor''aria-label'25'Availability of the appliance you wanted''aria-label'26'Ease of finding a suitable appliance''aria-label'27'How important was each of the following when choosing the appliance?''text'28'Very important''aria-label'29'Somewhat important''aria-label'30'Not very important''aria-label'31'Not at all important''aria-label'32'Price and value''aria-label'33'Product performance and features''aria-label'34'Brand reputation''aria-label'35'Availability''aria-label'36'Overall, how would you rate the appliance you purchased?''text'37'Overall rating of the appliance''text'38'How likely are you to recommend the brand of the appliance you purchased to someone you know?''text'39'Not at all likely''aria-label'40'Extremely likely''aria-label'41'What was the primary intended use of the appliance when you purchased it?''text'42'Personal or household use''aria-label'43'Professional or work use''aria-label'44'Both personal and professional use''aria-label'45'Since purchasing the appliance, has it needed any repairs?''text'46'Yes, and it has been repaired''aria-label'47'Yes, but it has not been repaired''aria-label'48'No''aria-label'49'Not sure''aria-label'50'If the appliance replaced a previous one, what happened to the previous appliance?''text'51'Kept it''aria-label'52'Recycled or disposed of it''aria-label'53'Sold or gave it away''aria-label'54'This purchase did not replace a previous appliance''aria-label'55'How often do you use the appliance you purchased?''text'56'Daily''aria-label'57'A few times a week''aria-label'58'About once a week''aria-label'59'Less than once a week''aria-label'60'NielsenIQ Panel On Demand Omnishopper | EXP Omni Agg SI 5yrs Synd | Entire Dataset''text'61'Optiq''text'62'Başlamak için bir soru sorun. Optiq hızla gelişiyo… bu nedenle geri bildiriminiz yardımcı olacaktır.''text'63'Yeni sohbet''text'64'Yapay zeka tarafından oluşturulan içerikler hatalı olabilir.''text'65"Optiq'i Aç"'title'66'Step 1 of 3, completed''aria-label'67'Step 2 of 3, current''aria-label'68'Step 3 of 3, pending''aria-label'69'Satır 1, Beş yıldız ölçeği''aria-label'70'Bir soru sorun...''placeholder'Array(71)
+Bar Chart
+Column Chart
+Pie Chart
+Line Chart
+Table View
+AC11: Multiple Choice Visualization Support
+The dashboard shall support the following visualizations for Multiple Choice questions:
+
+Bar Chart
+Column Chart
+Pie Chart
+Line Chart
+Table View
+AC12: Rating Visualization Support
+The dashboard shall support the following visualizations for Rating questions:
+
+Heatmap
+Table View
+AC13: NPS Visualization Support
+The dashboard shall support the following visualizations for NPS questions:
+
+Speedometer
+Bar Chart
+Table View
+And the solution shall support future extensibility for additional chart formats.
+
+AC14: Point and Multi-Scale Visualization Support
+For Point Scale and Multi-Scale questions:
+
+Combined View
+
+Heatmap
+Table
+Single Statement View
+
+Bar Chart
+Column Chart
+Pie Chart
+Line Chart
+Table
+shall be supported.
+
+AC15: Survey Overview Access
+Given a user accesses the Results Dashboard
+When survey results are viewed
+Then the Survey Overview tab shall remain accessible regardless of dashboard stage.
+
+AC16: AI Summary Placement
+Given a completed survey qualifies for AI Summary generation
+When a user accesses the completed Results Dashboard
+Then the AI Summary shall appear below the KPI section and above results visualizations.
+
+AC17: AI Summary Generation
+Given a survey has reached completion status
+When the AI Summary is generated
+Then the summary shall present:
+
+Overall survey findings
+Key trends
+Notable insights
+Significant conclusions
+based on collected survey responses.
+
+AC18: Export and Share Controls
+Given a user has access to the Results Dashboard
+When the survey is not yet complete
+Then Export and Share controls shall remain unavailable.
+
+And
+
+When the survey reaches completion status
+Then Export and Share controls shall become available according to the Export and Sharing requirements defined in dependent epics.
+
+AC19: Empty-State Handling
+Given dashboard visualizations do not yet contain data
+When the user views a chart or table
+Then the dashboard shall display an appropriate empty-state experience rather than an error.
+
+AC20: Live Results Accuracy
+Given responses are being collected
+When the Results Dashboard is rendered
+Then charts, tables, KPIs, and AI-generated insights shall be based on the latest available survey response data.
+
+AC21: Authorization and Access Control
+Given a user attempts to access a Results Dashboard
+When permissions are evaluated
+Then only authorized users shall be allowed to view survey results, exports, AI summaries, and related dashboard artifacts.
+
+AC22: Design Compliance
+Given the Results Dashboard is rendered
+When users interact with the experience
+Then layouts, component placement, workflow progression, and dashboard presentation shall align with the approved Survey Results dashboard designs.
+-----------------------------
+Background:
+
+After users pass the survey "Build" portion of their user experience, they will "Review" their Survey and then send it through to "Publishing".  After the "Publishing" phase, the Survey will be fielded to participants and responses will begin to come through in a "Results" dashboard view for them to analyze. This epic is covering the UI build of the "Results" dashboard, inclusive of all the charts, tables, KPIs, AI Summary, and the placement of relevant functions. 
+
+Goal: Develop the screens and functionality to support a "Results" dashboard where survey results are live and viewable by users in a variety of formats.  
+
+ 
+
+Scope: 
+
+Trigger
+Dashboard should become available immediately upon publication.  When a user selects "Publish", they should unlock the dashboard view.  In the line tracker at the top of the screen "Survey Results" is highlighted.  There are different stages of the dashboard.
+Just Published --> FMS
+User should be immediately directed to Find My Stuff experience where the dashboard link is present, live, and selectable
+Text disclaimer/pop-up required alerting the user that their survey was just published and can be referenced here. 
+Stage 1 - No responses gathered
+Disclaimer should be present on page with text reminder that the survey was just launched and the data is not robust
+Share/Export functions should be disabled
+Charts and tables are present, but empty
+KPIs are present and live
+Survey overview tab is present
+Stage 2 - Survey responses coming in, not complete
+Disclaimer should still be present
+Share/Export functions should be disabled
+Charts and tables are present, displaying incremental responses
+KPIs are present and live, reflecting the increase in responses accurately
+Survey overview tab is present
+Notification should be sent out to user at the half-way point of full responses i.e. if user requires 400 responses, notification goes out at 200 responses (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
+Stage 3 - Survey is complete, all responses gathered
+Disclaimer is removed
+Share/Export functions should be enabled
+AI Summary unlocked
+Survey overview tab is present
+Notification should be sent to user that survey is complete (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
+Charts and Tables
+For each question type, we have associated charts and displays that correspond and should be displayed.  Chart Library Supported charts only 
+Single Choice 
+Bar (Default + Toggle)
+Column (Toggle)
+Pie (Toggle)
+Table (Persistent)
+Multiple Choice
+Bar (Default + Toggle)
+Column (Toggle)
+Pie (Toggle)
+Table (Persistent)
+Rating (TBD)
+Heatmap
+Table
+NPS
+Speedometer (Persistent)
+Bar (Default + Toggle)
+Column (Toggle)
+Pie (Toggle)
+Table (Persistent)
+Point and Multi Scale
+Main (Combined view)
+Heatmap (Persistent)
+Table (Persistent)
+Sub (Single statement view)
+Bar (Toggle)
+Column (Toggle)
+Pie (Default + Toggle)
+Table (Toggle)
+KPIs
+3 KPIs for MVP listed in this order:
+Total Responses
+Completion Rate
+Time left on survey
+All are live and should update upon page refresh to reflect new responses
+AI Summary
+AI Summary sits at the top of the results dashboard, underneath the KPIs.  
+Triggered to load when survey is complete and display a text summary of the results, including insights on overall summary, trends, and notable conclusions to the user. 
+Do we give a follow-up option? 
+Export and Share
+See Export epic: 
+Share?
