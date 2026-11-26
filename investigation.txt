@@ -1,238 +1,234 @@
+The investigation is complete and written to localization-phase-2.md. No existing files were modified — only this new file (and the new e2e/investigation/ folder, which is already in .gitignore).
 
-AC1: Results Dashboard Availability
-Given a survey has been successfully published
-When publication completes
-Then the Survey Results dashboard shall become available immediately to authorized users
-And the Survey Results step shall be highlighted in the survey workflow tracker.
+Summary of findings (190 locators total across the 8 files):
 
-AC2: Post-Publish Navigation
-Given a user publishes a survey
-When publication completes
-Then the user shall be directed to the Find My Stuff (FMS) experience
-And a link to the Results Dashboard shall be visible and selectable
-And a message shall inform the user that their survey has been published and results can be monitored from the dashboard.
+Group	Count	Meaning
+ALREADY TEST-ID	103	selector already keys off data-test-id
+TEST-ID EXISTS, NOT USED	13	element already has data-test-id (or the inconsistent data-testid), but the locator uses text/class/role/id instead
+NO TEST-ID	67	no data-test-id exists; mostly shared library elements (external crf-uic-*/niq-*/crf-data-selector-panel-v2/re-dataset-picker components, dynamic toasts, or pages outside this repo like the IdP login and FMS admin pages), plus a few host tags (<crf-uic-save-a-copy>, <crf-uic-create-folder>, <niq-step>, <niq-link class="view-all-link">) that we do author and could annotate
+UNUSED	7	never referenced from any page object or test
 
-AC3: Stage 1 – No Responses Received
-Given a survey has been published and no responses have been received
-When a user accesses the Results Dashboard
-Then a disclaimer shall indicate that the survey is newly launched and insufficient data has been collected
-And charts and tables shall be displayed in an empty state
-And KPI components shall be visible and active
-And the Survey Overview tab shall be available
-And Export and Share functions shall be disabled.
+Notable findings worth flagging for Phase 2 planning:
 
-AC4: Stage 2 – Responses In Progress
-Given a survey has received responses but has not reached its target completion threshold
-When a user accesses the Results Dashboard
-Then a disclaimer shall indicate that results are still being collected
-And charts and tables shall display currently available responses
-And KPI values shall accurately reflect collected responses
-And the Survey Overview tab shall remain available
-And Export and Share functions shall remain disabled.
+startFromScratch/startWithPrompt rely on a data-testid attribute (missing the hyphen) in survey-homepage.component.html:92 — inconsistent with the rest of the app's data-test-id convention.
+Several already-tagged elements (eligibilityMessage, responsesCreditMessage, footerSelectedValue, searchForPanelistsButton, selectDatasetButton, questionCountError, reviewSurveyDetailsDialog, publishEditSurveyButton, publishSurveyTitle, publishQuestionSummary, publish-response-count-text, questionTextDisplay) could switch to their existing data-test-id instead of text/class/role selectors.
+optiqHeading's target text ("Let's get you started with Optiq!") couldn't be located anywhere in libs/**/*.html or related TS/translation sources — likely stale.
+----------------------------------------------------
+## Phase 1 - Investigation (test-ids)
 
-AC5: Stage 3 – Survey Complete
-Given a survey has achieved its required response target or completed fielding status
-When a user accesses the Results Dashboard
-Then the disclaimer shall be removed
-And Export and Share functionality shall be enabled
-And the AI Summary shall become available
-And the Survey Overview tab shall remain available.
+Scope: every locator in `e2e/locators/survey/*.json`, cross-checked against `libs/**/*.html` (app source) and against actual usage in `e2e/page-objects` / `e2e/tests`.
 
-AC6: Dashboard State Management
-Given a survey transitions between response collection states
-When response volumes increase or completion criteria are met
-Then the dashboard shall automatically reflect the appropriate stage (No Responses, In Progress, Complete) based on survey status and response thresholds.
+Notes:
+- "Shared library" means the target element is rendered internally by a `niq-*` / `crf-uic-*` / `crf-data-selector-panel-v2` / `re-dataset-picker` component and is not an element we author in our own `libs/**/*.html` templates, so no test-id can be added to it from this repo.
+- A few elements use `data-testid` (no hyphen) instead of the repo's `data-test-id` convention — these are called out explicitly in the "TEST-ID EXISTS, NOT USED" table since they are a naming inconsistency, not a missing attribute.
+- Dynamic/toast messages created via `ToastService.InsertToast(...)` (TS code, not HTML) are treated as "shared library" since there is no template element to annotate.
 
-AC7: KPI Display
-Given a user accesses the Results Dashboard
-When KPI data is available
-Then the following KPIs shall be displayed in the specified order:
+### Group 1 — ALREADY TEST-ID
 
-Total Responses
-Completion Rate
-Time Remaining on Survey
-And KPI values shall reflect the most current survey data available.
+| file | elementName | current selector | data-test-id |
+|---|---|---|---|
+| survey-builder.locator.json | questionTypeSingleChoice | `[data-test-id='question-type-SINGLE_CHOICE']` | question-type-SINGLE_CHOICE |
+| survey-builder.locator.json | questionTypeMultipleChoice | `[data-test-id='question-type-MULTIPLE_CHOICE']` | question-type-MULTIPLE_CHOICE |
+| survey-builder.locator.json | questionTypeRating | `[data-test-id='question-type-STAR_RATING']` | question-type-STAR_RATING |
+| survey-builder.locator.json | questionTypeNPS | `[data-test-id='question-type-NET_PROMOTER_SCORE']` | question-type-NET_PROMOTER_SCORE |
+| survey-builder.locator.json | questionTypePointScale | `[data-test-id='question-type-SINGLE_POINT_SCALE']` | question-type-SINGLE_POINT_SCALE |
+| survey-builder.locator.json | questionTypeMultiScale | `[data-test-id='question-type-MULTIPLE_POINT_SCALE']` | question-type-MULTIPLE_POINT_SCALE |
+| survey-builder.locator.json | questionTextInput | `[data-test-id='question-text-input-${text}-input']` | question-text-input-${text}-input |
+| survey-builder.locator.json | ratingQuestionTextInput | `[data-test-id^='question-text-input-'] input:visible` | question-text-input-* |
+| survey-builder.locator.json | ratingRowInput | `[data-test-id^='rating-row-input-'] input:visible` | rating-row-input-* |
+| survey-builder.locator.json | addRatingRowButton | `niq-button[data-test-id^='add-rating-row-']:visible` | add-rating-row-* |
+| survey-builder.locator.json | addOptionButton | `[data-test-id='add-option']` | add-option |
+| survey-builder.locator.json | optionRow | `[data-test-id^='question-option-row-']` | question-option-row-* |
+| survey-builder.locator.json | removeOptionIcon | `[data-test-id^='remove-option-']` | remove-option-* |
+| survey-builder.locator.json | addRowButton | `[data-test-id='add-scale-row']` | add-scale-row |
+| survey-builder.locator.json | addColumnButton | `[data-test-id='add-scale-column']` | add-scale-column |
+| survey-builder.locator.json | scaleAddMenuTrigger | `[data-test-id='scale-add-menu-trigger']` | scale-add-menu-trigger |
+| survey-builder.locator.json | requiredToggle | `[data-test-id='-input-checkbox'], [data-test-id^='required-toggle-'][data-test-id$='-input-checkbox']` | required-toggle-*-input-checkbox |
+| survey-builder.locator.json | editQuestionButton | `niq-icon-button[data-test-id^='edit-question-']` | edit-question-* |
+| survey-builder.locator.json | inlineAddEditor | `[data-test-id='inline-add-editor']` | inline-add-editor |
+| survey-builder.locator.json | questionRow | `[data-test-id^='question-row-']` | question-row-* |
+| survey-builder.locator.json | addQuestionLink | `[data-test-id='add-question']` | add-question |
+| survey-builder.locator.json | duplicateQuestionButton | `niq-icon-button[data-test-id^='duplicate-question-']` | duplicate-question-* |
+| survey-builder.locator.json | deleteQuestionButton | `niq-icon-button[data-test-id^='delete-question-']` | delete-question-* |
+| survey-builder.locator.json | questionNumberMarker | `[data-test-id^='question-number-'], [data-test-id^='reorder-question-'] .question-number` | question-number-* / reorder-question-* |
+| survey-builder.locator.json | backButton | `[data-test-id='back-to-panelist-selection']` | back-to-panelist-selection |
+| survey-builder.locator.json | reviewSurveyButton | `[data-test-id='review-survey']` | review-survey |
+| survey-builder.locator.json | selectQuestionByIndex | `[data-test-id='select-question-${text}-icon']` | select-question-${text}-icon |
+| survey-builder.locator.json | selectQuestionCheckboxContainer | `[data-test-id='select-question-${text}'] .checkbox-container` | select-question-${text} |
+| survey-builder.locator.json | deleteQuestionsButton | `[data-test-id='review-delete-questions']` | review-delete-questions |
+| survey-builder.locator.json | selectAllButton | `[data-test-id='review-select-all']` | review-select-all |
+| survey-builder.locator.json | unselectAllButton | `[data-test-id='review-select-all']` | review-select-all |
+| survey-builder.locator.json | expandAllButton | `[data-test-id='review-expand-all']` | review-expand-all |
+| survey-builder.locator.json | collapseAllButton | `[data-test-id='review-collapse-all']` | review-collapse-all |
+| survey-builder.locator.json | exitReviewModeButton | `[data-test-id='exit-review-mode']` | exit-review-mode |
+| survey-builder.locator.json | editSurveyNameIcon | `[data-test-id='edit-survey-title']` | edit-survey-title |
+| survey-builder.locator.json | surveyTitleInput | `[data-test-id='survey-title-input'] input, input[data-test-id='survey-title-input'], input[data-test-id='survey-title-input-input']` | survey-title-input |
+| survey-builder.locator.json | saveDraftButton | `[data-test-id='save-draft']` | save-draft |
+| survey-builder.locator.json | saveCopyTitleInput | `[data-test-id='save-a-copy-title-input']` | save-a-copy-title-input |
+| survey-builder.locator.json | savePendingChangesButton | `[data-test-id='save-pending-changes-button']` | save-pending-changes-button |
+| survey-builder.locator.json | confirmPublishDialogText | `[data-test-id='publish-dialog-title']` | publish-dialog-title |
+| survey-builder.locator.json | validateSurveyButton | `[data-test-id='validate-survey']` | validate-survey |
+| survey-builder.locator.json | toastCloseButton | `[data-test-id='-close-button']` | -close-button (templated prefix) |
+| survey-builder.locator.json | viewOptiqFeedbackLink | `[data-test-id='ai-suggestions']` | ai-suggestions |
+| survey-builder.locator.json | publishingSurveyStatus | `[data-test-id='publishing-survey-loader']` | publishing-survey-loader |
+| survey-builder.locator.json | publishSurveyButton | `[data-test-id='publish-survey']` | publish-survey |
+| survey-builder.locator.json | publishDialogTitle | `[data-test-id='publish-dialog-title']` | publish-dialog-title |
+| survey-builder.locator.json | publishResponseCount | `[data-test-id='publish-response-count']` | publish-response-count |
+| survey-builder.locator.json | reviewDialogPublishButton | `[data-test-id='confirm-publish']` | confirm-publish |
+| survey-builder.locator.json | publish-dialog-dimension-by-index | `.publish-review-details [data-test-id$='_Dimension'] >> nth=${text}` | *_Dimension (child match) |
+| survey-builder.locator.json | saveQuestionChangesButton | `[data-test-id='save-question-changes']` | save-question-changes |
+| survey-builder.locator.json | discardChangesButton | `[data-test-id='discard-question-changes'] >> visible=true >> nth=0` | discard-question-changes |
+| survey-builder.locator.json | surveyTitleDisplay | `[data-test-id='survey-title']` | survey-title |
+| select-panelist.locator.json | productNoDataPrompt | `[data-test-id='ds-noDataPrompt_Product']` | ds-noDataPrompt_Product |
+| select-panelist.locator.json | retailerNoDataPrompt | `[data-test-id='ds-noDataPrompt_Retailer']` | ds-noDataPrompt_Retailer |
+| select-panelist.locator.json | geographyNoDataPrompt | `[data-test-id='ds-noDataPrompt_Geography']` | ds-noDataPrompt_Geography |
+| select-panelist.locator.json | demographicNoDataPrompt | `[data-test-id='ds-noDataPrompt_Demographic']` | ds-noDataPrompt_Demographic |
+| select-panelist.locator.json | periodNoDataPrompt | `[data-test-id='ds-noDataPrompt_Period']` | ds-noDataPrompt_Period |
+| select-panelist.locator.json | searchIcon | `[data-test-id='ds-filterIcon-icon']:visible >> nth=0` | ds-filterIcon-icon |
+| select-panelist.locator.json | dsSearchBarInput | `[data-test-id='ds-searchBar-input']` | ds-searchBar-input |
+| select-panelist.locator.json | dsSelectionsViewPort | `[data-test-id='ds-virtualScrollViewport']` | ds-virtualScrollViewport |
+| select-panelist.locator.json | removeIcon | `[data-test-id='ds-removeIcon']` | ds-removeIcon |
+| select-panelist.locator.json | lastRemoveIcon | `[data-test-id='ds-removeIcon'] >> nth=-1` | ds-removeIcon |
+| select-panelist.locator.json | filledDimensionTile | `[data-test-id='ds-${text}_Dimension']` | ds-${text}_Dimension |
+| select-panelist.locator.json | addButton | `[data-test-id='ds-addButton']` | ds-addButton |
+| select-panelist.locator.json | deleteMenuIcon | `[data-test-id='ds-selectionMenu_Delete-icon']` | ds-selectionMenu_Delete-icon |
+| select-panelist.locator.json | categoryItem | `[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0` | ds-navigationItemLabel_${text} |
+| select-panelist.locator.json | doneIcon | `[data-test-id='ds-breadcrumbDoneButton']` | ds-breadcrumbDoneButton |
+| select-panelist.locator.json | 250ResponsesButton | `[data-test-id='select-response-count-250']` | select-response-count-250 |
+| select-panelist.locator.json | proceedToSurveyBuilderButton | `[data-test-id='proceed-to-survey']` | proceed-to-survey |
+| select-panelist.locator.json | selectedResponseCountButton | `[data-test-id^='select-response-count-'].selected` | select-response-count-* |
+| select-panelist.locator.json | cancelDatasetButton | `[data-test-id='rv-dataset-selector-footer'] niq-button.btn-cancel` | rv-dataset-selector-footer (ancestor) |
+| select-panelist.locator.json | responseCountOption | `[data-test-id='select-response-count-${text}']` | select-response-count-${text} |
+| select-panelist.locator.json | moreOptionsButton | `[data-test-id='toggle-more-response-options']` | toggle-more-response-options |
+| select-panelist.locator.json | visibleResponseCountOptions | `[data-test-id^='select-response-count-']:visible` | select-response-count-* |
+| select-panelist.locator.json | footerRefreshedOn | `[data-test-id='rb-report-refreshed-on-block']` | rb-report-refreshed-on-block |
+| my-assets.locator.json | surveyAssetsGrid | `[data-test-id='survey-assets-grid']` | survey-assets-grid |
+| my-assets.locator.json | surveyGridTitleByText | `[data-test-id='survey-grid-title']:text-is("${text}") >> nth=0` | survey-grid-title |
+| my-assets.locator.json | myAssetsTab | `[data-test-id='my-assets-tab-my-assets']` | my-assets-tab-my-assets |
+| my-assets.locator.json | folderBreadcrumb | `[data-test-id='my-assets-folder-breadcrumb']` | my-assets-folder-breadcrumb |
+| profile.locator.json | profileIcon | `[data-test-id='global-nav-trigger-iconbtn-comp-icon']` | global-nav-trigger-iconbtn-comp-icon (external platform nav, not in libs) |
+| profile.locator.json | profileSettings | `[data-test-id='profile-settings-item']` | profile-settings-item (external) |
+| profile.locator.json | accountSettings | `[data-test-id='settings-category-title-LP.PROFILE.INFO.ACCOUNT.TITLE']` | settings-category-title-... (external) |
+| profile.locator.json | profileAccountTitle | `[data-test-id='profile-account']` | profile-account (external) |
+| profile.locator.json | profileLanguageInput | `[data-test-id='profile-display-setting-lang-input']` | profile-display-setting-lang-input (external) |
+| profile.locator.json | saveChanges | `[data-test-id='profile-save-changes-button']` | profile-save-changes-button (external) |
+| profile.locator.json | languageOption | `[data-test-id='profile-language-drp-down-value-${languageName}']` | profile-language-drp-down-value-${languageName} (external) |
+| login.locator.json | termsAcceptCheckbox | `[data-test-id='terms-agree-reminder-checkbox-icon']` | terms-agree-reminder-checkbox-icon (external IdP) |
+| login.locator.json | termsAcceptButton | `[data-test-id='terms-submit-button']` | terms-submit-button (external IdP) |
+| start-from-scratch.locator.json | nextButton | `[data-test-id='btn-next-dataset']` | btn-next-dataset |
+| start-from-scratch.locator.json | searchToggle | `[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']` | dataset-picker-search-bar-toggle-search-button-icon |
+| start-from-scratch.locator.json | searchInput | `[data-test-id='dataset-picker-search-bar-input']` | dataset-picker-search-bar-input |
+| start-from-scratch.locator.json | datasetByLabel | `[data-test-id^='rv-dataset-id-selector']:has-text('${text}')` | rv-dataset-id-selector* |
+| start-from-scratch.locator.json | dialogElement | `[data-test-id='title-second-dialog']` | title-second-dialog |
+| start-from-scratch.locator.json | applyButton | `[data-test-id='apply-dataset-btn']` | apply-dataset-btn |
+| start-from-scratch.locator.json | defaultDataset | `[data-test-id='rv-default-dataset']` | rv-default-dataset |
+| start-from-scratch.locator.json | chooseDatasetBreadcrumb | `[data-test-id='dataset-picker-title']` | dataset-picker-title |
+| start-from-scratch.locator.json | chooseDataviewBreadcrumb | `[data-test-id='breadcrumb-and-search-container']` | breadcrumb-and-search-container |
+| start-with-prompt.locator.json | datasetTypeSelector | `[data-test-id='rv-dataset-type-selector${text}']` | rv-dataset-type-selector${text} |
+| start-with-prompt.locator.json | omnishopperOfferingTile | `[data-test-id='${text}']` | ${text} |
+| start-with-prompt.locator.json | nextDatasetButton | `[data-test-id='btn-next-dataset']` | btn-next-dataset |
+| start-with-prompt.locator.json | datasetSearchToggle | `[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']` | dataset-picker-search-bar-toggle-search-button-icon |
+| start-with-prompt.locator.json | datasetSearchInput | `[data-test-id='dataset-picker-search-bar-input']` | dataset-picker-search-bar-input |
+| start-with-prompt.locator.json | dialogElement | `[data-test-id='title-second-dialog']` | title-second-dialog |
+| start-with-prompt.locator.json | applyButton | `[data-test-id='apply-dataset-btn']` | apply-dataset-btn |
+| start-with-prompt.locator.json | chooseDatasetBreadcrumb | `[data-test-id='dataset-picker-title']` | dataset-picker-title |
+| start-with-prompt.locator.json | chooseDataviewBreadcrumb | `[data-test-id='breadcrumb-and-search-container']` | breadcrumb-and-search-container |
+| start-with-prompt.locator.json | defaultDataset | `[data-test-id='rv-default-dataset']` | rv-default-dataset |
+| start-with-prompt.locator.json | promptTextarea | `[data-test-id='survey-generation-prompt']` | survey-generation-prompt |
+| start-with-prompt.locator.json | generateSurveyButton | `[data-test-id='proceed-to-survey']` | proceed-to-survey |
+| start-with-prompt.locator.json | questionTypeOption | `[data-test-id='question-type-${text}']` | question-type-${text} |
+| start-with-prompt.locator.json | generateQuestionsButton | `[data-test-id='generate-questions']` | generate-questions |
+| start-with-prompt.locator.json | questionCountSlider | `[data-test-id='question-count-slider']` | question-count-slider |
+| start-with-prompt.locator.json | questionCountInput | `[data-test-id='question-count-slider'] input:not([type='range'])` | question-count-slider |
+| start-with-prompt.locator.json | questionNumberMarker | `[data-test-id^='question-number-'], [data-test-id^='reorder-question-'] .question-number` | question-number-* / reorder-question-* |
+| start-with-prompt.locator.json | questionRow | `[data-test-id^='question-row-']` | question-row-* |
+| start-with-prompt.locator.json | rephraseWithAiButton | `[data-test-id='rephrase-with-ai-${text}']` | rephrase-with-ai-${text} |
+| start-with-prompt.locator.json | rephraseInput | `[data-test-id='rephrase-input-${text}']` | rephrase-input-${text} |
+| start-with-prompt.locator.json | rephraseSendButton | `[data-test-id='rephrase-send-${text}']` | rephrase-send-${text} |
+| start-with-prompt.locator.json | suggestNewQuestionsButton | `[data-test-id='suggest-new-questions']` | suggest-new-questions |
+| start-with-prompt.locator.json | repromptNewQuestionsButton | `[data-test-id='reprompt-new-questions']` | reprompt-new-questions |
+| start-with-prompt.locator.json | repromptInput | `[data-test-id='reprompt-input']` | reprompt-input |
+| start-with-prompt.locator.json | repromptSubmitButton | `[data-test-id='reprompt-submit']` | reprompt-submit |
 
-AC8: KPI Refresh
-Given new survey responses are received
-When the dashboard is refreshed or reloaded
-Then KPI metrics shall reflect the updated survey response counts and status.
+### Group 2 — TEST-ID EXISTS, NOT USED
 
-AC9: Question-Level Visualization Support
-Given survey results exist for a supported question type
-When a user views the Results Dashboard
-Then visualizations supported by the approved Chart Library shall be available for that question type.
+| file | elementName | current selector | data-test-id (HTML file) |
+|---|---|---|---|
+| survey-builder.locator.json | reviewSurveyDetailsDialog | `[role='dialog']:has-text("Review survey details") >> nth=0` | `data-test-id="publish-survey-dialog"` — [survey-publish-popup.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:1) |
+| survey-builder.locator.json | publishSurveyTitle | `.publish-survey-title` | `[attr.data-test-id]="testId('survey-title')"` → computed `publish-survey-title` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:7) (shared `<survey-details variant="publish">`) |
+| survey-builder.locator.json | publishQuestionSummary | `.publish-question-summary` | `[attr.data-test-id]="testId('question-summary')"` → computed `publish-question-summary` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:28) |
+| survey-builder.locator.json | publish-response-count-text | `.publish-review-details` | `[attr.data-test-id]="variant()==='publish' ? 'publish-review-details' : null"` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:16) |
+| survey-builder.locator.json | publishEditSurveyButton | `role=button[name="Edit survey"]` | `data-test-id="publish-edit-survey"` — [survey-publish-popup.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:11) |
+| survey-builder.locator.json | questionTextDisplay | `.question-text` | `[attr.data-test-id]="'question-text-' + questionNumber()"` — e.g. [choice-editor.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:57) (also present in nps/rating/text/scale editors) |
+| select-panelist.locator.json | searchForPanelistsButton | `[id='report-btn-run']` | `data-test-id="search-panelists"` — [panelist-dataselector.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:38) |
+| select-panelist.locator.json | selectDatasetButton | `.no-dataset-state niq-button` | `data-test-id="select-dataset-button"` — [panelist-dataselector.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:79) |
+| select-panelist.locator.json | eligibilityMessage | `.eligibility` | `data-test-id="panelist-eligibility-message"` — [select-panelist.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:17) |
+| select-panelist.locator.json | responsesCreditMessage | `.responses-frame .question` | `data-test-id="responses-credit-message"` — [select-panelist.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:28) |
+| select-panelist.locator.json | footerSelectedValue | `.dataset-footer .selected-value` | `data-test-id="dataset-footer-selected-value"` — [dataset-footer.component.html](/libs/survey-mod-lib/src/lib/shared/components/dataset-footer/dataset-footer.component.html:5) |
+| start-from-scratch.locator.json | startFromScratch | `[data-testid='quick-survey-quick-2']` | **inconsistent attribute**: `[attr.data-testid]="'quick-survey-' + card.id"` (no hyphen, not `data-test-id`) — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:92) |
+| start-with-prompt.locator.json | startWithPrompt | `[data-testid='quick-survey-quick-1']` | **inconsistent attribute**: same element/line as above, `card.id === 'quick-1'` — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:92) |
+| start-with-prompt.locator.json | questionCountError | `.question-count-error[role='alert']:visible, .question-count-error [role='alert']:visible` | `data-test-id="question-count-error"` — [question-generator.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html:18) |
 
-AC10: Single Choice Visualization Support
-The dashboard shall support the following visualizations for Single Choice questions:
+### Group 3 — NO TEST-ID
 
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table View
-AC11: Multiple Choice Visualization Support
-The dashboard shall support the following visualizations for Multiple Choice questions:
+| file | elementName | current selector | HTML file:line (or note) |
+|---|---|---|---|
+| survey-builder.locator.json | maxOptionsMessageText | `text="You have already reached the maximum number of options." >> nth=0` | shared library — rendered by `niqTooltip` directive (`SURVEYMOD_MAXIMUM_OPTIONS_WARNING`), triggering element at [choice-editor.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:36) |
+| survey-builder.locator.json | maxQuestionsMessageText | `You have already reached the maximum number of questions.` | shared library — `niqTooltip` directive (`SURVEYMOD_MAXIMUM_QUESTIONS_WARNING`) — [preview-mode.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:84) |
+| survey-builder.locator.json | select-panelists-step-circle | `.niq-step-circle >> nth=0` | shared library — internal class of the `niq-stepper`/`niq-step` library component (only referenced in our [crf-survey-wrapper.component.scss](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.scss) for styling, not an element we author) |
+| survey-builder.locator.json | myAssetsTreeItem | `role=treeitem[name*="My Assets"]` | shared library — internal to `<crf-uic-save-a-copy>` folder tree, [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
+| survey-builder.locator.json | saveDraftDialog | `[role='dialog']:has-text("Save your survey") >> nth=0` | `<crf-uic-save-a-copy>` host tag has no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
+| survey-builder.locator.json | saveDraftDialogNameInput | `role=textbox[name="Name"]` | shared library — internal to `<crf-uic-save-a-copy>`, [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
+| survey-builder.locator.json | saveDraftDialogErrorText | `text="Survey name is required." >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogMyAssetsFolder | `role=treeitem[name*="My Assets"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogSaveButton | `role=button[name="Save draft"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogCancelButton | `role=button[name="Cancel"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogCreateNewFolderLink | `text=/^Create new folder/ >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogMyAssetsArrow | `role=treeitem[name*="My Assets"] >> nth=0 >> .arrow` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | saveDraftDialogFolderTree | `[role='tree'] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | publishLocationDialog | `[role='dialog']:has-text("Publish your survey") >> nth=0` | same `<crf-uic-save-a-copy>` host tag (reused, text toggled by `isPublishAction()`), no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
+| survey-builder.locator.json | dialogContinueButton | `role=button[name="Continue"]` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | createNewFolderLink | `text="Create new folder"` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | createNewFolderInLocationButton | `text="Create new folder in location"` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | createNewFolderDialog | `[role='dialog']:visible:has-text("Create new folder")...` | `<crf-uic-create-folder>` host tag has no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:85) (note: the equivalent dialog on the My Assets page already has `data-test-id="create-folder-dialog"`, see [my-assets-page.component.html](/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html:189)) |
+| survey-builder.locator.json | createNewFolderDialogNameInput | `input:visible >> nth=0` | shared library — internal to `<crf-uic-create-folder>` |
+| survey-builder.locator.json | createNewFolderDialogCreateButton | `role=button[name="Create"]` | shared library — internal to `<crf-uic-create-folder>` |
+| survey-builder.locator.json | createNewFolderDialogCloseButton | `role=button[name="Close"]` | shared library — internal to `<crf-uic-create-folder>` |
+| survey-builder.locator.json | locationDialogFolderRow | `role=treeitem` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | locationDialogFolderByName | `role=treeitem[name*="${text}"]` | shared library — internal to `<crf-uic-save-a-copy>` |
+| survey-builder.locator.json | validatingSurveyToastText | `text="Validating your survey" >> nth=0` | shared library — dynamic toast via `ToastService.InsertToast` (`containerClass: 'survey-action-toast'`), [validation.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/validation.service.ts:420) |
+| survey-builder.locator.json | changesRecommendedToastText | `text="Changes recommended" >> nth=0` | shared library — same toast mechanism as above |
+| survey-builder.locator.json | validationCompleteToastText | `text="Validation complete" >> nth=0` | shared library — same toast mechanism |
+| survey-builder.locator.json | changesNeededToastText | `text="Changes needed" >> nth=0` | shared library — same toast mechanism |
+| survey-builder.locator.json | recommendationTagText | `text=/\d+ recommendation/i >> nth=0` | shared library — same toast mechanism |
+| survey-builder.locator.json | saveDraftSuccessToast | `Survey saved as draft successfully` | shared library — dynamic toast via `ToastService.InsertToast` (`SURVEYMOD_DRAFT_SAVED`), [survey-header.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts:164) |
+| survey-builder.locator.json | survey-action-toast | `.survey-action-toast` | shared library — toast `containerClass`, not a template element; set in [survey-header.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts:168) and [survey-publish-popup.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts:73) |
+| select-panelist.locator.json | checkboxLabel | `div.item-container:has-text('${text}') niq-checkbox >> nth=0` | shared library — external panelist picker (`crf-data-selector-panel-v2` / `re-dataset-picker`); `item-container` not found anywhere in `libs/**/*.html` |
+| select-panelist.locator.json | selectedOption | `[data-cy='Selected-option']` | shared library — uses `data-cy`, not `data-test-id`; not found in `libs/**/*.html` |
+| select-panelist.locator.json | buildSurveyPageHeading | `text= Build Survey >>nth=0` | `<niq-step>` renders `{{ step.label \| translate }}` (`SURVEYMOD_BUILD_SURVEY`) with no `data-test-id` — [crf-survey-wrapper.component.html](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.html:4) |
+| select-panelist.locator.json | productOfferingModal | `.ds-picker-container.ds-picker-type-selection` | shared library — external dataset/offering picker modal (`re-dataset-picker`); class not found in `libs/**/*.html` |
+| select-panelist.locator.json | filterValidationMessage | `crf-data-selector-panel-v2 >> text=/Please select 1\|Looking good!\|Please remove 1/ >> visible=true >> nth=0` | shared library — external `crf-data-selector-panel-v2` component |
+| select-panelist.locator.json | filterCounter | `crf-data-selector-panel-v2 >> text=/\b\d+\/\d+\b/ >> visible=true >> nth=0` | shared library — external `crf-data-selector-panel-v2` component |
+| my-assets.locator.json | viewAllSurveysLink | `.view-all-link:has-text("View all surveys") >> nth=0` | `<niq-link class="view-all-link">` has no `data-test-id` — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:14) |
+| login.locator.json | userName | `[data-id='username-input']` | external identity-provider login page — not in this repo (`data-id`, not `data-test-id`) |
+| login.locator.json | nextButton | `role=button[name="Next"]` | external identity-provider login page — not in this repo |
+| login.locator.json | password | `[data-id='password-input']` | external identity-provider login page — not in this repo |
+| login.locator.json | verifyButton | `role=button[name="Verify"]` | external identity-provider login page — not in this repo |
+| feature-toggle.locator.json | surveyModernizationFmsRow | `tr:has(td:text-is("Enable Survey Modernization in FMS"))` | external FMS admin page (`report/featuretoggle`) — not in this repo |
+| feature-toggle.locator.json | surveyModernizationFmsSwitch | `tr:has(td:text-is("Enable Survey Modernization in FMS")) input[role='switch']` | external FMS admin page — not in this repo |
+| feature-toggle.locator.json | surveyModernizationFmsSwitchLabel | `tr:has(td:text-is("Enable Survey Modernization in FMS")) label.switch` | external FMS admin page — not in this repo |
+| start-from-scratch.locator.json | productOfferingHeading | `.ds-picker-container.ds-picker-type-selection` | shared library — external dataset/offering picker modal; class not found in `libs/**/*.html` |
+| start-with-prompt.locator.json | datasetByText | `${text}` | shared library — generic text match inside the external dataset picker (`re-dataset-picker` / `crf-data-selector-panel-v2`) |
+| start-with-prompt.locator.json | optiqHeading | `Let's get you started with Optiq!` | not found anywhere in `libs/**/*.html` (or any `.ts`/translation source in this repo) — no component location to attach a test-id to |
 
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table View
-AC12: Rating Visualization Support
-The dashboard shall support the following visualizations for Rating questions:
+### UNUSED — never referenced from `e2e/page-objects` or `e2e/tests`
 
-Heatmap
-Table View
-AC13: NPS Visualization Support
-The dashboard shall support the following visualizations for NPS questions:
-
-Speedometer
-Bar Chart
-Table View
-And the solution shall support future extensibility for additional chart formats.
-
-AC14: Point and Multi-Scale Visualization Support
-For Point Scale and Multi-Scale questions:
-
-Combined View
-
-Heatmap
-Table
-Single Statement View
-
-Bar Chart
-Column Chart
-Pie Chart
-Line Chart
-Table
-shall be supported.
-
-AC15: Survey Overview Access
-Given a user accesses the Results Dashboard
-When survey results are viewed
-Then the Survey Overview tab shall remain accessible regardless of dashboard stage.
-
-AC16: AI Summary Placement
-Given a completed survey qualifies for AI Summary generation
-When a user accesses the completed Results Dashboard
-Then the AI Summary shall appear below the KPI section and above results visualizations.
-
-AC17: AI Summary Generation
-Given a survey has reached completion status
-When the AI Summary is generated
-Then the summary shall present:
-
-Overall survey findings
-Key trends
-Notable insights
-Significant conclusions
-based on collected survey responses.
-
-AC18: Export and Share Controls
-Given a user has access to the Results Dashboard
-When the survey is not yet complete
-Then Export and Share controls shall remain unavailable.
-
-And
-
-When the survey reaches completion status
-Then Export and Share controls shall become available according to the Export and Sharing requirements defined in dependent epics.
-
-AC19: Empty-State Handling
-Given dashboard visualizations do not yet contain data
-When the user views a chart or table
-Then the dashboard shall display an appropriate empty-state experience rather than an error.
-
-AC20: Live Results Accuracy
-Given responses are being collected
-When the Results Dashboard is rendered
-Then charts, tables, KPIs, and AI-generated insights shall be based on the latest available survey response data.
-
-AC21: Authorization and Access Control
-Given a user attempts to access a Results Dashboard
-When permissions are evaluated
-Then only authorized users shall be allowed to view survey results, exports, AI summaries, and related dashboard artifacts.
-
-AC22: Design Compliance
-Given the Results Dashboard is rendered
-When users interact with the experience
-Then layouts, component placement, workflow progression, and dashboard presentation shall align with the approved Survey Results dashboard designs.
------------------------------
-Background:
-
-After users pass the survey "Build" portion of their user experience, they will "Review" their Survey and then send it through to "Publishing".  After the "Publishing" phase, the Survey will be fielded to participants and responses will begin to come through in a "Results" dashboard view for them to analyze. This epic is covering the UI build of the "Results" dashboard, inclusive of all the charts, tables, KPIs, AI Summary, and the placement of relevant functions. 
-
-Goal: Develop the screens and functionality to support a "Results" dashboard where survey results are live and viewable by users in a variety of formats.  
-
- 
-
-Scope: 
-
-Trigger
-Dashboard should become available immediately upon publication.  When a user selects "Publish", they should unlock the dashboard view.  In the line tracker at the top of the screen "Survey Results" is highlighted.  There are different stages of the dashboard.
-Just Published --> FMS
-User should be immediately directed to Find My Stuff experience where the dashboard link is present, live, and selectable
-Text disclaimer/pop-up required alerting the user that their survey was just published and can be referenced here. 
-Stage 1 - No responses gathered
-Disclaimer should be present on page with text reminder that the survey was just launched and the data is not robust
-Share/Export functions should be disabled
-Charts and tables are present, but empty
-KPIs are present and live
-Survey overview tab is present
-Stage 2 - Survey responses coming in, not complete
-Disclaimer should still be present
-Share/Export functions should be disabled
-Charts and tables are present, displaying incremental responses
-KPIs are present and live, reflecting the increase in responses accurately
-Survey overview tab is present
-Notification should be sent out to user at the half-way point of full responses i.e. if user requires 400 responses, notification goes out at 200 responses (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
-Stage 3 - Survey is complete, all responses gathered
-Disclaimer is removed
-Share/Export functions should be enabled
-AI Summary unlocked
-Survey overview tab is present
-Notification should be sent to user that survey is complete (OOS for this epic, notifications will be handled in a separate JIRA, included for reference)
-Charts and Tables
-For each question type, we have associated charts and displays that correspond and should be displayed.  Chart Library Supported charts only 
-Single Choice 
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Multiple Choice
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Rating (TBD)
-Heatmap
-Table
-NPS
-Speedometer (Persistent)
-Bar (Default + Toggle)
-Column (Toggle)
-Pie (Toggle)
-Table (Persistent)
-Point and Multi Scale
-Main (Combined view)
-Heatmap (Persistent)
-Table (Persistent)
-Sub (Single statement view)
-Bar (Toggle)
-Column (Toggle)
-Pie (Default + Toggle)
-Table (Toggle)
-KPIs
-3 KPIs for MVP listed in this order:
-Total Responses
-Completion Rate
-Time left on survey
-All are live and should update upon page refresh to reflect new responses
-AI Summary
-AI Summary sits at the top of the results dashboard, underneath the KPIs.  
-Triggered to load when survey is complete and display a text summary of the results, including insights on overall summary, trends, and notable conclusions to the user. 
-Do we give a follow-up option? 
-Export and Share
-See Export epic: 
-Share?
+| file | elementName | current selector | data-test-id (or HTML file:line) |
+|---|---|---|---|
+| survey-builder.locator.json | optionInputByLabel | `role=textbox[name="${text}"] >> nth=0` | n/a (role-based, no test-id) |
+| survey-builder.locator.json | savedAssetGridcellByTitle | `role=gridcell[name="${text}"]` | n/a (role-based, no test-id) |
+| survey-builder.locator.json | confirmPublishButton | `[data-test-id='-footer'] >> role=button[name="Publish survey"]` | already data-test-id-based (`-footer` ancestor), superseded by `reviewDialogPublishButton` (`confirm-publish`) |
+| survey-builder.locator.json | publish-success-toast | `Survey published successfully` | shared library — toast via `SURVEYMOD_SURVEY_PUBLISHED`, [survey-publish-popup.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts:73) |
+| my-assets.locator.json | surveyGridTitle | `[data-test-id='survey-grid-title']` | survey-grid-title — [my-assets-page.component.html](/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html:66) (superseded by `surveyGridTitleByText`) |
+| profile.locator.json | profileLanguageSettingsInput | `[data-test-id='profile-display-setting'] [data-test-id='profile-display-setting-lang-input']` | already data-test-id-based; duplicate of `profileLanguageInput` |
+| profile.locator.json | languageOptions | `[data-test-id^='profile-language-drp-down-value-']` | already data-test-id-based; superseded by `languageOption` (parameterized) |
