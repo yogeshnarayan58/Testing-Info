@@ -1,66 +1,48 @@
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ git checkout --locators/survey/profile.locator.json
-error: unknown option `locators/survey/profile.locator.json'
-usage: git checkout [<options>] <branch>
-   or: git checkout [<options>] [<branch>] -- <file>...
+$ npx playwright test --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to en-US...
+Global setup failed: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Profile language input not visible after 15000ms
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:121:13)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
+    at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6660:27)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6414:33)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+Global setup completed. Auth state saved.
+Error: Global setup failed: Failed to set the user locale to 'en-US': Failed to read the user locale: Profile language input not visible after 15000ms
 
-    -b <branch>           create and checkout a new branch
-    -B <branch>           create/reset and checkout a branch
-    -l                    create reflog for new branch
-    --[no-]guess          second guess 'git checkout <no-such-branch>' (default)
-    --[no-]overlay        use overlay mode (default)
-    --[no-]auto-advance   auto advance to the next file when selecting hunks interactively
-    -q, --[no-]quiet      suppress progress reporting
-    --[no-]recurse-submodules[=<checkout>]
-                          control recursive updating of submodules
-    --[no-]progress       force progress reporting
-    -m, --[no-]merge      perform a 3-way merge with the new branch
-    --[no-]conflict <style>
-                          conflict style (merge, diff3, or zdiff3)
-    -d, --[no-]detach     detach HEAD at named commit
-    -t, --[no-]track[=(direct|inherit)]
-                          set branch tracking configuration
-    -f, --[no-]force      force checkout (throw away local modifications)
-    --[no-]orphan <new-branch>
-                          new unborn branch
-    --[no-]overwrite-ignore
-                          update ignored files (default)
-    --[no-]ignore-other-worktrees
-                          do not check if another worktree is using this branch
-    -2, --ours            checkout our version for unmerged files
-    -3, --theirs          checkout their version for unmerged files
-    -p, --[no-]patch      select hunks interactively
-    -U, --unified <n>     generate diffs with <n> lines context
-    --inter-hunk-context <n>
-                          show context between diff hunks up to the specified number of lines
-    --[no-]ignore-skip-worktree-bits
-                          do not limit pathspecs to sparse entries only
-    --[no-]pathspec-from-file <file>
-                          read pathspec from file
-    --[no-]pathspec-file-nul
-                          with --pathspec-from-file, pathspec elements are separated with NUL character
+   at ..\helpers\global-setup.ts:50
+
+  48 |     console.error('Global setup failed:', error);
+  49 |     if (error instanceof Error) {
+> 50 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  51 |     }
+  52 |     throw new Error('Global setup failed with an unknown error');
+  53 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
 
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ git diff --stat
- e2e/locators/survey/my-assets.locator.json         |  1 -
- e2e/locators/survey/profile.locator.json           |  2 --
- e2e/locators/survey/select-panelist.locator.json   | 20 ++++++++++----------
- e2e/locators/survey/start-with-prompt.locator.json |  2 +-
- e2e/locators/survey/survey-builder.locator.json    | 16 ++++++----------
- 5 files changed, 17 insertions(+), 24 deletions(-)
+To open last HTML report run:
+
+  npx playwright show-report
+
 
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ git diff locators/survey/survey-builder.locator.json locators/survey/my-assets.locator.json | grep "^-.*elementName"
--    { "elementName": "surveyGridTitle", "selectorType": "css", "selectorValue": "[data-test-id='survey-grid-title']" },
--        { "elementName": "optionInputByLabel", "selectorType": "playwrights", "selectorValue": "role=textbox[name=\"${text}\"] >> nth=0" },
--    { "elementName": "savedAssetGridcellByTitle", "selectorType": "playwrights", "selectorValue": "role=gridcell[name=\"${text}\"]" },
--    { "elementName": "confirmPublishButton","selectorType": "playwrights","selectorValue": "[data-test-id='-footer'] >> role=button[name=\"Publish survey\"]"},
--    { "elementName": "reviewSurveyDetailsDialog", "selectorType": "playwrights", "selectorValue": "[role='dialog']:has-text(\"Review survey details\") >> nth=0" },
--    { "elementName": "publishSurveyTitle", "selectorType": "css", "selectorValue": ".publish-survey-title" },
--    { "elementName": "publishQuestionSummary", "selectorType": "css", "selectorValue": ".publish-question-summary" },
--    { "elementName": "publishEditSurveyButton", "selectorType": "playwrights", "selectorValue": "role=button[name=\"Edit survey\"]" },
--    { "elementName": "publish-response-count-text", "selectorType": "css", "selectorValue": ".publish-review-details" },
--    { "elementName": "publish-success-toast", "selectorType": "text", "selectorValue": "Survey published successfully" },
--    { "elementName": "questionTextDisplay", "selectorType": "css", "selectorValue": ".question-text" }
+$ 
