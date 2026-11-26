@@ -1,8 +1,264 @@
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
 $ npx playwright test --project=chromium --workers=1
-◇ injected env (21) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to en-US...
+Current language: 'United States', expected: 'English (United States)'
+User language set to en-US.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 89 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 … no dataset @SelectPanelist @SPModalCancel (20.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 …tart from scratch @SelectPanelist @SPSetup (12.7s)
+Auth state loaded from storage/auth.json
+  ✓   3 …h Select Panelists @SelectPanelist @SPSetup (3.5s)
+  ✓   4 …ummary sentence @SelectPanelist @SPSummary (57.2s)
+  ✓   5 … refreshed" date @SelectPanelist @SPFooter (129ms)
+  ✓   6 … selection @SelectPanelist @SPSearchButton (22.1s)
+  ✓   7 … items @SelectPanelist @SPFilterValidation (45.8s)
+  ✓   8 …it message @SelectPanelist @SPSearchResult (36.4s)
+  ✓   9 …ount choices @SelectPanelist @SPMoreOptions (1.1s)
+  ✓  10 …resets it @SelectPanelist @SPResponseCount (36.0s)
+  ✘  11 …ding @SelectPanelist @SPTooFewParticipants (54.4s)
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓  12 …ge @StartFromScratch @LandStartFromScratch (14.0s)
+Auth state loaded from storage/auth.json
+  ✓  13 … screen @StartFromScratch @DatasetSelection (3.1s)
+  ✓  14 …ers are set @StartFromScratch @DataSummary (24.3s)
+  ✓  15 …onse count @StartFromScratch @ResponseCount (4.3s)
+  ✓  16 … @StartFromScratch @ProceedToSurveyBuilder (602ms)
+  ✓  17 …estion panel @StartFromScratch @EmptyState (222ms)
+  ✓  18 …y title @StartFromScratch @EditSurveyTitle (835ms)
+  ✓  19 …ion @StartFromScratch @SingleChoiceQuestion (1.6s)
+  ✓  20 …n @StartFromScratch @MultipleChoiceQuestion (3.8s)
+  ✓  21 … question @StartFromScratch @RatingQuestion (3.6s)
+  ✓  22 …NPS question @StartFromScratch @NPSQuestion (2.9s)
+  ✓  23 …stion @StartFromScratch @PointScaleQuestion (4.3s)
+  ✓  24 …stion @StartFromScratch @MultiScaleQuestion (4.3s)
+  ✓  25 …ggle is on @StartFromScratch @RequiredStar (19.6s)
+  ✓  26 …pencil icon @StartFromScratch @EditQuestion (6.0s)
+  ✓  27 …ng question @StartFromScratch @DiscardSave (27.0s)
+  ✓  28 …ave changes @StartFromScratch @DiscardSave (11.4s)
+  ✓  29 …hanged @StartFromScratch @CancelAddQuestion (2.7s)
+  ✓  30 …rders questions @StartFromScratch @DragDrop (2.2s)
+  ✓  31 … actions @StartFromScratch @DeleteDuplicate (1.9s)
+  ✓  32 …, max 15 @StartFromScratch @OptionBoundary (32.3s)
+  ✓  33 …urvey @StartFromScratch @StepperNavigation (25.3s)
+  ✓  34 …it message @StartFromScratch @MaxQuestions (19.7s)
+  ✓  35 …elected, exit @StartFromScratch @ReviewMode (6.1s)
+  ✓  36 …uilder @StartFromScratch @StartFromScratch (273ms)
+  ✓  37 …ve one @StartFromScratch @CancelAddQuestion (6.2s)
+  ✓  38 … as last @StartFromScratch @DeleteDuplicate (8.6s)
+  ✓  39 …rvey @StartFromScratch @ReviewModeDeleteAll (1.2s)
+  ✓  40 …stions @StartFromScratch @ValidateDisabled (195ms)
+  ✓  41 … the builder @StartFromScratch @BackButton (594ms)
+  ✓  42 … questions @StartFromScratch @PublishSetup (39.3s)
+  ✓  43 …vey name @StartFromScratch @SaveDraftDialog (9.2s)
+  ✓  44 …urvey as draft @StartFromScratch @SaveDraft (7.1s)
+  ✘  45 …ndations @StartFromScratch @ValidateSurvey (26.8s)
+  -  46 …uild Survey @StartFromScratch @ReviewSurveyDetails
+  -  47 …8: Publish survey @StartFromScratch @PublishSurvey
+  -  48 …re listed in My assets @StartFromScratch @MyAssets
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓  49 …n on the survey home page @StartWithPrompt (16.6s)
+Auth state loaded from storage/auth.json
+  ✓  50 … dataset @StartWithPrompt @DatasetSelection (2.5s)
+  ✓  51 …or panelists @StartWithPrompt @DataSummary (16.9s)
+  ✓  52 …ponse count @StartWithPrompt @ResponseCount (3.3s)
+  ✓  53 …pt entered @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓  54 …urvey page @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓  55 …ons screen @StartWithPrompt @GenerateSurvey (3.2s)
+  ✓  56 …mber field @StartWithPrompt @GenerateSurvey (5.0s)
+  ✓  57 …questions @StartWithPrompt @GenerateSurvey (15.0s)
+  ✓  58 …I generation @StartWithPrompt @BuildSurvey (529ms)
+  ✓  59 …nd prompt @StartWithPrompt @GenerateSurvey (10.2s)
+  ✓  60 …ion count @StartWithPrompt @GenerateSurvey (12.0s)
+  ✓  61 …ion count @StartWithPrompt @GenerateSurvey (20.4s)
+  ✓  62 …@StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
+  ✓  63 …toggle is on @StartWithPrompt @BuildSurvey (18.5s)
+  ✓  64 …e pencil icon @StartWithPrompt @BuildSurvey (6.0s)
+  ✓  65 …ing question @StartWithPrompt @DiscardSave (27.0s)
+  ✓  66 …Save changes @StartWithPrompt @DiscardSave (16.5s)
+  ✓  67 …r row actions @StartWithPrompt @BuildSurvey (2.4s)
+  ✓  68 …ers questions @StartWithPrompt @BuildSurvey (2.2s)
+  ✓  69 …unt unchanged @StartWithPrompt @BuildSurvey (3.4s)
+  ✓  70 …ave one @StartWithPrompt @CancelAddQuestion (5.6s)
+  ✓  71 …e as last @StartWithPrompt @DeleteDuplicate (7.7s)
+  ✓  72 …elected, exit @StartWithPrompt @BuildSurvey (5.4s)
+  ✓  73 …n 3 questions @StartWithPrompt @BuildSurvey (3.8s)
+  ✓  74 … Build Survey @StartWithPrompt @BuildSurvey (1.0s)
+  ✓  75 …ns and 0 rows @StartWithPrompt @BuildSurvey (70ms)
+  ✓  76 …ice question @StartWithPrompt @BuildSurvey (762ms)
+  ✓  77 …oice question @StartWithPrompt @BuildSurvey (3.2s)
+  ✓  78 …ting question @StartWithPrompt @BuildSurvey (2.9s)
+  ✓  79 … NPS question @StartWithPrompt @BuildSurvey (2.5s)
+  ✓  80 …cale question @StartWithPrompt @BuildSurvey (3.6s)
+  ✓  81 …cale question @StartWithPrompt @BuildSurvey (3.6s)
+  ✓  82 …Build Survey @StartWithPrompt @BuildSurvey (25.1s)
+  ✓  83 …2, max 15 @StartWithPrompt @OptionBoundary (33.0s)
+  ✓  84 …rvey name @StartWithPrompt @SaveDraftDialog (8.3s)
+  ✓  85 …survey as draft @StartWithPrompt @SaveDraft (6.3s)
+  ✓  86 …endations @StartWithPrompt @ValidateSurvey (13.2s)
+  ✘  87 …rvey @StartWithPrompt @ReviewSurveyDetails (16.0s)
+  -  88 …18: Publish survey @StartWithPrompt @PublishSurvey
+  -  89 …are listed in My assets @StartWithPrompt @MyAssets
+
+
+  1) [chromium] › tests\survey\select-panelist.spec.ts:278:3 › Select Panelists - filters and search › TC_SP_09: Too few eligible participants shows a message and blocks proceeding @SelectPanelist @SPTooFewParticipants 
+
+    Error: Eligibility message not visible after 10000ms
+
+       at ..\page-objects\common\select-panelist.page.ts:461
+
+      459 |     const eligibility = this.getSelectPanelistElement('eligibilityMessage');
+      460 |     if (!(await eligibility.isVisible(MEDIUM_TIMEOUT))) {
+    > 461 |       throw new Error(`Eligibility message not visible after ${MEDIUM_TIMEOUT}ms`);
+          |             ^
+      462 |     }
+      463 |     return ((await eligibility.getText()) ?? '').trim();
+      464 |   }
+        at SelectPanelistPage.getEligibilityMessageText (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\select-panelist.page.ts:461:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:294:26
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ─────
+    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\attachments\select-panelist-video-48e2e6376a8d890ca0afa046ee16d13eb044dcd3.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:860:3 › Start from scratch › TC_BS_23: Validate survey: Completes and shows Optiq feedback when there are recommendations @StartFromScratch @ValidateSurvey 
+
+    Error: Expected "Validate survey" to be replaced by "Review & publish survey" after validation
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:871:7
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ──
+    test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\attachments\start-from-scratch-video-3491741b9feb7a68ebaf60e77bcb7c72f3906444.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--3fcb6-n-there-are-recommendations-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  3) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:395:3 › Start with a prompt › TC_BS_29: Review survey details dialog, Edit survey returns to Build Survey @StartWithPrompt @ReviewSurveyDetails 
+
+    Error: Expected "Review survey details" dialog to be visible
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:404:7
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───
+    test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\attachments\start-with-prompt-video-19d9624210feaa1b99234bd0cf481e27bd808d8b.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-39ba5-vey-returns-to-Build-Survey-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:278:3 › Select Panelists - filters and search › TC_SP_09: Too few eligible participants shows a message and blocks proceeding @SelectPanelist @SPTooFewParticipants 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:860:3 › Start from scratch › TC_BS_23: Validate survey: Completes and shows Optiq feedback when there are recommendations @StartFromScratch @ValidateSurvey 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:395:3 › Start with a prompt › TC_BS_29: Review survey details dialog, Edit survey returns to Build Survey @StartWithPrompt @ReviewSurveyDetails 
+  2 skipped
+  3 did not run
+  81 passed (17.5m)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ 
+----------------------------
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -12,37 +268,396 @@ Checking for Terms & Conditions page...
 Terms page not shown or already accepted, continuing login...
 FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
 Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Switching user language to en-US...
-Global setup failed: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Profile language input not visible after 15000ms
-    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:121:13)
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
-    at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6660:27)
-    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
-    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
-    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6414:33)
-    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
-    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
-    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
-    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+Switching user language to fr-FR...
+Current language: 'United States', expected: 'French'
+User language set to fr-FR.
+Authentication successful. New auth state created.
 Global setup completed. Auth state saved.
-Error: Global setup failed: Failed to set the user locale to 'en-US': Failed to read the user locale: Profile language input not visible after 15000ms
 
-   at ..\helpers\global-setup.ts:50
+Running 89 tests using 1 worker
 
-  48 |     console.error('Global setup failed:', error);
-  49 |     if (error instanceof Error) {
-> 50 |       throw new Error(`Global setup failed: ${error.message}`);
-     |             ^
-  51 |     }
-  52 |     throw new Error('Global setup failed with an unknown error');
-  53 |   } finally {
-    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 … no dataset @SelectPanelist @SPModalCancel (21.6s)
+Auth state loaded from storage/auth.json
+  ✓   2 …tart from scratch @SelectPanelist @SPSetup (14.0s)
+Auth state loaded from storage/auth.json
+  ✓   3 …h Select Panelists @SelectPanelist @SPSetup (3.5s)
+  ✓   4 …ummary sentence @SelectPanelist @SPSummary (57.2s)
+  ✓   5 … refreshed" date @SelectPanelist @SPFooter (126ms)
+  ✓   6 … selection @SelectPanelist @SPSearchButton (22.1s)
+  ✓   7 … items @SelectPanelist @SPFilterValidation (45.6s)
+  ✘   8 …it message @SelectPanelist @SPSearchResult (18.5s)
+  -   9 …ponse count choices @SelectPanelist @SPMoreOptions
+  -  10 … filter resets it @SelectPanelist @SPResponseCount
+  -  11 …s proceeding @SelectPanelist @SPTooFewParticipants
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓  12 …ge @StartFromScratch @LandStartFromScratch (22.1s)
+Auth state loaded from storage/auth.json
+  ✓  13 … screen @StartFromScratch @DatasetSelection (5.0s)
+  ✓  14 …ers are set @StartFromScratch @DataSummary (16.4s)
+  ✓  15 …onse count @StartFromScratch @ResponseCount (3.7s)
+  ✘  16 … @StartFromScratch @ProceedToSurveyBuilder (19.1s)
+  -  17 …e Add question panel @StartFromScratch @EmptyState
+  -  18 …it survey title @StartFromScratch @EditSurveyTitle
+  -  19 …e question @StartFromScratch @SingleChoiceQuestion
+  -  20 …question @StartFromScratch @MultipleChoiceQuestion
+  -  21 … Rating question @StartFromScratch @RatingQuestion
+  -  22 …Add an NPS question @StartFromScratch @NPSQuestion
+  -  23 …ale question @StartFromScratch @PointScaleQuestion
+  -  24 …ale question @StartFromScratch @MultiScaleQuestion
+  -  25 …uired toggle is on @StartFromScratch @RequiredStar
+  -  26 …ia the pencil icon @StartFromScratch @EditQuestion
+  -  27 …n existing question @StartFromScratch @DiscardSave
+  -  28 …blocks Save changes @StartFromScratch @DiscardSave
+  -  29 …unt unchanged @StartFromScratch @CancelAddQuestion
+  -  30 …rop reorders questions @StartFromScratch @DragDrop
+  -  31 …ver row actions @StartFromScratch @DeleteDuplicate
+  -  32 … - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  33 … Build Survey @StartFromScratch @StepperNavigation
+  -  34 …with limit message @StartFromScratch @MaxQuestions
+  -  35 …elete selected, exit @StartFromScratch @ReviewMode
+  -  36 …cratch builder @StartFromScratch @StartFromScratch
+  -  37 … and save one @StartFromScratch @CancelAddQuestion
+  -  38 …me type as last @StartFromScratch @DeleteDuplicate
+  -  39 …uild Survey @StartFromScratch @ReviewModeDeleteAll
+  -  40 …an 3 questions @StartFromScratch @ValidateDisabled
+  -  41 …tep from the builder @StartFromScratch @BackButton
+  -  42 …st three questions @StartFromScratch @PublishSetup
+  -  43 …s a survey name @StartFromScratch @SaveDraftDialog
+  -  44 … Save survey as draft @StartFromScratch @SaveDraft
+  -  45 … recommendations @StartFromScratch @ValidateSurvey
+  -  46 …uild Survey @StartFromScratch @ReviewSurveyDetails
+  -  47 …8: Publish survey @StartFromScratch @PublishSurvey
+  -  48 …re listed in My assets @StartFromScratch @MyAssets
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+isLambdaTest = false
+  ✓  49 …n on the survey home page @StartWithPrompt (19.9s)
+Auth state loaded from storage/auth.json
+  ✓  50 … dataset @StartWithPrompt @DatasetSelection (4.8s)
+  ✓  51 …or panelists @StartWithPrompt @DataSummary (59.0s)
+  ✓  52 …ponse count @StartWithPrompt @ResponseCount (2.5s)
+  ✘  53 …pt entered @StartWithPrompt @GenerateSurvey (5.3s)
+  -  54 …Build Survey page @StartWithPrompt @GenerateSurvey
+  -  55 … Questions screen @StartWithPrompt @GenerateSurvey
+  -  56 … and number field @StartWithPrompt @GenerateSurvey
+  -  57 …ates AI questions @StartWithPrompt @GenerateSurvey
+  -  58 … after AI generation @StartWithPrompt @BuildSurvey
+  -  59 … state and prompt @StartWithPrompt @GenerateSurvey
+  -  60 …he question count @StartWithPrompt @GenerateSurvey
+  -  61 …he question count @StartWithPrompt @GenerateSurvey
+  -  62 …stions @StartWithPrompt @BuildSurvey @MaxQuestions
+  -  63 …equired toggle is on @StartWithPrompt @BuildSurvey
+  -  64 … via the pencil icon @StartWithPrompt @BuildSurvey
+  -  65 …an existing question @StartWithPrompt @DiscardSave
+  -  66 … blocks Save changes @StartWithPrompt @DiscardSave
+  -  67 …ia hover row actions @StartWithPrompt @BuildSurvey
+  -  68 …p reorders questions @StartWithPrompt @BuildSurvey
+  -  69 …tion count unchanged @StartWithPrompt @BuildSurvey
+  -  70 …d and save one @StartWithPrompt @CancelAddQuestion
+  -  71 …ame type as last @StartWithPrompt @DeleteDuplicate
+  -  72 …elete selected, exit @StartWithPrompt @BuildSurvey
+  -  73 …wer than 3 questions @StartWithPrompt @BuildSurvey
+  -  74 …stay on Build Survey @StartWithPrompt @BuildSurvey
+  -  75 …n options and 0 rows @StartWithPrompt @BuildSurvey
+  -  76 …ngle Choice question @StartWithPrompt @BuildSurvey
+  -  77 …iple Choice question @StartWithPrompt @BuildSurvey
+  -  78 …dd a Rating question @StartWithPrompt @BuildSurvey
+  -  79 … Add an NPS question @StartWithPrompt @BuildSurvey
+  -  80 …Point Scale question @StartWithPrompt @BuildSurvey
+  -  81 …Multi Scale question @StartWithPrompt @BuildSurvey
+  -  82 …back to Build Survey @StartWithPrompt @BuildSurvey
+  -  83 …y - min 2, max 15 @StartWithPrompt @OptionBoundary
+  -  84 …es a survey name @StartWithPrompt @SaveDraftDialog
+  -  85 …: Save survey as draft @StartWithPrompt @SaveDraft
+  -  86 …e recommendations @StartWithPrompt @ValidateSurvey
+  -  87 …Build Survey @StartWithPrompt @ReviewSurveyDetails
+  -  88 …18: Publish survey @StartWithPrompt @PublishSurvey
+  -  89 …are listed in My assets @StartWithPrompt @MyAssets
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+Current language: 'United States', expected: 'English (United States)'
+[global-teardown] User language reset to en-US.
 
 
-To open last HTML report run:
+  1) [chromium] › tests\survey\select-panelist.spec.ts:188:3 › Select Panelists - filters and search › TC_SP_08: Search result shows eligible count, response options and credit message @SelectPanelist @SPSearchResult 
 
-  npx playwright show-report
+    Error: Expected credit message to contain "100" and "credit", got "Combien de réponses souhaitez-vous obtenir ? Un nombre plus élevé de réponses nécessite plus de temps et influe également sur le calcul des crédits. Par exemple : 100 réponses = 1 crédit"
+    expect(received).toBeTruthy()
 
+    Received: false
 
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ 
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\error-context.md
+
+    attachment #3: select-panelist-video (video/webm) ─────
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\attachments\select-panelist-video-77eacf61b9d6b417bd4fb59d4b3daf23026ba3dc.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-select-panelist-Sel-aa75a--options-and-credit-message-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  2) [chromium] › tests\survey\start-from-scratch.spec.ts:84:3 › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder 
+
+    Error: Build Survey page did not load after proceeding
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:87:5
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ──
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\attachments\start-from-scratch-video-d085bcfb32f3b70bf08f698a9bda607c01b1c9c3.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  3) [chromium] › tests\survey\start-with-prompt.spec.ts:74:3 › Start with a prompt › TC_AI_01: Select Panelists shows Optiq heading and prompt box, Generate Survey disabled until prompt entered @StartWithPrompt @GenerateSurvey 
+
+    Error: Expected "Let's get you started with Optiq!" heading visible
+    expect(received).toBeTruthy()
+
+    Received: false
+
+       at ..\page-objects\common\assert-utils.ts:14
+
+      12 |  */
+      13 | export function assertTrue(result: boolean, message?: string): void {
+    > 14 |   assert(result).toBeTruthy(message);
+         |                  ^
+      15 | }
+      16 |
+        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:78:7
+
+    attachment #1: screenshot (image/png) ─────────────────
+    test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\test-failed-1.png
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\error-context.md
+
+    attachment #3: start-with-prompt-video (video/webm) ───
+    test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\attachments\start-with-prompt-video-227d796ce549062b8743b38ed31d11007deebf22.webm
+    ───────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ────────────────
+    test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-with-prompt-S-4ba29-sabled-until-prompt-entered-chromium\trace.zip
+
+    ───────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › tests\survey\select-panelist.spec.ts:188:3 › Select Panelists - filters and search › TC_SP_08: Search result shows eligible count, response options and credit message @SelectPanelist @SPSearchResult 
+    [chromium] › tests\survey\start-from-scratch.spec.ts:84:3 › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder 
+    [chromium] › tests\survey\start-with-prompt.spec.ts:74:3 › Start with a prompt › TC_AI_01: Select Panelists shows Optiq heading and prompt box, Generate Survey disabled until prompt entered @StartWithPrompt @GenerateSurvey 
+  2 skipped
+  69 did not run
+  15 passed (8.0m)
+-----------------
+TC_SP_08: Search result shows eligible count, response options and credit message
+survey/select-panelist.spec.ts:188
+18.5s
+chromiumSelectPanelistSPSearchResult
+serial
+Copy prompt
+Error: Expected credit message to contain "100" and "credit", got "Combien de réponses souhaitez-vous obtenir ? Un nombre plus élevé de réponses nécessite plus de temps et influe également sur le calcul des crédits. Par exemple : 100 réponses = 1 crédit"
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:210:5
+Filter steps
+Before Hooks
+15ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.1s
+Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+12ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Retailer\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Retailer_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+13ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Geography\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Geography_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+14ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Demographic\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Demographic_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+14ms
+Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Period\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+Wait for selector locator('[data-test-id=\'ds-Period_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+15ms
+Wait for selector locator('[data-test-id=\'search-panelists\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+11ms
+Click locator('[data-test-id=\'search-panelists\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+75ms
+Wait for selector locator('[data-test-id=\'panelist-eligibility-message\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+2.3s
+Wait for selector locator('[data-test-id=\'select-response-count-100\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+17ms
+Wait for selector locator('[data-test-id=\'select-response-count-150\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+17ms
+Wait for selector locator('[data-test-id=\'select-response-count-200\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+17ms
+Wait for selector locator('[data-test-id=\'select-response-count-250\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15ms
+Wait for selector locator('[data-test-id=\'select-response-count-300\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+16ms
+Wait for selector locator('[data-test-id=\'select-response-count-400\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+18ms
+Wait for selector locator('[data-test-id=\'select-response-count-500\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+14ms
+Wait for selector locator('[data-test-id=\'toggle-more-response-options\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+12ms
+Wait for selector locator('[data-test-id=\'responses-credit-message\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+11ms
+After Hooks
+1.6s
+Worker Cleanup
+2ms
+---------
+Survey Builder: Should navigate to the Build Survey page after proceeding
+survey/start-from-scratch.spec.ts:84
+19.1s
+chromiumStartFromScratchProceedToSurveyBuilder
+serial
+Copy prompt
+Error: Build Survey page did not load after proceeding
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:87:5
+Filter steps
+Before Hooks
+32ms
+Wait for selector locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+136ms
+Click locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+326ms
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+15.1s
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+3.0s
+After Hooks
+1.4s
+Worker Cleanup
+1ms
+------------
+TC_AI_01: Select Panelists shows Optiq heading and prompt box, Generate Survey disabled until prompt entered
+survey/start-with-prompt.spec.ts:74
+5.3s
+chromiumStartWithPromptGenerateSurvey
+serial
+Copy prompt
+Error: Expected "Let's get you started with Optiq!" heading visible
+expect(received).toBeTruthy()
+
+Received: false
+
+   at ..\page-objects\common\assert-utils.ts:14
+
+  12 |  */
+  13 | export function assertTrue(result: boolean, message?: string): void {
+> 14 |   assert(result).toBeTruthy(message);
+     |                  ^
+  15 | }
+  16 |
+    at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
+    at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
+    at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
+    at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-with-prompt.spec.ts:78:7
+Filter steps
+Before Hooks
+10ms
+Wait for selector locator('text=Let\'s get you started with Optiq!')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+5.1s
+After Hooks
+1.5s
+Worker Cleanup
+3ms
