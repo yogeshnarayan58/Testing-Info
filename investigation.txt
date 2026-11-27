@@ -1,112 +1,17 @@
+Both changes are complete and verified:
+
+localization-data.json — added tooFewParticipantsMessage to all 13 locale entries with the exact strings provided, all existing fields preserved.
+select-panelist.spec.ts:
+Removed the TOO_FEW_PARTICIPANTS_MESSAGE constant entirely (no remaining references).
+TC_SP_09 now computes expectedMessage from tooFewParticipantsMessage for envConfig.LOCALE, falling back to DEFAULT_LOCALE — the same lookup pattern used for responsesCreditMessage in TC_SP_08.
+Both expected and actual are normalized the same way as TC_SP_08 (\u00a0/\u202f → space, whitespace collapsed, trimmed) and asserted for exact equality, with the assert message showing both values.
+Nothing else in either file was changed.
+------------------------------------------------
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
 $ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
-◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Switching user language to fr-FR...
-Current language: 'English (United Kingdom)', expected: 'French'
-User language set to fr-FR.
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 11 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-  ✓   1 …modal applies no dataset @SelectPanelist @SPModalCancel (23.0s)
-Auth state loaded from storage/auth.json
-  ✓   2 …me page and start from scratch @SelectPanelist @SPSetup (14.8s)
-Auth state loaded from storage/auth.json
-  ✓   3 …aset and reach Select Panelists @SelectPanelist @SPSetup (4.0s)
-  ✓   4 …ctly in the summary sentence @SelectPanelist @SPSummary (56.9s)
-  ✓   5 … with a "Last refreshed" date @SelectPanelist @SPFooter (122ms)
-  ✓   6 …has exactly 1 selection @SelectPanelist @SPSearchButton (22.1s)
-  ✓   7 …r of selected items @SelectPanelist @SPFilterValidation (44.5s)
-  ✓   8 …ions and credit message @SelectPanelist @SPSearchResult (18.3s)
-  ✓   9 …al response count choices @SelectPanelist @SPMoreOptions (1.6s)
-  ✘  10 …ging a filter resets it @SelectPanelist @SPResponseCount (5.1s)
-  -  11 …age and blocks proceeding @SelectPanelist @SPTooFewParticipants
-[global-teardown] Resetting user language from fr-FR to en-US...
-Auth state loaded from storage/auth.json
-[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
-    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
-    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
-    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
-    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6676:7)
-    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
-    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
-    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6415:28)
-    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
-    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
-    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
-    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
-
-
-  1) [chromium] › tests\survey\select-panelist.spec.ts:250:3 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount 
-
-    Error: Proceed to survey builder should be disabled before a response count is selected
-    expect(received).toBeTruthy()
-
-    Received: false
-
-       at ..\page-objects\common\assert-utils.ts:14
-
-      12 |  */
-      13 | export function assertTrue(result: boolean, message?: string): void {
-    > 14 |   assert(result).toBeTruthy(message);
-         |                  ^
-      15 | }
-      16 |
-        at GTAExpect.handleAssertionError (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:245:11)
-        at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
-        at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
-        at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:257:7
-
-    attachment #1: screenshot (image/png) ──────────────────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
-
-    attachment #3: select-panelist-video (video/webm) ──────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\attachments\select-panelist-video-1a04ebd756b1a8c3008677e3c656e9efd20f42cb.webm
-    ────────────────────────────────────────────────────────────────────
-
-    Error Context: test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\error-context.md
-
-    attachment #5: trace (application/zip) ─────────────────────────────
-    test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace test-results\survey-select-panelist-Sel-ca87f-changing-a-filter-resets-it-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────
-
-  1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:250:3 › Select Panelists - filters and search › TC_SP_10 - selecting a response count enables Proceed, and changing a filter resets it @SelectPanelist @SPResponseCount 
-  1 did not run
-  9 passed (5.2m)
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
-◇ injected env (21) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -124,31 +29,202 @@ Global setup completed. Auth state saved.
 
 Running 11 tests using 1 worker
 
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 … Offering modal applies no dataset @SelectPanelist @SPModalCancel (30.7s)
+Auth state loaded from storage/auth.json
+  ✓   2 … survey home page and start from scratch @SelectPanelist @SPSetup (15.0s)
+Auth state loaded from storage/auth.json
+  ✓   3 …ng and dataset and reach Select Panelists @SelectPanelist @SPSetup (4.3s)
+  ✓   4 …shown correctly in the summary sentence @SelectPanelist @SPSummary (1.0m)
+  ✓   5 …t and view with a "Last refreshed" date @SelectPanelist @SPFooter (282ms)
+  ✓   6 …ry filter has exactly 1 selection @SelectPanelist @SPSearchButton (23.1s)
+  ✓   7 … the number of selected items @SelectPanelist @SPFilterValidation (47.7s)
+  ✓   8 …sponse options and credit message @SelectPanelist @SPSearchResult (19.4s)
+  ✓   9 …s additional response count choices @SelectPanelist @SPMoreOptions (1.8s)
+  ✓  10 … and changing a filter resets it @SelectPanelist @SPResponseCount (37.4s)
+  ✓  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants (1.0m)
+[global-teardown] Resetting user language from fr-FR to en-US...
+Auth state loaded from storage/auth.json
+[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
+    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
+    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
+    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6676:7)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6415:28)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+
+  Slow test file: [chromium] › tests\survey\select-panelist.spec.ts (5.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  11 passed (6.9m)
+
+--------------------------
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Starting global setup...
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to zh-TW...
+Current language: 'English (United States)', expected: 'Traditional Chinese (for Taiwan)'
+User language set to zh-TW.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 11 tests using 1 worker
+
 ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 isLambdaTest = false
-  ✓   1 …modal applies no dataset @SelectPanelist @SPModalCancel (30.5s)
+  ✓   1 … Offering modal applies no dataset @SelectPanelist @SPModalCancel (21.0s)
 Auth state loaded from storage/auth.json
-  ✓   2 …me page and start from scratch @SelectPanelist @SPSetup (18.6s)
+  ✓   2 … survey home page and start from scratch @SelectPanelist @SPSetup (15.5s)
 Auth state loaded from storage/auth.json
-  ✓   3 …aset and reach Select Panelists @SelectPanelist @SPSetup (6.8s)
-  ✓   4 …ectly in the summary sentence @SelectPanelist @SPSummary (1.0m)
-  ✓   5 … with a "Last refreshed" date @SelectPanelist @SPFooter (200ms)
-  ✓   6 …has exactly 1 selection @SelectPanelist @SPSearchButton (23.8s)
-  ✓   7 …r of selected items @SelectPanelist @SPFilterValidation (48.2s)
-  ✓   8 …ions and credit message @SelectPanelist @SPSearchResult (19.5s)
-  ✓   9 …al response count choices @SelectPanelist @SPMoreOptions (2.4s)
-  ✓  10 …ing a filter resets it @SelectPanelist @SPResponseCount (36.7s)
-  ✘  11 …blocks proceeding @SelectPanelist @SPTooFewParticipants (49.2s)
-[global-teardown] Resetting user language from fr-FR to en-US...
+  ✓   3 …ng and dataset and reach Select Panelists @SelectPanelist @SPSetup (3.9s)
+  ✓   4 …hown correctly in the summary sentence @SelectPanelist @SPSummary (57.8s)
+  ✓   5 …t and view with a "Last refreshed" date @SelectPanelist @SPFooter (135ms)
+  ✓   6 …ry filter has exactly 1 selection @SelectPanelist @SPSearchButton (22.0s)
+  ✓   7 … the number of selected items @SelectPanelist @SPFilterValidation (50.1s)
+  ✓   8 …sponse options and credit message @SelectPanelist @SPSearchResult (20.0s)
+  ✓   9 …s additional response count choices @SelectPanelist @SPMoreOptions (2.1s)
+  ✓  10 … and changing a filter resets it @SelectPanelist @SPResponseCount (37.8s)
+  ✓  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants (1.0m)
+[global-teardown] Resetting user language from zh-TW to en-US...
 Auth state loaded from storage/auth.json
 Current language: 'English (United States)', expected: 'English (United States)'
 Already in en-US, skipping language switch
 [global-teardown] User language reset to en-US.
 
+  11 passed (6.7m)
 
-  1) [chromium] › tests\survey\select-panelist.spec.ts:286:3 › Select Panelists - filters and search › TC_SP_09: Too few eligible participants shows a message and blocks proceeding @SelectPanelist @SPTooFewParticipants 
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/select-panelist.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to tr-TR...
+Current language: 'English (United States)', expected: 'Turkish'
+User language set to tr-TR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
 
-    Error: Expected eligibility message "Your current criteria returns too few eligible participants. Try expanding your selection (e.g., geography, demographics, or time frame) to increase your audience size", got "Vos critères actuels renvoient trop peu de participants éligibles. Essayez d’élargir votre sélection, par exemple la zone géographique, les données démographiques ou la période, afin d’augmenter la taille de votre public."
+Running 11 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+isLambdaTest = false
+  ✓   1 … Offering modal applies no dataset @SelectPanelist @SPModalCancel (29.1s)
+Auth state loaded from storage/auth.json
+  ✓   2 … survey home page and start from scratch @SelectPanelist @SPSetup (23.0s)
+Auth state loaded from storage/auth.json
+  ✓   3 …ng and dataset and reach Select Panelists @SelectPanelist @SPSetup (5.8s)
+  ✓   4 …shown correctly in the summary sentence @SelectPanelist @SPSummary (1.2m)
+  ✓   5 …t and view with a "Last refreshed" date @SelectPanelist @SPFooter (417ms)
+  ✓   6 …ry filter has exactly 1 selection @SelectPanelist @SPSearchButton (23.5s)
+  ✓   7 … the number of selected items @SelectPanelist @SPFilterValidation (50.7s)
+  ✓   8 …sponse options and credit message @SelectPanelist @SPSearchResult (19.3s)
+  ✓   9 …s additional response count choices @SelectPanelist @SPMoreOptions (2.1s)
+  ✓  10 … and changing a filter resets it @SelectPanelist @SPResponseCount (37.9s)
+  ✓  11 …essage and blocks proceeding @SelectPanelist @SPTooFewParticipants (1.0m)
+[global-teardown] Resetting user language from tr-TR to en-US...
+Auth state loaded from storage/auth.json
+Current language: 'Turkish', expected: 'English (United States)'
+[global-teardown] User language reset to en-US.
+
+  Slow test file: [chromium] › tests\survey\select-panelist.spec.ts (5.4m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  11 passed (8.1m)
+------------
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ suppress logs { quiet: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to tr-TR...
+Current language: 'English (United States)', expected: 'Turkish'
+User language set to tr-TR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 37 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+  ✓   1 …n on the survey home page @StartFromScratch @LandStartFromScratch (24.4s)
+Auth state loaded from storage/auth.json
+  ✓   2 …rm the Choose a dataset screen @StartFromScratch @DatasetSelection (6.5s)
+  ✓   3 …elists after all 5 filters are set @StartFromScratch @DataSummary (52.1s)
+  ✓   4 … after selecting a response count @StartFromScratch @ResponseCount (3.8s)
+  ✘   5 …y page after proceeding @StartFromScratch @ProceedToSurveyBuilder (19.1s)
+  -   6 …Untitled Survey" and the Add question panel @StartFromScratch @EmptyState
+  -   7 … scratch › TC_BS_02: Edit survey title @StartFromScratch @EditSurveyTitle
+  -   8 …03a: Add a Single Choice question @StartFromScratch @SingleChoiceQuestion
+  -   9 … Add a Multiple Choice question @StartFromScratch @MultipleChoiceQuestion
+  -  10 …atch › TC_BS_03c: Add a Rating question @StartFromScratch @RatingQuestion
+  -  11 …m scratch › TC_BS_03d: Add an NPS question @StartFromScratch @NPSQuestion
+  -  12 …_BS_03e: Add a Point Scale question @StartFromScratch @PointScaleQuestion
+  -  13 …_BS_03f: Add a Multi Scale question @StartFromScratch @MultiScaleQuestion
+  -  14 …ar appears when the Required toggle is on @StartFromScratch @RequiredStar
+  -  15 …5: Edit question text via the pencil icon @StartFromScratch @EditQuestion
+  -  16 …ard / Save changes on an existing question @StartFromScratch @DiscardSave
+  -  17 …8: Empty question text blocks Save changes @StartFromScratch @DiscardSave
+  -  18 … leaves the question count unchanged @StartFromScratch @CancelAddQuestion
+  -  19 … › TC_BS_15: Drag and drop reorders questions @StartFromScratch @DragDrop
+  -  20 …icate a question via hover row actions @StartFromScratch @DeleteDuplicate
+  -  21 …BS_04: Options boundary - min 2, max 15 @StartFromScratch @OptionBoundary
+  -  22 …etains data and back to Build Survey @StartFromScratch @StepperNavigation
+  -  23 …question and Duplicate with limit message @StartFromScratch @MaxQuestions
+  -  24 …ode controls, select, delete selected, exit @StartFromScratch @ReviewMode
+  -  25 …ble in the Start From Scratch builder @StartFromScratch @StartFromScratch
+  -  26 …estion cancel, then add and save one @StartFromScratch @CancelAddQuestion
+  -  27 …tion then re-add the same type as last @StartFromScratch @DeleteDuplicate
+  -  28 …, delete all, stay on Build Survey @StartFromScratch @ReviewModeDeleteAll
+  -  29 … disabled with fewer than 3 questions @StartFromScratch @ValidateDisabled
+  -  30 …turns to the previous step from the builder @StartFromScratch @BackButton
+  -  31 …rvey and restore at least three questions @StartFromScratch @PublishSetup
+  -  32 …ith empty title requires a survey name @StartFromScratch @SaveDraftDialog
+  -  33 …rom scratch › TC_BS_10: Save survey as draft @StartFromScratch @SaveDraft
+  -  34 …feedback when there are recommendations @StartFromScratch @ValidateSurvey
+  -  35 …dit survey returns to Build Survey @StartFromScratch @ReviewSurveyDetails
+  -  36 …atch › TC_BS_16/TC_BS_18: Publish survey @StartFromScratch @PublishSurvey
+  -  37 …ved folder and survey are listed in My assets @StartFromScratch @MyAssets
+[global-teardown] Resetting user language from tr-TR to en-US...
+Auth state loaded from storage/auth.json
+Current language: 'Turkish', expected: 'English (United States)'
+[global-teardown] User language reset to en-US.
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:84:3 › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder 
+
+    Error: Build Survey page did not load after proceeding
     expect(received).toBeTruthy()
 
     Received: false
@@ -165,50 +241,45 @@ Already in en-US, skipping language switch
         at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
         at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
         at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:303:9
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:87:5
 
-    attachment #1: screenshot (image/png) ──────────────────────────────
-    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────
+    attachment #1: screenshot (image/png) ────────────────────────────────────────
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\error-context.md
 
-    attachment #3: select-panelist-video (video/webm) ──────────────────
-    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\attachments\select-panelist-video-569a61a05b3d8c82c54d62f6c85040aba464d108.webm
-    ────────────────────────────────────────────────────────────────────
+    attachment #3: start-from-scratch-video (video/webm) ─────────────────────────
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\attachments\start-from-scratch-video-3cb84075cdc9d731189061fddc8eb047a54a6a1f.webm
+    ──────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\error-context.md
+    Error Context: test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\error-context.md
 
-    attachment #5: trace (application/zip) ─────────────────────────────
-    test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\trace.zip
+    attachment #5: trace (application/zip) ───────────────────────────────────────
+    test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-select-panelist-Sel-50828-ssage-and-blocks-proceeding-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-from-scratch--c6b3e-urvey-page-after-proceeding-chromium\trace.zip
 
-    ────────────────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\select-panelist.spec.ts:286:3 › Select Panelists - filters and search › TC_SP_09: Too few eligible participants shows a message and blocks proceeding @SelectPanelist @SPTooFewParticipants 
-  10 passed (7.0m)
+    [chromium] › tests\survey\start-from-scratch.spec.ts:84:3 › Start from scratch › Survey Builder: Should navigate to the Build Survey page after proceeding @StartFromScratch @ProceedToSurveyBuilder 
+  1 skipped
+  31 did not run
+  4 passed (4.1m)
 
 To open last HTML report run:
 
   npx playwright show-report
 
-
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ npx playwright show-report
-
-  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
-
--------------------
-TC_SP_09: Too few eligible participants shows a message and blocks proceeding
-survey/select-panelist.spec.ts:286
-49.2s
-chromiumSelectPanelistSPTooFewParticipants
+Survey Builder: Should navigate to the Build Survey page after proceeding
+survey/start-from-scratch.spec.ts:84
+19.1s
+chromiumStartFromScratchProceedToSurveyBuilder
 serial
 Copy prompt
-Error: Expected eligibility message "Your current criteria returns too few eligible participants. Try expanding your selection (e.g., geography, demographics, or time frame) to increase your audience size", got "Vos critères actuels renvoient trop peu de participants éligibles. Essayez d’élargir votre sélection, par exemple la zone géographique, les données démographiques ou la période, afin d’augmenter la taille de votre public."
+Error: Build Survey page did not load after proceeding
 expect(received).toBeTruthy()
 
 Received: false
@@ -225,141 +296,18 @@ Received: false
     at GTAExpect.runExpect (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:231:12)
     at GTAExpect.toBeTruthy (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\assertions.ts:53:10)
     at assertTrue (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\assert-utils.ts:14:18)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\select-panelist.spec.ts:303:9
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:87:5
 Filter steps
 Before Hooks
-24ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.1s
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-37ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Retailer\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Retailer_Dimension\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-57ms
-Click locator('[data-test-id=\'ds-Retailer_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-202ms
-Wait for selector locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-33ms
-Click locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-215ms
-Wait for selector locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
 38ms
-Click locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-446ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-48ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-91ms
-Fill "Channel" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-113ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-49ms
-Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-41ms
-Click locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-203ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-50ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-81ms
-Fill "Beauty Supply" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-87ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-36ms
-Wait for selector locator('div.item-container:has-text(\'Beauty Supply\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-39ms
-Click locator('div.item-container:has-text(\'Beauty Supply\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-248ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-43ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-121ms
-Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-38ms
-Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-237ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Geography\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+Wait for selector locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+191ms
+Click locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+387ms
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+15.0s
+Wait for selector locator('text= Build Survey').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
 3.0s
-Wait for selector locator('[data-test-id=\'ds-Geography_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-31ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Demographic\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Demographic_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-41ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Period\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Period_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-30ms
-Wait for selector locator('[data-test-id=\'search-panelists\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-32ms
-Click locator('[data-test-id=\'search-panelists\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-151ms
-Wait for selector locator('[data-test-id=\'panelist-eligibility-message\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-1.9s
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Product\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Product_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-21ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Retailer\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Retailer_Dimension\']') ✕ 2— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-46ms
-Click locator('[data-test-id=\'ds-Retailer_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-94ms
-Wait for selector locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-26ms
-Click locator('[data-test-id=\'ds-removeIcon\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-115ms
-Wait for selector locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-35ms
-Click locator('[data-test-id=\'ds-addButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-226ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-23ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-63ms
-Fill "Channel" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-56ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-18ms
-Wait for selector locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-28ms
-Click locator('[data-test-id=\'ds-navigationItemLabel_Channel\']').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-90ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-38ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-66ms
-Fill "Dollar Store" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-41ms
-Wait for selector locator('[data-test-id=\'ds-virtualScrollViewport\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-18ms
-Wait for selector locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-26ms
-Click locator('div.item-container:has-text(\'Dollar Store\') niq-checkbox').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-120ms
-Wait for selector locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-29ms
-Fill "" locator('[data-test-id=\'ds-searchBar-input\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-294ms
-Wait for selector locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-87ms
-Click locator('[data-test-id=\'ds-breadcrumbDoneButton\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-421ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Geography\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Geography_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-27ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Demographic\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Demographic_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-39ms
-Wait for selector locator('[data-test-id=\'ds-noDataPrompt_Period\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-3.0s
-Wait for selector locator('[data-test-id=\'ds-Period_Dimension\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-19ms
 After Hooks
-5.4s
+1.7s
 Worker Cleanup
-3ms
