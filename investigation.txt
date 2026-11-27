@@ -1,299 +1,8 @@
-Done. Appended ## Build Survey - Investigation to localization-phase-2.md with the two tables.
-
-Summary of what's English-only in the Build Survey scope
-
-List 1 — 4 text-dependent locators, all NO TEST-ID:
-
-maxOptionsMessageText / maxQuestionsMessageText — niqTooltip tooltips (shared directive); only the triggers (add-option, add-question, duplicate-question-*) carry test-ids.
-saveDraftSuccessToast — dynamic ToastService toast (SURVEYMOD_DRAFT_SAVED), also matched inline via getByText in survey-builder.page.ts.
-buildSurveyPageHeading (text= Build Survey) — <niq-step> label in crf-survey-wrapper.component.html; this gates every Build Survey landing in both specs.
-List 2 — 3 hardcoded expected values:
-
-'Untitled Survey' ×2 — NO KEY: it's an untranslated literal in survey.service.ts / build-survey.ts, so it stays English in every locale (the test would actually pass under tr-TR, but it's a product-side localization gap).
-'please enter a value between 3 and 10' — SURVEYMOD_PLEASE_ENTER_VALUE_BETWEEN in question-generator.html.
-Everything else in scope (title edit, question types, cards, row actions, Required toggle, Save draft / Review Survey / Back / Validate buttons, and all Review-mode controls) is already data-test-id-based. Excluded per your instructions: Save-draft dialog locators (My Assets treeitem, etc.), validation toasts / recommendation tag, Review & publish, Publish, My assets.
-
-One note: I ran a single read-only PowerShell Get-Content to check the file's size before appending — no other commands were run and no other files were touched.
-## Phase 1 - Investigation (test-ids)
-
-Scope: every locator in `e2e/locators/survey/*.json`, cross-checked against `libs/**/*.html` (app source) and against actual usage in `e2e/page-objects` / `e2e/tests`.
-
-Notes:
-- "Shared library" means the target element is rendered internally by a `niq-*` / `crf-uic-*` / `crf-data-selector-panel-v2` / `re-dataset-picker` component and is not an element we author in our own `libs/**/*.html` templates, so no test-id can be added to it from this repo.
-- A few elements use `data-testid` (no hyphen) instead of the repo's `data-test-id` convention — these are called out explicitly in the "TEST-ID EXISTS, NOT USED" table since they are a naming inconsistency, not a missing attribute.
-- Dynamic/toast messages created via `ToastService.InsertToast(...)` (TS code, not HTML) are treated as "shared library" since there is no template element to annotate.
-
-### Group 1 — ALREADY TEST-ID
-
-| file | elementName | current selector | data-test-id |
-|---|---|---|---|
-| survey-builder.locator.json | questionTypeSingleChoice | `[data-test-id='question-type-SINGLE_CHOICE']` | question-type-SINGLE_CHOICE |
-| survey-builder.locator.json | questionTypeMultipleChoice | `[data-test-id='question-type-MULTIPLE_CHOICE']` | question-type-MULTIPLE_CHOICE |
-| survey-builder.locator.json | questionTypeRating | `[data-test-id='question-type-STAR_RATING']` | question-type-STAR_RATING |
-| survey-builder.locator.json | questionTypeNPS | `[data-test-id='question-type-NET_PROMOTER_SCORE']` | question-type-NET_PROMOTER_SCORE |
-| survey-builder.locator.json | questionTypePointScale | `[data-test-id='question-type-SINGLE_POINT_SCALE']` | question-type-SINGLE_POINT_SCALE |
-| survey-builder.locator.json | questionTypeMultiScale | `[data-test-id='question-type-MULTIPLE_POINT_SCALE']` | question-type-MULTIPLE_POINT_SCALE |
-| survey-builder.locator.json | questionTextInput | `[data-test-id='question-text-input-${text}-input']` | question-text-input-${text}-input |
-| survey-builder.locator.json | ratingQuestionTextInput | `[data-test-id^='question-text-input-'] input:visible` | question-text-input-* |
-| survey-builder.locator.json | ratingRowInput | `[data-test-id^='rating-row-input-'] input:visible` | rating-row-input-* |
-| survey-builder.locator.json | addRatingRowButton | `niq-button[data-test-id^='add-rating-row-']:visible` | add-rating-row-* |
-| survey-builder.locator.json | addOptionButton | `[data-test-id='add-option']` | add-option |
-| survey-builder.locator.json | optionRow | `[data-test-id^='question-option-row-']` | question-option-row-* |
-| survey-builder.locator.json | removeOptionIcon | `[data-test-id^='remove-option-']` | remove-option-* |
-| survey-builder.locator.json | addRowButton | `[data-test-id='add-scale-row']` | add-scale-row |
-| survey-builder.locator.json | addColumnButton | `[data-test-id='add-scale-column']` | add-scale-column |
-| survey-builder.locator.json | scaleAddMenuTrigger | `[data-test-id='scale-add-menu-trigger']` | scale-add-menu-trigger |
-| survey-builder.locator.json | requiredToggle | `[data-test-id='-input-checkbox'], [data-test-id^='required-toggle-'][data-test-id$='-input-checkbox']` | required-toggle-*-input-checkbox |
-| survey-builder.locator.json | editQuestionButton | `niq-icon-button[data-test-id^='edit-question-']` | edit-question-* |
-| survey-builder.locator.json | inlineAddEditor | `[data-test-id='inline-add-editor']` | inline-add-editor |
-| survey-builder.locator.json | questionRow | `[data-test-id^='question-row-']` | question-row-* |
-| survey-builder.locator.json | addQuestionLink | `[data-test-id='add-question']` | add-question |
-| survey-builder.locator.json | duplicateQuestionButton | `niq-icon-button[data-test-id^='duplicate-question-']` | duplicate-question-* |
-| survey-builder.locator.json | deleteQuestionButton | `niq-icon-button[data-test-id^='delete-question-']` | delete-question-* |
-| survey-builder.locator.json | questionNumberMarker | `[data-test-id^='question-number-'], [data-test-id^='reorder-question-'] .question-number` | question-number-* / reorder-question-* |
-| survey-builder.locator.json | backButton | `[data-test-id='back-to-panelist-selection']` | back-to-panelist-selection |
-| survey-builder.locator.json | reviewSurveyButton | `[data-test-id='review-survey']` | review-survey |
-| survey-builder.locator.json | selectQuestionByIndex | `[data-test-id='select-question-${text}-icon']` | select-question-${text}-icon |
-| survey-builder.locator.json | selectQuestionCheckboxContainer | `[data-test-id='select-question-${text}'] .checkbox-container` | select-question-${text} |
-| survey-builder.locator.json | deleteQuestionsButton | `[data-test-id='review-delete-questions']` | review-delete-questions |
-| survey-builder.locator.json | selectAllButton | `[data-test-id='review-select-all']` | review-select-all |
-| survey-builder.locator.json | unselectAllButton | `[data-test-id='review-select-all']` | review-select-all |
-| survey-builder.locator.json | expandAllButton | `[data-test-id='review-expand-all']` | review-expand-all |
-| survey-builder.locator.json | collapseAllButton | `[data-test-id='review-collapse-all']` | review-collapse-all |
-| survey-builder.locator.json | exitReviewModeButton | `[data-test-id='exit-review-mode']` | exit-review-mode |
-| survey-builder.locator.json | editSurveyNameIcon | `[data-test-id='edit-survey-title']` | edit-survey-title |
-| survey-builder.locator.json | surveyTitleInput | `[data-test-id='survey-title-input'] input, input[data-test-id='survey-title-input'], input[data-test-id='survey-title-input-input']` | survey-title-input |
-| survey-builder.locator.json | saveDraftButton | `[data-test-id='save-draft']` | save-draft |
-| survey-builder.locator.json | saveCopyTitleInput | `[data-test-id='save-a-copy-title-input']` | save-a-copy-title-input |
-| survey-builder.locator.json | savePendingChangesButton | `[data-test-id='save-pending-changes-button']` | save-pending-changes-button |
-| survey-builder.locator.json | confirmPublishDialogText | `[data-test-id='publish-dialog-title']` | publish-dialog-title |
-| survey-builder.locator.json | validateSurveyButton | `[data-test-id='validate-survey']` | validate-survey |
-| survey-builder.locator.json | toastCloseButton | `[data-test-id='-close-button']` | -close-button (templated prefix) |
-| survey-builder.locator.json | viewOptiqFeedbackLink | `[data-test-id='ai-suggestions']` | ai-suggestions |
-| survey-builder.locator.json | publishingSurveyStatus | `[data-test-id='publishing-survey-loader']` | publishing-survey-loader |
-| survey-builder.locator.json | publishSurveyButton | `[data-test-id='publish-survey']` | publish-survey |
-| survey-builder.locator.json | publishDialogTitle | `[data-test-id='publish-dialog-title']` | publish-dialog-title |
-| survey-builder.locator.json | publishResponseCount | `[data-test-id='publish-response-count']` | publish-response-count |
-| survey-builder.locator.json | reviewDialogPublishButton | `[data-test-id='confirm-publish']` | confirm-publish |
-| survey-builder.locator.json | publish-dialog-dimension-by-index | `.publish-review-details [data-test-id$='_Dimension'] >> nth=${text}` | *_Dimension (child match) |
-| survey-builder.locator.json | saveQuestionChangesButton | `[data-test-id='save-question-changes']` | save-question-changes |
-| survey-builder.locator.json | discardChangesButton | `[data-test-id='discard-question-changes'] >> visible=true >> nth=0` | discard-question-changes |
-| survey-builder.locator.json | surveyTitleDisplay | `[data-test-id='survey-title']` | survey-title |
-| select-panelist.locator.json | productNoDataPrompt | `[data-test-id='ds-noDataPrompt_Product']` | ds-noDataPrompt_Product |
-| select-panelist.locator.json | retailerNoDataPrompt | `[data-test-id='ds-noDataPrompt_Retailer']` | ds-noDataPrompt_Retailer |
-| select-panelist.locator.json | geographyNoDataPrompt | `[data-test-id='ds-noDataPrompt_Geography']` | ds-noDataPrompt_Geography |
-| select-panelist.locator.json | demographicNoDataPrompt | `[data-test-id='ds-noDataPrompt_Demographic']` | ds-noDataPrompt_Demographic |
-| select-panelist.locator.json | periodNoDataPrompt | `[data-test-id='ds-noDataPrompt_Period']` | ds-noDataPrompt_Period |
-| select-panelist.locator.json | searchIcon | `[data-test-id='ds-filterIcon-icon']:visible >> nth=0` | ds-filterIcon-icon |
-| select-panelist.locator.json | dsSearchBarInput | `[data-test-id='ds-searchBar-input']` | ds-searchBar-input |
-| select-panelist.locator.json | dsSelectionsViewPort | `[data-test-id='ds-virtualScrollViewport']` | ds-virtualScrollViewport |
-| select-panelist.locator.json | removeIcon | `[data-test-id='ds-removeIcon']` | ds-removeIcon |
-| select-panelist.locator.json | lastRemoveIcon | `[data-test-id='ds-removeIcon'] >> nth=-1` | ds-removeIcon |
-| select-panelist.locator.json | filledDimensionTile | `[data-test-id='ds-${text}_Dimension']` | ds-${text}_Dimension |
-| select-panelist.locator.json | addButton | `[data-test-id='ds-addButton']` | ds-addButton |
-| select-panelist.locator.json | deleteMenuIcon | `[data-test-id='ds-selectionMenu_Delete-icon']` | ds-selectionMenu_Delete-icon |
-| select-panelist.locator.json | categoryItem | `[data-test-id='ds-navigationItemLabel_${text}'] >> nth=0` | ds-navigationItemLabel_${text} |
-| select-panelist.locator.json | doneIcon | `[data-test-id='ds-breadcrumbDoneButton']` | ds-breadcrumbDoneButton |
-| select-panelist.locator.json | 250ResponsesButton | `[data-test-id='select-response-count-250']` | select-response-count-250 |
-| select-panelist.locator.json | proceedToSurveyBuilderButton | `[data-test-id='proceed-to-survey']` | proceed-to-survey |
-| select-panelist.locator.json | selectedResponseCountButton | `[data-test-id^='select-response-count-'].selected` | select-response-count-* |
-| select-panelist.locator.json | cancelDatasetButton | `[data-test-id='rv-dataset-selector-footer'] niq-button.btn-cancel` | rv-dataset-selector-footer (ancestor) |
-| select-panelist.locator.json | responseCountOption | `[data-test-id='select-response-count-${text}']` | select-response-count-${text} |
-| select-panelist.locator.json | moreOptionsButton | `[data-test-id='toggle-more-response-options']` | toggle-more-response-options |
-| select-panelist.locator.json | visibleResponseCountOptions | `[data-test-id^='select-response-count-']:visible` | select-response-count-* |
-| select-panelist.locator.json | footerRefreshedOn | `[data-test-id='rb-report-refreshed-on-block']` | rb-report-refreshed-on-block |
-| my-assets.locator.json | surveyAssetsGrid | `[data-test-id='survey-assets-grid']` | survey-assets-grid |
-| my-assets.locator.json | surveyGridTitleByText | `[data-test-id='survey-grid-title']:text-is("${text}") >> nth=0` | survey-grid-title |
-| my-assets.locator.json | myAssetsTab | `[data-test-id='my-assets-tab-my-assets']` | my-assets-tab-my-assets |
-| my-assets.locator.json | folderBreadcrumb | `[data-test-id='my-assets-folder-breadcrumb']` | my-assets-folder-breadcrumb |
-| profile.locator.json | profileIcon | `[data-test-id='global-nav-trigger-iconbtn-comp-icon']` | global-nav-trigger-iconbtn-comp-icon (external platform nav, not in libs) |
-| profile.locator.json | profileSettings | `[data-test-id='profile-settings-item']` | profile-settings-item (external) |
-| profile.locator.json | accountSettings | `[data-test-id='settings-category-title-LP.PROFILE.INFO.ACCOUNT.TITLE']` | settings-category-title-... (external) |
-| profile.locator.json | profileAccountTitle | `[data-test-id='profile-account']` | profile-account (external) |
-| profile.locator.json | profileLanguageInput | `[data-test-id='profile-display-setting-lang-input']` | profile-display-setting-lang-input (external) |
-| profile.locator.json | saveChanges | `[data-test-id='profile-save-changes-button']` | profile-save-changes-button (external) |
-| profile.locator.json | languageOption | `[data-test-id='profile-language-drp-down-value-${languageName}']` | profile-language-drp-down-value-${languageName} (external) |
-| login.locator.json | termsAcceptCheckbox | `[data-test-id='terms-agree-reminder-checkbox-icon']` | terms-agree-reminder-checkbox-icon (external IdP) |
-| login.locator.json | termsAcceptButton | `[data-test-id='terms-submit-button']` | terms-submit-button (external IdP) |
-| start-from-scratch.locator.json | nextButton | `[data-test-id='btn-next-dataset']` | btn-next-dataset |
-| start-from-scratch.locator.json | searchToggle | `[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']` | dataset-picker-search-bar-toggle-search-button-icon |
-| start-from-scratch.locator.json | searchInput | `[data-test-id='dataset-picker-search-bar-input']` | dataset-picker-search-bar-input |
-| start-from-scratch.locator.json | datasetByLabel | `[data-test-id^='rv-dataset-id-selector']:has-text('${text}')` | rv-dataset-id-selector* |
-| start-from-scratch.locator.json | dialogElement | `[data-test-id='title-second-dialog']` | title-second-dialog |
-| start-from-scratch.locator.json | applyButton | `[data-test-id='apply-dataset-btn']` | apply-dataset-btn |
-| start-from-scratch.locator.json | defaultDataset | `[data-test-id='rv-default-dataset']` | rv-default-dataset |
-| start-from-scratch.locator.json | chooseDatasetBreadcrumb | `[data-test-id='dataset-picker-title']` | dataset-picker-title |
-| start-from-scratch.locator.json | chooseDataviewBreadcrumb | `[data-test-id='breadcrumb-and-search-container']` | breadcrumb-and-search-container |
-| start-with-prompt.locator.json | datasetTypeSelector | `[data-test-id='rv-dataset-type-selector${text}']` | rv-dataset-type-selector${text} |
-| start-with-prompt.locator.json | omnishopperOfferingTile | `[data-test-id='${text}']` | ${text} |
-| start-with-prompt.locator.json | nextDatasetButton | `[data-test-id='btn-next-dataset']` | btn-next-dataset |
-| start-with-prompt.locator.json | datasetSearchToggle | `[data-test-id='dataset-picker-search-bar-toggle-search-button-icon']` | dataset-picker-search-bar-toggle-search-button-icon |
-| start-with-prompt.locator.json | datasetSearchInput | `[data-test-id='dataset-picker-search-bar-input']` | dataset-picker-search-bar-input |
-| start-with-prompt.locator.json | dialogElement | `[data-test-id='title-second-dialog']` | title-second-dialog |
-| start-with-prompt.locator.json | applyButton | `[data-test-id='apply-dataset-btn']` | apply-dataset-btn |
-| start-with-prompt.locator.json | chooseDatasetBreadcrumb | `[data-test-id='dataset-picker-title']` | dataset-picker-title |
-| start-with-prompt.locator.json | chooseDataviewBreadcrumb | `[data-test-id='breadcrumb-and-search-container']` | breadcrumb-and-search-container |
-| start-with-prompt.locator.json | defaultDataset | `[data-test-id='rv-default-dataset']` | rv-default-dataset |
-| start-with-prompt.locator.json | promptTextarea | `[data-test-id='survey-generation-prompt']` | survey-generation-prompt |
-| start-with-prompt.locator.json | generateSurveyButton | `[data-test-id='proceed-to-survey']` | proceed-to-survey |
-| start-with-prompt.locator.json | questionTypeOption | `[data-test-id='question-type-${text}']` | question-type-${text} |
-| start-with-prompt.locator.json | generateQuestionsButton | `[data-test-id='generate-questions']` | generate-questions |
-| start-with-prompt.locator.json | questionCountSlider | `[data-test-id='question-count-slider']` | question-count-slider |
-| start-with-prompt.locator.json | questionCountInput | `[data-test-id='question-count-slider'] input:not([type='range'])` | question-count-slider |
-| start-with-prompt.locator.json | questionNumberMarker | `[data-test-id^='question-number-'], [data-test-id^='reorder-question-'] .question-number` | question-number-* / reorder-question-* |
-| start-with-prompt.locator.json | questionRow | `[data-test-id^='question-row-']` | question-row-* |
-| start-with-prompt.locator.json | rephraseWithAiButton | `[data-test-id='rephrase-with-ai-${text}']` | rephrase-with-ai-${text} |
-| start-with-prompt.locator.json | rephraseInput | `[data-test-id='rephrase-input-${text}']` | rephrase-input-${text} |
-| start-with-prompt.locator.json | rephraseSendButton | `[data-test-id='rephrase-send-${text}']` | rephrase-send-${text} |
-| start-with-prompt.locator.json | suggestNewQuestionsButton | `[data-test-id='suggest-new-questions']` | suggest-new-questions |
-| start-with-prompt.locator.json | repromptNewQuestionsButton | `[data-test-id='reprompt-new-questions']` | reprompt-new-questions |
-| start-with-prompt.locator.json | repromptInput | `[data-test-id='reprompt-input']` | reprompt-input |
-| start-with-prompt.locator.json | repromptSubmitButton | `[data-test-id='reprompt-submit']` | reprompt-submit |
-
-### Group 2 — TEST-ID EXISTS, NOT USED
-
-| file | elementName | current selector | data-test-id (HTML file) |
-|---|---|---|---|
-| survey-builder.locator.json | reviewSurveyDetailsDialog | `[role='dialog']:has-text("Review survey details") >> nth=0` | `data-test-id="publish-survey-dialog"` — [survey-publish-popup.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:1) |
-| survey-builder.locator.json | publishSurveyTitle | `.publish-survey-title` | `[attr.data-test-id]="testId('survey-title')"` → computed `publish-survey-title` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:7) (shared `<survey-details variant="publish">`) |
-| survey-builder.locator.json | publishQuestionSummary | `.publish-question-summary` | `[attr.data-test-id]="testId('question-summary')"` → computed `publish-question-summary` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:28) |
-| survey-builder.locator.json | publish-response-count-text | `.publish-review-details` | `[attr.data-test-id]="variant()==='publish' ? 'publish-review-details' : null"` — [survey-details.component.html](/libs/survey-mod-lib/src/lib/shared/components/survey-details/survey-details.component.html:16) |
-| survey-builder.locator.json | publishEditSurveyButton | `role=button[name="Edit survey"]` | `data-test-id="publish-edit-survey"` — [survey-publish-popup.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.html:11) |
-| survey-builder.locator.json | questionTextDisplay | `.question-text` | `[attr.data-test-id]="'question-text-' + questionNumber()"` — e.g. [choice-editor.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:57) (also present in nps/rating/text/scale editors) |
-| select-panelist.locator.json | searchForPanelistsButton | `[id='report-btn-run']` | `data-test-id="search-panelists"` — [panelist-dataselector.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:38) |
-| select-panelist.locator.json | selectDatasetButton | `.no-dataset-state niq-button` | `data-test-id="select-dataset-button"` — [panelist-dataselector.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/panelist-dataselector/panelist-dataselector.component.html:79) |
-| select-panelist.locator.json | eligibilityMessage | `.eligibility` | `data-test-id="panelist-eligibility-message"` — [select-panelist.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:17) |
-| select-panelist.locator.json | responsesCreditMessage | `.responses-frame .question` | `data-test-id="responses-credit-message"` — [select-panelist.component.html](/libs/survey-mod-lib/src/lib/features/select-panelist/components/select-panelist.component.html:28) |
-| select-panelist.locator.json | footerSelectedValue | `.dataset-footer .selected-value` | `data-test-id="dataset-footer-selected-value"` — [dataset-footer.component.html](/libs/survey-mod-lib/src/lib/shared/components/dataset-footer/dataset-footer.component.html:5) |
-| start-from-scratch.locator.json | startFromScratch | `[data-testid='quick-survey-quick-2']` | **inconsistent attribute**: `[attr.data-testid]="'quick-survey-' + card.id"` (no hyphen, not `data-test-id`) — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:92) |
-| start-with-prompt.locator.json | startWithPrompt | `[data-testid='quick-survey-quick-1']` | **inconsistent attribute**: same element/line as above, `card.id === 'quick-1'` — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:92) |
-| start-with-prompt.locator.json | questionCountError | `.question-count-error[role='alert']:visible, .question-count-error [role='alert']:visible` | `data-test-id="question-count-error"` — [question-generator.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html:18) |
-
-### Group 3 — NO TEST-ID
-
-| file | elementName | current selector | HTML file:line (or note) |
-|---|---|---|---|
-| survey-builder.locator.json | maxOptionsMessageText | `text="You have already reached the maximum number of options." >> nth=0` | shared library — rendered by `niqTooltip` directive (`SURVEYMOD_MAXIMUM_OPTIONS_WARNING`), triggering element at [choice-editor.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:36) |
-| survey-builder.locator.json | maxQuestionsMessageText | `You have already reached the maximum number of questions.` | shared library — `niqTooltip` directive (`SURVEYMOD_MAXIMUM_QUESTIONS_WARNING`) — [preview-mode.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:84) |
-| survey-builder.locator.json | select-panelists-step-circle | `.niq-step-circle >> nth=0` | shared library — internal class of the `niq-stepper`/`niq-step` library component (only referenced in our [crf-survey-wrapper.component.scss](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.scss) for styling, not an element we author) |
-| survey-builder.locator.json | myAssetsTreeItem | `role=treeitem[name*="My Assets"]` | shared library — internal to `<crf-uic-save-a-copy>` folder tree, [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
-| survey-builder.locator.json | saveDraftDialog | `[role='dialog']:has-text("Save your survey") >> nth=0` | `<crf-uic-save-a-copy>` host tag has no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
-| survey-builder.locator.json | saveDraftDialogNameInput | `role=textbox[name="Name"]` | shared library — internal to `<crf-uic-save-a-copy>`, [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
-| survey-builder.locator.json | saveDraftDialogErrorText | `text="Survey name is required." >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogMyAssetsFolder | `role=treeitem[name*="My Assets"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogSaveButton | `role=button[name="Save draft"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogCancelButton | `role=button[name="Cancel"] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogCreateNewFolderLink | `text=/^Create new folder/ >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogMyAssetsArrow | `role=treeitem[name*="My Assets"] >> nth=0 >> .arrow` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | saveDraftDialogFolderTree | `[role='tree'] >> nth=0` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | publishLocationDialog | `[role='dialog']:has-text("Publish your survey") >> nth=0` | same `<crf-uic-save-a-copy>` host tag (reused, text toggled by `isPublishAction()`), no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:69) |
-| survey-builder.locator.json | dialogContinueButton | `role=button[name="Continue"]` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | createNewFolderLink | `text="Create new folder"` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | createNewFolderInLocationButton | `text="Create new folder in location"` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | createNewFolderDialog | `[role='dialog']:visible:has-text("Create new folder")...` | `<crf-uic-create-folder>` host tag has no `data-test-id` — [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:85) (note: the equivalent dialog on the My Assets page already has `data-test-id="create-folder-dialog"`, see [my-assets-page.component.html](/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html:189)) |
-| survey-builder.locator.json | createNewFolderDialogNameInput | `input:visible >> nth=0` | shared library — internal to `<crf-uic-create-folder>` |
-| survey-builder.locator.json | createNewFolderDialogCreateButton | `role=button[name="Create"]` | shared library — internal to `<crf-uic-create-folder>` |
-| survey-builder.locator.json | createNewFolderDialogCloseButton | `role=button[name="Close"]` | shared library — internal to `<crf-uic-create-folder>` |
-| survey-builder.locator.json | locationDialogFolderRow | `role=treeitem` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | locationDialogFolderByName | `role=treeitem[name*="${text}"]` | shared library — internal to `<crf-uic-save-a-copy>` |
-| survey-builder.locator.json | validatingSurveyToastText | `text="Validating your survey" >> nth=0` | shared library — dynamic toast via `ToastService.InsertToast` (`containerClass: 'survey-action-toast'`), [validation.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/validation.service.ts:420) |
-| survey-builder.locator.json | changesRecommendedToastText | `text="Changes recommended" >> nth=0` | shared library — same toast mechanism as above |
-| survey-builder.locator.json | validationCompleteToastText | `text="Validation complete" >> nth=0` | shared library — same toast mechanism |
-| survey-builder.locator.json | changesNeededToastText | `text="Changes needed" >> nth=0` | shared library — same toast mechanism |
-| survey-builder.locator.json | recommendationTagText | `text=/\d+ recommendation/i >> nth=0` | shared library — same toast mechanism |
-| survey-builder.locator.json | saveDraftSuccessToast | `Survey saved as draft successfully` | shared library — dynamic toast via `ToastService.InsertToast` (`SURVEYMOD_DRAFT_SAVED`), [survey-header.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts:164) |
-| survey-builder.locator.json | survey-action-toast | `.survey-action-toast` | shared library — toast `containerClass`, not a template element; set in [survey-header.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts:168) and [survey-publish-popup.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts:73) |
-| select-panelist.locator.json | checkboxLabel | `div.item-container:has-text('${text}') niq-checkbox >> nth=0` | shared library — external panelist picker (`crf-data-selector-panel-v2` / `re-dataset-picker`); `item-container` not found anywhere in `libs/**/*.html` |
-| select-panelist.locator.json | selectedOption | `[data-cy='Selected-option']` | shared library — uses `data-cy`, not `data-test-id`; not found in `libs/**/*.html` |
-| select-panelist.locator.json | buildSurveyPageHeading | `text= Build Survey >>nth=0` | `<niq-step>` renders `{{ step.label \| translate }}` (`SURVEYMOD_BUILD_SURVEY`) with no `data-test-id` — [crf-survey-wrapper.component.html](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.html:4) |
-| select-panelist.locator.json | productOfferingModal | `.ds-picker-container.ds-picker-type-selection` | shared library — external dataset/offering picker modal (`re-dataset-picker`); class not found in `libs/**/*.html` |
-| select-panelist.locator.json | filterValidationMessage | `crf-data-selector-panel-v2 >> text=/Please select 1\|Looking good!\|Please remove 1/ >> visible=true >> nth=0` | shared library — external `crf-data-selector-panel-v2` component |
-| select-panelist.locator.json | filterCounter | `crf-data-selector-panel-v2 >> text=/\b\d+\/\d+\b/ >> visible=true >> nth=0` | shared library — external `crf-data-selector-panel-v2` component |
-| my-assets.locator.json | viewAllSurveysLink | `.view-all-link:has-text("View all surveys") >> nth=0` | `<niq-link class="view-all-link">` has no `data-test-id` — [survey-homepage.component.html](/libs/survey-mod-lib/src/lib/features/survey-home/components/survey-homepage/survey-homepage.component.html:14) |
-| login.locator.json | userName | `[data-id='username-input']` | external identity-provider login page — not in this repo (`data-id`, not `data-test-id`) |
-| login.locator.json | nextButton | `role=button[name="Next"]` | external identity-provider login page — not in this repo |
-| login.locator.json | password | `[data-id='password-input']` | external identity-provider login page — not in this repo |
-| login.locator.json | verifyButton | `role=button[name="Verify"]` | external identity-provider login page — not in this repo |
-| feature-toggle.locator.json | surveyModernizationFmsRow | `tr:has(td:text-is("Enable Survey Modernization in FMS"))` | external FMS admin page (`report/featuretoggle`) — not in this repo |
-| feature-toggle.locator.json | surveyModernizationFmsSwitch | `tr:has(td:text-is("Enable Survey Modernization in FMS")) input[role='switch']` | external FMS admin page — not in this repo |
-| feature-toggle.locator.json | surveyModernizationFmsSwitchLabel | `tr:has(td:text-is("Enable Survey Modernization in FMS")) label.switch` | external FMS admin page — not in this repo |
-| start-from-scratch.locator.json | productOfferingHeading | `.ds-picker-container.ds-picker-type-selection` | shared library — external dataset/offering picker modal; class not found in `libs/**/*.html` |
-| start-with-prompt.locator.json | datasetByText | `${text}` | shared library — generic text match inside the external dataset picker (`re-dataset-picker` / `crf-data-selector-panel-v2`) |
-| start-with-prompt.locator.json | optiqHeading | `Let's get you started with Optiq!` | not found anywhere in `libs/**/*.html` (or any `.ts`/translation source in this repo) — no component location to attach a test-id to |
-
-### UNUSED — never referenced from `e2e/page-objects` or `e2e/tests`
-
-| file | elementName | current selector | data-test-id (or HTML file:line) |
-|---|---|---|---|
-| survey-builder.locator.json | optionInputByLabel | `role=textbox[name="${text}"] >> nth=0` | n/a (role-based, no test-id) |
-| survey-builder.locator.json | savedAssetGridcellByTitle | `role=gridcell[name="${text}"]` | n/a (role-based, no test-id) |
-| survey-builder.locator.json | confirmPublishButton | `[data-test-id='-footer'] >> role=button[name="Publish survey"]` | already data-test-id-based (`-footer` ancestor), superseded by `reviewDialogPublishButton` (`confirm-publish`) |
-| survey-builder.locator.json | publish-success-toast | `Survey published successfully` | shared library — toast via `SURVEYMOD_SURVEY_PUBLISHED`, [survey-publish-popup.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-publish-popup/survey-publish-popup.component.ts:73) |
-| my-assets.locator.json | surveyGridTitle | `[data-test-id='survey-grid-title']` | survey-grid-title — [my-assets-page.component.html](/libs/survey-mod-lib/src/lib/features/my-assets/components/my-assets-page.component.html:66) (superseded by `surveyGridTitleByText`) |
-| profile.locator.json | profileLanguageSettingsInput | `[data-test-id='profile-display-setting'] [data-test-id='profile-display-setting-lang-input']` | already data-test-id-based; duplicate of `profileLanguageInput` |
-| profile.locator.json | languageOptions | `[data-test-id^='profile-language-drp-down-value-']` | already data-test-id-based; superseded by `languageOption` (parameterized) |
-
-## Phase 2 - Done
-
-Applied the Group 2 ("TEST-ID EXISTS, NOT USED") fixes and removed the UNUSED locators identified in Phase 1. `elementName` values were kept unchanged throughout.
-
-### selectorValue updated to use the existing data-test-id (selectorType set to `playwrights`)
-
-| file | elementName | new selectorValue |
-|---|---|---|
-| survey-builder.locator.json | reviewSurveyDetailsDialog | `[data-test-id='publish-survey-dialog']` |
-| survey-builder.locator.json | publishSurveyTitle | `[data-test-id='publish-survey-title']` |
-| survey-builder.locator.json | publishQuestionSummary | `[data-test-id='publish-question-summary']` |
-| survey-builder.locator.json | publish-response-count-text | `[data-test-id='publish-review-details']` |
-| survey-builder.locator.json | publishEditSurveyButton | `[data-test-id='publish-edit-survey']` |
-| survey-builder.locator.json | questionTextDisplay | `[data-test-id^='question-text-']:not([data-test-id^='question-text-input'])` |
-| select-panelist.locator.json | searchForPanelistsButton | `[data-test-id='search-panelists']` |
-| select-panelist.locator.json | selectDatasetButton | `[data-test-id='select-dataset-button']` |
-| select-panelist.locator.json | eligibilityMessage | `[data-test-id='panelist-eligibility-message']` |
-| select-panelist.locator.json | responsesCreditMessage | `[data-test-id='responses-credit-message']` |
-| select-panelist.locator.json | footerSelectedValue | `[data-test-id='dataset-footer-selected-value']` |
-| start-with-prompt.locator.json | questionCountError | `[data-test-id='question-count-error']` |
-
-### Unused locators deleted
-
-| file | elementName |
-|---|---|
-| survey-builder.locator.json | optionInputByLabel |
-| survey-builder.locator.json | savedAssetGridcellByTitle |
-| survey-builder.locator.json | confirmPublishButton |
-| survey-builder.locator.json | publish-success-toast |
-| my-assets.locator.json | surveyGridTitle |
-| profile.locator.json | profileLanguageSettingsInput |
-| profile.locator.json | languageOptions |
-
-Nothing else was changed: all other `elementName`s, `selectorType`s, and `selectorValue`s in the five files are untouched, and no `e2e/page-objects` or `e2e/tests` files were modified.
-
-## Build Survey - Investigation
-
-### List 1 - English-text locators
-
-| file | elementName | current selector | data-test-id on target (html file:line) |
-|---|---|---|---|
-| survey-builder.locator.json | maxOptionsMessageText | `text="You have already reached the maximum number of options." >> nth=0` | NO TEST-ID — tooltip is rendered by the shared `niqTooltip` directive (`'SURVEYMOD_MAXIMUM_OPTIONS_WARNING' \| translate`); only the trigger has `data-test-id="add-option"` — [choice-editor.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-editor/choice-editor/choice-editor.component.html:30) (tooltip binding at line 36) |
-| survey-builder.locator.json | maxQuestionsMessageText | `You have already reached the maximum number of questions.` (selectorType `text`) | NO TEST-ID — tooltip rendered by `niqTooltip` (`'SURVEYMOD_MAXIMUM_QUESTIONS_WARNING' \| translate`); triggers have `data-test-id="add-question"` — [preview-mode.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:110) (tooltip at line 115) and `[attr.data-test-id]="'duplicate-question-' + …"` — [preview-mode.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/preview-mode/preview-mode.component.html:78) (tooltip at line 84) |
-| survey-builder.locator.json | saveDraftSuccessToast | `Survey saved as draft successfully` (selectorType `text`; also used inline via `nativePage.getByText(...)` at [survey-builder.page.ts](/e2e/page-objects/common/survey-builder.page.ts:613)) | NO TEST-ID — dynamic toast, not a template element: `ToastService.InsertToast('success', translate.instant('SURVEYMOD_DRAFT_SAVED'), { containerClass: 'survey-action-toast' })` — [survey-header.component.ts](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.ts:162) |
-| select-panelist.locator.json | buildSurveyPageHeading | `text= Build Survey >>nth=0` (used by `isBuildSurveyPageLoaded()` on every Build Survey landing) | NO TEST-ID — `<niq-step>{{ step.label \| translate }}</niq-step>` with `label: 'SURVEYMOD_BUILD_SURVEY'` — [crf-survey-wrapper.component.html](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.html:4) (label defined in [crf-survey-wrapper.component.ts](/libs/survey-mod-lib/src/lib/shared/components/crf-survey-wrapper/crf-survey-wrapper.component.ts:32)) |
-
-### List 2 - English expected texts
-
-| file:line | string | translation key (html file:line) |
-|---|---|---|
-| [start-from-scratch.spec.ts:97](/e2e/tests/survey/start-from-scratch.spec.ts:97) | `'Untitled Survey'` (compared to `getSurveyTitleDisplay()`, i.e. `[data-test-id='survey-title']`) | NO KEY — hardcoded, untranslated default: `_title = signal<string>('Untitled Survey')` — [survey.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts:82) and `untitledName: 'Untitled Survey'` — [build-survey.ts](/libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts:186); rendered as plain `{{ surveyTitle }}` at [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:7) |
-| [build-survey-common-test-cases.ts:41](/e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts:41) | `'Untitled Survey'` (AI title must differ from it, `expectAiTitle` in TC_AI_07) | NO KEY — same hardcoded default as above ([survey.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts:82), [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:7)) |
-| [start-with-prompt.spec.ts:142](/e2e/tests/survey/start-with-prompt.spec.ts:142) | `'please enter a value between 3 and 10'` (`errorText.toLowerCase().includes(...)` on `[data-test-id='question-count-error']`, TC_AI_03) | `SURVEYMOD_PLEASE_ENTER_VALUE_BETWEEN` (`\| translate: { min_value, max_value }`) — [question-generator.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html:19) |
-
-----------------------------------------------------------------------------------
-
 INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
 isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 Starting global setup...
 Old authentication state deleted.
 Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
@@ -304,8 +13,28 @@ Terms page not shown or already accepted, continuing login...
 FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
 Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
 Switching user language to tr-TR...
-Global setup failed: Error: Failed to set the user locale to 'tr-TR': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+Current language: 'English (United States)', expected: 'Turkish'
+Navigation to URL failed: https://si.connect.nielseniq.io/reportexperience-dev/launchpad page.goto: net::ERR_ABORTED at https://si.connect.nielseniq.io/reportexperience-dev/launchpad
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"
+
+    at WebActions.navigateTo (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\@gfk\gta\core\web\webActions.ts:627:23)
+    at ProfilePage.navigateToUrl (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\common-page.ts:68:35)
+    at ProfilePage.openLaunchpad (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:67:16)
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:120:20)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5) {
+  log: [
+    '  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}
+Global setup failed: Error: Failed to set the user locale to 'tr-TR': page.goto: net::ERR_ABORTED at https://si.connect.nielseniq.io/reportexperience-dev/launchpad
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"
+
     at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at processImmediate (node:internal/timers:541:9)
     at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
     at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6660:27)
     at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
@@ -316,7 +45,10 @@ Global setup failed: Error: Failed to set the user locale to 'tr-TR': Failed to 
     at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
     at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
 Global setup completed. Auth state saved.
-Error: Global setup failed: Failed to set the user locale to 'tr-TR': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+Error: Global setup failed: Failed to set the user locale to 'tr-TR': page.goto: net::ERR_ABORTED at https://si.connect.nielseniq.io/reportexperience-dev/launchpad
+Call log:
+  - navigating to "https://si.connect.nielseniq.io/reportexperience-dev/launchpad", waiting until "domcontentloaded"
+
 
    at ..\helpers\global-setup.ts:50
 
@@ -330,81 +62,7 @@ Error: Global setup failed: Failed to set the user locale to 'tr-TR': Failed to 
     at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
 [global-teardown] Resetting user language from tr-TR to en-US...
 Auth state loaded from storage/auth.json
-Current language: 'English (United States)', expected: 'English (United States)'
-Already in en-US, skipping language switch
-[global-teardown] User language reset to en-US.
-
-
-To open last HTML report run:
-
-  npx playwright show-report
-
-
-INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
-$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
-◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
-isLambdaTest = false
-◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Starting global setup...
-Old authentication state deleted.
-Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
-No auth state found - login required
-Starting login process...
-Checking for Terms & Conditions page...
-Terms page not shown or already accepted, continuing login...
-FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
-Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
-Switching user language to tr-TR...
-Current language: 'English (United States)', expected: 'Turkish'
-User language set to tr-TR.
-Authentication successful. New auth state created.
-Global setup completed. Auth state saved.
-
-Running 37 tests using 1 worker
-
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-isLambdaTest = false
-  ✓   1 … page @StartFromScratch @LandStartFromScratch (17.8s)
-Auth state loaded from storage/auth.json
-  ✓   2 …set screen @StartFromScratch @DatasetSelection (4.3s)
-  ✓   3 …ilters are set @StartFromScratch @DataSummary (41.1s)
-  ✓   4 …esponse count @StartFromScratch @ResponseCount (4.2s)
-  ✓   5 …ing @StartFromScratch @ProceedToSurveyBuilder (577ms)
-  ✓   6 … question panel @StartFromScratch @EmptyState (154ms)
-  ✓   7 …rvey title @StartFromScratch @EditSurveyTitle (722ms)
-  ✓   8 …estion @StartFromScratch @SingleChoiceQuestion (1.5s)
-  ✓   9 …tion @StartFromScratch @MultipleChoiceQuestion (4.3s)
-  ✓  10 …ing question @StartFromScratch @RatingQuestion (4.4s)
-  ✓  11 …an NPS question @StartFromScratch @NPSQuestion (3.2s)
-  ✓  12 …question @StartFromScratch @PointScaleQuestion (4.0s)
-  ✓  13 …question @StartFromScratch @MultiScaleQuestion (4.1s)
-  ✓  14 … toggle is on @StartFromScratch @RequiredStar (19.6s)
-  ✓  15 …he pencil icon @StartFromScratch @EditQuestion (6.0s)
-  ✓  16 …sting question @StartFromScratch @DiscardSave (26.7s)
-  ✓  17 …s Save changes @StartFromScratch @DiscardSave (11.2s)
-  ✓  18 …unchanged @StartFromScratch @CancelAddQuestion (2.7s)
-  ✓  19 …reorders questions @StartFromScratch @DragDrop (2.0s)
-  ✓  20 …row actions @StartFromScratch @DeleteDuplicate (1.7s)
-  ✓  21 …n 2, max 15 @StartFromScratch @OptionBoundary (31.7s)
-  ✓  22 …d Survey @StartFromScratch @StepperNavigation (25.0s)
-  ✓  23 …limit message @StartFromScratch @MaxQuestions (19.8s)
-  ✓  24 …e selected, exit @StartFromScratch @ReviewMode (5.9s)
-  ✓  25 …h builder @StartFromScratch @StartFromScratch (323ms)
-  ✓  26 … save one @StartFromScratch @CancelAddQuestion (6.4s)
-  ✓  27 …ype as last @StartFromScratch @DeleteDuplicate (8.3s)
-  ✓  28 … Survey @StartFromScratch @ReviewModeDeleteAll (1.2s)
-  ✓  29 …questions @StartFromScratch @ValidateDisabled (250ms)
-  ✓  30 …rom the builder @StartFromScratch @BackButton (641ms)
-  ✘  31 …ree questions @StartFromScratch @PublishSetup (28.7s)
-  -  32 …ires a survey name @StartFromScratch @SaveDraftDialog
-  -  33 …10: Save survey as draft @StartFromScratch @SaveDraft
-  -  34 …are recommendations @StartFromScratch @ValidateSurvey
-  -  35 …o Build Survey @StartFromScratch @ReviewSurveyDetails
-  -  36 …S_18: Publish survey @StartFromScratch @PublishSurvey
-  -  37 …y are listed in My assets @StartFromScratch @MyAssets
-[global-teardown] Resetting user language from tr-TR to en-US...
-Auth state loaded from storage/auth.json
-[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 60000ms
     at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
     at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
     at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
@@ -418,107 +76,166 @@ Auth state loaded from storage/auth.json
     at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
 
 
-  1) [chromium] › tests\survey\start-from-scratch.spec.ts:252:3 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+To open last HTML report run:
 
-    Error: Failed to save question changes: Save changes button not visible after 15000ms
+  npx playwright show-report
 
-       at ..\page-objects\common\survey-builder.page.ts:1958
 
-      1956 |       }
-      1957 |     } catch (error) {
-    > 1958 |       throw new Error(`Failed to save question changes: ${error instanceof Error ? error.message : error}`);
-           |             ^
-      1959 |     }
-      1960 |   }
-      1961 |
-        at SurveyBuilderPage.saveQuestionChanges (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1958:13)
-        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:278:7
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/start-with-prompt.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to tr-TR...
+Current language: 'Turkish', expected: 'Turkish'
+Already in tr-TR, skipping language switch
+User language set to tr-TR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 41 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 …tion on the survey home page @StartWithPrompt (12.5s)
+Auth state loaded from storage/auth.json
+  ✓   2 …and dataset @StartWithPrompt @DatasetSelection (2.2s)
+  ✓   3 …h for panelists @StartWithPrompt @DataSummary (42.8s)
+  ✓   4 …response count @StartWithPrompt @ResponseCount (3.3s)
+  ✓   5 …rompt entered @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓   6 …d Survey page @StartWithPrompt @GenerateSurvey (1.8s)
+  ✓   7 …stions screen @StartWithPrompt @GenerateSurvey (3.3s)
+  ✓   8 … number field @StartWithPrompt @GenerateSurvey (5.2s)
+  ✓   9 …AI questions @StartWithPrompt @GenerateSurvey (17.6s)
+  ✓  10 …r AI generation @StartWithPrompt @BuildSurvey (524ms)
+  ✓  11 …te and prompt @StartWithPrompt @GenerateSurvey (8.4s)
+  ✓  12 …estion count @StartWithPrompt @GenerateSurvey (17.3s)
+  ✓  13 …estion count @StartWithPrompt @GenerateSurvey (21.4s)
+  ✓  14 …ns @StartWithPrompt @BuildSurvey @MaxQuestions (2.0s)
+  ✓  15 …ed toggle is on @StartWithPrompt @BuildSurvey (18.6s)
+  ✓  16 … the pencil icon @StartWithPrompt @BuildSurvey (5.9s)
+  ✓  17 …isting question @StartWithPrompt @DiscardSave (27.1s)
+  ✓  18 …ks Save changes @StartWithPrompt @DiscardSave (11.5s)
+  ✓  19 …over row actions @StartWithPrompt @BuildSurvey (2.3s)
+  ✓  20 …orders questions @StartWithPrompt @BuildSurvey (2.3s)
+  ✓  21 … count unchanged @StartWithPrompt @BuildSurvey (3.5s)
+  ✓  22 …d save one @StartWithPrompt @CancelAddQuestion (5.6s)
+  ✓  23 …type as last @StartWithPrompt @DeleteDuplicate (7.7s)
+  ✓  24 …e selected, exit @StartWithPrompt @BuildSurvey (5.1s)
+  ✓  25 …than 3 questions @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  26 … on Build Survey @StartWithPrompt @BuildSurvey (1.0s)
+  ✓  27 …tions and 0 rows @StartWithPrompt @BuildSurvey (67ms)
+  ✓  28 …Choice question @StartWithPrompt @BuildSurvey (737ms)
+  ✓  29 … Choice question @StartWithPrompt @BuildSurvey (3.2s)
+  ✓  30 … Rating question @StartWithPrompt @BuildSurvey (2.9s)
+  ✓  31 … an NPS question @StartWithPrompt @BuildSurvey (2.6s)
+  ✓  32 …t Scale question @StartWithPrompt @BuildSurvey (3.7s)
+  ✓  33 …i Scale question @StartWithPrompt @BuildSurvey (3.6s)
+  ✓  34 …to Build Survey @StartWithPrompt @BuildSurvey (25.1s)
+  ✓  35 …in 2, max 15 @StartWithPrompt @OptionBoundary (34.0s)
+  ✘  36 …survey name @StartWithPrompt @SaveDraftDialog (31.2s)
+  -  37 …_10: Save survey as draft @StartWithPrompt @SaveDraft
+  -  38 … are recommendations @StartWithPrompt @ValidateSurvey
+  -  39 …to Build Survey @StartWithPrompt @ReviewSurveyDetails
+  -  40 …BS_18: Publish survey @StartWithPrompt @PublishSurvey
+  -  41 …ey are listed in My assets @StartWithPrompt @MyAssets
+[global-teardown] Resetting user language from tr-TR to en-US...
+Auth state loaded from storage/auth.json
+[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 60000ms
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
+    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
+    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
+    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6676:7)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6415:28)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+
+
+  1) [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:773:3 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
+
+    Error: Failed to open the Save draft dialog: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('[data-test-id=\'save-draft\']')
+        - locator resolved to <niq-button tabindex="0" size="medium" role="button" colortheme="light" _nghost-ng-c653818712="" data-test-id="save-draft" _ngcontent-ng-c2778460539="" class="ng-tns-c653818712-399 ng-trigger ng-trigger-clickAnimation light medium secondary text-neutral icon-right ng-star-inserted default">…</niq-button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div role="dialog" cdktrapfocus="" aria-modal="true" _ngcontent-ng-c33994700="" cdktrapfocusautocapture="true" data-test-id="save-a-copy-dialog-container" aria-labelledby="save-a-copy-dialog-dialog-title" aria-describedby="save-a-copy-dialog-dialog-desc" class="dialog-container save-a-copy-dialog-custom responsive-dialog ng-star-inserted open">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div role="dialog" cdktrapfocus="" aria-modal="true" _ngcontent-ng-c33994700="" cdktrapfocusautocapture="true" data-test-id="save-a-copy-dialog-container" aria-labelledby="save-a-copy-dialog-dialog-title" aria-describedby="save-a-copy-dialog-dialog-desc" class="dialog-container save-a-copy-dialog-custom responsive-dialog ng-star-inserted open">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        28 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div role="dialog" cdktrapfocus="" aria-modal="true" _ngcontent-ng-c33994700="" cdktrapfocusautocapture="true" data-test-id="save-a-copy-dialog-container" aria-labelledby="save-a-copy-dialog-dialog-title" aria-describedby="save-a-copy-dialog-dialog-desc" class="dialog-container save-a-copy-dialog-custom responsive-dialog ng-star-inserted open">…</div> from <div class="cdk-overlay-container niq-dailog-special-overlay">…</div> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+
+
+       at ..\page-objects\common\survey-builder.page.ts:692
+
+      690 |       await this.clickWhenVisible('saveDraftButton', 'Save draft button');
+      691 |     } catch (error) {
+    > 692 |       throw new Error(`Failed to open the Save draft dialog: ${error instanceof Error ? error.message : error}`);
+          |             ^
+      693 |     }
+      694 |   }
+      695 |
+        at SurveyBuilderPage.clickSaveDraftAndWaitForDialog (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:692:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\common-test-cases\build-survey-common-test-cases.ts:788:7
 
     attachment #1: screenshot (image/png) ────────────────────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\test-failed-1.png
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\test-failed-1.png
     ──────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
 
-    attachment #3: start-from-scratch-video (video/webm) ─────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\attachments\start-from-scratch-video-7f21de32febe85ac4c55bcdc0ff6801f928de9f9.webm
+    attachment #3: start-with-prompt-video (video/webm) ──────
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\attachments\start-with-prompt-video-984c8aba1e8678b282f2aaa5548e151f137cdd03.webm
     ──────────────────────────────────────────────────────────
 
-    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+    Error Context: test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\error-context.md
 
     attachment #5: trace (application/zip) ───────────────────
-    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+    test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+        npx playwright show-trace test-results\survey-start-with-prompt-S-91aaa-itle-requires-a-survey-name-chromium\trace.zip
 
     ──────────────────────────────────────────────────────────
 
   1 failed
-    [chromium] › tests\survey\start-from-scratch.spec.ts:252:3 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+    [chromium] › tests\survey\common-test-cases\build-survey-common-test-cases.ts:773:3 › Start with a prompt › TC_BS_10a: Save draft with empty title requires a survey name @StartWithPrompt @SaveDraftDialog 
   1 skipped
-  5 did not run
-  30 passed (6.9m)
-------------------------
-Setup: Return to Build Survey and restore at least three questions
-survey/start-from-scratch.spec.ts:252
-28.7s
-chromiumStartFromScratchPublishSetup
-serial
-Copy prompt
-Error: Failed to save question changes: Save changes button not visible after 15000ms
+  4 did not run
+  35 passed (8.2m)
 
-   at ..\page-objects\common\survey-builder.page.ts:1958
+To open last HTML report run:
 
-  1956 |       }
-  1957 |     } catch (error) {
-> 1958 |       throw new Error(`Failed to save question changes: ${error instanceof Error ? error.message : error}`);
-       |             ^
-  1959 |     }
-  1960 |   }
-  1961 |
-    at SurveyBuilderPage.saveQuestionChanges (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1958:13)
-    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:278:7
-Filter steps
-Before Hooks
-18ms
-Wait for selector locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-83ms
-Click locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-496ms
-Wait for selector locator('[data-test-id=\'survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
-23ms
-Wait for selector locator('[data-test-id=\'survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-13ms
-Evaluate locator('[data-test-id^=\'question-number-\'], [data-test-id^=\'reorder-question-\'] .question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
-14ms
-Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-14ms
-Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-469ms
-Wait for selector locator('[data-test-id^=\'question-text-input-\'] input:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-30ms
-Fill "Rate your experience" locator('[data-test-id^=\'question-text-input-\'] input:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-37ms
-Wait for selector locator('[data-test-id^=\'rating-row-input-\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-23ms
-Fill "Overall experience" locator('[data-test-id^=\'rating-row-input-\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-37ms
-Wait for selector locator('niq-button[data-test-id^=\'add-rating-row-\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-28ms
-Click locator('niq-button[data-test-id^=\'add-rating-row-\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-84ms
-Wait for selector locator('[data-test-id^=\'rating-row-input-\'] input:visible').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-26ms
-Fill "Ease of use" locator('[data-test-id^=\'rating-row-input-\'] input:visible').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:138
-63ms
-Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-10.4s
-Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
-79ms
-Wait for selector locator('[data-test-id=\'save-question-changes\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
-15.0s
-After Hooks
-2.3s
-Worker Cleanup
-2ms
+  npx playwright show-report
+
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ 
