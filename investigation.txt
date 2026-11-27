@@ -286,3 +286,239 @@ Nothing else was changed: all other `elementName`s, `selectorType`s, and `select
 | [start-from-scratch.spec.ts:97](/e2e/tests/survey/start-from-scratch.spec.ts:97) | `'Untitled Survey'` (compared to `getSurveyTitleDisplay()`, i.e. `[data-test-id='survey-title']`) | NO KEY — hardcoded, untranslated default: `_title = signal<string>('Untitled Survey')` — [survey.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts:82) and `untitledName: 'Untitled Survey'` — [build-survey.ts](/libs/survey-mod-lib/src/lib/features/build-survey/models/build-survey.ts:186); rendered as plain `{{ surveyTitle }}` at [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:7) |
 | [build-survey-common-test-cases.ts:41](/e2e/tests/survey/common-test-cases/build-survey-common-test-cases.ts:41) | `'Untitled Survey'` (AI title must differ from it, `expectAiTitle` in TC_AI_07) | NO KEY — same hardcoded default as above ([survey.service.ts](/libs/survey-mod-lib/src/lib/features/build-survey/services/survey.service.ts:82), [survey-header.component.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/survey-header/survey-header.component.html:7)) |
 | [start-with-prompt.spec.ts:142](/e2e/tests/survey/start-with-prompt.spec.ts:142) | `'please enter a value between 3 and 10'` (`errorText.toLowerCase().includes(...)` on `[data-test-id='question-count-error']`, TC_AI_03) | `SURVEYMOD_PLEASE_ENTER_VALUE_BETWEEN` (`\| translate: { min_value, max_value }`) — [question-generator.html](/libs/survey-mod-lib/src/lib/features/build-survey/components/question-generator/question-generator.html:19) |
+
+----------------------------------------------------------------------------------
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to tr-TR...
+Global setup failed: Error: Failed to set the user locale to 'tr-TR': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:41:5)
+    at Object.setup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6660:27)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6414:33)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+Global setup completed. Auth state saved.
+Error: Global setup failed: Failed to set the user locale to 'tr-TR': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+
+   at ..\helpers\global-setup.ts:50
+
+  48 |     console.error('Global setup failed:', error);
+  49 |     if (error instanceof Error) {
+> 50 |       throw new Error(`Global setup failed: ${error.message}`);
+     |             ^
+  51 |     }
+  52 |     throw new Error('Global setup failed with an unknown error');
+  53 |   } finally {
+    at globalSetup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\helpers\global-setup.ts:50:13)
+[global-teardown] Resetting user language from tr-TR to en-US...
+Auth state loaded from storage/auth.json
+Current language: 'English (United States)', expected: 'English (United States)'
+Already in en-US, skipping language switch
+[global-teardown] User language reset to en-US.
+
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+INCOFORGETECH+yogesh.upadhyay@ENCOPDBANLT0828 UCRT64 ~/projects/disc-fe-omni-survey-mod/e2e (feature/localization-phase-2)
+$ npx playwright test tests/survey/start-from-scratch.spec.ts --project=chromium --workers=1
+◇ injected env (21) from .env // tip: ⌘ enable debugging { debug: true }
+isLambdaTest = false
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Starting global setup...
+Old authentication state deleted.
+Logging in to https://si.connect.nielseniq.io/reportexperience-dev/...
+No auth state found - login required
+Starting login process...
+Checking for Terms & Conditions page...
+Terms page not shown or already accepted, continuing login...
+FMS toggle "Enable Survey Modernization in FMS" was OFF, turned ON successfully
+Login process completed successfully. Landed on https://si.connect.nielseniq.io/reportexperience-dev/survey
+Switching user language to tr-TR...
+Current language: 'English (United States)', expected: 'Turkish'
+User language set to tr-TR.
+Authentication successful. New auth state created.
+Global setup completed. Auth state saved.
+
+Running 37 tests using 1 worker
+
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+isLambdaTest = false
+  ✓   1 … page @StartFromScratch @LandStartFromScratch (17.8s)
+Auth state loaded from storage/auth.json
+  ✓   2 …set screen @StartFromScratch @DatasetSelection (4.3s)
+  ✓   3 …ilters are set @StartFromScratch @DataSummary (41.1s)
+  ✓   4 …esponse count @StartFromScratch @ResponseCount (4.2s)
+  ✓   5 …ing @StartFromScratch @ProceedToSurveyBuilder (577ms)
+  ✓   6 … question panel @StartFromScratch @EmptyState (154ms)
+  ✓   7 …rvey title @StartFromScratch @EditSurveyTitle (722ms)
+  ✓   8 …estion @StartFromScratch @SingleChoiceQuestion (1.5s)
+  ✓   9 …tion @StartFromScratch @MultipleChoiceQuestion (4.3s)
+  ✓  10 …ing question @StartFromScratch @RatingQuestion (4.4s)
+  ✓  11 …an NPS question @StartFromScratch @NPSQuestion (3.2s)
+  ✓  12 …question @StartFromScratch @PointScaleQuestion (4.0s)
+  ✓  13 …question @StartFromScratch @MultiScaleQuestion (4.1s)
+  ✓  14 … toggle is on @StartFromScratch @RequiredStar (19.6s)
+  ✓  15 …he pencil icon @StartFromScratch @EditQuestion (6.0s)
+  ✓  16 …sting question @StartFromScratch @DiscardSave (26.7s)
+  ✓  17 …s Save changes @StartFromScratch @DiscardSave (11.2s)
+  ✓  18 …unchanged @StartFromScratch @CancelAddQuestion (2.7s)
+  ✓  19 …reorders questions @StartFromScratch @DragDrop (2.0s)
+  ✓  20 …row actions @StartFromScratch @DeleteDuplicate (1.7s)
+  ✓  21 …n 2, max 15 @StartFromScratch @OptionBoundary (31.7s)
+  ✓  22 …d Survey @StartFromScratch @StepperNavigation (25.0s)
+  ✓  23 …limit message @StartFromScratch @MaxQuestions (19.8s)
+  ✓  24 …e selected, exit @StartFromScratch @ReviewMode (5.9s)
+  ✓  25 …h builder @StartFromScratch @StartFromScratch (323ms)
+  ✓  26 … save one @StartFromScratch @CancelAddQuestion (6.4s)
+  ✓  27 …ype as last @StartFromScratch @DeleteDuplicate (8.3s)
+  ✓  28 … Survey @StartFromScratch @ReviewModeDeleteAll (1.2s)
+  ✓  29 …questions @StartFromScratch @ValidateDisabled (250ms)
+  ✓  30 …rom the builder @StartFromScratch @BackButton (641ms)
+  ✘  31 …ree questions @StartFromScratch @PublishSetup (28.7s)
+  -  32 …ires a survey name @StartFromScratch @SaveDraftDialog
+  -  33 …10: Save survey as draft @StartFromScratch @SaveDraft
+  -  34 …are recommendations @StartFromScratch @ValidateSurvey
+  -  35 …o Build Survey @StartFromScratch @ReviewSurveyDetails
+  -  36 …S_18: Publish survey @StartFromScratch @PublishSurvey
+  -  37 …y are listed in My assets @StartFromScratch @MyAssets
+[global-teardown] Resetting user language from tr-TR to en-US...
+Auth state loaded from storage/auth.json
+[global-teardown] Failed to reset the user language: Error: Failed to set the user locale to 'en-US': Failed to read the user locale: Failed to open the profile settings: Account settings category not visible after 15000ms
+    at ProfilePage.setUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\profile.page.ts:123:13)
+    at resetUserLocale (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:332:5)
+    at _default (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\playwright\setup\globalTeardown.ts:349:3)
+    at Object.teardown [as setup] (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6676:7)
+    at taskLoop (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6434:11)
+    at _TaskRunner.runDeferCleanup (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6450:5)
+    at _TaskRunner.run (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6415:28)
+    at runTasks (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:6581:18)
+    at Object.runAllTestsWithConfig (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\runner\index.js:7248:18)
+    at runTests (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\cli\testActions.js:91:18)
+    at _Command.<anonymous> (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\node_modules\playwright\lib\program.js:55:7)
+
+
+  1) [chromium] › tests\survey\start-from-scratch.spec.ts:252:3 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+
+    Error: Failed to save question changes: Save changes button not visible after 15000ms
+
+       at ..\page-objects\common\survey-builder.page.ts:1958
+
+      1956 |       }
+      1957 |     } catch (error) {
+    > 1958 |       throw new Error(`Failed to save question changes: ${error instanceof Error ? error.message : error}`);
+           |             ^
+      1959 |     }
+      1960 |   }
+      1961 |
+        at SurveyBuilderPage.saveQuestionChanges (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1958:13)
+        at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:278:7
+
+    attachment #1: screenshot (image/png) ────────────────────
+    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\test-failed-1.png
+    ──────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+
+    attachment #3: start-from-scratch-video (video/webm) ─────
+    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\attachments\start-from-scratch-video-7f21de32febe85ac4c55bcdc0ff6801f928de9f9.webm
+    ──────────────────────────────────────────────────────────
+
+    Error Context: test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ───────────────────
+    test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\survey-start-from-scratch--f1f52-re-at-least-three-questions-chromium\trace.zip
+
+    ──────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\survey\start-from-scratch.spec.ts:252:3 › Start from scratch › Setup: Return to Build Survey and restore at least three questions @StartFromScratch @PublishSetup 
+  1 skipped
+  5 did not run
+  30 passed (6.9m)
+------------------------
+Setup: Return to Build Survey and restore at least three questions
+survey/start-from-scratch.spec.ts:252
+28.7s
+chromiumStartFromScratchPublishSetup
+serial
+Copy prompt
+Error: Failed to save question changes: Save changes button not visible after 15000ms
+
+   at ..\page-objects\common\survey-builder.page.ts:1958
+
+  1956 |       }
+  1957 |     } catch (error) {
+> 1958 |       throw new Error(`Failed to save question changes: ${error instanceof Error ? error.message : error}`);
+       |             ^
+  1959 |     }
+  1960 |   }
+  1961 |
+    at SurveyBuilderPage.saveQuestionChanges (C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\page-objects\common\survey-builder.page.ts:1958:13)
+    at C:\Users\yogesh.upadhyay\projects\disc-fe-omni-survey-mod\e2e\tests\survey\start-from-scratch.spec.ts:278:7
+Filter steps
+Before Hooks
+18ms
+Wait for selector locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+83ms
+Click locator('[data-test-id=\'proceed-to-survey\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+496ms
+Wait for selector locator('[data-test-id=\'survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:789
+23ms
+Wait for selector locator('[data-test-id=\'survey-title\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+13ms
+Evaluate locator('[data-test-id^=\'question-number-\'], [data-test-id^=\'reorder-question-\'] .question-number')— ../node_modules/@gfk/gta/core/web/webActions.ts:310
+14ms
+Wait for selector locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+14ms
+Click locator('[data-test-id=\'question-type-STAR_RATING\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+469ms
+Wait for selector locator('[data-test-id^=\'question-text-input-\'] input:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+30ms
+Fill "Rate your experience" locator('[data-test-id^=\'question-text-input-\'] input:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+37ms
+Wait for selector locator('[data-test-id^=\'rating-row-input-\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+23ms
+Fill "Overall experience" locator('[data-test-id^=\'rating-row-input-\'] input:visible').first()— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+37ms
+Wait for selector locator('niq-button[data-test-id^=\'add-rating-row-\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+28ms
+Click locator('niq-button[data-test-id^=\'add-rating-row-\']:visible')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+84ms
+Wait for selector locator('[data-test-id^=\'rating-row-input-\'] input:visible').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+26ms
+Fill "Ease of use" locator('[data-test-id^=\'rating-row-input-\'] input:visible').nth(1)— ../node_modules/@gfk/gta/core/web/webElement.ts:138
+63ms
+Wait for selector locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+10.4s
+Click locator('[data-test-id=\'add-question\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:71
+79ms
+Wait for selector locator('[data-test-id=\'save-question-changes\']')— ../node_modules/@gfk/gta/core/web/webElement.ts:587
+15.0s
+After Hooks
+2.3s
+Worker Cleanup
+2ms
